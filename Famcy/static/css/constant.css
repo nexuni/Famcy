@@ -1,0 +1,125 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+button:focus {
+	outline: none;
+	box-shadow: none;
+}
+
+.float_left{
+	float: left;
+}
+
+.float_right{
+	float: right;
+}
+
+@media only screen and (min-width: 0px) {
+	:root {
+		--win_width: 800px;
+
+		--very-large-text: calc(800px * (54 / 800));
+		--large-text: calc(800px * (40 / 800));
+		--semi-large-text: calc(800px * (24 / 800));
+		--normal-text: calc(800px * (16 / 800));
+		--small-text: calc(800px * (12 / 800));
+	}
+}
+
+@media only screen and (min-width: 500px) {
+	:root {
+		--win_width: 800px;
+
+		--very-large-text: calc(800px * (54 / 800));
+		--large-text: calc(800px * (40 / 800));
+		--semi-large-text: calc(800px * (24 / 800));
+		--normal-text: calc(800px * (16 / 800));
+		--small-text: calc(800px * (12 / 800));
+	}
+}
+
+@media only screen and (min-width: 800px) {
+	:root {
+		--win_width: 800px;
+
+		--very-large-text: calc(800px * (54 / 800));
+		--large-text: calc(800px * (40 / 800));
+		--semi-large-text: calc(800px * (24 / 800));
+		--normal-text: calc(800px * (16 / 800));
+		--small-text: calc(800px * (12 / 800));
+	}
+}
+
+/*@media only screen and (min-width: 1200px) {
+	:root {
+		--win_width: 1200px;
+
+		--very-large-text: calc(1200px * (54 / 800));
+		--large-text: calc(1200px * (40 / 800));
+		--semi-large-text: calc(1200px * (24 / 800));
+		--normal-text: calc(1200px * (16 / 800));
+		--small-text: calc(1200px * (12 / 800));
+	}
+}
+
+@media only screen and (min-width: 1600px) {
+	:root {
+		--win_width: 1600px;
+
+		--very-large-text: calc(1600px * (54 / 800));
+		--large-text: calc(1600px * (40 / 800));
+		--semi-large-text: calc(1600px * (24 / 800));
+		--normal-text: calc(1600px * (16 / 800));
+		--small-text: calc(1600px * (12 / 800));
+	}
+}*/
+
+/*:root {
+	--main-color: #3968F7;
+	--sub-color: #94D4ED;
+	--white-color: #ffffff;
+	--dark-color: #2d2d2d;
+	--light-grey-color: #f1f1f1;
+	--semi-grey-color: #cccccc;
+}

@@ -1,0 +1,166 @@
+
+#picker {
+    width: 100%;
+}
+
+#myc-container {
+    width: inherit;
+}
+
+#myc-nav-container {
+    margin-bottom: 15px;
+    width: inherit;
+}
+
+#myc-current-month-year-container {
+    display: inline-block;
+    font-size: var(--semi-large-text);
+    font-weight: lighter;
+    text-align: center;
+    vertical-align: top;
+    width: 68%;
+}
+
+#myc-prev-week-container {
+    display: inline-block;
+    width: 15%;
+}
+
+#myc-next-week-container {
+    display: inline-block;
+    width: 15%;
+}
+
+#myc-prev-week {
+    border: 1px solid var(--sub-color);
+    border-radius: 80px;
+    color: var(--sub-color);
+    cursor: pointer;
+    float: left;
+    font-size: var(--semi-large-text);
+    font-weight: lighter;
+    height: 40px;
+    text-align: center;
+    width: 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#myc-next-week {
+    border: 1px solid var(--sub-color);
+    border-radius: 80px;
+    color: var(--sub-color);
+    cursor: pointer;
+    float: right;
+    font-size: var(--semi-large-text);
+    font-weight: lighter;
+    height: 40px;
+    text-align: center;
+    width: 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#myc-prev-week:hover, #myc-next-week:hover {
+    border: 1px solid  var(--dark-color);
+    color:  var(--dark-color);
+}
+
+#myc-week-container {
+    border: 1px solid var(--light-grey-color);
+}
+
+#myc-dates-container {
+    width: 100%;
+    background-color: var(--light-grey-color);
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.myc-date-header {
+    border-right: 1px solid var(--white-color);
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 50px;
+    vertical-align: top;
+    min-width: calc(100% / 7);
+}
+
+.myc-date-header:last-of-type {
+    border-right: none;
+}
+
+#myc-available-time-container {
+    border-top: 1px solid var(--light-grey-color);
+    min-height: 150px;
+}
+
+.myc-day-time-container {
+    display: inline-block;
+    height: 100%;
+    padding: 15px 15px 15px 15px;
+    vertical-align: top;
+    width: 13.77%;
+}
+
+.myc-day-time-container:first-of-type {
+    padding-left: 15px;
+}
+
+.myc-day-time-container:last-of-type {
+    border-right: none;
+    width: 13%;
+}
+
+.myc-date-number {
+    font-size: var(--semi-large-text);
+    font-weight: lighter;
+}
+
+.myc-available-time {
+    background-color: var(--sub-color);
+    border-radius: 20px;
+    color: var(--white-color);
+    display: block;
+    margin-bottom: 15px;
+    padding: 10px 0px 10px 0px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.myc-available-time.selected, .myc-available-time:hover {
+    background-color: var(--dark-color);
+    color: var(--white-color);
+    text-decoration: none;
+}
+
+.myc-date-display {
+    font-weight: lighter;
+}
+
+.selected_list {
+    padding: 10px 2%;
+    border: 1px solid var(--light-grey-color);
+    background-color: var(--light-grey-color);
+    min-height: 100px;
+}
+
+#selected-date {
+    width: auto;
+    display: flex;
+    flex-flow: row;
+}
+
+@media only screen and (max-width: 768px) {
+    .myc-date-header, .myc-day-time-container {
+        width: 13.5%;
+    }
+}

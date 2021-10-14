@@ -1,0 +1,143 @@
+.doday_holder {
+	width: 100%;
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+
+.doday_card_holder {
+	margin: 10px 1% 10px 0;
+	width: 49%;
+	min-width: 270px;
+	max-width: 350px;
+	height: 0;
+	padding-top: clamp(164px, 30%, 215px);
+	position: relative;
+
+	border-radius: 10px;
+}
+
+.doday_card_holder .card_content {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	width: 100%;
+	height: 100%;
+	padding: 20px;
+
+	overflow: hidden;
+
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+.card_title {
+	width: 100%;
+	font-weight: 600;
+	font-size: var(--small-text);
+	line-height: calc(1.3 * var(--small-text));
+	color: var(--white-color);
+	margin: 10px 0;
+}
+
+.card_main_status {
+	width: 40%;
+	font-weight: 700;
+	font-size: var(--semi-large-text);
+	line-height: calc(1.3 * var(--semi-large-text));
+	color: var(--white-color);
+	/*margin: 10px 0;*/
+}
+
+.card_date {
+	align-self: flex-end;
+	width: 100%;
+	font-weight: 600;
+	font-size: var(--small-text);
+	line-height: calc(1.3 * var(--small-text));
+	color: var(--white-color);
+	margin: 10px 0;
+}
+
+.card_icon {
+	width: 50%;
+	height: auto;
+	padding: 0 5%;
+}
+
+.dofan_card {
+	background: radial-gradient(ellipse at bottom, #2D2F80 0%, #0c0d13 100%);
+}
+
+.doyo_card {
+	background: radial-gradient(ellipse at bottom, #F7E80C 0%, #D68B0B 100%);
+}
+
+.doday_card_info_holder {
+	margin: 10px 1% 10px 0;
+	width: 49%;
+	min-width: 270px;
+	max-width: 350px;
+	height: 0;
+	padding-top: clamp(164px, 30%, 215px);
+	position: relative;
+
+	border-radius: 10px;
+
+	background: radial-gradient(ellipse at bottom, #ffffff 0%, #D0CDD9 100%);
+}
+
+.doday_card_info_holder .card_content {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	width: 100%;
+	height: 100%;
+	padding: 20px;
+
+	overflow: hidden;
+
+	display: flex;
+	flex-flow: row wrap;
+}
+
+.card_info_holder {
+	width: 100%;
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+.card_info_holder h4 {
+	font-weight: 600;
+	font-size: var(--small-text);
+	line-height: calc(1.3 * var(--small-text));
+	color: var(--dark-color);
+	margin: 0 0 10px 0;
+}
+
+.card_info_holder h6 {
+	font-weight: 900;
+	font-size: var(--small-text);
+	line-height: calc(1.3 * var(--small-text));
+	color: var(--dark-color);
+	margin: 0 0 10px 0;
+}
+
+.doday_card_info_holder h5{
+	align-self: flex-end;
+	width: 100%;
+	font-weight: 900;
+	font-size: var(--normal-text);
+	line-height: calc(1.3 * var(--normal-text));
+	color: var(--dark-color);
+	margin: 0;
+}
+
+

@@ -1,0 +1,7 @@
+<div class="content_section {% if extra_class %}{{ extra_class|safe }}{% endif %}" id="content_section">	
+	{% for inner_html in content %}
+	<div class="{{ inner_html.size|safe }}">
+	    {% include 'block.html' %}
+	</div>
+	{% endfor %}
+</div>

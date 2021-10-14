@@ -1,0 +1,14 @@
+{% if inner_html %}
+
+{% if inner_html.title != "" %}
+<div class="title_holder">
+    <h2 class="section_title">{{ inner_html.title|safe }}</h2>
+</div>
+{% endif %}
+
+<div class="inner_section_content" id="{{ inner_html.target_id|safe }}">
+	{{ inner_html.content|safe }}
+</div>
+
+
+{% endif %}

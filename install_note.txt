@@ -1,0 +1,109 @@
+sudo apt-get install python3.7-venv
+sudo apt-get install libxml2-dev libxslt-dev libpython3.7-dev libpq-dev
+
+make sure
+python 3.7.5
+
+sudo apt install python3.7 python3-pip
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2
+sudo update-alternatives --config python3
+sudo rm /usr/bin/python3
+sudo ln -s python3.7 /usr/bin/python3
+https://dev.to/serhatteker/how-to-upgrade-to-python-3-7-on-ubuntu-18-04-18-10-5hab
+python3.7 -m pip install --upgrade pip
+sudo apt-get install --reinstall python-apt python3-apt
+cd /usr/lib/python3/dist-packages
+
+
+cd ~/.local/famcy/
+python3 -m venv venv
+source venv/bin/activate
+sudo apt-get install libxml2-dev libxslt-dev libpython3.7-dev
+pip3 install wheel uwsgi
+pip3 install setuptools-rust
+pip3 install famcy
+
+generate default folder
+~/.local/share/famcy
+	- console
+		- _custom_fblocks_
+		- _static_
+			- user_css
+			- user_js
+			- user_image
+		- dashboard
+			- page.py
+		- famcy.yaml
+	- venv
+
+cd into /venv/lib/python3.7/site-packages/Famcy
+ln -s ../../../../../console/ _CONSOLE_FOLDER_
+
+cd static
+ln -s ../../../../../../console/_static_/user_css/ user_css
+ln -s ../../../../../../console/_static_/user_js/ user_js
+ln -s ../../../../../../console/_static_/user_image/ user_image
+
+famcy.yaml
+
+console_title: "Nexuni 後台"
+console_description: "這是Nexuni公司的後台管理系統"
+main_page: dashboard
+
+side_bar_title: "Nexuni"
+side_bar_hierachy:
+  - 總覽: overview
+  - 管理: 
+    - 簽到打卡: management-checkin
+    - 財務管理: management-financial
+    - 庫存管理: management-inventory
+
+user_defined_content_header_var: PAGE_HEADER
+user_defined_content_var: PAGE_CONTENT
+user_defined_content_object_var: PAGE_CONTENT_OBJECT
+user_default_page_define_file: page
+
+db_url: ''
+
+default_profile_pic_url: "https://gadgethi-css.s3.amazonaws.com/FamcyPic/gadget_square.png"
+
+main_url: "http://127.0.0.1:5000"
+
+[uwsgi]
+module = wsgi:app
+master = true
+processes = 5
+socket = /tmp/famcy.sock
+chmod-socket = 660
+vacuum = true
+die-on-term = true
+
+[Unit]
+Description=uWSGI instance to serve famcy
+After=network.target
+
+[Service]
+User=parq
+Group=www-data
+WorkingDirectory=/home/parq/.local/share/famcy/venv/lib/python3.7/site-packages/Famcy
+Environment="PATH=/home/parq/.local/share/famcy/venv/bin"
+ExecStart=/home/parq/.local/share/famcy/venv/bin/uwsgi --ini famcy.ini
+
+[Install]
+WantedBy=multi-user.target
+
+server_name famcy.nexuni.com;
+
+location / {
+    include uwsgi_params;
+    uwsgi_pass unix:/tmp/famcy.sock;
+}
+
+location /static  {
+    alias /home/parq/.local/share/famcy/venv/lib/python3.7/site-packages/Famcy/static;
+}
+
+change nginx.conf username to user_name: parq in this case
+user parq;
+

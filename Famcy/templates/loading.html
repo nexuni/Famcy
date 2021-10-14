@@ -1,0 +1,22 @@
+<style type="text/css">
+    #loading_holder {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--sub-color);
+        opacity: 0.6;
+    }
+</style>
+
+<div id="loading_holder">
+    {% if loader_type %} 
+    {{ loader_type|safe }}
+    {% endif %}
+</div>
+
+
