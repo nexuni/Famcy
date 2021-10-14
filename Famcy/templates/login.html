@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="{{ url_for('static', filename='css/constant.css') }}" rel="stylesheet" media="screen">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {% if html_header %} 
+	{{ html_header|safe }}
+	{% endif %}
+	{% if color_theme %} 
+	{{ color_theme|safe }}
+	{% endif %}
+
+	{% if extra_script %}
+	{% for es in extra_script %}
+	{{ es|safe }}
+	{% endfor %}
+	{% endif %}
+
+	<script type="text/javascript" src="/static/js/sijax/sijax.js"></script>
+    <script type="text/javascript">
+        {{ g.sijax.get_js()|safe }}
+    </script>
+</head>
+<body id="root">
+
+	<div class="main_win login_win">
+
+		{% if content %}
+		{% set extra_class="login_content" %}
+		{% include 'content.html' %}
+		{% endif %}
+
+	</div>
+
+	{% if load_spinner %} 
+    {{ load_spinner|safe }}
+    {% endif %}
+
+	{% if end_js %} 
+	{{ end_js|safe }}
+	{% endif %}
+	
+</body>
+</html>
