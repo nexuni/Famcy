@@ -107,5 +107,11 @@ def input_form_submission(submission_list, **configs):
 	submission_dict_handler = Famcy.SijaxSubmit(PAGE_CONTENT_OBJECT[0].context["submit_type"])
 	content = submission_dict_handler.generate_tab_html("management-inventory")
 	return submission_dict_handler.return_submit_info(msg=content, script="console.log('succeed')")
-	
+
+@Famcy.MainBlueprint.route("/")
+def index():
+	return "==== success ===="
+
+print(" === yooo =====")
+
 PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT, [input_form_submission, file_submission])

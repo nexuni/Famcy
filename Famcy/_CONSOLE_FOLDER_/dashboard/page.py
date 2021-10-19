@@ -121,7 +121,6 @@ card_section.update({
 PAGE_CONTENT = [card_section]
 PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT)
 
-
 # PAGE_HEADER = {
 # 	"title": ["Nexuni 員工後台"],
 #     "size": ["inner_section"],
