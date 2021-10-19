@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
 
@@ -30,20 +30,22 @@ SijaxSubmit = SubmitType
 
 _current_user = current_user
 _current_app = current_app
+MainBlueprint = Blueprint('MainBlueprint', __name__)
+print("===== Famcy Init Version Id ===== ", id(MainBlueprint))
 
 VIDEO_CAMERA = {}
 
 # extra python function and global variable when server init
 # ====================================================================
-from Famcy._CONSOLE_FOLDER_._custom_python_.extra_init_function import EXTRA_ACTION, EXTRA_GLOBAL_VAR, LOGIN_VAR
-for action in EXTRA_ACTION:
-    action()
+# from Famcy._CONSOLE_FOLDER_._custom_python_.extra_init_function import EXTRA_ACTION, EXTRA_GLOBAL_VAR, LOGIN_VAR
+# for action in EXTRA_ACTION:
+#     action()
 
-for extra_var in EXTRA_GLOBAL_VAR:
-    globals()[extra_var["title"]] = extra_var["action"]
+# for extra_var in EXTRA_GLOBAL_VAR:
+#     globals()[extra_var["title"]] = extra_var["action"]
 
-for extra_login in LOGIN_VAR:
-    globals()[extra_login["title"]] = extra_login["action"]
+# for extra_login in LOGIN_VAR:
+#     globals()[extra_login["title"]] = extra_login["action"]
 # ====================================================================
 # ====================================================================
 
@@ -87,16 +89,16 @@ def create_app():
         return None
 
     # blueprint for non-auth routes of app
-    from Famcy._services_._main_service import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+    # from Famcy._services_._main_service import main as main_blueprint
 
-    # blueprint for auth parts of app
-    from Famcy._services_.iam_service import iam as iam_blueprint
-    app.register_blueprint(iam_blueprint)
+    # # blueprint for auth parts of app
+    # from Famcy._services_.iam_service import iam as iam_blueprint
+    # app.register_blueprint(iam_blueprint)
 
-    # blueprint for custom parts of app
-    from Famcy._CONSOLE_FOLDER_._custom_python_.cus_service import cus as cus_blueprint
-    app.register_blueprint(cus_blueprint)
+    # # blueprint for custom parts of app
+    # from Famcy._CONSOLE_FOLDER_._custom_python_.cus_service import cus as cus_blueprint
+    # app.register_blueprint(MainBlueprint)
+    # app.register_blueprint(cus_blueprint)
 
     # Import Fblocks from default and custom folders. 
     # ------------------------------
@@ -119,6 +121,12 @@ def create_app():
             globals()[block] = getattr(importlib.import_module(PACKAGE_NAME+"."+fblock_group+"."+block+"."+block), block)
 
     globals()["VideoCamera"] = getattr(importlib.import_module(PACKAGE_NAME+"."+"_fblocks_"+"."+"video_stream"+"."+"video_stream"), "VideoCamera")
+
+    importlib.import_module(PACKAGE_NAME+"."+USER_DEFAULT_FOLDER[:-1]+".management.inventory.page")
+    # TODO: need import module recursively for all pages in the console folder
+
+    # Register the main blueprint that is used in the FamcyPage
+    app.register_blueprint(MainBlueprint)
 
     return app
 
