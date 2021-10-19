@@ -16,7 +16,6 @@ from gadgethiServerUtils.file_basics import *
 class FamcyUser(UserMixin):
     pass
 
-
 __codename__ = "Xinhai"
 famcy_dir = os.path.dirname(Famcy.__file__)
 

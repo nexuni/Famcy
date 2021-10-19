@@ -18,6 +18,7 @@ default_profile_pic_url: "https://gadgethi-css.s3.amazonaws.com/FamcyPic/gadget_
 
 main_url: "http://127.0.0.1:5000"
 with_login: True
+login_url: "iam/login"
 
 # theme color
 MAIN_COLOR: "#edaf00"
