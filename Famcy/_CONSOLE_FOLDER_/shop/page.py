@@ -61,7 +61,7 @@ send_dict = {
 	"service": "member",
 	"operation": "get_item_info"
 }
-res_str = Famcy.CLIENT_SERVER.client_get("member_http_url", send_dict, gauth=True)
+res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
 res_ind = json.loads(res_str)["indicator"]
 res_msg = json.loads(res_str)["message"]
 
@@ -246,7 +246,7 @@ def cart_submission(submission_list, **configs):
 			"datetime":submission_list[2][0]
 		}
 
-		post_str = Famcy.CLIENT_SERVER.client_post("member_http_url", submit_data, gauth=True)
+		post_str = Famcy.FManager.http_client.client_post("member_http_url", submit_data, gauth=True)
 		post_ind = json.loads(post_str)["indicator"]
 		post_msg = json.loads(post_str)["message"]
 

@@ -63,7 +63,7 @@ send_dict = {
 	"operation": "get_member_status",
 	"user_phone": "0905860683"
 }
-res_str = Famcy.CLIENT_SERVER.client_get("member_http_url", send_dict, gauth=True)
+res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
 res_ind = json.loads(res_str)["indicator"]
 res_msg = json.loads(res_str)["message"]
 
@@ -84,7 +84,7 @@ send_dict = {
 	"operation": "get_point_info",
 	"user_phone": "0905860683"
 }
-res_str = Famcy.CLIENT_SERVER.client_get("member_http_url", send_dict, gauth=True)
+res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
 res_ind = json.loads(res_str)["indicator"]
 res_msg = json.loads(res_str)["message"]
 

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
 
@@ -7,123 +7,97 @@ import os
 import importlib
 import Famcy
 import json
-from Famcy._util_.file_utils import *
-from Famcy._util_._fblock import FBlock
-from Famcy._util_._submit_type import SubmitType
-from gadgethiServerUtils.file_basics import *
 
-# Define Famcy User
-class FamcyUser(UserMixin):
-    pass
+from Famcy._util_._fmanager import *
+from Famcy._util_._fuser import *
+from Famcy._util_._fblock import *
+from Famcy._util_._submit_type import SubmitType
 
 __codename__ = "Xinhai"
 famcy_dir = os.path.dirname(Famcy.__file__)
 
-PACKAGE_NAME = "Famcy"
-USER_DEFAULT_FOLDER = "_CONSOLE_FOLDER_/"
+# Create Imports for User usage
 FamcyBlock = FBlock
-login = login_user
-logout = logout_user
-user = FamcyUser
-sijax = flask_sijax
-SijaxSubmit = SubmitType
 
-_current_user = current_user
-_current_app = current_app
+# Famcy Manager that manage all global vars, imports, 
+# file systems, http
+FManager = FamcyManager(famcy_dir)
+
+# Header definitions
+FManager["CUSTOM_STATIC_PATH"] = FManager.console + "_static_"
+
+# Sijax, submission related
+FManager["Sijax"] = flask_sijax
+FManager["SijaxSubmit"] = SubmitType
+FManager["SijaxStaticPath"] = FManager.main + 'static/js/sijax/'
+FManager["SijaxJsonUri"] = '/static/js/sijax/json2.js'
+
+# User, login related init
+FManager["FamcyUser"] = FManager.importclass(FManager.console + "famcy_user", "CustomFamcyUser", otherwise=FamcyUser)
+FManager["LoginManager"] = LoginManager()
+FManager["CurrentUser"] = current_user
+
+# System Wide blueprints and application object
 MainBlueprint = Blueprint('MainBlueprint', __name__)
-print("===== Famcy Init Version Id ===== ", id(MainBlueprint))
+FManager["MainBlueprint"] = MainBlueprint
+FManager["CurrentApp"] = current_app
 
-VIDEO_CAMERA = {}
+# Webpage related configs
+FManager["ConsoleConfig"] = FManager.read(FManager.console + "/famcy.yaml")
 
-# extra python function and global variable when server init
-# ====================================================================
-# from Famcy._CONSOLE_FOLDER_._custom_python_.extra_init_function import EXTRA_ACTION, EXTRA_GLOBAL_VAR, LOGIN_VAR
-# for action in EXTRA_ACTION:
-#     action()
-
-# for extra_var in EXTRA_GLOBAL_VAR:
-#     globals()[extra_var["title"]] = extra_var["action"]
-
-# for extra_login in LOGIN_VAR:
-#     globals()[extra_login["title"]] = extra_login["action"]
-# ====================================================================
-# ====================================================================
+# Init print statement, also make sure blueprint didn't change for all time
+print("===== Famcy Init Version Id ===== ", id(FManager["MainBlueprint"]))
 
 def create_app():
-
+    """
+    Main creation function of the famcy application. 
+    Can set to different factory settings in the future. 
+    """
     app = Flask(__name__)
-
+    # Some sort of security here -> TODO check on this
     app.config['SECRET_KEY'] = '00famcy00!2'
-    app.config['user_default_folder'] = USER_DEFAULT_FOLDER
-    app.config['package_name'] = PACKAGE_NAME
-    app.config.update(read_config_yaml(app.config.get('user_default_folder','')+"famcy.yaml"))
 
-    app.config["SIJAX_STATIC_PATH"] = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
-    app.config["SIJAX_JSON_URI"] = '/static/js/sijax/json2.js'
+    # Init Sijax
+    FManager["Sijax"].Sijax().init_app(app)
 
-    sijax.Sijax().init_app(app)
+    # Init login manager
+    FManager["LoginManager"].login_view = FManager["ConsoleConfig"]['member_http_url']
+    FManager["LoginManager"].init_app(app)
+    FManager["FamcyUser"].setup_user_loader(FManager["LoginManager"])
 
-    login_manager = LoginManager()
-    login_manager.login_view = app.config['main_url'] + "/iam/login"
-    login_manager.init_app(app)
+    # Init http client
+    FManager.init_http_client(**FManager["ConsoleConfig"])
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        # since the user_id is just the primary key of our user table, use it in the query for the user
-        # return FamcyUser.query.get(int(user_id))
-
-        print("user_id: ", user_id)
-
-        Famcy.LOGIN_BEFORE()
-
-        get_str = Famcy.CLIENT_SERVER.client_get(Famcy.LOGIN_URL, Famcy.LOGIN_API, gauth=True)
-        get_ind = json.loads(get_str)["indicator"]
-        get_msg = json.loads(get_str)["message"]
-
-        print("get_ind: ", get_ind)
-
-        if get_ind:
-            Famcy.LOGIN_AFTER(get_str)
-            print("Famcy.user: ", Famcy.user)
-            return Famcy.user
-        return None
-
-    # blueprint for non-auth routes of app
-    # from Famcy._services_._main_service import main as main_blueprint
-
-    # # blueprint for auth parts of app
-    # from Famcy._services_.iam_service import iam as iam_blueprint
-    # app.register_blueprint(iam_blueprint)
-
-    # # blueprint for custom parts of app
-    # from Famcy._CONSOLE_FOLDER_._custom_python_.cus_service import cus as cus_blueprint
-    # app.register_blueprint(MainBlueprint)
-    # app.register_blueprint(cus_blueprint)
+    # User Static Data
+    @MainBlueprint.route('/asset/<path:filename>')
+    def user_custom_asset(filename):
+        # Usage in template {{ url_for('user_custom_asset', filename='doday_icon.png') }}
+        return send_from_directory(CUSTOM_STATIC_PATH, filename)
 
     # Import Fblocks from default and custom folders. 
     # ------------------------------
-    famcy_blocks = {
-        "_fblocks_": [],
-        USER_DEFAULT_FOLDER + "_custom_fblocks_": []
-    }
+    # Get all sources of fblocks definitions 
+    system_fblocks = FManager.importclassdir(FManager.main + "/_fblocks_", FamcyFileImportMode.name, "", 
+        exclude=["_", "."], otherwise=[])
+    user_fblocks = FManager.importclassdir(FManager.console + "/_custom_fblocks_", FamcyFileImportMode.name, "", 
+        exclude=["_", "."], otherwise=[])
 
-    block_list = []
-    for fblock_group in famcy_blocks.keys():
-        famcy_blocks[fblock_group] = listdir_exclude(famcy_dir+"/"+fblock_group, exclude_list=[".", "_"])
-        block_list.extend(famcy_blocks[fblock_group])
+    print("system_fblocks ", system_fblocks)
+    print("user_fblocks ", user_fblocks)
 
     # Check no repeat names
-    assert len(block_list) == len(list(set(block_list)))
+    assert len(system_fblocks) == len(list(set(system_fblocks))), "System Fblocks definition have duplicated names"
+    assert len(user_fblocks) == len(list(set(user_fblocks))), "User Defined Fblocks have duplicated names"
 
-    for fblock_group in famcy_blocks.keys():
-        for block in famcy_blocks[fblock_group]:
-            fblock_group = fblock_group.replace('/', '.')
-            globals()[block] = getattr(importlib.import_module(PACKAGE_NAME+"."+fblock_group+"."+block+"."+block), block)
+    # Assign flocks to global
+    for module in (system_fblocks + user_fblocks):
+        block = FManager.get_module_name(module)
+        globals()[block] = getattr(module, block)
 
-    globals()["VideoCamera"] = getattr(importlib.import_module(PACKAGE_NAME+"."+"_fblocks_"+"."+"video_stream"+"."+"video_stream"), "VideoCamera")
-
-    importlib.import_module(PACKAGE_NAME+"."+USER_DEFAULT_FOLDER[:-1]+".management.inventory.page")
-    # TODO: need import module recursively for all pages in the console folder
+    # Import module recursively for all pages in the console folder
+    class_dir = FManager.importclassdir(FManager.console, FamcyFileImportMode.fixed, "page", recursive=True, 
+            exclude=["_", "."], otherwise=None)
+    print("class_dir ", class_dir)
 
     # Register the main blueprint that is used in the FamcyPage
     app.register_blueprint(MainBlueprint)
