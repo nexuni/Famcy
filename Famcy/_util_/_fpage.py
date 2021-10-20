@@ -1,7 +1,7 @@
 import abc
 import Famcy
 
-class FamcyPage:
+class FamcyPage(metaclass=abc.ABCMeta):
 	"""
 	This page represents each of the page 
 	on Famcy. It handles rendering, layout, 

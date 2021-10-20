@@ -63,7 +63,7 @@ send_dict = {
 	"operation": "get_item_info",
 	"include": json.dumps(["會員純享6. 有糖家庭號豆漿","會員純享6. 無糖家庭號豆漿","會員純享6. 有糖瓶裝豆漿","會員純享6. 無糖瓶裝豆漿"])
 }
-res_str = Famcy.CLIENT_SERVER.client_get("member_http_url", send_dict, gauth=True)
+res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
 res_ind = json.loads(res_str)["indicator"]
 res_msg = json.loads(res_str)["message"]
 
@@ -126,69 +126,67 @@ doday_input_form.update({
 
 
 
-send_dict = {
-    "service": "member",
-    "operation": "get_history_order",
-    "user_phone": Famcy._current_user.phone_num,
-    "member_order": "True"
-}
-res_str = Famcy.CLIENT_SERVER.client_get("member_http_url", send_dict, gauth=True)
-res_ind = json.loads(res_str)["indicator"]
-res_msg = json.loads(res_str)["message"]
+# send_dict = {
+#     "service": "member",
+#     "operation": "get_history_order",
+#     "user_phone": Famcy.FManager["CurrentUser"].phone_num,
+#     "member_order": "True"
+# }
+# res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
+# res_ind = json.loads(res_str)["indicator"]
+# res_msg = json.loads(res_str)["message"]
 
-table_info = []
+# table_info = []
 
-if res_ind:
-    table_info = res_msg
+# if res_ind:
+#     table_info = res_msg
 
-table_content = Famcy.table.generate_template_content()
-table_content.update({
-		"main_button_name": [],
-		"input_button": "none",
-        "page_detail": False,
-        "page_detail_content": ["<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>"],
-        "page_footer": True,
-        "page_footer_detail": {
-            "page_size": 10,
-            "page_list": [10, 20, "all"]
-        },
-        "column": [[{
-                "title": 'datetime',
-                "field": 'datetime',
-                "rowspan": 1,
-                "align": 'center',
-                "valign": 'middle',
-                "sortable": True
-            },
-            {
-                "title": 'order',
-                "field": 'order',
-                "rowspan": 1,
-                "align": 'center',
-                "valign": 'middle',
-                "sortable": True
-            },
-            {
-                "title": 'total_price',
-                "field": 'total_price',
-                "rowspan": 1,
-                "align": 'center',
-                "valign": 'middle',
-                "sortable": True
-            },
-            {
-                "title": 'used_point',
-                "field": 'used_point',
-                "rowspan": 1,
-                "align": 'center',
-                "valign": 'middle',
-                "sortable": True
-            }
-        ]],
-        "data": table_info
-	})
-
-
+# table_content = Famcy.table.generate_template_content()
+# table_content.update({
+# 		"main_button_name": [],
+# 		"input_button": "none",
+#         "page_detail": False,
+#         "page_detail_content": ["<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>"],
+#         "page_footer": True,
+#         "page_footer_detail": {
+#             "page_size": 10,
+#             "page_list": [10, 20, "all"]
+#         },
+#         "column": [[{
+#                 "title": 'datetime',
+#                 "field": 'datetime',
+#                 "rowspan": 1,
+#                 "align": 'center',
+#                 "valign": 'middle',
+#                 "sortable": True
+#             },
+#             {
+#                 "title": 'order',
+#                 "field": 'order',
+#                 "rowspan": 1,
+#                 "align": 'center',
+#                 "valign": 'middle',
+#                 "sortable": True
+#             },
+#             {
+#                 "title": 'total_price',
+#                 "field": 'total_price',
+#                 "rowspan": 1,
+#                 "align": 'center',
+#                 "valign": 'middle',
+#                 "sortable": True
+#             },
+#             {
+#                 "title": 'used_point',
+#                 "field": 'used_point',
+#                 "rowspan": 1,
+#                 "align": 'center',
+#                 "valign": 'middle',
+#                 "sortable": True
+#             }
+#         ]],
+#         "data": table_info
+# 	})
 
 
 
@@ -197,49 +195,51 @@ table_content.update({
 
 
 
-PAGE_CONTENT = [doday_input_form, table_content]
 
-def find_item(item_name, amount):
-	for item in avail_type:
-		if item["title"] == item_name:
-			temp = []
-			for i in range(int(amount)):
-				temp.append(item)
-			return temp
-	return None
 
-def find_store(store_name):
-	if store_name == "辛亥店":
-		return "DDB"
-	elif store_name == "木柵店":
-		return "DDA"
-	return None
+# PAGE_CONTENT = [doday_input_form, table_content]
 
-def doday_input_form_submission(submission_list, **configs):
-	submission_dict_handler = Famcy.SijaxSubmit(PAGE_CONTENT_OBJECT[0].context["submit_type"])
-	item = find_item(submission_list[2][0])
-	store = find_store(submission_list[0][0])
+# def find_item(item_name, amount):
+# 	for item in avail_type:
+# 		if item["title"] == item_name:
+# 			temp = []
+# 			for i in range(int(amount)):
+# 				temp.append(item)
+# 			return temp
+# 	return None
 
-	msg = "未成功送出訂單，請重新再試"
+# def find_store(store_name):
+# 	if store_name == "辛亥店":
+# 		return "DDB"
+# 	elif store_name == "木柵店":
+# 		return "DDA"
+# 	return None
 
-	if item and store:
-		submit_data = {
-			"operation":"add_to_member_cart",
-			"service":"order",
-			"store_id":store,
-			"item":item,
-			"user_phone":"0983030465",
-			"name":"test",
-			"datetime":submission_list[1][0]
-		}
+# def doday_input_form_submission(submission_list, **configs):
+# 	submission_dict_handler = Famcy.SijaxSubmit(PAGE_CONTENT_OBJECT[0].context["submit_type"])
+# 	item = find_item(submission_list[2][0])
+# 	store = find_store(submission_list[0][0])
 
-		post_str = Famcy.CLIENT_SERVER.client_post("member_http_url", submit_data, gauth=True)
-		post_ind = json.loads(post_str)["indicator"]
-		post_msg = json.loads(post_str)["message"]
+# 	msg = "未成功送出訂單，請重新再試"
 
-		if post_ind:
-			msg = "成功送出訂單"
+# 	if item and store:
+# 		submit_data = {
+# 			"operation":"add_to_member_cart",
+# 			"service":"order",
+# 			"store_id":store,
+# 			"item":item,
+# 			"user_phone":"0983030465",
+# 			"name":"test",
+# 			"datetime":submission_list[1][0]
+# 		}
 
-	return submission_dict_handler.return_submit_info(msg=msg)
+# 		post_str = Famcy.CLIENT_SERVER.client_post("member_http_url", submit_data, gauth=True)
+# 		post_ind = json.loads(post_str)["indicator"]
+# 		post_msg = json.loads(post_str)["message"]
 
-PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT, [doday_input_form_submission, None])
+# 		if post_ind:
+# 			msg = "成功送出訂單"
+
+# 	return submission_dict_handler.return_submit_info(msg=msg)
+
+# PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT, [doday_input_form_submission, None])

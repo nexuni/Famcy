@@ -17,6 +17,8 @@ default_name: "admin"
 default_profile_pic_url: "https://gadgethi-css.s3.amazonaws.com/FamcyPic/gadget_square.png"
 
 main_url: "http://127.0.0.1:5000"
+member_http_url: "https://store.nexuni-api.com/doday/v1"
+
 with_login: True
 login_url: "iam/login"
 
