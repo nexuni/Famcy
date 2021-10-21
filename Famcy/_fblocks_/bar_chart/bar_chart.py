@@ -9,6 +9,7 @@ class bar_chart(Famcy.FamcyBlock):
     """
     def __init__(self, **kwargs):
         super(bar_chart, self).__init__(**kwargs)
+        self.header_script = """<script src="%s/static/js/bar_chart.js"></script>%s""" % (current_app.config.get("main_url", ""), header_script)
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -38,7 +39,7 @@ class bar_chart(Famcy.FamcyBlock):
             "before_function": [],          # python function that you want to run before page refresh
         }
 
-    def render_html(self, context, **configs):
+    def render_inner(self):
         """
         context = {
             "values": [{

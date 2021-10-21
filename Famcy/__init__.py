@@ -18,6 +18,8 @@ famcy_dir = os.path.dirname(Famcy.__file__)
 
 # Create Imports for User usage
 FamcyBlock = FBlock
+FamcyPage = FPage
+FamcyCard = FCard
 
 # Famcy Manager that manage all global vars, imports, 
 # file systems, http
@@ -78,12 +80,8 @@ def create_app():
     # ------------------------------
     # Get all sources of fblocks definitions 
     system_fblocks = FManager.importclassdir(FManager.main + "/_fblocks_", FamcyFileImportMode.name, "", 
-        exclude=["_", "."], otherwise=[])
-    user_fblocks = FManager.importclassdir(FManager.console + "/_custom_fblocks_", FamcyFileImportMode.name, "", 
-        exclude=["_", "."], otherwise=[])
-
+        exclude=["_", "."], otherwise=[], recursive=True)
     print("system_fblocks ", system_fblocks)
-    print("user_fblocks ", user_fblocks)
 
     # Check no repeat names
     assert len(system_fblocks) == len(list(set(system_fblocks))), "System Fblocks definition have duplicated names"
