@@ -1,6 +1,11 @@
-# import enum
-# import Famcy
+import enum
+import Famcy
 import random
+
+class FamcyLayoutMode(enum.IntEnum):
+	default = 0
+	recommend = 1
+	custom = 2
 
 class FamcyCustomLayoutType:
 	def __init__(self):
@@ -102,14 +107,10 @@ class FamcyRecommendLayoutType:
 
 
 
-
-
-
-
 class FamcyLayoutType:
-	def __init__(self, layout_mode="default"):
-		self.mode = layout_mode					# ("recommend", "custom", "default")
-		self.layoutClass = FamcyRecommendLayoutType() if self.mode == "recommend" else FamcyCustomLayoutType()
+	def __init__(self, layout_mode=FamcyLayoutMode.default):
+		self.mode = layout_mode					# (FamcyLayoutMode.reommend, FamcyLayoutMode.custom, FamcyLayoutMode.default)
+		self.layoutClass = FamcyRecommendLayoutType() if self.mode == FamcyLayoutMode.reommend else FamcyCustomLayoutType()
 
 	def getLayoutDict(self):
 		return self.layoutClass.generateFamcyLayoutDict()
@@ -131,7 +132,7 @@ class FamcyLayout:
 
 	Method:
 		* setMode(layout mode)
-		* addCard(card, start row, start col, height(num row), width(num col))
+		* addWidget(card, start row, start col, height(num row), width(num col))
 		* render()
 	"""
 	def __init__(self, layout_mode):
@@ -154,7 +155,7 @@ class FamcyLayout:
 		"""
 		self.mode = layout_mode
 
-	def addCard(self, card, start_row, start_col, height=1, width=1):
+	def addWidget(self, card, start_row, start_col, height=1, width=1):
 		self.content.append([card, int(start_row), int(start_col), int(height), int(width)])
 
 	def clearContent(self):
@@ -165,42 +166,42 @@ class FamcyLayout:
 		self.clearContent()
 
 	def updateCustomLayoutContent(self, _type=None, _max=None, _min=None, orientation=None):
-		if self.mode == "custom":
+		if self.mode == FamcyLayoutMode.custom:
 			self.layoutType.layoutClass.setCustomLayoutContent(_type, _max, _min, orientation, self.content)
 			self.clearContent()
 
 	def updateBrowserLayoutContent960(self):
-		if self.mode == "recommend":
+		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setBrowserLayoutContent(content960=self.content)
 			self.clearContent()
 
 	def updateBrowserLayoutContent1440(self):
-		if self.mode == "recommend":
+		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setBrowserLayoutContent(content1440=self.content)
 			self.clearContent()
 
 	def updateBrowserLayoutContent2000(self):
-		if self.mode == "recommend":
+		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setBrowserLayoutContent(content2000=self.content)
 			self.clearContent()
 
 	def updatePhoneLayoutContent(self):
-		if self.mode == "recommend":
+		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setPhoneLayoutContent(contentPhone=self.content)
 			self.clearContent()
 
 	def updateipadLayoutContent(self):
-		if self.mode == "recommend":
+		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipad=self.content)
 			self.clearContent()
 
 	def updateipadLayoutContent(self):
-		if self.mode == "recommend":
+		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipadV=self.content)
 			self.clearContent()
 
 	def updateipadLayoutContent(self):
-		if self.mode == "recommend":
+		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipadH=self.content)
 			self.clearContent()
 
@@ -239,23 +240,25 @@ class FamcyLayout:
 		render_html = ""
 		return layout_css + render_html
 
+# Tests
+# -----------
 class _card:
 	def __init__(self):
 		self.id = "id_" + str(random.randint(0,1000))
 		
 
 if __name__ == '__main__':
-	layout = FamcyLayout("default")
-	layout.addCard(_card(), 0, 0, 2, 1)
-	layout.addCard(_card(), 0, 1)
-	layout.addCard(_card(), 1, 1)
-	layout.addCard(_card(), 2, 0, 1, 2)
+	layout = FamcyLayout(FamcyLayoutMode.default)
+	layout.addWidget(_card(), 0, 0, 2, 1)
+	layout.addWidget(_card(), 0, 1)
+	layout.addWidget(_card(), 1, 1)
+	layout.addWidget(_card(), 2, 0, 1, 2)
 	layout.updateDefaultContent()
 
-	layout.addCard(_card(), 0, 0, 2, 1)
-	layout.addCard(_card(), 0, 1)
-	layout.addCard(_card(), 1, 1)
-	layout.addCard(_card(), 2, 0, 1, 2)
+	layout.addWidget(_card(), 0, 0, 2, 1)
+	layout.addWidget(_card(), 0, 1)
+	layout.addWidget(_card(), 1, 1)
+	layout.addWidget(_card(), 2, 0, 1, 2)
 	layout.updatePhoneLayoutContent()
 
 

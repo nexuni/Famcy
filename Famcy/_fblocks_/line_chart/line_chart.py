@@ -7,8 +7,10 @@ class line_chart(Famcy.FamcyBlock):
     Represents the block to display
     line_chart. 
     """
-    def __init__(self, **kwargs):
-        super(line_chart, self).__init__(**kwargs)
+    def __init__(self):
+        super(line_chart, self).__init__()
+        self.title = "line_chart"
+        self.configs["labels"] = ["line1", "line2", "line3"]
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -18,8 +20,7 @@ class line_chart(Famcy.FamcyBlock):
         for the given fblock. 
         - Return a content dictionary
         """
-        return {
-            "values": [{
+        return [{
                 "x": [1, 2, 3, 4],
                 "y": [12, 9, 15, 12],
                 "mode": "lines+markers",
@@ -42,16 +43,9 @@ class line_chart(Famcy.FamcyBlock):
                 "color": "rgb(128, 0, 2)",
                 "marker_size": 12,
                 "line_width": 1
-            }],
-            "labels": ["line1", "line2", "line3"],
-            "title": "line_chart",
-            "js_after_func_dict": {},
-            "js_after_func_name": "empty_func",             # extra script which add after fblock item
-            "header_script": "",            # extra script which add in header section
-            "before_function": [],          # python function that you want to run before page refresh
-        }
+            }]
 
-    def render_html(self, context, **configs):
+    def render_inner(self):
         """
         context = {
             "values": [{
@@ -66,12 +60,8 @@ class line_chart(Famcy.FamcyBlock):
             "title": "line_chart"
         }
         """
-
-        for action in context["before_function"]:
-            action(context, **configs)
-
         data = []
-        for dict, label in zip(context["values"], context["labels"]):
+        for dict, label in zip(self.values, self.configs["labels"]):
             
             temp = {}
             temp["x"] = dict["x"]
@@ -104,9 +94,6 @@ class line_chart(Famcy.FamcyBlock):
             data.append(temp)
 
         json_line_dict_values = json.dumps(data)
-        json_line_dict_title = json.dumps(context["title"])
+        json_line_dict_title = json.dumps(self.title)
 
-        return"""<div id="%s"></div><script>generateLineChart("%s", %s, %s)</script><script>%s('%s', %s)</script>""" % (context["id"], context["id"], json_line_dict_values, json_line_dict_title, context["js_after_func_name"], context["id"], json.dumps(context["js_after_func_dict"]))
-
-    def extra_script(self, header_script, **configs):
-        return"""<script src="%s/static/js/line_chart.js"></script>%s""" % (current_app.config.get("main_url", ""), header_script)
+        return"""<div id="%s"></div><script>generateLineChart("%s", %s, %s)</script><script>%s('%s', %s)</script>""" % (self.id, self.id, json_line_dict_values, json_line_dict_title, self.js_after_func_name, self.id, json.dumps(self.js_after_func_dict))

@@ -120,7 +120,7 @@ class input_form(Famcy.FamcyBlock):
             "submit_type": "update_block_html",
             "loader": False,
             "values": fblock_values,
-            "js_after_func_dict": {},
+            "js_after_func_dict": {}, 
             "js_after_func_name": "empty_func",             # extra script which add after fblock item
             "header_script": "",            # extra script which add in header section
             "before_function": [],          # python function that you want to run before page refresh

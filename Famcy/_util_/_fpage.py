@@ -1,7 +1,7 @@
-import abc
+from Famcy._util_._fwidget import FamcyWidget
 import Famcy
 
-class FamcyPage(metaclass=abc.ABCMeta):
+class FPage(FamcyWidget):
 	"""
 	This page represents each of the page 
 	on Famcy. It handles rendering, layout, 
@@ -27,12 +27,14 @@ class FamcyPage(metaclass=abc.ABCMeta):
 		* preload(): action before the rendering
 		* postload(): actions after the rendering
 	"""	
-	layout = abc.abstractproperty()
-	permission = abc.abstractproperty()
+	def __init__(self, route, style, permission_level=0, 
+			layout_mode=FamcyLayoutMode.recommend):
 
-	def __init__(self, route, style):
+		super(FPage, self).__init__(permission_level)
 		self.route = route
 		self.style = style
+
+		self.layout = FamcyLayout(layout_mode)
 		self._check_rep()
 
 	def _check_rep(self):
@@ -41,18 +43,6 @@ class FamcyPage(metaclass=abc.ABCMeta):
 			- Famcy layout in bound
 			- Permission is not empty, able to 
 				access in some way. 
-		"""
-		pass
-
-	def render(self):
-		"""
-		The main render flow is as
-		follow. 
-		1. Check permission
-		2. preload function
-		3. render inner
-		4. start post load thread
-		5. return render inner stuffs
 		"""
 		pass
 
@@ -71,8 +61,9 @@ class FamcyPage(metaclass=abc.ABCMeta):
 	# ---------------------------------
 	def render_inner(self):
 		"""
-		This is the customizable inner render
-		function for famcy page. 
+		This is the function to 
+		render the layout and
+		apply style. 
 		"""
 		pass
 
