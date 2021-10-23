@@ -5,8 +5,7 @@ from flask import render_template
 
 class FamcyStyle:
 
-	def __init__(self, path, styleName="default", with_login=False):
-		self.path = path
+	def __init__(self, styleName="default", with_login=False):
 		self.styleName = styleName				# ("default" / "login")
 		self.withLogin = with_login
 
@@ -37,9 +36,6 @@ class FamcyStyle:
 		Rep Invariant
 		"""
 		pass
-
-	def setPath(self, path):
-		self.path = path
 
 	def setStyleName(self, style_name):
 		self.styleName = style_name
@@ -246,12 +242,11 @@ class FamcyStyle:
 	    self.loaderType = self.loaderType if self.loaderType else "Spinner"
 	    return '<div id="loading_holder" style="display: none;"><div id="loader"></div></div><script>generate_loader("' + self.loaderType + '")</script>'
 
-	def render(self):
+	def render(self, extra_script, content):
 		html_template = "login.html" if self.styleName == "login" else "index.html"
 
 		html_header = self.setDashboardHTMLHeader()
-		content, extra_script = user_defined_contents(self.path)
-		content, extra_script = "", ""
+		# content, extra_script = user_defined_contents(self.path)
 		end_js = self.setDashboardJavaScript()
 		color_theme = self.setColorTheme()
 		load_spinner = self.setLoader()
