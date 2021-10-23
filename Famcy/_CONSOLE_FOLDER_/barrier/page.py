@@ -1,4 +1,5 @@
 import Famcy
+from Famcy._CONSOLE_FOLDER_._items_.input_form import *
 
 PAGE_HEADER = {
 	"title": ["Nexuni 員工後台", "Nexuni 員工後台", "Nexuni 員工後台", "Nexuni 員工後台"],
@@ -11,7 +12,15 @@ style = Famcy.FamcyStyle()
 class BarrierPage(Famcy.FamcyPage):
 	def __init__(self):
 		super(BarrierPage, self).__init__("/barrier", style)
-		self.layout.addWidget()
+		self.card_1 = self.card1()
+		self.card_2 = self.card2()
+		self.card_3 = self.card3()
+		self.card_4 = self.card4()
+
+		self.layout.addWidget(self.card_1, 0, 0)
+		self.layout.addWidget(self.card_2, 0, 1)
+		self.layout.addWidget(self.card_3, 0, 2)
+		self.layout.addWidget(self.card_4, 1, 0, 1, 3)
 
 	def card1(self):
 		card1 = Famcy.FamcyCard()
@@ -50,8 +59,6 @@ class BarrierPage(Famcy.FamcyPage):
 		card1.layout.addWidget(block1, 0, 0, 1, 1)
 		card1.layout.addWidget(block2, 1, 0, 1, 1)
 		return card1
-
-
 
 page = BarrierPage()
 page.register()

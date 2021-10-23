@@ -20,6 +20,7 @@ famcy_dir = os.path.dirname(Famcy.__file__)
 FamcyBlock = FBlock
 FamcyPage = FPage
 FamcyCard = FCard
+FamcyInputBlock = FInputBlock
 
 # Famcy Manager that manage all global vars, imports, 
 # file systems, http

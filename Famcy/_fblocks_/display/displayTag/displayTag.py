@@ -13,10 +13,10 @@ class displayTag(Famcy.FamcyBlock):
 
     @classmethod
     def generate_template_content(cls):
-        return [{
+        return {
             "title": "測試不知道這是用來幹嘛的Layout",
             "content": "到底Display Tag有什麼不一樣？",
-        }]
+        }
 
     def render_inner(self):
         inner_html = '<div class="displayTag"><h3>' + self.value["title"] + '</h3><h4>' + self.value["content"] + '</h4></div>'
