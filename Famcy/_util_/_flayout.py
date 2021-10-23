@@ -140,6 +140,7 @@ class FamcyLayout:
 		self.layoutType = FamcyLayoutType(self.mode)
 
 		self.content = []
+		self.cusContent = []
 		self._check_rep()
 
 	def _check_rep(self):
@@ -157,52 +158,52 @@ class FamcyLayout:
 
 	def addWidget(self, card, start_row, start_col, height=1, width=1):
 		self.content.append([card, int(start_row), int(start_col), int(height), int(width)])
-
-	def clearContent(self):
-		self.content = []
-
-	def updateDefaultContent(self):
 		self.layoutType.layoutClass.setDefaultContent(self.content)
-		self.clearContent()
+
+	def addCusWidget(self, card, start_row, start_col, height=1, width=1):
+		self.cusContent.append([card, int(start_row), int(start_col), int(height), int(width)])
+
+	def clearCusContent(self):
+		self.cusContent = []
 
 	def updateCustomLayoutContent(self, _type=None, _max=None, _min=None, orientation=None):
 		if self.mode == FamcyLayoutMode.custom:
-			self.layoutType.layoutClass.setCustomLayoutContent(_type, _max, _min, orientation, self.content)
+			self.layoutType.layoutClass.setCustomLayoutContent(_type, _max, _min, orientation, self.cusContent)
 			self.clearContent()
 
 	def updateBrowserLayoutContent960(self):
 		if self.mode == FamcyLayoutMode.reommend:
-			self.layoutType.layoutClass.setBrowserLayoutContent(content960=self.content)
+			self.layoutType.layoutClass.setBrowserLayoutContent(content960=self.cusContent)
 			self.clearContent()
 
 	def updateBrowserLayoutContent1440(self):
 		if self.mode == FamcyLayoutMode.reommend:
-			self.layoutType.layoutClass.setBrowserLayoutContent(content1440=self.content)
+			self.layoutType.layoutClass.setBrowserLayoutContent(content1440=self.cusContent)
 			self.clearContent()
 
 	def updateBrowserLayoutContent2000(self):
 		if self.mode == FamcyLayoutMode.reommend:
-			self.layoutType.layoutClass.setBrowserLayoutContent(content2000=self.content)
+			self.layoutType.layoutClass.setBrowserLayoutContent(content2000=self.cusContent)
 			self.clearContent()
 
 	def updatePhoneLayoutContent(self):
 		if self.mode == FamcyLayoutMode.reommend:
-			self.layoutType.layoutClass.setPhoneLayoutContent(contentPhone=self.content)
+			self.layoutType.layoutClass.setPhoneLayoutContent(contentPhone=self.cusContent)
 			self.clearContent()
 
 	def updateipadLayoutContent(self):
 		if self.mode == FamcyLayoutMode.reommend:
-			self.layoutType.layoutClass.setipadLayoutContent(contentipad=self.content)
+			self.layoutType.layoutClass.setipadLayoutContent(contentipad=self.cusContent)
 			self.clearContent()
 
 	def updateipadLayoutContent(self):
 		if self.mode == FamcyLayoutMode.reommend:
-			self.layoutType.layoutClass.setipadLayoutContent(contentipadV=self.content)
+			self.layoutType.layoutClass.setipadLayoutContent(contentipadV=self.cusContent)
 			self.clearContent()
 
 	def updateipadLayoutContent(self):
 		if self.mode == FamcyLayoutMode.reommend:
-			self.layoutType.layoutClass.setipadLayoutContent(contentipadH=self.content)
+			self.layoutType.layoutClass.setipadLayoutContent(contentipadH=self.cusContent)
 			self.clearContent()
 
 	def setLayout(self):
@@ -237,7 +238,11 @@ class FamcyLayout:
 
 	def render(self):
 		layout_css = self.setLayout()
+
 		render_html = ""
+		for _card, _, _, _, _ in self.content:
+			render_html += _card.render()
+
 		return layout_css + render_html
 
 # Tests
