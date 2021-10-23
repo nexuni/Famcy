@@ -21,6 +21,15 @@ class FBlock(FamcyWidget):
     def __init__(self):
         self.value = FBlock.generate_template_content()
 
+    def __getitem__(self, k):
+        return self.value.get(k, None)
+
+    def __setitem__(self, k, v):
+        self.value[k] = v
+
+    def update(self, updated_dict):
+        self.value.update(updated_dict)
+
     def preload(self):
         """
         This is the preload function
@@ -60,9 +69,32 @@ class FInputBlock(FBlock):
     mandatory
     action_after_post
     """
+    REQUIRED_KEYS = ["action_after_post", "mandatory"]
+
     def __init__(self):
         super(FInputBlock, self).__init__()
 
+        for k in self.REQUIRED_KEYS:
+            assert k in self.value.keys(), k + " is needed for FInputBlock.."
+
+        # Need to instantiate some important headers that are related
+        # to required settings
+        self.update_input_headers()
+
+    def __setitem__(self, k, v):
+        super(FInputBlock, self).__setitem__(k, v)
+        if k in self.REQUIRED_KEYS:
+            self.update_input_headers()
+
+    def update(self, updated_dict):
+        super(FInputBlock, self).update(updated_dict)
+        # Update input headers
+        for k in self.REQUIRED_KEYS:
+            if k in self.value.keys():
+                self.update_input_headers()
+                break
+
+    def update_input_headers(self):
         # Settings for action after post
         # ------------------------------
         after_action = self.value["action_after_post"]
