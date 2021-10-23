@@ -13,7 +13,7 @@ class displayParagraph(Famcy.FamcyBlock):
 
     @classmethod
     def generate_template_content(cls):
-        return [{
+        return {
                 "title": "",
                 "content": '''
 **Nexuni 会社ウェブサイトの案内** 
@@ -30,7 +30,7 @@ class displayParagraph(Famcy.FamcyBlock):
 
 （網頁內容的版權皆為Nexuni Co. 擁有）
 '''
-        }]
+        }
 
     def render_inner(self):
         inner_html = '<div class="displayParagraph"><h3>' + self.value["title"] + '</h3><h4>' + markdown.markdown(self.value["content"]) + '</h4></div>'

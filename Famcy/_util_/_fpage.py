@@ -57,15 +57,18 @@ class FPage(FamcyWidget):
 		# Register the page render to the main blueprint
 		Famcy.MainBlueprint.route(self.route)(route_func)
 
+	def render(self):
+		content_data = super(FPage, self).render()
+		return self.style.render(self.header_script, content_data)
+
 	# Functions that can be overwritten
 	# ---------------------------------
 	def render_inner(self):
 		"""
 		This is the function to 
-		render the layout and
-		apply style. 
+		render the layout. 
 		"""
-		pass
+		return self.layout.render()
 
 	def preload(self):
 		"""

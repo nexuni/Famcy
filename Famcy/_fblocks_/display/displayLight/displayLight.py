@@ -13,11 +13,11 @@ class displayLight(Famcy.FamcyBlock):
 
     @classmethod
     def generate_template_content(cls):
-        return [{
+        return {
             "title": "Traffic light",
             "status": {"red": "bulb_red", "yellow": "", "green": ""}, 
             "light_size": "30%",
-        }]
+        }
 
     def render_inner(self):
         inner_html = '<div class="displayLight"><div class="bulb_holder" style="width: ' + self.value["light_size"] + ';"><div class="bulb ' + self.value["status"]["red"] + '"></div><div class="bulb ' + self.value["status"]["yellow"] + '"></div><div class="bulb ' + self.value["status"]["green"] + '"></div></div></div>'
