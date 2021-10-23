@@ -239,6 +239,16 @@ class FamcyLayout:
 		render_html = ""
 		return layout_css + render_html
 
+
+
+
+
+
+
+
+
+# test
+# ========================================================
 class _card:
 	def __init__(self):
 		self.id = "id_" + str(random.randint(0,1000))
@@ -260,6 +270,7 @@ if __name__ == '__main__':
 
 
 	print(layout.render())
+# ========================================================
 
 
 
