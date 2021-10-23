@@ -1,11 +1,4 @@
 import Famcy
-from Famcy._CONSOLE_FOLDER_._items_.input_form import *
-
-PAGE_HEADER = {
-	"title": ["Nexuni 員工後台", "Nexuni 員工後台", "Nexuni 員工後台", "Nexuni 員工後台"],
-    "size": ["onethird_inner_section", "onethird_inner_section", "onethird_inner_section", "half_inner_section"],
-    "type": ["display", ["display", "input_form"], ["display", "input_form"], ["display", "input_form"]]
-}
 
 style = Famcy.FamcyStyle()
 
@@ -15,7 +8,7 @@ class BarrierPage(Famcy.FamcyPage):
 		self.card_1 = self.card1()
 		self.card_2 = self.card2()
 		self.card_3 = self.card3()
-		self.card_4 = self.card4()
+		self.card_4 = self.card3()
 
 		self.layout.addWidget(self.card_1, 0, 0)
 		self.layout.addWidget(self.card_2, 0, 1)
@@ -25,92 +18,141 @@ class BarrierPage(Famcy.FamcyPage):
 	def card1(self):
 		card1 = Famcy.FamcyCard()
 
-		display_paragraph_value_1 = Famcy.displayParagraph.generate_template_content()
-		display_paragraph_value_1.update({
+		block1 = Famcy.displayParagraph()
+		block1.value.update({
 			"title": "標題更新",
 	    	"content": "這是什麼東西的**Update**"
 		})
-		block1 = Famcy.displayParagraph()
-		block1.value = display_paragraph_value_1
 
-		display_paragraph_value_2 = Famcy.displayParagraph.generate_template_content()
 		block2 = Famcy.displayParagraph()
-		block2.value = display_paragraph_value_2
 
-		card1.layout.addWidget(block1, 0, 0, 1, 1)
-		card1.layout.addWidget(block2, 1, 0, 1, 1)
+		card1.layout.addWidget(block1, 0, 0)
+		card1.layout.addWidget(block2, 1, 0)
 		return card1
 
 	def card2(self):
 		card2 = Famcy.FamcyCard()
 
-		display_paragraph_value_1 = Famcy.displayTag.generate_template_content()
-		display_paragraph_value_1.update({
+		block1 = Famcy.displayTag()
+		block1.update({
 			"title": "不知道這是用來幹嘛的Layout???????????",
 		    "content": "到底Display Tag有什麼用??????????",
 		})
-		block1 = Famcy.displayTag()
-		block1.value = display_paragraph_value_1
 
-		display_paragraph_value_2 = Famcy.displayParagraph.generate_template_content()
-		block2 = Famcy.displayParagraph()
-		block2.value = display_paragraph_value_2
+		block2 = Famcy.displayLight()
 
-		card1.layout.addWidget(block1, 0, 0, 1, 1)
-		card1.layout.addWidget(block2, 1, 0, 1, 1)
-		return card1
+		# Input form zone
+		# ------------------------
+		input_light = Famcy.input_form()
 
-page = BarrierPage()
-page.register()
-
-
-
-display_tag_block = Famcy.display.generate_values_content("displayTag")
-display_tag_block.update({
-		"title": "不知道這是用來幹嘛的Layout",
-	    "content": "到底Display Tag有什麼用？",
-	})
-
-display_light_block = Famcy.display.generate_values_content("displayLight")
-
-input_form_content = Famcy.input_form.generate_template_content()
-input_form_content.update({
-		"main_button_name": ["送出"], # btn name in same section must not be same
-		"action_after_post": "save",                    # (clean / save)
-		"values": [{
+		light_selection = Famcy.inputList()
+		light_selection.update({
                 "type": "inputList",
                 "title": "inputList1",
                 "desc": "some description some description some description some description some description some description some description some description some description some description some description",
                 "mandatory": False,
                 "value": ["red", "yellow", "green"],
-            }]
-	})
+            })
+		light_selection["action_after_post"] = "save"
 
-display_gif_block = Famcy.display.generate_values_content("displayImage")
-display_gif_block.update({
-		"img_name": ["../../_CONSOLE_FOLDER_/_static_/image/barrier_gif_close.gif"],
-        "img_size": ["100%"]
-	})
+		submission_btn = Famcy.submitBtn()
+		submission_btn.update({
+			"title": "送出"
+		})
 
-input_switch_content = Famcy.input_form.generate_template_content()
-input_switch_content.update({
-		"main_button_name": ["送出"], # btn name in same section must not be same
-		"action_after_post": "save",                    # (clean / save)
-		"values": [{
+		input_light.layout.addWidget(light_selection, 0, 0)
+		input_light.layout.addWidget(submission_btn, 1, 0)
+		# -------------------------
+
+		card2.layout.addWidget(block1, 0, 0)
+		card2.layout.addWidget(block2, 1, 0)
+		card2.layout.addWidget(input_light, 2, 0)
+		return card2
+
+	def card3(self):
+		card3 = Famcy.FamcyCard()
+
+		block1 = Famcy.displayImage()
+		block1.update({
+			"img_name": ["../../_CONSOLE_FOLDER_/_static_/image/barrier_gif_close.gif"],
+	        "img_size": ["100%"]
+		})
+
+		# Input form zone
+		# ------------------------
+		input_light = Famcy.input_form()
+
+		light_selection = Famcy.singleChoiceRadioInput()
+		light_selection.update({
                 "type": "singleChoiceRadioInput",
                 "title": "singleChoiceRadioInput1",
                 "desc": "some description some description some description some description some description some description some description some description some description some description some description",
                 "mandatory": True,
                 "value": ["open", "close"],
-            }]
-	})
+            })
+		light_selection["action_after_post"] = "save"
 
-PAGE_CONTENT = [
-	Famcy.display.generate_template_content([display_paragraph_block]),
-	[Famcy.display.generate_template_content([display_light_block]), input_form_content],
-    [Famcy.display.generate_template_content([display_gif_block]), input_switch_content],
-    [Famcy.display.generate_template_content([display_gif_block]), input_switch_content]
-]
+		submission_btn = Famcy.submitBtn()
+		submission_btn.update({
+			"title": "送出"
+		})
+
+		input_light.layout.addWidget(light_selection, 0, 0)
+		input_light.layout.addWidget(submission_btn, 1, 0)
+		# -------------------------
+
+		card3.layout.addWidget(block1, 0, 0)
+		card3.layout.addWidget(input_light, 1, 0)
+
+page = BarrierPage()
+page.register()
+
+# display_tag_block = Famcy.display.generate_values_content("displayTag")
+# display_tag_block.update({
+# 		"title": "不知道這是用來幹嘛的Layout",
+# 	    "content": "到底Display Tag有什麼用？",
+# 	})
+
+# display_light_block = Famcy.display.generate_values_content("displayLight")
+
+# input_form_content = Famcy.input_form.generate_template_content()
+# input_form_content.update({
+# 		"main_button_name": ["送出"], # btn name in same section must not be same
+# 		"action_after_post": "save",                    # (clean / save)
+# 		"values": [{
+#                 "type": "inputList",
+#                 "title": "inputList1",
+#                 "desc": "some description some description some description some description some description some description some description some description some description some description some description",
+#                 "mandatory": False,
+#                 "value": ["red", "yellow", "green"],
+#             }]
+# 	})
+
+# display_gif_block = Famcy.display.generate_values_content("displayImage")
+# display_gif_block.update({
+# 		"img_name": ["../../_CONSOLE_FOLDER_/_static_/image/barrier_gif_close.gif"],
+#         "img_size": ["100%"]
+# 	})
+
+# input_switch_content = Famcy.input_form.generate_template_content()
+# input_switch_content.update({
+# 		"main_button_name": ["送出"], # btn name in same section must not be same
+# 		"action_after_post": "save",                    # (clean / save)
+# 		"values": [{
+#                 "type": "singleChoiceRadioInput",
+#                 "title": "singleChoiceRadioInput1",
+#                 "desc": "some description some description some description some description some description some description some description some description some description some description some description",
+#                 "mandatory": True,
+#                 "value": ["open", "close"],
+#             }]
+# 	})
+
+# PAGE_CONTENT = [
+# 	Famcy.display.generate_template_content([display_paragraph_block]),
+# 	[Famcy.display.generate_template_content([display_light_block]), input_form_content],
+#     [Famcy.display.generate_template_content([display_gif_block]), input_switch_content],
+#     [Famcy.display.generate_template_content([display_gif_block]), input_switch_content]
+# ]
 
 # def traffic_light_submission(submission_list, **configs):
 # 	submission_dict_handler = Famcy.SijaxSubmit(PAGE_CONTENT_OBJECT[1][1].context["submit_type"])

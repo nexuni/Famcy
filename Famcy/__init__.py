@@ -80,16 +80,15 @@ def create_app():
     # Import Fblocks from default and custom folders. 
     # ------------------------------
     # Get all sources of fblocks definitions 
-    system_fblocks = FManager.importclassdir(FManager.main + "/_fblocks_", FamcyFileImportMode.name, "", 
+    system_items = FManager.importclassdir(FManager.main + "/_items_", FamcyFileImportMode.name, "", 
         exclude=["_", "."], otherwise=[], recursive=True)
-    print("system_fblocks ", system_fblocks)
+    print("system_items ", system_items)
 
     # Check no repeat names
-    assert len(system_fblocks) == len(list(set(system_fblocks))), "System Fblocks definition have duplicated names"
-    assert len(user_fblocks) == len(list(set(user_fblocks))), "User Defined Fblocks have duplicated names"
+    assert len(system_items) == len(list(set(system_items))), "System Fblocks definition have duplicated names"
 
     # Assign flocks to global
-    for module in (system_fblocks + user_fblocks):
+    for module in system_items:
         block = FManager.get_module_name(module)
         globals()[block] = getattr(module, block)
 

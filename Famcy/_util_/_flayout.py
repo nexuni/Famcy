@@ -169,42 +169,42 @@ class FamcyLayout:
 	def updateCustomLayoutContent(self, _type=None, _max=None, _min=None, orientation=None):
 		if self.mode == FamcyLayoutMode.custom:
 			self.layoutType.layoutClass.setCustomLayoutContent(_type, _max, _min, orientation, self.cusContent)
-			self.clearContent()
+			self.clearCusContent()
 
 	def updateBrowserLayoutContent960(self):
 		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setBrowserLayoutContent(content960=self.cusContent)
-			self.clearContent()
+			self.clearCusContent()
 
 	def updateBrowserLayoutContent1440(self):
 		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setBrowserLayoutContent(content1440=self.cusContent)
-			self.clearContent()
+			self.clearCusContent()
 
 	def updateBrowserLayoutContent2000(self):
 		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setBrowserLayoutContent(content2000=self.cusContent)
-			self.clearContent()
+			self.clearCusContent()
 
 	def updatePhoneLayoutContent(self):
 		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setPhoneLayoutContent(contentPhone=self.cusContent)
-			self.clearContent()
+			self.clearCusContent()
 
 	def updateipadLayoutContent(self):
 		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipad=self.cusContent)
-			self.clearContent()
+			self.clearCusContent()
 
 	def updateipadLayoutContent(self):
 		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipadV=self.cusContent)
-			self.clearContent()
+			self.clearCusContent()
 
 	def updateipadLayoutContent(self):
 		if self.mode == FamcyLayoutMode.reommend:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipadH=self.cusContent)
-			self.clearContent()
+			self.clearCusContent()
 
 	def setLayout(self):
 		layoutDict = self.layoutType.getLayoutDict()
