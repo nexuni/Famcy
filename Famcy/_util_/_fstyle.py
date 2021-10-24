@@ -1,4 +1,4 @@
-# import Famcy
+import Famcy
 import os
 from flask import render_template
 # from dashboard_utils import *
@@ -27,8 +27,8 @@ class FStyle:
 		self.loaderType = "Spinner"
 
 		# default url
-		# self.main_url = current_app.config.get("main_url", "")
-		self.main_url = "http://127.0.0.1:5000/"
+		self.main_url = Famcy.FManager["ConsoleConfig"]["main_url"]
+		# self.main_url = "http://127.0.0.1:5000"
 
 		self._check_rep()
 
@@ -147,7 +147,7 @@ class FStyle:
 
 		<!--fblock extra function-->
 		<script src="%s/static/js/fblock_extra_func.js"></script>
-		<script src="%s/static/user_js/fblock_cus_func.js"></script>
+		<script src="%s/asset/js/fblock_cus_func.js"></script>
 
 		""" % tuple([self.main_url for _ in range(12)])
 

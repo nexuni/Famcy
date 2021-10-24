@@ -28,4 +28,4 @@ class singleChoiceRadioInput(Famcy.FamcyInputBlock):
 
         input_html = '<div class="singleChoiceRadioInput"><h3>' + self.value["title"] + '</h3><p>' + self.value["desc"] + '</p><div>' + temp + '</div></div>' + self.extra_script_btn
 
-        return inner_html
+        return input_html

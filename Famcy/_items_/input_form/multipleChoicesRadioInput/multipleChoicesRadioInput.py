@@ -28,4 +28,4 @@ class multipleChoicesRadioInput(Famcy.FamcyInputBlock):
 
         input_html = '<div class="multipleChoicesRadioInput ' + self.mandatory + '_mult"><h3>' + self.value["title"] + '</h3><p>' + self.value["desc"] + '</p><div>' + temp + '</div></div>' + self.extra_script_mult_btn
 
-        return inner_html
+        return input_html
