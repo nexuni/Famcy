@@ -1,6 +1,5 @@
 import markdown
 import Famcy
-from flask import current_app
 import json
 
 class displayTag(Famcy.FamcyBlock):
@@ -9,6 +8,7 @@ class displayTag(Famcy.FamcyBlock):
     paragraph. 
     """
     def __init__(self):
+        self.value = displayTag.generate_template_content()
         super(displayTag, self).__init__()
 
     @classmethod

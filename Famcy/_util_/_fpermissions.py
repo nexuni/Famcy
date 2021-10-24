@@ -6,7 +6,7 @@ class FamcyPermissionLevel(enum.IntEnum):
 	Member = 1
 	Admin = 2
 
-class FamcyPermissions:
+class FPermissions:
 	"""
 	This represents the permission 
 	structure of FamcyPage

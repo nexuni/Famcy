@@ -1,6 +1,5 @@
 import markdown
 import Famcy
-from flask import current_app
 import json
 
 class displayLight(Famcy.FamcyBlock):
@@ -9,7 +8,8 @@ class displayLight(Famcy.FamcyBlock):
     paragraph. 
     """
     def __init__(self):
-        super(displayParagraph, self).__init__()
+        self.value = displayLight.generate_template_content()
+        super(displayLight, self).__init__()
 
     @classmethod
     def generate_template_content(cls):

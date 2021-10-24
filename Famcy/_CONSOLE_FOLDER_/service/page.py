@@ -59,44 +59,44 @@ import os
 # from werkzeug.utils import secure_filename
 
 
-def test_function(context, **configs):
-	print("test_function")
+# def test_function(context, **configs):
+# 	print("test_function")
 
 
-PAGE_HEADER = {
-	"title": ["doday客服表單"],
-	"size": ["inner_section"],
-	"type": ["input_form"]
-}
+# PAGE_HEADER = {
+# 	"title": ["doday客服表單"],
+# 	"size": ["inner_section"],
+# 	"type": ["input_form"]
+# }
 
-mail_title = Famcy.input_form.generate_values_content("pureInput")
-mail_title.update({
-        "title": "主旨",
-        "input_type": "text",
-        "placeholder": "",
-        "mandatory": True,
-	})
+# mail_title = Famcy.input_form.generate_values_content("pureInput")
+# mail_title.update({
+#         "title": "主旨",
+#         "input_type": "text",
+#         "placeholder": "",
+#         "mandatory": True,
+# 	})
 
-mail_content = Famcy.input_form.generate_values_content("inputParagraph")
-mail_content.update({
-		"title": "信件內容",
-        "placeholder": "",
-        "mandatory": False,
-	})
+# mail_content = Famcy.input_form.generate_values_content("inputParagraph")
+# mail_content.update({
+# 		"title": "信件內容",
+#         "placeholder": "",
+#         "mandatory": False,
+# 	})
 
-doday_input_form = Famcy.input_form.generate_template_content([mail_title, mail_content])
-doday_input_form.update({
-		"main_desc": "歡迎doday會員寫信!",
-		"submit_type": "update_alert",
-		"main_button_name": ["送出"],
-		"action_after_post": "save",
-		"before_function": [test_function]
-	})
+# doday_input_form = Famcy.input_form.generate_template_content([mail_title, mail_content])
+# doday_input_form.update({
+# 		"main_desc": "歡迎doday會員寫信!",
+# 		"submit_type": "update_alert",
+# 		"main_button_name": ["送出"],
+# 		"action_after_post": "save",
+# 		"before_function": [test_function]
+# 	})
 
-PAGE_CONTENT = [doday_input_form]
+# PAGE_CONTENT = [doday_input_form]
 
-def doday_input_form_submission(submission_list, **configs):
-	submission_dict_handler = Famcy.SijaxSubmit(PAGE_CONTENT_OBJECT[0].context["submit_type"])
-	return submission_dict_handler.return_submit_info(msg=str(submission_list))
+# def doday_input_form_submission(submission_list, **configs):
+# 	submission_dict_handler = Famcy.SijaxSubmit(PAGE_CONTENT_OBJECT[0].context["submit_type"])
+# 	return submission_dict_handler.return_submit_info(msg=str(submission_list))
 
-PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT, [doday_input_form_submission])
+# PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT, [doday_input_form_submission])
