@@ -102,6 +102,19 @@ def create_app():
         block = FManager.get_module_name(module)
         globals()[block] = getattr(module, block)
 
+    # Get all sources of fresponse definitions 
+    system_responses = FManager.importclassdir(FManager.main + "/_responses_", FamcyFileImportMode.name, "", 
+        exclude=["_", "."], otherwise=[], recursive=True)
+    print("system_responses ", system_responses)
+
+    # Check no repeat names
+    assert len(system_responses) == len(list(set(system_responses))), "System Fblocks definition have duplicated names"
+
+    # Assign flocks to global
+    for module in system_responses:
+        block = FManager.get_module_name(module)
+        globals()[block] = getattr(module, block)
+
     # Import module recursively for all pages in the console folder
     class_dir = FManager.importclassdir(FManager.console, FamcyFileImportMode.fixed, "page", recursive=True, 
             exclude=["_", "."], otherwise=None)

@@ -41,34 +41,6 @@ class FSubmissionSijaxHandler(object):
     	# Response according to the return response
     	response_obj.response(obj_response)
 
-			elif info_dict["submit_type"] == "update_block_html":
-				obj_response.html('#'+block_id, info_dict["inner_text"])
-				obj_response.script(info_dict["extra_script"])
-				obj_response.script("$('#loading_holder').css('display','none');")
-
-			elif info_dict["submit_type"] == "update_alert":			
-				inner_text, extra_script, target_alert = generate_alert(info_dict, form_id)
-
-				block_id = target_alert if target_alert else block_id
-
-				if info_dict["alert_position"] == "append":
-					obj_response.html_append('#'+block_id, inner_text)
-				else:
-					obj_response.html_prepend('#'+block_id, inner_text)
-
-				obj_response.script(extra_script)
-				obj_response.script("$('#loading_holder').css('display','none');")
-
-			elif info_dict["submit_type"] == "update_nothing":
-				obj_response.script("$('#loading_holder').css('display','none');")
-
-			elif info_dict["submit_type"] == "redirect_page":
-				obj_response.redirect(url_for(info_dict["redirect_url"]))
-				# obj_response.script("$('#loading_holder').css('display','none');")
-
-			elif info_dict["submit_type"] == "redirect_page_tab":
-				obj_response.redirect(url_for("main.generate_tab_page", tab=info_dict["redirect_tab"]))
-				# obj_response.script("$('#loading_holder').css('display','none');")
 
 class FSubmission:
 	"""
