@@ -1,5 +1,7 @@
 from Famcy._util_._fwidget import FamcyWidget
 from Famcy._util_._flayout import *
+from Famcy._util_._submit_manager import *
+from flask import g
 import Famcy
 
 class FPage(FamcyWidget):
@@ -59,7 +61,19 @@ class FPage(FamcyWidget):
 		Famcy.MainBlueprint.route(self.route)(route_func)
 
 	def render(self, *args, **kwargs):
+		"""
+		This is the main render function, i.e.
+		the flask route function top level. 
+		"""
+		# First setup the submission handler
+		if g.sijax.is_sijax_request:
+			g.sijax.register_object(FamcySubmissionHandler)
+			return g.sijax.process_request()
+
+		# Render all content
 		content_data = super(FPage, self).render()
+
+		# Apply style at the end
 		return self.style.render(self.header_script, content_data)
 
 	# Functions that can be overwritten
