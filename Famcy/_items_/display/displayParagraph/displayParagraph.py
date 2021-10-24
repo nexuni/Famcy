@@ -33,5 +33,5 @@ class displayParagraph(Famcy.FamcyBlock):
         }
 
     def render_inner(self):
-        inner_html = '<div class="displayParagraph"><h3>' + self.value["title"] + '</h3><h4>' + markdown.markdown(self.value["content"]) + '</h4></div>'
+        inner_html = '<div id="' + self.id + '" class="displayParagraph"><h3>' + self.value["title"] + '</h3><h4>' + markdown.markdown(self.value["content"]) + '</h4></div>'
         return inner_html

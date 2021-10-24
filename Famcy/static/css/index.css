@@ -262,9 +262,10 @@ html{
 }
 
 .content_section{
-	padding: 10px 0;
-	display: flex;
-	flex-wrap: wrap;
+	display: grid;
+	padding: 1.25vw;
+	row-gap: 1.25vw;
+	column-gap: 1.25vw;
 	overflow-y: scroll;
 	max-height: calc(90% - var(--normal-text)*1.5);
 }
@@ -275,10 +276,7 @@ html{
 
 .inner_section{
 	background-color: var(--white-color);
-	width: 97.5%;
-	padding: 1.25%;
-	margin: 1.25%;
-
+	padding: 1.25vw;
 	display: flex;
 	flex-flow: column;
 	justify-content: flex-start;
@@ -286,79 +284,13 @@ html{
 	overflow-x: hidden;
 }
 
-.onefourth_inner_section{
-	background-color: var(--white-color);
-	width: 22.5%;
-	padding: 1.25%;
-	margin: 1.25%;
-
-	display: flex;
-	flex-flow: column;
-	justify-content: flex-start;
-
-	overflow: hidden;
-}
-
-.onethird_inner_section{
-	background-color: var(--white-color);
-	width: 30.5%;
-	padding: 1.25%;
-	margin: 1.25%;
-
-	display: flex;
-	flex-flow: column;
-	justify-content: flex-start;
-
-	overflow: hidden;
-}
-
-.half_inner_section{
-	background-color: var(--white-color);
-	width: 47.5%;
-	padding: 1.25%;
-	margin: 1.25%;
-
-	display: flex;
-	flex-flow: column;
-	justify-content: flex-start;
-
-	overflow: hidden;
-}
-
-.twothird_inner_section{
-	background-color: var(--white-color);
-	width: 63.5%;
-	padding: 1.25%;
-	margin: 1.25%;
-
-	display: flex;
-	flex-flow: column;
-	justify-content: flex-start;
-
-	overflow: hidden;
-}
-
-.threefourth_inner_section{
-	background-color: var(--white-color);
-	width: 72.5%;
-	padding: 1.25%;  
-	margin: 1.25%;
-
-	display: flex;
-	flex-flow: column;
-	justify-content: flex-start;
-
-	overflow: hidden;
-}
-
 .inner_section_content{
 	overflow-x: auto;
 	width: 100%;
 
-	display: flex;
-	flex-flow: column;
-	justify-content: flex-start;
-	align-items: center;
+	display: grid;
+	row-gap: .75vw;
+	column-gap: .75vw;
 }
 
 .inner_section_content::-webkit-scrollbar{

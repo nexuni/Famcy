@@ -18,8 +18,8 @@ class FStyle:
 		self.white_color = "#ffffff"
 		self.light_grey_color = "#f1f1f1"
 		self.semi_grey_color = "#cccccc"
-		self.side_bar_title = ""
-		self.side_bar_hierarchy = []
+		self.side_bar_title = Famcy.FManager["ConsoleConfig"]["side_bar_title"]
+		self.side_bar_hierarchy = Famcy.FManager["ConsoleConfig"]["side_bar_hierachy"]
 		self.title_style = "bx-game"
 		self.side_bar_style = {}
 		self.userName = "admin"
@@ -247,7 +247,6 @@ class FStyle:
 		html_template = "login.html" if self.styleName == "login" else "index.html"
 
 		html_header = self.setDashboardHTMLHeader()
-		# content, extra_script = user_defined_contents(self.path)
 		end_js = self.setDashboardJavaScript()
 		color_theme = self.setColorTheme()
 		load_spinner = self.setLoader()

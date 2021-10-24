@@ -23,5 +23,5 @@ class displayStepLoader(Famcy.FamcyBlock):
         temp = ""
         for step_title, step_status in zip(self.value["steps"], self.value["steps_status"]):
             temp += '<li class="is-' + step_status + '"><span>' + step_title + '</span></li>'
-        inner_html = '<div class="displayStepLoader"><h3>' + self.value["title"] + '</h3><ol class="_progress-bar">' + temp + '</ol></div>'
+        inner_html = '<div id="' + self.id + '" class="displayStepLoader"><h3>' + self.value["title"] + '</h3><ol class="_progress-bar">' + temp + '</ol></div>'
         return inner_html

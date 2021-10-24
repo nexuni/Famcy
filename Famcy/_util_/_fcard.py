@@ -12,6 +12,7 @@ class FCard(FamcyWidget):
 			layout_mode=FamcyLayoutMode.recommend):
 		super(FCard, self).__init__(permission_level)
 
+		self.title = ""
 		self.layout = FamcyLayout(layout_mode)
 		self._check_rep()
 
@@ -30,7 +31,20 @@ class FCard(FamcyWidget):
 		render the layout and
 		apply style. 
 		"""
-		return self.layout.render()
+		header_script, content = self.layout.render()
+		if header_script not in self.header_script:
+			self.header_script += header_script
+		title = '<div class="title_holder"><h2 class="section_title">' + self.title + '</h2></div>' if self.title != "" else ""
+
+		return """
+		<div class="inner_section" id="{0}">
+			{1}
+
+			<div class="inner_section_content">
+				{2}
+			</div>
+		</div>
+		""".format(self.id, title, content)
 
 	def preload(self):
 		"""

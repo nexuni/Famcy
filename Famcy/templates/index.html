@@ -11,9 +11,7 @@
 	{% endif %}
 
 	{% if extra_script %}
-	{% for es in extra_script %}
-	{{ es|safe }}
-	{% endfor %}
+	{{ extra_script|safe }}
 	{% endif %}
 
 	<script type="text/javascript" src="/static/js/sijax/sijax.js"></script>
