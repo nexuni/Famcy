@@ -37,7 +37,7 @@ class FPage(FamcyWidget):
 		self.route = route
 		self.style = style
 
-		self.layout = FamcyLayout(layout_mode)
+		self.layout = FamcyLayout(self, layout_mode)
 		self._check_rep()
 
 	def _check_rep(self):

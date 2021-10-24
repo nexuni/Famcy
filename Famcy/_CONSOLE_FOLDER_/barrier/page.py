@@ -81,6 +81,7 @@ class BarrierPage(Famcy.FamcyPage):
 		# Input form zone
 		# ------------------------
 		input_light = Famcy.input_form()
+		input_light.action = self.route
 
 		light_selection = Famcy.singleChoiceRadioInput()
 		light_selection.update({
@@ -96,6 +97,7 @@ class BarrierPage(Famcy.FamcyPage):
 		submission_btn.update({
 			"title": "送出"
 		})
+		submission_btn.connect(self.card3_submit, target=block1)
 
 		input_light.layout.addWidget(light_selection, 0, 0)
 		input_light.layout.addWidget(submission_btn, 1, 0)
@@ -104,6 +106,11 @@ class BarrierPage(Famcy.FamcyPage):
 		card3.layout.addWidget(block1, 0, 0)
 		card3.layout.addWidget(input_light, 1, 0)
 		return card3
+
+	def card3_submit(self, submission_obj):
+		# submission_obj.origin
+		submission_obj.target.value = {"red": True}
+		submission_obj.target.post_submission_js = "ddd"
 
 page = BarrierPage()
 page.register()
@@ -155,30 +162,30 @@ page.register()
 #     [Famcy.display.generate_template_content([display_gif_block]), input_switch_content]
 # ]
 
-# def traffic_light_submission(submission_list, **configs):
-# 	submission_dict_handler = Famcy.SijaxSubmit(PAGE_CONTENT_OBJECT[1][1].context["submit_type"])
+def traffic_light_submission(submission_list, **configs):
+	submission_dict_handler = Famcy.SijaxSubmit(PAGE_CONTENT_OBJECT[1][1].context["submit_type"])
 
-# 	if submission_list[0][0] == "yellow":
-# 		display_light_block.update({
-# 			"status": {"red": "", "yellow": "bulb_yellow", "green": ""},
-# 	    })
-# 	elif submission_list[0][0] == "green":
-# 		display_light_block.update({
-# 			"status": {"red": "", "yellow": "", "green": "bulb_green"},
-# 	    })
-# 	elif submission_list[0][0] == "red":
-# 		display_light_block.update({
-# 		    "status": {"red": "bulb_red", "yellow": "", "green": ""},
-# 	    })
+	if submission_list[0][0] == "yellow":
+		display_light_block.update({
+			"status": {"red": "", "yellow": "bulb_yellow", "green": ""},
+	    })
+	elif submission_list[0][0] == "green":
+		display_light_block.update({
+			"status": {"red": "", "yellow": "", "green": "bulb_green"},
+	    })
+	elif submission_list[0][0] == "red":
+		display_light_block.update({
+		    "status": {"red": "bulb_red", "yellow": "", "green": ""},
+	    })
 
-# 	PAGE_CONTENT_OBJECT[1][0].update_page_context({
-# 			"values": [display_light_block]
-# 		})
+	PAGE_CONTENT_OBJECT[1][0].update_page_context({
+			"values": [display_light_block]
+		})
 
-# 	content = submission_dict_handler.generate_block_html(PAGE_CONTENT_OBJECT[1])
-# 	return submission_dict_handler.return_submit_info(msg=content, script="console.log('succeed')")
+	content = submission_dict_handler.generate_block_html(PAGE_CONTENT_OBJECT[1])
+	return submission_dict_handler.return_submit_info(msg=content, script="console.log('succeed')")
 
-# 	# return {"inner_text": inner_text, "extra_script": "console.log('succeed')"}
+	# return {"inner_text": inner_text, "extra_script": "console.log('succeed')"}
 
 
 # def barrier_switch(submission_list, **configs):

@@ -1,5 +1,6 @@
 from Famcy._util_._fwidget import FamcyWidget
 from Famcy._util_._flayout import *
+from Famcy._util_._fsubmission import *
 import Famcy
 
 class FCard(FamcyWidget):
@@ -13,7 +14,7 @@ class FCard(FamcyWidget):
 		super(FCard, self).__init__(permission_level)
 
 		self.title = ""
-		self.layout = FamcyLayout(layout_mode)
+		self.layout = FamcyLayout(self, layout_mode)
 		self._check_rep()
 
 	def _check_rep(self):
