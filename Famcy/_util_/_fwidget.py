@@ -22,14 +22,18 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.id = "famcy"+str(id(self))
 		self.name = ""
 		self.action = ""
+		self.loader = False
 		self.parent = None
-		self.children = []
 		self.configs = {}
 
 		# Header script
 		self.header_script = ""
 		self.js_after_func_dict = {} # post js script input
 		self.js_after_func_name = "" # post js script function name
+
+		# Submission related
+		self.submission_obj = FSubmission(self)
+		self.post_submission_js = ""
 
 		self.permission = Famcy.FamcyPermissions(permission_level)
 
@@ -51,6 +55,15 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		post_thread = FamcyThread(target=self.postload, daemon=True)
 		post_thread.start()
 		return render_data
+
+	def connect(self, submission_func, target=self):
+		"""
+		This is the function to setup the
+		submission object type. 
+		"""
+		self.submission_obj.func = submission_func
+		self.submission_obj.origin = self
+		self.submission_obj.target = target
 
 	@abc.abstractmethod
 	def render_inner(self):

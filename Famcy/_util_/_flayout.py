@@ -135,7 +135,8 @@ class FamcyLayout:
 		* addWidget(card, start row, start col, height(num row), width(num col))
 		* render()
 	"""
-	def __init__(self, layout_mode):
+	def __init__(self, parent, layout_mode):
+		self.parent = parent
 		self.mode = layout_mode
 		self.layoutType = FamcyLayoutType(self.mode)
 
@@ -157,6 +158,7 @@ class FamcyLayout:
 		self.mode = layout_mode
 
 	def addWidget(self, card, start_row, start_col, height=1, width=1):
+		card.parent = self.parent
 		self.content.append([card, int(start_row), int(start_col), int(height), int(width)])
 		self.layoutType.layoutClass.setDefaultContent(self.content)
 

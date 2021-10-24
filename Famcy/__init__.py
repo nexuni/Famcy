@@ -18,7 +18,7 @@ from Famcy._util_._fstyle import *
 from Famcy._util_._fpermissions import *
 from Famcy._util_._fthread import *
 from Famcy._util_._flayout import *
-from Famcy._util_._submit_type import SubmitType
+from Famcy._util_._fsubmission import *
 
 __codename__ = "Xinhai"
 famcy_dir = os.path.dirname(Famcy.__file__)
@@ -30,6 +30,7 @@ FamcyCard = FCard
 FamcyStyle = FStyle
 FamcyPermissions = FPermissions
 FamcyInputBlock = FInputBlock
+FamcyResponse = FResponse
 
 # Famcy Manager that manage all global vars, imports, 
 # file systems, http
