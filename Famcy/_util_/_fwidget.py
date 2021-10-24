@@ -1,4 +1,7 @@
 import abc
+import json
+import Famcy
+from Famcy._util_._fthread import *
 
 class FamcyWidget(metaclass=abc.ABCMeta):
 	"""
@@ -16,19 +19,19 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		* postload(): actions after the rendering
 	"""	
 	def __init__(self, permission_level=0):
-		self.id = id(self)
+		self.id = str(id(self))
 		self.name = ""
 		self.action = ""
 		self.parent = None
 		self.children = []
 		self.configs = {}
 
-        # Header script
-        self.header_script = ""
-        self.js_after_func_dict = {} # post js script input
-        self.js_after_func_name = "" # post js script function name
+		# Header script
+		self.header_script = ""
+		self.js_after_func_dict = {} # post js script input
+		self.js_after_func_name = "" # post js script function name
 
-		self.permission = FamcyPermissions(permission_level)
+		self.permission = Famcy.FamcyPermissions(permission_level)
 
 	def render(self):
 		"""
@@ -43,7 +46,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		# self.permission.verify(Famcy.FManager["CurrentUser"])
 		self.preload()
 		render_data = self.render_inner()
-		render_data += += '<script>' + self.js_after_func_name + '("' + self.id + '", ' + json.dumps(self.js_after_func_dict) + ')</script>'
+		render_data += '<script>' + self.js_after_func_name + '("' + self.id + '", ' + json.dumps(self.js_after_func_dict) + ')</script>'
 		# Set daemon to true to ensure thread dies when main thread dies
 		post_thread = FamcyThread(target=self.postload, daemon=True)
 		post_thread.start()

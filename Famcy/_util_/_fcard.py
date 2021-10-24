@@ -1,4 +1,5 @@
 from Famcy._util_._fwidget import FamcyWidget
+from Famcy._util_._flayout import *
 import Famcy
 
 class FCard(FamcyWidget):

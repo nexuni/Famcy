@@ -1,4 +1,5 @@
 from Famcy._util_._fwidget import FamcyWidget
+from Famcy._util_._flayout import *
 import Famcy
 
 class FPage(FamcyWidget):
@@ -52,12 +53,12 @@ class FPage(FamcyWidget):
 		the page to the flask route system. 
 		"""
 		route_func = lambda: self.render
-		route_func.__name__ = id(self)
+		route_func.__name__ = self.id
 
 		# Register the page render to the main blueprint
 		Famcy.MainBlueprint.route(self.route)(route_func)
 
-	def render(self):
+	def render(self, *args, **kwargs):
 		content_data = super(FPage, self).render()
 		return self.style.render(self.header_script, content_data)
 

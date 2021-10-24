@@ -77,7 +77,7 @@ class FamcyManager:
 		- Output:
 			* The class instance, or otherwise
 		"""
-		module_string = module_url.replace("/", ".")
+		module_string = module_url.replace("/", ".").replace("\\", ".")
 		try:
 			class_inst = getattr(importlib.import_module(module_string), class_name)
 		except:
@@ -125,7 +125,7 @@ class FamcyManager:
 			# Import class instance. 
 			# Prune root directory
 			pruned_url = dir_path.replace(self.main, self.PACKAGE_NAME) + "/" + module_name
-			module_string = pruned_url.replace("/", ".")
+			module_string = pruned_url.replace("/", ".").replace("\\", ".")
 			try:
 				class_inst = importlib.import_module(module_string)
 			except Exception as e:

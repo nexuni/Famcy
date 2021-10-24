@@ -11,6 +11,13 @@ import json
 from Famcy._util_._fmanager import *
 from Famcy._util_._fuser import *
 from Famcy._util_._fblock import *
+from Famcy._util_._fpage import *
+from Famcy._util_._fcard import *
+from Famcy._util_._flayout import *
+from Famcy._util_._fstyle import *
+from Famcy._util_._fpermissions import *
+from Famcy._util_._fthread import *
+from Famcy._util_._flayout import *
 from Famcy._util_._submit_type import SubmitType
 
 __codename__ = "Xinhai"
@@ -20,6 +27,8 @@ famcy_dir = os.path.dirname(Famcy.__file__)
 FamcyBlock = FBlock
 FamcyPage = FPage
 FamcyCard = FCard
+FamcyStyle = FStyle
+FamcyPermissions = FPermissions
 FamcyInputBlock = FInputBlock
 
 # Famcy Manager that manage all global vars, imports, 
@@ -95,6 +104,7 @@ def create_app():
     # Import module recursively for all pages in the console folder
     class_dir = FManager.importclassdir(FManager.console, FamcyFileImportMode.fixed, "page", recursive=True, 
             exclude=["_", "."], otherwise=None)
+    importlib.import_module("Famcy._CONSOLE_FOLDER_.barrier.page")
     print("class_dir ", class_dir)
 
     # Register the main blueprint that is used in the FamcyPage

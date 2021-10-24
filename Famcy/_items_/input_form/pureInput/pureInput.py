@@ -1,6 +1,5 @@
 import markdown
 import Famcy
-from flask import current_app
 import json
 
 class pureInput(Famcy.FamcyInputBlock):
@@ -9,6 +8,7 @@ class pureInput(Famcy.FamcyInputBlock):
     paragraph. 
     """
     def __init__(self):
+        self.value = pureInput.generate_template_content()
         super(pureInput, self).__init__()
 
     @classmethod
@@ -21,6 +21,7 @@ class pureInput(Famcy.FamcyInputBlock):
             "num_range": None,                               # if type == number
             "placeholder": "",
             "mandatory": True,
+            "action_after_post": "save",                    # (clean / save)
         }
 
     def render_inner(self):

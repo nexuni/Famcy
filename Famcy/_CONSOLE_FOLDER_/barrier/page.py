@@ -19,9 +19,9 @@ class BarrierPage(Famcy.FamcyPage):
 		card1 = Famcy.FamcyCard()
 
 		block1 = Famcy.displayParagraph()
-		block1.value.update({
+		block1.update({
 			"title": "標題更新",
-	    	"content": "這是什麼東西的**Update**"
+			"content": "這是什麼東西的**Update**"
 		})
 
 		block2 = Famcy.displayParagraph()
@@ -36,7 +36,7 @@ class BarrierPage(Famcy.FamcyPage):
 		block1 = Famcy.displayTag()
 		block1.update({
 			"title": "不知道這是用來幹嘛的Layout???????????",
-		    "content": "到底Display Tag有什麼用??????????",
+			"content": "到底Display Tag有什麼用??????????",
 		})
 
 		block2 = Famcy.displayLight()
@@ -47,12 +47,12 @@ class BarrierPage(Famcy.FamcyPage):
 
 		light_selection = Famcy.inputList()
 		light_selection.update({
-                "type": "inputList",
-                "title": "inputList1",
-                "desc": "some description some description some description some description some description some description some description some description some description some description some description",
-                "mandatory": False,
-                "value": ["red", "yellow", "green"],
-            })
+				"type": "inputList",
+				"title": "inputList1",
+				"desc": "some description some description some description some description some description some description some description some description some description some description some description",
+				"mandatory": False,
+				"value": ["red", "yellow", "green"],
+			})
 		light_selection["action_after_post"] = "save"
 
 		submission_btn = Famcy.submitBtn()
@@ -75,7 +75,7 @@ class BarrierPage(Famcy.FamcyPage):
 		block1 = Famcy.displayImage()
 		block1.update({
 			"img_name": ["../../_CONSOLE_FOLDER_/_static_/image/barrier_gif_close.gif"],
-	        "img_size": ["100%"]
+			"img_size": ["100%"]
 		})
 
 		# Input form zone
@@ -84,12 +84,12 @@ class BarrierPage(Famcy.FamcyPage):
 
 		light_selection = Famcy.singleChoiceRadioInput()
 		light_selection.update({
-                "type": "singleChoiceRadioInput",
-                "title": "singleChoiceRadioInput1",
-                "desc": "some description some description some description some description some description some description some description some description some description some description some description",
-                "mandatory": True,
-                "value": ["open", "close"],
-            })
+				"type": "singleChoiceRadioInput",
+				"title": "singleChoiceRadioInput1",
+				"desc": "some description some description some description some description some description some description some description some description some description some description some description",
+				"mandatory": True,
+				"value": ["open", "close"],
+			})
 		light_selection["action_after_post"] = "save"
 
 		submission_btn = Famcy.submitBtn()
@@ -103,6 +103,7 @@ class BarrierPage(Famcy.FamcyPage):
 
 		card3.layout.addWidget(block1, 0, 0)
 		card3.layout.addWidget(input_light, 1, 0)
+		return card3
 
 page = BarrierPage()
 page.register()

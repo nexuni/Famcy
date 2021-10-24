@@ -2,6 +2,7 @@ import Famcy
 
 class input_form(Famcy.FamcyCard):
 	def __init__(self):
+		super(input_form, self).__init__()
 		self.configs["method"] = "post"
 
 	def render_inner(self):

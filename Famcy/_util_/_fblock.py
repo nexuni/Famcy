@@ -19,7 +19,8 @@ class FBlock(FamcyWidget):
             action
     """
     def __init__(self):
-        self.value = FBlock.generate_template_content()
+        # self.value = FBlock.generate_template_content()
+        super(FBlock, self).__init__()
 
     def __getitem__(self, k):
         return self.value.get(k, None)
@@ -97,7 +98,7 @@ class FInputBlock(FBlock):
     def update_input_headers(self):
         # Settings for action after post
         # ------------------------------
-        after_action = self.value["action_after_post"]
+        self.after_action = self.value["action_after_post"]
 
         self.extra_keyup = ""
         self.extra_script = ""
@@ -105,7 +106,7 @@ class FInputBlock(FBlock):
         self.extra_onclick_mult_btn = ""
         self.extra_script_btn = ""
         self.extra_script_mult_btn = ""
-        if "save" in after_action:
+        if "save" in self.after_action:
             self.extra_keyup = ' onkeyup="saveValue(\'' + self.id + '\', this.value);"'
             self.extra_script = '<script type="text/javascript">document.getElementById("' + self.id + '").value = getSavedValue("' + self.id + '");</script>'
             self.extra_onclick_btn = ' onclick="saveValue(\'' + self.id + '\', \'' + self.id + '\' + this.value);"'
