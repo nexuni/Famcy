@@ -19,5 +19,5 @@ class displayTag(Famcy.FamcyBlock):
         }
 
     def render_inner(self):
-        inner_html = '<div class="displayTag"><h3>' + self.value["title"] + '</h3><h4>' + self.value["content"] + '</h4></div>'
+        inner_html = '<div id="' + self.id + '" class="displayTag"><h3>' + self.value["title"] + '</h3><h4>' + self.value["content"] + '</h4></div>'
         return inner_html

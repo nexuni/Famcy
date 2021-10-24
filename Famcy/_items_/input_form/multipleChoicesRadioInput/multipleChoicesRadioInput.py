@@ -26,6 +26,6 @@ class multipleChoicesRadioInput(Famcy.FamcyInputBlock):
         for list_value in self.value["value"]:
             temp += '<label class="rad-label"><input type="checkbox"' + self.extra_onclick_mult_btn + ' id="' + self.id + list_value + '" class="rad-input" name="' + self.name + '" value="' + list_value + '"><div class="rad-design"></div><div class="rad-text">' + list_value + '</div></label>'
 
-        input_html = '<div class="multipleChoicesRadioInput ' + self.mandatory + '_mult"><h3>' + self.value["title"] + '</h3><p>' + self.value["desc"] + '</p><div>' + temp + '</div></div>' + self.extra_script_mult_btn
+        input_html = '<div id="' + self.id + '" class="multipleChoicesRadioInput ' + self.mandatory + '_mult"><h3>' + self.value["title"] + '</h3><p>' + self.value["desc"] + '</p><div>' + temp + '</div></div>' + self.extra_script_mult_btn
 
         return input_html
