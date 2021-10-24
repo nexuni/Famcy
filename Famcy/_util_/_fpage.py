@@ -1,6 +1,6 @@
 from Famcy._util_._fwidget import FamcyWidget
 from Famcy._util_._flayout import *
-from Famcy._util_._submit_manager import *
+from Famcy._util_._fsubmission import *
 from flask import g
 import Famcy
 
@@ -67,7 +67,7 @@ class FPage(FamcyWidget):
 		"""
 		# First setup the submission handler
 		if g.sijax.is_sijax_request:
-			g.sijax.register_object(FamcySubmissionHandler)
+			g.sijax.register_object(FSubmissionSijaxHandler)
 			return g.sijax.process_request()
 
 		# Render all content
