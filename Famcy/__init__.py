@@ -84,7 +84,7 @@ def create_app():
     @MainBlueprint.route('/asset/<path:filename>')
     def user_custom_asset(filename):
         # Usage in template {{ url_for('user_custom_asset', filename='doday_icon.png') }}
-        return send_from_directory(CUSTOM_STATIC_PATH, filename)
+        return send_from_directory(FManager.console + "/" + FManager.USER_STATIC_FOLDER, filename)
 
     # Import Fblocks from default and custom folders. 
     # ------------------------------
@@ -104,7 +104,6 @@ def create_app():
     # Import module recursively for all pages in the console folder
     class_dir = FManager.importclassdir(FManager.console, FamcyFileImportMode.fixed, "page", recursive=True, 
             exclude=["_", "."], otherwise=None)
-    importlib.import_module("Famcy._CONSOLE_FOLDER_.barrier.page")
     print("class_dir ", class_dir)
 
     # Register the main blueprint that is used in the FamcyPage

@@ -22,4 +22,4 @@ class inputPassword(Famcy.FamcyInputBlock):
 
     def render_inner(self):
         input_html = '<div class="inputPassword"><label for="' + self.id + '">' + self.value["title"] + '</label><p>' + self.value["desc"] + '</p><div id="' + self.id + '" class="' + self.mandatory + '_password"></div></div>' + '<script>$(document).ready(function($) { $("#' + self.id + '").strength_meter({strengthMeterClass: "t_strength_meter", name: "' + self.name + '"})});</script>'
-        return inner_html
+        return input_html

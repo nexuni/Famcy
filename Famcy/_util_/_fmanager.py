@@ -34,6 +34,7 @@ class FamcyManager:
 	"""
 	PACKAGE_NAME = "Famcy"
 	USER_DEFAULT_FOLDER = "_CONSOLE_FOLDER_"
+	USER_STATIC_FOLDER = "_static_"
 
 	def __init__(self, famcy_url):
 		self.main = famcy_url

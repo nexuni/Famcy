@@ -52,7 +52,7 @@ class FPage(FamcyWidget):
 		This is the function to register 
 		the page to the flask route system. 
 		"""
-		route_func = lambda: self.render
+		route_func = lambda: self.render()
 		route_func.__name__ = self.id
 
 		# Register the page render to the main blueprint
