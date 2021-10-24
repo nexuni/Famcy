@@ -24,5 +24,5 @@ class urlBtn(Famcy.FamcyInputBlock):
         }
 
     def render_inner(self):
-        input_html = '<div class="urlBtn"><p class="' + self.value["style"] + '_p">' + self.value["desc"] + '</p><button type="button" class="' + self.value["style"] + '" onclick="window.location.href=\'' + self.value["url"] + '\'">' + self.value["button_name"] + '</button></div>'
+        input_html = '<div id="' + self.id + '" class="urlBtn"><p class="' + self.value["style"] + '_p">' + self.value["desc"] + '</p><button type="button" class="' + self.value["style"] + '" onclick="window.location.href=\'' + self.value["url"] + '\'">' + self.value["button_name"] + '</button></div>'
         return input_html

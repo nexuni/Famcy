@@ -20,5 +20,5 @@ class submitBtn(Famcy.FamcyInputBlock):
         }
 
     def render_inner(self):
-        inner_html = '<input class="main_submit_btn" type="submit" name="send" value="' + self.value["title"] + '">'
+        inner_html = '<input id="' + self.id + '" class="main_submit_btn" type="submit" name="send" value="' + self.value["title"] + '">'
         return inner_html

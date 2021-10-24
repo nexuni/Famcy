@@ -23,5 +23,5 @@ class displayImage(Famcy.FamcyBlock):
         temp = ""
         for img_name, img_size in zip(self.value["img_name"], self.value["img_size"]):
             temp += '<img style="width:' + img_size + ';" src="' + img_name + '">'
-        inner_html = '<div class="displayImage"><h3>' + self.value["title"] + '</h3><div>' + temp + '</div></div>'
+        inner_html = '<div id="' + self.id + '" class="displayImage"><h3>' + self.value["title"] + '</h3><div>' + temp + '</div></div>'
         return inner_html

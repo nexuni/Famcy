@@ -243,7 +243,7 @@ class FamcyLayout:
 		for _card, _, _, _, _ in self.content:
 			render_html += _card.render()
 
-		return layout_css + render_html
+		return layout_css, render_html
 
 # Tests
 # -----------

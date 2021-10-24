@@ -19,7 +19,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		* postload(): actions after the rendering
 	"""	
 	def __init__(self, permission_level=0):
-		self.id = str(id(self))
+		self.id = "famcy"+str(id(self))
 		self.name = ""
 		self.action = ""
 		self.parent = None
