@@ -69,7 +69,15 @@ class FPage(FamcyWidget):
 		This is the function to 
 		render the layout. 
 		"""
-		return self.layout.render()
+		header_script, content_data = self.layout.render()
+
+		if header_script not in self.header_script:
+			self.header_script += header_script
+			
+		for _card, _, _, _, _ in self.layout.content:
+			self.header_script += _card.header_script
+		
+		return content_data
 
 	def preload(self):
 		"""

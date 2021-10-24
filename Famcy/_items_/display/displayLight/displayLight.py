@@ -20,5 +20,5 @@ class displayLight(Famcy.FamcyBlock):
         }
 
     def render_inner(self):
-        inner_html = '<div class="displayLight"><div class="bulb_holder" style="width: ' + self.value["light_size"] + ';"><div class="bulb ' + self.value["status"]["red"] + '"></div><div class="bulb ' + self.value["status"]["yellow"] + '"></div><div class="bulb ' + self.value["status"]["green"] + '"></div></div></div>'
+        inner_html = '<div id="' + self.id + '" class="displayLight"><div class="bulb_holder" style="width: ' + self.value["light_size"] + ';"><div class="bulb ' + self.value["status"]["red"] + '"></div><div class="bulb ' + self.value["status"]["yellow"] + '"></div><div class="bulb ' + self.value["status"]["green"] + '"></div></div></div>'
         return inner_html
