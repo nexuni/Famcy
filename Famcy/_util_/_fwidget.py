@@ -10,8 +10,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 	all Famcy visual objects to follow. 
 
 	Rep:
-		* permission: FamcyPermissions. Represent
-		the allowed access of the user to this page. 
+		* id, name, etc.
 
 	Interface:
 		* render(): render the page
@@ -19,7 +18,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		* preload(): action before the rendering
 		* postload(): actions after the rendering
 	"""	
-	def __init__(self, permission_level=0):
+	def __init__(self):
 		self.id = "famcy"+str(id(self))
 		self.name = "famcy_name"+str(id(self))
 		self.action = ""
@@ -37,8 +36,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.submission_obj = FSubmission(self)
 		self.post_submission_js = ""
 
-		self.permission = Famcy.FamcyPermissions(permission_level)
-
 	def render(self):
 		"""
 		The main render flow is as
@@ -49,7 +46,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		4. start post load thread
 		5. return render inner stuffs
 		"""
-		# self.permission.verify(Famcy.FManager["CurrentUser"])
 		self.preload()
 		render_data = self.render_inner()
 		render_data += '<script>' + self.js_after_func_name + '("' + self.id + '", ' + json.dumps(self.js_after_func_dict) + ')</script>'

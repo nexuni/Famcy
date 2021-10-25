@@ -1,8 +1,10 @@
 from Famcy._util_._fwidget import FamcyWidget
 from Famcy._util_._flayout import *
 from Famcy._util_._fsubmission import *
+from Famcy._util_._fpermissions import *
 from Famcy._util_._fthread import *
 from flask import g
+from flask_login import login_user, logout_user, login_required
 import Famcy
 import time
 import abc
@@ -38,10 +40,11 @@ class FPage(FamcyWidget):
 			background_thread=False, background_freq=1, 
 			comet_update_freq=1):
 
-		super(FPage, self).__init__(permission_level)
+		super(FPage, self).__init__()
 		self.route = route
 		self.style = style
 		self.layout = FamcyLayout(self, layout_mode)
+		self.permission = FamcyPermissions(permission_level)
 		self.background_thread_flag = background_thread
 
 		if self.background_thread_flag:
@@ -76,8 +79,11 @@ class FPage(FamcyWidget):
 		route_func = lambda: self.render()
 		route_func.__name__ = self.id
 
-		# Register the page render to the main blueprint
-		Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, self.route)(route_func)
+		if self.permission.required_login():
+			# Register the page render to the main blueprint
+			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, self.route)(login_required(route_func))
+		else:
+			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, self.route)(route_func)
 
 	def render(self, *args, **kwargs):
 		"""
@@ -93,8 +99,11 @@ class FPage(FamcyWidget):
 
 			return g.sijax.process_request()
 
-		# Render all content
-		content_data = super(FPage, self).render()
+		if not self.permission.verify(Famcy.FManager["CurrentUser"]):
+			content_data = "<h1>You are not authorized to view this page!</h1>"
+		else:
+			# Render all content
+			content_data = super(FPage, self).render()
 
 		# Apply style at the end
 		return self.style.render(self.header_script, content_data, background_flag=self.background_thread_flag)
