@@ -86,6 +86,19 @@ class FamcyManager:
 
 		return class_inst
 
+	def assign_to_global(self, global_dict, system_items):
+		"""
+		This assign system item modules to 
+		global dictionary. 
+		"""
+		# Check no repeat names
+		assert len(system_items) == len(list(set(system_items))), "System Fblocks definition have duplicated names"
+
+		# Assign flocks to global
+		for module in system_items:
+			block = self.get_module_name(module)
+			global_dict[block] = getattr(module, block)
+
 	def importclassdir(self, module_url, file_import_mode, import_arg, exclude=[], 
 			recursive=False, otherwise=None):
 		"""

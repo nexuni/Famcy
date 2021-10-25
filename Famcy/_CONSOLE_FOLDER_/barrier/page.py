@@ -1,7 +1,15 @@
 import Famcy
 import random
 
-style = Famcy.FamcyStyle()
+style = Famcy.ClassicStyle()
+video_style = Famcy.VideoStreamStyle()
+
+class VideoStream1(Famcy.FamcyPage):
+	def __init__(self):
+		super(VideoStream1, self).__init__("/video_feed_1", video_style)
+
+v1 = VideoStream1()
+v1.register()
 
 class BarrierPage(Famcy.FamcyPage):
 	def __init__(self):

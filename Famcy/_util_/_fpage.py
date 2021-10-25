@@ -35,8 +35,8 @@ class FPage(FamcyWidget):
 	"""	
 	def __init__(self, route, style, permission_level=0, 
 			layout_mode=FamcyLayoutMode.recommend, 
-			background_thread=False, background_freq=0.125, 
-			comet_update_freq=0.25):
+			background_thread=False, background_freq=1, 
+			comet_update_freq=1):
 
 		super(FPage, self).__init__(permission_level)
 		self.route = route
