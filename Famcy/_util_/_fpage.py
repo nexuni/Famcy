@@ -76,7 +76,7 @@ class FPage(FamcyWidget):
 		route_func.__name__ = self.id
 
 		# Register the page render to the main blueprint
-		Famcy.MainBlueprint.route(self.route)(route_func)
+		Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, self.route)(route_func)
 
 	def render(self, *args, **kwargs):
 		"""

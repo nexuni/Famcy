@@ -109,23 +109,22 @@ class BarrierPage(Famcy.FamcyPage):
 		card3.layout.addWidget(input_light, 1, 0)
 		return card3
 
-	def traffic_light_submit(self, submission_obj):
-		# submission_obj.origin
-		submission_list = submission_obj.getFormData().content
+	def traffic_light_submit(self, submission_obj, info_list):
 
-		if submission_list[0][0] == "yellow":
+		if info_list[0][0] == "yellow":
 			submission_obj.target.update({
 				"status": {"red": "", "yellow": "bulb_yellow", "green": ""},
 		    })
-		elif submission_list[0][0] == "green":
+		elif info_list[0][0] == "green":
 			submission_obj.target.update({
 				"status": {"red": "", "yellow": "", "green": "bulb_green"},
 		    })
-		elif submission_list[0][0] == "red":
+		elif info_list[0][0] == "red":
 			submission_obj.target.update({
 			    "status": {"red": "bulb_red", "yellow": "", "green": ""},
 		    })
-		submission_obj.target.post_submission_js = "ddd"
+
+		return Famcy.UpdateBlockHtml()
 
 page = BarrierPage()
 page.register()

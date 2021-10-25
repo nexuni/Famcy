@@ -6,7 +6,7 @@ import _ctypes
 # GLOBAL HELPER
 def get_fsubmission_obj(obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
-	return _ctypes.PyObj_FromPtr(obj_id)
+	return _ctypes.PyObj_FromPtr(int(obj_id))
 
 def exception_handler(func):
 	def inner_function(*args, **kwargs):
@@ -18,6 +18,19 @@ def exception_handler(func):
 			args[0].script(extra_script)
 			args[0].script("$('#loading_holder').css('display','none');")
 	return inner_function
+
+def put_submissions_to_list(sub_dict):
+    """
+    This is the helper function to put the
+    submission content to a list of arguments
+    - Input:
+        * sub_dict: submission dictionary
+    """
+    ordered_submission_list = []
+    for key in sorted(list(sub_dict.keys())):
+        ordered_submission_list.append(sub_dict[key])
+
+    return ordered_submission_list
 
 class FResponse(metaclass=abc.ABCMeta):
 	def __init__(self, target=None):
@@ -41,17 +54,19 @@ class FSubmissionSijaxHandler(object):
 	"""
 	@staticmethod
 	# @exception_handler
-	def famcy_submission_handler(obj_response, fsubmission_id):
+	def famcy_submission_handler(obj_response, fsubmission_id, info_dict):
 		"""
 		This is the main submission handler that handles all
 		the submission traffics. 
 		"""
+		print("fsubmission_id, info_dict: ", fsubmission_id, info_dict)
 		# Get the submission object
 		fsubmission_obj = get_fsubmission_obj(fsubmission_id)
+		info_list = put_submissions_to_list(info_dict)
 
 		# Run user defined handle submission
 		# Will assume all data ready at this point
-		response_obj = fsubmission_obj.func(fsubmission_obj)
+		response_obj = fsubmission_obj.func(fsubmission_obj, info_list)
 		response_obj.target = fsubmission_obj.target
 
 		# Response according to the return response

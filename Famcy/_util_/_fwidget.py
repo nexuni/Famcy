@@ -21,10 +21,11 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 	"""	
 	def __init__(self, permission_level=0):
 		self.id = "famcy"+str(id(self))
-		self.name = ""
+		self.name = "famcy_name"+str(id(self))
 		self.action = ""
 		self.loader = False
 		self.parent = None
+		self.clickable = False
 		self.configs = {}
 
 		# Header script
@@ -63,6 +64,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		This is the function to setup the
 		submission object type. 
 		"""
+		self.clickable = True
 		self.submission_obj.func = submission_func
 		self.submission_obj.origin = self
 		self.submission_obj.target = target if target else self
