@@ -5,4 +5,4 @@ class UpdateNothing(Famcy.FamcyResponse):
 		super(UpdateNothing, self).__init__(self)
 
 	def response(self, sijax_response):
-		pass
+		sijax_response.script(self.finish_loading_script)
