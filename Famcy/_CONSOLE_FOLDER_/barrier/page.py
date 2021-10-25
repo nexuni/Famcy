@@ -4,7 +4,7 @@ style = Famcy.FamcyStyle()
 
 class BarrierPage(Famcy.FamcyPage):
 	def __init__(self):
-		super(BarrierPage, self).__init__("/barrier", style)
+		super(BarrierPage, self).__init__("/barrier", style, background_thread=True)
 		self.card_1 = self.card1()
 		self.card_2 = self.card2()
 		self.card_3 = self.card3()
@@ -14,6 +14,20 @@ class BarrierPage(Famcy.FamcyPage):
 		self.layout.addWidget(self.card_2, 0, 1)
 		self.layout.addWidget(self.card_3, 0, 2)
 		self.layout.addWidget(self.card_4, 1, 0, 1, 3)
+
+	def background_thread_inner(self, sijax_response):
+		"""
+		This is the inner loop of 
+		the background thread. 
+		"""
+		r = random.randint(1, 100)
+		rtype = [{"red": "", "yellow": "bulb_yellow", "green": ""},
+{"red": "", "yellow": "", "green": "bulb_green"},
+{"red": "bulb_red", "yellow": "", "green": ""}]
+
+		if r > 30:
+			ridx = random.randint(0, 2)
+			self.background_queue.add()
 
 	def card1(self):
 		card1 = Famcy.FamcyCard()
