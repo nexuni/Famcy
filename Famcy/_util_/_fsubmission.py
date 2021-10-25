@@ -59,7 +59,6 @@ class FSubmissionSijaxHandler(object):
 		This is the main submission handler that handles all
 		the submission traffics. 
 		"""
-		print("fsubmission_id, info_dict: ", fsubmission_id, info_dict)
 		# Get the submission object
 		fsubmission_obj = get_fsubmission_obj(fsubmission_id)
 		info_list = put_submissions_to_list(info_dict)
