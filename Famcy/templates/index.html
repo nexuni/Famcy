@@ -20,7 +20,9 @@
     </script>
 
 </head>
-<body id="root">
+<body id="root" onload={% if body_on_load %}
+    {{ body_on_load|safe }}
+    {% endif %}>
 
 	{% if side_bar %} 
 	{{ side_bar|safe }}

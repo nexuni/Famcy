@@ -8,7 +8,8 @@ def get_fsubmission_obj(obj_id):
     return _ctypes.PyObj_FromPtr(obj_id)
 
 class FResponse(metaclass=abc.ABCMeta):
-	def __init__(self):
+	def __init__(self, target=None):
+		self.target = target
 		self.finish_loading_script = "$('#loading_holder').css('display','none');"
 
 	@abc.abstractmethod
@@ -37,6 +38,7 @@ class FSubmissionSijaxHandler(object):
     	# Run user defined handle submission
     	# Will assume all data ready at this point
     	response_obj = fsubmission_obj.func(fsubmission_obj)
+    	response_obj.target = fsubmission_obj.target
 
     	# Response according to the return response
     	response_obj.response(obj_response)

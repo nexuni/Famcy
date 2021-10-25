@@ -243,7 +243,7 @@ class FStyle:
 		self.loaderType = self.loaderType if self.loaderType else "Spinner"
 		return '<div id="loading_holder" style="display: none;"><div id="loader"></div></div><script>generate_loader("' + self.loaderType + '")</script>'
 
-	def render(self, extra_script, content):
+	def render(self, extra_script, content, background_flag=False):
 		html_template = "login.html" if self.styleName == "login" else "index.html"
 
 		html_header = self.setDashboardHTMLHeader()
@@ -254,5 +254,5 @@ class FStyle:
 		side_bar = None if self.styleName == "login" else self.setDashboardSideBar()
 		nav_bar = None if self.styleName == "login" else self.setDashboardNavBar()
 
-			
-		return render_template(html_template, load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, side_bar=side_bar, nav_bar=nav_bar, content=content, extra_script=extra_script, end_js=end_js)
+		body_on_load = "sjxComet.request('background_work');" if background_flag else ""
+		return render_template(html_template, load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, side_bar=side_bar, nav_bar=nav_bar, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)
