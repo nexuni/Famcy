@@ -109,7 +109,7 @@ class FPage(FamcyWidget):
 			if not self.sijax_response:
 				continue
 
-			self.background_thread_inner()
+			self.background_thread_inner(self.sijax_response)
 			
 
 	def background_thread_inner(self, sijax_response):
