@@ -1,4 +1,4 @@
-function generate_list(list_id) {
+function generate_list(list_id, submission_obj_id) {
   var x, i, j, l, ll, selElmnt, a, b, c, d, temp;
 
   x = document.getElementById(list_id);                   // div.inputList
@@ -19,6 +19,7 @@ function generate_list(list_id) {
   b = document.createElement("DIV");
   b.setAttribute("class", "select-items select-hide");
 
+  console.log(selElmnt.options[selElmnt.selectedIndex], selElmnt.options[selElmnt.selectedIndex].getAttribute("name"))
   d = document.createElement("INPUT");
   d.setAttribute("id", selElmnt.options[selElmnt.selectedIndex].getAttribute("name"));
   d.setAttribute("type", "hidden");
@@ -36,6 +37,7 @@ function generate_list(list_id) {
           and the selected item:*/
           var y, i, k, s, h, sl, yl;
           s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+          console.log(s, s.options)
           sl = s.length;
           h = this.parentNode.previousSibling;
           
@@ -49,9 +51,9 @@ function generate_list(list_id) {
                 saveValue(s.options[s.selectedIndex].getAttribute("name"), this.innerHTML)
               }
 
-              if (s.getAttribute("selected_action") == "True" || s.getAttribute("selected_action")) {
-                // Sijax.request('update_page', [form_id, tab_name, block_id, {"list_value": this.innerHTML, "list_flag": "True"}]);
-              }
+              // if (s.getAttribute("selected_action") == "True" || s.getAttribute("selected_action")) {
+                // Sijax.request('famcy_submission_handler', [submission_obj_id, {"list_value": this.innerHTML, "list_flag": "True"}]);
+              // }
 
               y = this.parentNode.getElementsByClassName("same-as-selected");
               yl = y.length;
