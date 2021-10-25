@@ -1,6 +1,30 @@
 import Famcy
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 
+class FLogin:
+	"""
+	Represent the login manager
+	that helps authenticate famcy
+	users to famcy applications. 
+	"""
+	def __init__(self, always_remember=True):
+		self.always_remember = always_remember
+
+	def login_famcy_user(self, user):
+		login_user(user, remember=self.always_remember)
+
+	def logout_famcy_user(self):
+		logout_user()
+
+	def load_famcy_user(self):
+		pass
+
+	def prelogin(self):
+		pass
+
+	def postlogin(self):
+		pass
+
 # Define Famcy User
 class FamcyUser(UserMixin):
 
