@@ -2,6 +2,7 @@ import abc
 import enum
 import Famcy
 import _ctypes
+from Famcy._responses_.UpdateAlert
 
 # GLOBAL HELPER
 def get_fsubmission_obj(obj_id):
@@ -13,6 +14,9 @@ def exception_handler(func):
 		try:
 			func(*args, **kwargs)
 		except:
+			# Arg1 is intend to be the submission id of the submission object
+			fsubmission_obj = get_fsubmission_obj(args[1])
+			UpdateAlert
 			inner_text, extra_script = generate_alert({"alert_type":"alert-warning", "alert_message":"系統異常", "alert_position":"prepend"}, args[1])
 			args[0].html_prepend('#'+args[3], inner_text)
 			args[0].script(extra_script)
