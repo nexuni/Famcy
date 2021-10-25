@@ -31,6 +31,7 @@ FamcyStyle = FStyle
 FamcyPermissions = FPermissions
 FamcyInputBlock = FInputBlock
 FamcyResponse = FResponse
+FamcyPriority = FPriority
 
 # Famcy Manager that manage all global vars, imports, 
 # file systems, http

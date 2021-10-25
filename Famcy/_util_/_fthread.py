@@ -1,8 +1,7 @@
 import threading
-
 import enum
 
-class FamcyPriority(enum.IntEnum):
+class FPriority(enum.IntEnum):
     """
     This is the enum for defining
     Famcy module priorities. 
