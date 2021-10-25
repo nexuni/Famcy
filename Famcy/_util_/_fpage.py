@@ -46,7 +46,7 @@ class FPage(FamcyWidget):
 		if self.background_thread_flag:
 			self.comet_update_freq = comet_update_freq
 			self.background_freq = background_freq
-			self.background_signal = FamcySignal()
+			self.background_queue = FamcyPriorityQueue()
 			self.sijax_response = None
 			# Necessary header script for comet
 			self.header_script += '<script type="text/javascript" src="/static/js/sijax/sijax_comet.js"></script>'
@@ -129,7 +129,11 @@ class FPage(FamcyWidget):
 		"""
 		while True:
 			self.sijax_response = obj_response
-			self.background_signal.emit()
+			try:
+				baction = self.background_queue.pop()
+				baction()
+			except:
+				continue
 
 			yield self.sijax_response
 
