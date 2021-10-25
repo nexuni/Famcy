@@ -41,7 +41,7 @@ FManager["CUSTOM_STATIC_PATH"] = FManager.console + "_static_"
 
 # Sijax, submission related
 FManager["Sijax"] = flask_sijax
-FManager["SijaxSubmit"] = SubmitType
+# FManager["SijaxSubmit"] = SubmitType
 FManager["SijaxStaticPath"] = FManager.main + 'static/js/sijax/'
 FManager["SijaxJsonUri"] = '/static/js/sijax/json2.js'
 
