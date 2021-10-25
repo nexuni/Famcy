@@ -1,6 +1,7 @@
 from Famcy._util_._fwidget import FamcyWidget
 from Famcy._util_._flayout import *
 from Famcy._util_._fsubmission import *
+from Famcy._util_._fthread import *
 from flask import g
 import Famcy
 import time
@@ -34,7 +35,7 @@ class FPage(FamcyWidget):
 	"""	
 	def __init__(self, route, style, permission_level=0, 
 			layout_mode=FamcyLayoutMode.recommend, 
-			background_thread=False, background_freq=0.5, 
+			background_thread=False, background_freq=0.125, 
 			comet_update_freq=0.25):
 
 		super(FPage, self).__init__(permission_level)
