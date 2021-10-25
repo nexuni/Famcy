@@ -2,6 +2,7 @@ import abc
 import json
 import Famcy
 from Famcy._util_._fthread import *
+from Famcy._util_._fsubmission import *
 
 class FamcyWidget(metaclass=abc.ABCMeta):
 	"""
@@ -51,19 +52,20 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.preload()
 		render_data = self.render_inner()
 		render_data += '<script>' + self.js_after_func_name + '("' + self.id + '", ' + json.dumps(self.js_after_func_dict) + ')</script>'
+
 		# Set daemon to true to ensure thread dies when main thread dies
 		post_thread = FamcyThread(target=self.postload, daemon=True)
 		post_thread.start()
 		return render_data
 
-	def connect(self, submission_func, target=self):
+	def connect(self, submission_func, target=None):
 		"""
 		This is the function to setup the
 		submission object type. 
 		"""
 		self.submission_obj.func = submission_func
 		self.submission_obj.origin = self
-		self.submission_obj.target = target
+		self.submission_obj.target = target if target else self
 
 	@abc.abstractmethod
 	def render_inner(self):

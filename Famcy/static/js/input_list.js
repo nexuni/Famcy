@@ -1,32 +1,36 @@
-function generate_list(list_id, form_id, tab_name, block_id) {
+function generate_list(list_id) {
   var x, i, j, l, ll, selElmnt, a, b, c, d, temp;
-  /*look for any elements with the class "inputList":*/
-  x = document.getElementById(list_id);
-  // l = x.length;
-  // for (i = 0; i < l; i++) {
-    selElmnt = x.getElementsByTagName("select")[0];
 
-    ll = selElmnt.length;
-    /*for each element, create a new DIV that will act as the selected item:*/
-    a = document.createElement("DIV");
-    a.setAttribute("class", "select-selected");
-    a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
-    x.appendChild(a);
-    /*for each element, create a new DIV that will contain the option list:*/
-    b = document.createElement("DIV");
-    b.setAttribute("class", "select-items select-hide");
+  x = document.getElementById(list_id);                   // div.inputList
+  console.log(x)
 
-    d = document.createElement("INPUT");
-    d.setAttribute("id", selElmnt.options[selElmnt.selectedIndex].getAttribute("name"));
-    d.setAttribute("type", "hidden");
-    d.setAttribute("name", selElmnt.options[selElmnt.selectedIndex].getAttribute("name"));
-    b.appendChild(d);
+  selElmnt = x.getElementsByTagName("select")[0];         // div.select
+  console.log(selElmnt.selectedIndex)
+
+  ll = selElmnt.length;
+
+  /*for each element, create a new DIV that will act as the selected item:*/
+  a = document.createElement("DIV");
+  a.setAttribute("class", "select-selected");
+  a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+  x.appendChild(a);
+
+  /*for each element, create a new DIV that will contain the option list:*/
+  b = document.createElement("DIV");
+  b.setAttribute("class", "select-items select-hide");
+
+  d = document.createElement("INPUT");
+  d.setAttribute("id", selElmnt.options[selElmnt.selectedIndex].getAttribute("name"));
+  d.setAttribute("type", "hidden");
+  d.setAttribute("name", selElmnt.options[selElmnt.selectedIndex].getAttribute("name"));
+  b.appendChild(d);
 
     for (j = 1; j < ll; j++) {
       /*for each option in the original select element,
       create a new DIV that will act as an option item:*/
       c = document.createElement("DIV");
       c.innerHTML += selElmnt.options[j].innerHTML;
+
       c.addEventListener("click", function(e) {
           /*when an item is clicked, update the original select box,
           and the selected item:*/
@@ -46,7 +50,7 @@ function generate_list(list_id, form_id, tab_name, block_id) {
               }
 
               if (s.getAttribute("selected_action") == "True" || s.getAttribute("selected_action")) {
-                Sijax.request('update_page', [form_id, tab_name, block_id, {"list_value": this.innerHTML, "list_flag": "True"}]);
+                // Sijax.request('update_page', [form_id, tab_name, block_id, {"list_value": this.innerHTML, "list_flag": "True"}]);
               }
 
               y = this.parentNode.getElementsByClassName("same-as-selected");
@@ -64,13 +68,13 @@ function generate_list(list_id, form_id, tab_name, block_id) {
     }
     x.appendChild(b);
     a.addEventListener("click", function(e) {
-        /*when the select box is clicked, close any other select boxes,
-        and open/close the current select box:*/
-        e.stopPropagation();
-        closeAllSelect(this);
-        this.nextSibling.classList.toggle("select-hide");
-        this.classList.toggle("select-arrow-active");
-      });
+      /*when the select box is clicked, close any other select boxes,
+      and open/close the current select box:*/
+      e.stopPropagation();
+      closeAllSelect(this);
+      this.nextSibling.classList.toggle("select-hide");
+      this.classList.toggle("select-arrow-active");
+    });
 
     if (selElmnt.getAttribute("after_action").includes("save")) {
 
