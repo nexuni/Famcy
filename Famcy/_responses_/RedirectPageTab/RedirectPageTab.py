@@ -1,8 +1,8 @@
 import Famcy
 
 class RedirectPageTab(Famcy.FamcyResponse):
-	def __init__(self):
-		super(RedirectPageTab, self).__init__(self)
+	def __init__(self, target=None):
+		super(RedirectPageTab, self).__init__(target=target)
 
 		self.redirect_tab = ""
 

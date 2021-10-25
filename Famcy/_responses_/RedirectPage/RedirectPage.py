@@ -1,8 +1,8 @@
 import Famcy
 
 class RedirectPage(Famcy.FamcyResponse):
-	def __init__(self):
-		super(RedirectPage, self).__init__(self)
+	def __init__(self, target=None):
+		super(RedirectPage, self).__init__(target=target)
 
 		self.redirect_url = ""
 

@@ -1,4 +1,5 @@
 import Famcy
+import random
 
 style = Famcy.FamcyStyle()
 
@@ -25,9 +26,22 @@ class BarrierPage(Famcy.FamcyPage):
 {"red": "", "yellow": "", "green": "bulb_green"},
 {"red": "bulb_red", "yellow": "", "green": ""}]
 
+		itype = ["/asset/image/barrier_gif_close.gif", "/asset/image/barrier_gif_close.gif", "/asset/image/barrier_gif.gif"]
+
+		responseObj = Famcy.UpdateBlockHtml(self.card_2.layout.content[1][0])
+		responseObj2 = Famcy.UpdateBlockHtml(self.card_3.layout.content[0][0])
+		responseObj3 = Famcy.UpdateBlockHtml(self.card_4.layout.content[0][0])
+
 		if r > 30:
 			ridx = random.randint(0, 2)
-			self.background_queue.add()
+			responseObj.target.update({"status": rtype[ridx]})
+			ridx = random.randint(0, 2)
+			responseObj2.target.update({"img_name": [itype[ridx]]})
+			ridx = random.randint(0, 2)
+			responseObj3.target.update({"img_name": [itype[ridx]]})
+			self.background_queue.add(lambda: responseObj.response(sijax_response), Famcy.FamcyPriority.Standard)
+			self.background_queue.add(lambda: responseObj2.response(sijax_response), Famcy.FamcyPriority.Standard)
+			self.background_queue.add(lambda: responseObj3.response(sijax_response), Famcy.FamcyPriority.Standard)
 
 	def card1(self):
 		card1 = Famcy.FamcyCard()
@@ -190,28 +204,28 @@ page.register()
 #     [Famcy.display.generate_template_content([display_gif_block]), input_switch_content]
 # ]
 
-def traffic_light_submission(submission_list, **configs):
-	submission_dict_handler = Famcy.SijaxSubmit(PAGE_CONTENT_OBJECT[1][1].context["submit_type"])
+# def traffic_light_submission(submission_list, **configs):
+# 	submission_dict_handler = Famcy.SijaxSubmit(PAGE_CONTENT_OBJECT[1][1].context["submit_type"])
 
-	if submission_list[0][0] == "yellow":
-		display_light_block.update({
-			"status": {"red": "", "yellow": "bulb_yellow", "green": ""},
-	    })
-	elif submission_list[0][0] == "green":
-		display_light_block.update({
-			"status": {"red": "", "yellow": "", "green": "bulb_green"},
-	    })
-	elif submission_list[0][0] == "red":
-		display_light_block.update({
-		    "status": {"red": "bulb_red", "yellow": "", "green": ""},
-	    })
+# 	if submission_list[0][0] == "yellow":
+# 		display_light_block.update({
+# 			"status": {"red": "", "yellow": "bulb_yellow", "green": ""},
+# 	    })
+# 	elif submission_list[0][0] == "green":
+# 		display_light_block.update({
+# 			"status": {"red": "", "yellow": "", "green": "bulb_green"},
+# 	    })
+# 	elif submission_list[0][0] == "red":
+# 		display_light_block.update({
+# 		    "status": {"red": "bulb_red", "yellow": "", "green": ""},
+# 	    })
 
-	PAGE_CONTENT_OBJECT[1][0].update_page_context({
-			"values": [display_light_block]
-		})
+# 	PAGE_CONTENT_OBJECT[1][0].update_page_context({
+# 			"values": [display_light_block]
+# 		})
 
-	content = submission_dict_handler.generate_block_html(PAGE_CONTENT_OBJECT[1])
-	return submission_dict_handler.return_submit_info(msg=content, script="console.log('succeed')")
+# 	content = submission_dict_handler.generate_block_html(PAGE_CONTENT_OBJECT[1])
+# 	return submission_dict_handler.return_submit_info(msg=content, script="console.log('succeed')")
 
 	# return {"inner_text": inner_text, "extra_script": "console.log('succeed')"}
 

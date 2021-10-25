@@ -1,8 +1,8 @@
 import Famcy
 
 class UpdateAlert(Famcy.FamcyResponse):
-	def __init__(self):
-		super(UpdateAlert, self).__init__(self)
+	def __init__(self, target=None):
+		super(UpdateAlert, self).__init__(target=target)
 
 		self.alert_type = ""
 		self.alert_message = ""
