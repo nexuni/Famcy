@@ -21,7 +21,9 @@
         {{ g.sijax.get_js()|safe }}
     </script>
 </head>
-<body id="root">
+<body id="root" onload={% if body_on_load %}
+    {{ body_on_load|safe }}
+    {% endif %}>
 
 	<div class="main_win login_win">
 
