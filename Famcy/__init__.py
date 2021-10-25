@@ -93,33 +93,22 @@ def create_app():
     # Get all sources of fblocks definitions 
     system_items = FManager.importclassdir(FManager.main + "/_items_", FamcyFileImportMode.name, "", 
         exclude=["_", "."], otherwise=[], recursive=True)
-    print("system_items ", system_items)
+    FManager.assign_to_global(globals(), system_items)
 
-    # Check no repeat names
-    assert len(system_items) == len(list(set(system_items))), "System Fblocks definition have duplicated names"
-
-    # Assign flocks to global
-    for module in system_items:
-        block = FManager.get_module_name(module)
-        globals()[block] = getattr(module, block)
 
     # Get all sources of fresponse definitions 
     system_responses = FManager.importclassdir(FManager.main + "/_responses_", FamcyFileImportMode.name, "", 
         exclude=["_", "."], otherwise=[], recursive=True)
-    print("system_responses ", system_responses)
+    FManager.assign_to_global(globals(), system_responses)
 
-    # Check no repeat names
-    assert len(system_responses) == len(list(set(system_responses))), "System Fblocks definition have duplicated names"
-
-    # Assign flocks to global
-    for module in system_responses:
-        block = FManager.get_module_name(module)
-        globals()[block] = getattr(module, block)
+    # Get all sources of fstyle definitions 
+    system_styles = FManager.importclassdir(FManager.main + "/_style_", FamcyFileImportMode.name, "", 
+        exclude=["_", "."], otherwise=[], recursive=True)
+    FManager.assign_to_global(globals(), system_styles)
 
     # Import module recursively for all pages in the console folder
     class_dir = FManager.importclassdir(FManager.console, FamcyFileImportMode.fixed, "page", recursive=True, 
             exclude=["_", "."], otherwise=None)
-    print("class_dir ", class_dir)
 
     # Register the main blueprint that is used in the FamcyPage
     app.register_blueprint(MainBlueprint)
@@ -127,73 +116,3 @@ def create_app():
     return app
 
 # ------ above is the flask part -----------
-
-# ------ Famcy system utility functions -------
-def generate_content_obj(page_header, page_content, submission_list=None):
-    """
-    This is the helper function to generate the content
-    object for the page. Like compiling the content
-    """
-    if submission_list == None:
-        submission_list = []
-        for _ in range(len(page_content)):
-            if isinstance(page_content[_], list):
-                temp = [lambda i,**c: None for __ in range(len(page_content[_]))]
-                submission_list.append(temp)
-            else:
-                submission_list.append(None)
-
-    ret_list = []
-    for i in range(len(page_content)):
-
-        if isinstance(page_header["type"][i], list):
-            temp = []
-            if submission_list == None:
-                submission_list[i] = [lambda i,**c: None for _ in range(len(page_content[i]))]
-            for j in range(len(page_header["type"][i])):
-                temp.append(globals()[page_header["type"][i][j]](_submission_handler=submission_list[i][j], 
-                    **page_content[i][j]))
-            ret_list.append(temp)
-
-        else:
-            ret_list.append(globals()[page_header["type"][i]](_submission_handler=submission_list[i], 
-                **page_content[i]))
-
-    return ret_list
-
-def put_submissions_to_list(sub_dict, submission_id):
-    """
-    This is the helper function to put the
-    submission content to a list of arguments
-    - Input:
-        * sub_dict: submission dictionary
-        * submission_id: id for the submission
-    """
-    ordered_submission_list = []
-    btn_info = []
-    for key in sorted(list(sub_dict.keys())):
-        # Guard the button case. 
-        if submission_id not in key:
-            continue
-        elif "mb_" in key:
-            btn_info = sub_dict[key]
-            continue
-        ordered_submission_list.append(sub_dict[key])
-
-    ordered_submission_list.append(btn_info)
-
-    return ordered_submission_list
-
-def update_object_id(content_object_list, file_path_key, action_path):
-    """
-    This is the helper function to update
-    the object id for all contect objects
-    """
-    for i in range(len(content_object_list)):
-        # Single fblock case
-        if not isinstance(content_object_list[i], list):
-            content_object_list[i].update_id(file_path_key+"-%d"%i, action_path, file_path_key+"-%d"%i)
-            continue
-
-        for j in range(len(content_object_list[i])):
-            content_object_list[i][j].update_id(file_path_key+"-%d-%d"%(i, j), action_path, file_path_key+"-%d"%i)
