@@ -4,7 +4,7 @@ from Famcy._util_._fsubmission import *
 from Famcy._util_._fpermissions import *
 from Famcy._util_._fthread import *
 from flask import g
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_required
 import Famcy
 import time
 import abc

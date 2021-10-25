@@ -35,10 +35,12 @@ class FamcyManager:
 	PACKAGE_NAME = "Famcy"
 	USER_DEFAULT_FOLDER = "_CONSOLE_FOLDER_"
 	USER_STATIC_FOLDER = "_static_"
+	PRODUCTION_FOLDER = os.path.join(os.path.expanduser("~"), ".local/share/famcy", famcy_id, "console")
 
-	def __init__(self, famcy_url):
+	def __init__(self, famcy_id, famcy_url, production=False):
+		self.famcy_id = famcy_id
 		self.main = famcy_url
-		self.console = os.path.join(self.main, self.USER_DEFAULT_FOLDER)
+		self.console = os.path.join(self.main, self.USER_DEFAULT_FOLDER) if not production else self.PRODUCTION_FOLDER
 		self.http_client = None
 
 		# Init header definition
