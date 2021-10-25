@@ -60,6 +60,8 @@ class BarrierPage(Famcy.FamcyPage):
 			"title": "送出"
 		})
 
+		submission_btn.connect(self.traffic_light_submit, target=block2)
+
 		input_light.layout.addWidget(light_selection, 0, 0)
 		input_light.layout.addWidget(submission_btn, 1, 0)
 		# -------------------------
@@ -97,7 +99,7 @@ class BarrierPage(Famcy.FamcyPage):
 		submission_btn.update({
 			"title": "送出"
 		})
-		submission_btn.connect(self.card3_submit, target=block1)
+		# submission_btn.connect(self.card3_submit, target=block1)
 
 		input_light.layout.addWidget(light_selection, 0, 0)
 		input_light.layout.addWidget(submission_btn, 1, 0)
@@ -107,9 +109,22 @@ class BarrierPage(Famcy.FamcyPage):
 		card3.layout.addWidget(input_light, 1, 0)
 		return card3
 
-	def card3_submit(self, submission_obj):
+	def traffic_light_submit(self, submission_obj):
 		# submission_obj.origin
-		submission_obj.target.value = {"red": True}
+		submission_list = submission_obj.getFormData().content
+
+		if submission_list[0][0] == "yellow":
+			submission_obj.target.update({
+				"status": {"red": "", "yellow": "bulb_yellow", "green": ""},
+		    })
+		elif submission_list[0][0] == "green":
+			submission_obj.target.update({
+				"status": {"red": "", "yellow": "", "green": "bulb_green"},
+		    })
+		elif submission_list[0][0] == "red":
+			submission_obj.target.update({
+			    "status": {"red": "bulb_red", "yellow": "", "green": ""},
+		    })
 		submission_obj.target.post_submission_js = "ddd"
 
 page = BarrierPage()

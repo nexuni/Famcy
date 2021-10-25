@@ -1,14 +1,27 @@
+import abc
 import enum
 import Famcy
 import _ctypes
 
 # GLOBAL HELPER
 def get_fsubmission_obj(obj_id):
-    """ Inverse of id() function. But only works if the object is not garbage collected"""
-    return _ctypes.PyObj_FromPtr(obj_id)
+	""" Inverse of id() function. But only works if the object is not garbage collected"""
+	return _ctypes.PyObj_FromPtr(obj_id)
+
+def exception_handler(func):
+	def inner_function(*args, **kwargs):
+		try:
+			func(*args, **kwargs)
+		except:
+			inner_text, extra_script = generate_alert({"alert_type":"alert-warning", "alert_message":"系統異常", "alert_position":"prepend"}, args[1])
+			args[0].html_prepend('#'+args[3], inner_text)
+			args[0].script(extra_script)
+			args[0].script("$('#loading_holder').css('display','none');")
+	return inner_function
 
 class FResponse(metaclass=abc.ABCMeta):
 	def __init__(self):
+		self.info_dict = {}
 		self.finish_loading_script = "$('#loading_holder').css('display','none');"
 
 	@abc.abstractmethod
@@ -26,20 +39,21 @@ class FSubmissionSijaxHandler(object):
 	and offer a response. 
 	"""
 	@staticmethod
-    def famcy_submission_handler(obj_response, fsubmission_id):
-    	"""
-    	This is the main submission handler that handles all
-    	the submission traffics. 
-    	"""
-    	# Get the submission object
-    	fsubmission_obj = get_fsubmission_obj(fsubmission_id)
+	# @exception_handler
+	def famcy_submission_handler(obj_response, fsubmission_id):
+		"""
+		This is the main submission handler that handles all
+		the submission traffics. 
+		"""
+		# Get the submission object
+		fsubmission_obj = get_fsubmission_obj(fsubmission_id)
 
-    	# Run user defined handle submission
-    	# Will assume all data ready at this point
-    	response_obj = fsubmission_obj.func(fsubmission_obj)
+		# Run user defined handle submission
+		# Will assume all data ready at this point
+		response_obj = fsubmission_obj.func(fsubmission_obj)
 
-    	# Response according to the return response
-    	response_obj.response(obj_response)
+		# Response according to the return response
+		response_obj.response(obj_response)
 
 
 class FSubmission:
@@ -54,7 +68,7 @@ class FSubmission:
 		* origin: the origin widget of the submission
 	"""
 	def __init__(self, origin):
-		self.func = lambda *a, **k: pass
+		self.func = lambda *a, **k: None
 		self.origin = origin
 		self.target = origin
 
