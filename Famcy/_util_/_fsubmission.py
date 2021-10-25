@@ -49,10 +49,10 @@ class FSubmissionSijaxHandler(object):
 		# Get the submission object
 		fsubmission_obj = get_fsubmission_obj(fsubmission_id)
 
-    	# Run user defined handle submission
-    	# Will assume all data ready at this point
-    	response_obj = fsubmission_obj.func(fsubmission_obj)
-    	response_obj.target = fsubmission_obj.target
+		# Run user defined handle submission
+		# Will assume all data ready at this point
+		response_obj = fsubmission_obj.func(fsubmission_obj)
+		response_obj.target = fsubmission_obj.target
 
 		# Response according to the return response
 		response_obj.response(obj_response)

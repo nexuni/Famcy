@@ -76,7 +76,7 @@ class BarrierPage(Famcy.FamcyPage):
 
 		block1 = Famcy.displayImage()
 		block1.update({
-			"img_name": ["../../_CONSOLE_FOLDER_/_static_/image/barrier_gif_close.gif"],
+			"img_name": ["/asset/image/barrier_gif_close.gif"],
 			"img_size": ["100%"]
 		})
 
