@@ -20,15 +20,9 @@ def exception_handler(func):
 	return inner_function
 
 class FResponse(metaclass=abc.ABCMeta):
-<<<<<<< HEAD
 	def __init__(self, target=None):
 		self.target = target
-||||||| merged common ancestors
-	def __init__(self):
-=======
-	def __init__(self):
 		self.info_dict = {}
->>>>>>> 3212364a06fcfaf34f5419a3f74285a79314ccc1
 		self.finish_loading_script = "$('#loading_holder').css('display','none');"
 
 	@abc.abstractmethod
