@@ -41,7 +41,7 @@ class pie_chart(Famcy.FamcyBlock):
                 }
             ],
             "labels": ["pie1", "pie2", "pie3", "pie4"],
-            "size": [700, 700], # width, height
+            "size": [400, 400], # width, height
         }
 
     def render_inner(self):
@@ -53,8 +53,6 @@ class pie_chart(Famcy.FamcyBlock):
         json_pie_dict_labels = json.dumps(self.value["labels"])
         json_pie_dict_size = json.dumps(self.value["size"])
 
-        inner_html = """<div id="%s"></div><script>generatePieChart("%s", %s, %s, %s)</script>""" % (self.id, self.id, json_pie_dict_values, json_pie_dict_labels, json_pie_dict_size)
+        return """<div id="%s"></div><script>generatePieChart("%s", %s, %s, %s)</script>""" % (self.id, self.id, json_pie_dict_values, json_pie_dict_labels, json_pie_dict_size)
 
-        return'<turbo-frame style="width: 100%;" id="t_' + self.id + '">' + inner_html + '</turbo-frame>'
-
-    
+        
