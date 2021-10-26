@@ -23,9 +23,8 @@ from Famcy._util_._fsubmission import *
 __codename__ = "Xinhai"
 famcy_dir = os.path.dirname(Famcy.__file__)
 
-# Create Imports for User usage
+# Create Global Var for User usage
 FamcyBlock = FBlock
-FamcyLogin = FLogin
 FamcyPage = FPage
 FamcyCard = FCard
 FamcyStyle = FStyle
@@ -33,6 +32,8 @@ FamcyPermissions = FPermissions
 FamcyInputBlock = FInputBlock
 FamcyResponse = FResponse
 FamcyPriority = FPriority
+FamcyUser = FUser
+FamcyLogin = FLogin
 FamcyLoginManager = None
 
 def create_app(famcy_id, production=False):
@@ -54,7 +55,7 @@ def create_app(famcy_id, production=False):
     FManager["SijaxJsonUri"] = '/static/js/sijax/json2.js'
 
     # User, login related init
-    FManager["FamcyUser"] = FamcyUser
+    FManager["FamcyUser"] = FUser
     FManager["LoginManager"] = LoginManager()
     FManager["CurrentUser"] = current_user
 
