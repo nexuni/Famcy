@@ -36,7 +36,7 @@ class FPage(FamcyWidget):
 		* postload(): actions after the rendering
 	"""	
 	def __init__(self, route, style, permission_level=0, 
-			layout_mode=FamcyLayoutMode.recommend, 
+			layout_mode=FLayoutMode.recommend, 
 			background_thread=False, background_freq=1, 
 			comet_update_freq=1):
 
@@ -160,9 +160,6 @@ class FPage(FamcyWidget):
 
 		if header_script not in self.header_script:
 			self.header_script += header_script
-			
-		for _card, _, _, _, _ in self.layout.content:
-			self.header_script += _card.header_script
 		
 		return content_data
 

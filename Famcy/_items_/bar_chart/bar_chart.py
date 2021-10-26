@@ -8,8 +8,10 @@ class bar_chart(Famcy.FamcyBlock):
     bar_chart. 
     """
     def __init__(self, **kwargs):
+        self.value = bar_chart.generate_template_content()
         super(bar_chart, self).__init__(**kwargs)
-        self.header_script = """<script src="%s/static/js/bar_chart.js"></script>%s""" % (current_app.config.get("main_url", ""), header_script)
+
+        self.header_script += '<script src="/static/js/bar_chart.js"></script>'
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -32,11 +34,7 @@ class bar_chart(Famcy.FamcyBlock):
             }],
             "labels": ["bar1", "bar2", "bar3"],
             "title": "bar_chart",
-            "xy_axis_title": ["x_title", "y_title"],
-            "js_after_func_dict": {},
-            "js_after_func_name": "empty_func",             # extra script which add after fblock item
-            "header_script": "",            # extra script which add in header section
-            "before_function": [],          # python function that you want to run before page refresh
+            "xy_axis_title": ["x_title", "y_title"]
         }
 
     def render_inner(self):
@@ -58,11 +56,8 @@ class bar_chart(Famcy.FamcyBlock):
         }
         """
 
-        for action in context["before_function"]:
-            action(context, **configs)
-
         data = []
-        for dict, label in zip(context["values"], context["labels"]):
+        for dict, label in zip(self.value["values"], self.value["labels"]):
             temp = {}
             temp["x"] = dict["x"]
             temp["y"] = dict["y"]
@@ -73,10 +68,7 @@ class bar_chart(Famcy.FamcyBlock):
             data.append(temp)
 
         json_line_dict_values = json.dumps(data)
-        json_line_dict_title = json.dumps(context["title"])
-        json_line_dict_xy_title = json.dumps(context["xy_axis_title"])
+        json_line_dict_title = json.dumps(self.value["title"])
+        json_line_dict_xy_title = json.dumps(self.value["xy_axis_title"])
         
-        return"""<div id="%s"></div><script>generateBarChart("%s", %s, %s, %s)</script><script>%s('%s', %s)</script>""" % (context["id"], context["id"], json_line_dict_values, json_line_dict_title, json_line_dict_xy_title, context["js_after_func_name"], context["id"], json.dumps(context["js_after_func_dict"]))
-
-    def extra_script(self, header_script, **configs):
-        return """<script src="%s/static/js/bar_chart.js"></script>%s""" % (current_app.config.get("main_url", ""), header_script)
+        return"""<div id="%s"></div><script>generateBarChart("%s", %s, %s, %s)</script>""" % (self.id, self.id, json_line_dict_values, json_line_dict_title, json_line_dict_xy_title)

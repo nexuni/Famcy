@@ -2,7 +2,7 @@ import enum
 import Famcy
 import random
 
-class FamcyLayoutMode(enum.IntEnum):
+class FLayoutMode(enum.IntEnum):
 	default = 0
 	recommend = 1
 	custom = 2
@@ -17,7 +17,7 @@ class FamcyCustomLayoutType:
 		self.layoutContent = []				# [[[card, start row, start col, height(num row), width(num col)] ...]]
 
 	def generateCssMode(self, index):
-		mode = "@media only screen "
+		mode = "screen and "
 		if self.type[index]:
 			self.type[index] += "-"
 		else:
@@ -66,19 +66,19 @@ class FamcyRecommendLayoutType:
 		if self.defaultContent:
 			return_dict["default"] = self.defaultContent
 		if self.browsers960LayoutContent:
-			return_dict["@media only screen and (min-width: 960px)"] = self.browsers960LayoutContent
+			return_dict["screen and (min-width: 960px)"] = self.browsers960LayoutContent
 		if self.browsers1440LayoutContent:
-			return_dict["@media only screen and (min-width: 1440px)"] = self.browsers1440LayoutContent
+			return_dict["screen and (min-width: 1440px)"] = self.browsers1440LayoutContent
 		if self.browsers2000LayoutContent:
-			return_dict["@media only screen and (min-width: 2000px)"] = self.browsers2000LayoutContent
+			return_dict["screen and (min-width: 2000px)"] = self.browsers2000LayoutContent
 		if self.phoneLayoutContent:
-			return_dict["@media only screen and (max-device-width: 480px)"] = self.phoneLayoutContent
+			return_dict["screen and (max-device-width: 480px)"] = self.phoneLayoutContent
 		if self.ipadLayoutContent:
-			return_dict["@media only screen and (device-width: 768px)"] = self.ipadLayoutContent
+			return_dict["screen and (device-width: 768px)"] = self.ipadLayoutContent
 		if self.ipadLayoutContentV:
-			return_dict["@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)"] = self.ipadLayoutContentV
+			return_dict["screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)"] = self.ipadLayoutContentV
 		if self.ipadLayoutContentH:
-			return_dict["@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)"] = self.ipadLayoutContentH
+			return_dict["screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)"] = self.ipadLayoutContentH
 		
 		return return_dict
 
@@ -108,9 +108,9 @@ class FamcyRecommendLayoutType:
 
 
 class FamcyLayoutType:
-	def __init__(self, layout_mode=FamcyLayoutMode.default):
-		self.mode = layout_mode					# (FamcyLayoutMode.recommend, FamcyLayoutMode.custom, FamcyLayoutMode.default)
-		self.layoutClass = FamcyRecommendLayoutType() if self.mode == FamcyLayoutMode.recommend else FamcyCustomLayoutType()
+	def __init__(self, layout_mode=FLayoutMode.default):
+		self.mode = layout_mode					# (FLayoutMode.recommend, FLayoutMode.custom, FLayoutMode.default)
+		self.layoutClass = FamcyRecommendLayoutType() if self.mode == FLayoutMode.recommend else FamcyCustomLayoutType()
 
 	def getLayoutDict(self):
 		return self.layoutClass.generateFamcyLayoutDict()
@@ -150,13 +150,6 @@ class FamcyLayout:
 		"""
 		pass
 
-	def setMode(self, layout_mode):
-		"""
-		This is the method to set the
-		layout mode of the famcy layout. 
-		"""
-		self.mode = layout_mode
-
 	def addWidget(self, card, start_row, start_col, height=1, width=1):
 		card.parent = self.parent
 		self.content.append([card, int(start_row), int(start_col), int(height), int(width)])
@@ -169,58 +162,57 @@ class FamcyLayout:
 		self.cusContent = []
 
 	def updateCustomLayoutContent(self, _type=None, _max=None, _min=None, orientation=None):
-		if self.mode == FamcyLayoutMode.custom:
+		if self.mode == FLayoutMode.custom:
 			self.layoutType.layoutClass.setCustomLayoutContent(_type, _max, _min, orientation, self.cusContent)
 			self.clearCusContent()
 
 	def updateBrowserLayoutContent960(self):
-		if self.mode == FamcyLayoutMode.recommend:
+		if self.mode == FLayoutMode.recommend:
 			self.layoutType.layoutClass.setBrowserLayoutContent(content960=self.cusContent)
 			self.clearCusContent()
 
 	def updateBrowserLayoutContent1440(self):
-		if self.mode == FamcyLayoutMode.recommend:
+		if self.mode == FLayoutMode.recommend:
 			self.layoutType.layoutClass.setBrowserLayoutContent(content1440=self.cusContent)
 			self.clearCusContent()
 
 	def updateBrowserLayoutContent2000(self):
-		if self.mode == FamcyLayoutMode.recommend:
+		if self.mode == FLayoutMode.recommend:
 			self.layoutType.layoutClass.setBrowserLayoutContent(content2000=self.cusContent)
 			self.clearCusContent()
 
 	def updatePhoneLayoutContent(self):
-		if self.mode == FamcyLayoutMode.recommend:
+		if self.mode == FLayoutMode.recommend:
 			self.layoutType.layoutClass.setPhoneLayoutContent(contentPhone=self.cusContent)
 			self.clearCusContent()
 
 	def updateipadLayoutContent(self):
-		if self.mode == FamcyLayoutMode.recommend:
+		if self.mode == FLayoutMode.recommend:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipad=self.cusContent)
 			self.clearCusContent()
 
 	def updateipadLayoutContent(self):
-		if self.mode == FamcyLayoutMode.recommend:
+		if self.mode == FLayoutMode.recommend:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipadV=self.cusContent)
 			self.clearCusContent()
 
 	def updateipadLayoutContent(self):
-		if self.mode == FamcyLayoutMode.recommend:
+		if self.mode == FLayoutMode.recommend:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipadH=self.cusContent)
 			self.clearCusContent()
 
 	def setLayout(self):
 		layoutDict = self.layoutType.getLayoutDict()
-		cssLayout = '<style type="text/css">'
+		cssLayout = ""
 
 		for i, (k, v) in enumerate(layoutDict.items()):
 			if k == "default":
+				cssLayout += '<style type="text/css">'
 				cssLayout += self.setDeviceLayout(v)
 			else:
-				cssLayout += k + " {"
+				cssLayout += '<style type="text/css" media="' + k + '">'
 				cssLayout += self.setDeviceLayout(v)
-				cssLayout += "}"
-
-		cssLayout += '</style>'
+			cssLayout += '</style>'
 
 		return cssLayout
 
@@ -243,8 +235,8 @@ class FamcyLayout:
 		header_script = ""
 		render_html = ""
 		for _card, _, _, _, _ in self.content:
-			header_script += _card.header_script
 			render_html += _card.render()
+			header_script += _card.header_script
 
 		return header_script + layout_css, render_html
 
@@ -256,7 +248,7 @@ class FamcyLayout:
 		
 
 # if __name__ == '__main__':
-# 	layout = FamcyLayout(FamcyLayoutMode.default)
+# 	layout = FamcyLayout(FLayoutMode.default)
 # 	layout.addWidget(_card(), 0, 0, 2, 1)
 # 	layout.addWidget(_card(), 0, 1)
 # 	layout.addWidget(_card(), 1, 1)

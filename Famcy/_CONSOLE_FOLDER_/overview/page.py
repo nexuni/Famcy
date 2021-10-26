@@ -118,21 +118,26 @@ import json
 
 class OverviewPage(Famcy.FamcyPage):
     def __init__(self):
-        super(OverviewPage, self).__init__("/overview", Famcy.ClassicStyle(), background_thread=False)
+        super(OverviewPage, self).__init__("/overview", Famcy.ClassicStyle(), layout_mode=Famcy.FamcyLayoutMode.custom, background_thread=False)
 
         self.card_1 = self.card1()
         self.card_2 = self.card2()
         self.card_3 = self.card3()
 
         self.layout.addWidget(self.card_1, 0, 0)
-        self.layout.addWidget(self.card_2, 0, 1)
-        self.layout.addWidget(self.card_3, 1, 0, 1, 2)
+        self.layout.addWidget(self.card_2, 1, 0)
+        self.layout.addWidget(self.card_3, 2, 0)
+
+        self.layout.addCusWidget(self.card_1, 0, 0, 1, 2)
+        self.layout.addCusWidget(self.card_2, 1, 0)
+        self.layout.addCusWidget(self.card_3, 1, 1)
+        self.layout.updateCustomLayoutContent(_min="960px")
 
     def card1(self):
         card1 = Famcy.FamcyCard()
 
         pie_chart = Famcy.pie_chart()
-        
+
         card1.layout.addWidget(pie_chart, 0, 0)
         return card1
 
@@ -147,10 +152,7 @@ class OverviewPage(Famcy.FamcyPage):
     def card3(self):
         card3 = Famcy.FamcyCard()
 
-        bar_chart = Famcy.table()
-        bar_chart.update({
-              
-          })
+        bar_chart = Famcy.bar_chart()
 
         card3.layout.addWidget(bar_chart, 0, 0)
         return card3
