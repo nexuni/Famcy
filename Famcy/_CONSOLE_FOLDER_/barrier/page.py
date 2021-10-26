@@ -2,11 +2,10 @@ import Famcy
 import random
 
 style = Famcy.ClassicStyle()
-video_style = Famcy.VideoStreamStyle()
 
 class VideoStream1(Famcy.FamcyPage):
 	def __init__(self):
-		super(VideoStream1, self).__init__("/video_feed_1", video_style)
+		super(VideoStream1, self).__init__("/video_1", Famcy.VideoStreamStyle("/video_1"))
 
 v1 = VideoStream1()
 v1.register()
@@ -62,8 +61,18 @@ class BarrierPage(Famcy.FamcyPage):
 
 		block2 = Famcy.displayParagraph()
 
+		videoStream = Famcy.video_stream()
+		videoStream.update({
+			"rtsp_address": ["rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov"],
+            "video_timeout": [15],
+            "holder_width": ["100%"],
+            "holder_height": ["150px"],
+            "img_path": ["/video_1"]
+		})
+
 		card1.layout.addWidget(block1, 0, 0)
 		card1.layout.addWidget(block2, 1, 0)
+		card1.layout.addWidget(videoStream, 2, 0)
 		return card1
 
 	def card2(self):

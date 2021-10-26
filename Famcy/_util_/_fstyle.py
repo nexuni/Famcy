@@ -1,34 +1,22 @@
 import Famcy
 import os
+import enum
 from flask import render_template
 # from dashboard_utils import *
 
+class FStyleMode(enum.IntEnum):
+	default = 0
+	login = 1
+	videoStream = 2
+
 class FStyle:
-
-	def __init__(self, styleName="default", with_login=False):
-		self.styleName = styleName				# ("default" / "login")
+	def __init__(self, styleName=FStyleMode.default, with_login=False):
+		self.styleDict = {FStyleMode.default: Famcy.ClassicStyle, FStyleMode.login: Famcy.LoginStyle, FStyleMode.videoStream: Famcy.VideoStreamStyle}
+		self._FamcyStyle = self.styleDict[styleName]
 		self.withLogin = with_login
-
-		# set default value
-		self.title = ""
-		self.desc = ""
-		self.main_color = "#3968F7"
-		self.sub_color = "#94D4ED"
-		self.dark_color = "#2d2d2d"
-		self.white_color = "#ffffff"
-		self.light_grey_color = "#f1f1f1"
-		self.semi_grey_color = "#cccccc"
-		self.side_bar_title = Famcy.FManager["ConsoleConfig"]["side_bar_title"]
-		self.side_bar_hierarchy = Famcy.FManager["ConsoleConfig"]["side_bar_hierachy"]
-		self.title_style = "bx-game"
-		self.side_bar_style = {}
-		self.userName = "admin"
-		self.userImg = os.path.join("", "static", "image/login.png")
-		self.loaderType = "Spinner"
 
 		# default url
 		self.main_url = Famcy.FManager["ConsoleConfig"]["main_url"]
-		# self.main_url = "http://127.0.0.1:5000"
 
 		self._check_rep()
 
@@ -38,66 +26,8 @@ class FStyle:
 		"""
 		pass
 
-	def setStyleName(self, style_name):
-		self.styleName = style_name
-
 	def setLogin(self, with_login):
 		self.withLogin = with_login
-
-	def setHeadScript(self, title=None, desc=None):
-		if title:
-			self.title = title
-		if desc:
-			self.desc = desc
-
-	def setColor(self, main_color=None, sub_color=None, dark_color=None, white_color=None, light_grey_color=None, semi_grey_color=None):
-		if main_color:
-			self.main_color = main_color
-		if sub_color:
-			self.sub_color = sub_color
-		if dark_color:
-			self.dark_color = dark_color
-		if white_color:
-			self.white_color = white_color
-		if light_grey_color:
-			self.light_grey_color = light_grey_color
-		if semi_grey_color:
-			self.semi_grey_color = semi_grey_color
-
-	def setSideBarInfo(self, side_bar_title=None, side_bar_hierarchy=None, title_style=None, side_bar_style=None):
-		if side_bar_title:
-			self.side_bar_title = side_bar_title
-		if side_bar_hierarchy:
-			self.side_bar_hierarchy = side_bar_hierarchy
-		if title_style:
-			self.title_style = title_style
-		if side_bar_style:
-			self.side_bar_style = side_bar_style
-
-	def setNavBarInfo(self, user_name=None, user_img_path=None):
-		if user_name:
-			self.userName = user_name
-		if user_img_path:
-			self.userImg = user_img_path
-
-	def setLoaderType(self, loader_type=None):
-		if loader_type:
-			self.loaderType = loader_type				# ("Bean_Eater" / "Blocks" / "Double_Ring" / "Ellipsis" / "Gear" / "Infinity" / "Pulse" / "Spinner")
-
-	def setColorTheme(self):
-		innerScript = ""
-
-		innerScript += "document.documentElement.style.setProperty('--main-color', '" + self.main_color + "');"
-		innerScript += "document.documentElement.style.setProperty('--sub-color', '" + self.sub_color + "');"
-		innerScript += "document.documentElement.style.setProperty('--white-color', '" + self.dark_color + "');"
-		innerScript += "document.documentElement.style.setProperty('--dark-color', '" + self.white_color + "');"
-		innerScript += "document.documentElement.style.setProperty('--light-grey-color', '" + self.light_grey_color + "');"
-		innerScript += "document.documentElement.style.setProperty('--semi-grey-color', '" + self.semi_grey_color + "');"
-		return"""
-		<script>
-		%s
-		</script>
-		""" % (innerScript)
 
 	def setDashboardHTMLHeader(self):
 		"""
@@ -158,6 +88,60 @@ class FStyle:
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 		<script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
 		"""
+	
+	def render(self, extra_script, content, background_flag=False):
+		return self._FamcyStyle.render(extra_script, content, background_flag=False)
+
+class FStyleNavBar(FStyle):
+	def __init__(self):
+		super(FStyleNavBar, self).__init__()
+		self.userName = "admin"
+		self.userImg = os.path.join("", "static", "image/login.png")
+
+	def setNavBarInfo(self, user_name=None, user_img_path=None):
+		if user_name:
+			self.userName = user_name
+		if user_img_path:
+			self.userImg = user_img_path
+
+	def setDashboardNavBar(self):
+		if self.withLogin:
+			login_class = ""
+		else:
+			login_class = "display_none"
+
+		return"""<div class="nav_bar">
+			<div class="header_toggle">
+				<i class='bx bx-menu' id="header-toggle"></i>
+			</div>
+			<button class="member_section %s" onclick="window.location.href='/dashboard/profile'">
+				<img src="%s" id="user_icon">
+				<h3 id="user_name">%s</h3>
+			</button>
+		</div>
+		<script src='%s/static/js/side_bar.js' type="text/javascript"></script>""" % (login_class, self.userImg, self.userName, self.main_url)
+
+
+	def render(self):
+		return self.setDashboardNavBar()
+
+class FStyleSideBar(FStyle):
+	def __init__(self):
+		super(FStyleSideBar, self).__init__()
+		self.side_bar_title = Famcy.FManager["ConsoleConfig"]["side_bar_title"]
+		self.side_bar_hierarchy = Famcy.FManager["ConsoleConfig"]["side_bar_hierachy"]
+		self.title_style = "bx-game"
+		self.side_bar_style = {}
+
+	def setSideBarInfo(self, side_bar_title=None, side_bar_hierarchy=None, title_style=None, side_bar_style=None):
+		if side_bar_title:
+			self.side_bar_title = side_bar_title
+		if side_bar_hierarchy:
+			self.side_bar_hierarchy = side_bar_hierarchy
+		if title_style:
+			self.title_style = title_style
+		if side_bar_style:
+			self.side_bar_style = side_bar_style
 
 	def setDashboardSideBar(self):
 		"""
@@ -222,37 +206,67 @@ class FStyle:
 		</div>
 		</form>""" % (self.title_style, self.side_bar_title, btn_html, login_class)
 
-	def setDashboardNavBar(self):
-		if self.withLogin:
-			login_class = ""
-		else:
-			login_class = "display_none"
+	def render(self):
+		return self.setDashboardSideBar()
 
-		return"""<div class="nav_bar">
-			<div class="header_toggle">
-				<i class='bx bx-menu' id="header-toggle"></i>
-			</div>
-			<button class="member_section %s" onclick="window.location.href='/dashboard/profile'">
-				<img src="%s" id="user_icon">
-				<h3 id="user_name">%s</h3>
-			</button>
-		</div>
-		<script src='%s/static/js/side_bar.js' type="text/javascript"></script>""" % (login_class, self.userImg, self.userName, self.main_url)
+
+
+class FColorTheme(FStyle):
+	def __init__(self):
+		super(FColorTheme, self).__init__()
+		self.main_color = "#3968F7"
+		self.sub_color = "#94D4ED"
+		self.dark_color = "#2d2d2d"
+		self.white_color = "#ffffff"
+		self.light_grey_color = "#f1f1f1"
+		self.semi_grey_color = "#cccccc"
+
+	def setColor(self, main_color=None, sub_color=None, dark_color=None, white_color=None, light_grey_color=None, semi_grey_color=None):
+		if main_color:
+			self.main_color = main_color
+		if sub_color:
+			self.sub_color = sub_color
+		if dark_color:
+			self.dark_color = dark_color
+		if white_color:
+			self.white_color = white_color
+		if light_grey_color:
+			self.light_grey_color = light_grey_color
+		if semi_grey_color:
+			self.semi_grey_color = semi_grey_color
+
+	def setColorTheme(self):
+		innerScript = ""
+		innerScript += "document.documentElement.style.setProperty('--main-color', '" + self.main_color + "');"
+		innerScript += "document.documentElement.style.setProperty('--sub-color', '" + self.sub_color + "');"
+		innerScript += "document.documentElement.style.setProperty('--white-color', '" + self.white_color + "');"
+		innerScript += "document.documentElement.style.setProperty('--dark-color', '" + self.dark_color + "');"
+		innerScript += "document.documentElement.style.setProperty('--light-grey-color', '" + self.light_grey_color + "');"
+		innerScript += "document.documentElement.style.setProperty('--semi-grey-color', '" + self.semi_grey_color + "');"
+		return"""
+		<script>
+		%s
+		</script>
+		""" % (innerScript)
+
+	def render(self):
+		return self.setColorTheme()
+
+class FStyleLoader(FStyle):
+	def __init__(self):
+		super(FStyleLoader, self).__init__()
+		self.loaderType = "Spinner"
+
+	def setLoaderType(self, loader_type=None):
+		if loader_type:
+			self.loaderType = loader_type				# ("Bean_Eater" / "Blocks" / "Double_Ring" / "Ellipsis" / "Gear" / "Infinity" / "Pulse" / "Spinner")
 
 	def setLoader(self):
 		self.loaderType = self.loaderType if self.loaderType else "Spinner"
 		return '<div id="loading_holder" style="display: none;"><div id="loader"></div></div><script>generate_loader("' + self.loaderType + '")</script>'
 
-	def render(self, extra_script, content, background_flag=False):
-		html_template = "login.html" if self.styleName == "login" else "index.html"
+	def render(self):
+		return self.setLoader()
 
-		html_header = self.setDashboardHTMLHeader()
-		end_js = self.setDashboardJavaScript()
-		color_theme = self.setColorTheme()
-		load_spinner = self.setLoader()
-
-		side_bar = None if self.styleName == "login" else self.setDashboardSideBar()
-		nav_bar = None if self.styleName == "login" else self.setDashboardNavBar()
-
-		body_on_load = "sjxComet.request('background_work');" if background_flag else ""
-		return render_template(html_template, load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, side_bar=side_bar, nav_bar=nav_bar, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)
+		
+		

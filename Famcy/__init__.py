@@ -18,6 +18,7 @@ from Famcy._util_._fstyle import *
 from Famcy._util_._fpermissions import *
 from Famcy._util_._fthread import *
 from Famcy._util_._flayout import *
+from Famcy._util_._fstyle import *
 from Famcy._util_._fsubmission import *
 
 __codename__ = "Xinhai"
@@ -27,14 +28,23 @@ famcy_dir = os.path.dirname(Famcy.__file__)
 FamcyBlock = FBlock
 FamcyPage = FPage
 FamcyCard = FCard
-FamcyStyle = FStyle
 FamcyPermissions = FPermissions
 FamcyInputBlock = FInputBlock
 FamcyResponse = FResponse
 FamcyPriority = FPriority
+
+# Login Related
 FamcyUser = FUser
 FamcyLogin = FLogin
 FamcyLoginManager = None
+
+# Style Related
+FamcyStyle = FStyle
+FamcyStyleLoader = FStyleLoader
+FamcyColorTheme = FColorTheme
+FamcyStyleSideBar = FStyleSideBar
+FamcyStyleNavBar = FStyleNavBar
+
 
 def create_app(famcy_id, production=False):
     """
