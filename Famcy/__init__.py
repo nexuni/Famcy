@@ -33,6 +33,7 @@ FamcyPermissions = FPermissions
 FamcyInputBlock = FInputBlock
 FamcyResponse = FResponse
 FamcyPriority = FPriority
+FamcyLoginManager = None
 
 def create_app(famcy_id, production=False):
     """
@@ -65,9 +66,6 @@ def create_app(famcy_id, production=False):
     # Webpage related configs
     FManager["ConsoleConfig"] = FManager.read(FManager.console + "/famcy.yaml")
 
-    # Init print statement, also make sure blueprint didn't change for all time
-    print("===== Famcy Init Version Id ===== ", id(FManager["MainBlueprint"]))
-
     # ------------------------
     # --- Main app start zone
     # ------------------------
@@ -77,11 +75,6 @@ def create_app(famcy_id, production=False):
 
     # Init Sijax
     FManager["Sijax"].Sijax().init_app(app)
-
-    # Init login manager
-    FManager["LoginManager"].login_view = FManager["ConsoleConfig"]['member_http_url']
-    FManager["LoginManager"].init_app(app)
-    FManager["FamcyUser"].setup_user_loader(FManager["LoginManager"])
 
     # Init http client
     FManager.init_http_client(**FManager["ConsoleConfig"])
@@ -99,7 +92,6 @@ def create_app(famcy_id, production=False):
         exclude=["_", "."], otherwise=[], recursive=True)
     FManager.assign_to_global(globals(), system_items)
 
-
     # Get all sources of fresponse definitions 
     system_responses = FManager.importclassdir(FManager.main + "/_responses_", FamcyFileImportMode.name, "", 
         exclude=["_", "."], otherwise=[], recursive=True)
@@ -116,6 +108,14 @@ def create_app(famcy_id, production=False):
 
     # Register the main blueprint that is used in the FamcyPage
     app.register_blueprint(MainBlueprint)
+
+    # Init Login Manager and Related Stuffs
+    if FManager["ConsoleConfig"]["with_login"]:
+        # Init login manager
+        FManager["LoginManager"].login_view = FManager["ConsoleConfig"]['login_url']
+        FManager["LoginManager"].init_app(app)
+        FManager["FamcyUser"].setup_user_loader(FManager["LoginManager"])
+        assert FamcyLoginManager, "User Must Register Famcy Login Manager"
 
     return app
 
