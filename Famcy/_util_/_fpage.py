@@ -26,7 +26,7 @@ class FPage(FamcyWidget):
 	Rep:
 		* layout: FamcyLayout. Represent the layout
 		of Famcy cards of the page. 
-		* permission: FamcyPermissions. Represent
+		* permission: FPermissions. Represent
 		the allowed access of the user to this page. 
 
 	Interface:
@@ -44,7 +44,7 @@ class FPage(FamcyWidget):
 		self.route = route
 		self.style = style
 		self.layout = FamcyLayout(self, layout_mode)
-		self.permission = FamcyPermissions(permission_level)
+		self.permission = FPermissions(permission_level)
 		self.background_thread_flag = background_thread
 
 		if self.background_thread_flag:

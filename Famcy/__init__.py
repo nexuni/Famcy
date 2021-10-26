@@ -54,6 +54,7 @@ def create_app(famcy_id, production=False):
     # Famcy Manager that manage all global vars, imports, 
     # file systems, http
     FManager = FamcyManager(famcy_id, famcy_dir, production=production)
+    globals()["FManager"] = FManager
 
     # Header definitions
     FManager["CUSTOM_STATIC_PATH"] = FManager.console + "_static_"
@@ -71,6 +72,7 @@ def create_app(famcy_id, production=False):
 
     # System Wide blueprints and application object
     MainBlueprint = Blueprint('MainBlueprint', __name__)
+    globals()["MainBlueprint"] = MainBlueprint
     FManager["MainBlueprint"] = MainBlueprint
     FManager["CurrentApp"] = current_app
 
@@ -125,8 +127,8 @@ def create_app(famcy_id, production=False):
         # Init login manager
         FManager["LoginManager"].login_view = FManager["ConsoleConfig"]['login_url']
         FManager["LoginManager"].init_app(app)
-        FManager["FamcyUser"].setup_user_loader(FManager["LoginManager"])
-        assert FamcyLoginManager, "User Must Register Famcy Login Manager"
+        FManager["FamcyUser"].setup_user_loader()
+        assert Famcy.FamcyLoginManager, "User Must Register Famcy Login Manager"
 
     return app
 

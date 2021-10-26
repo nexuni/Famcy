@@ -10,11 +10,12 @@ class CustomLoginManager(Famcy.FamcyLogin):
 		self.prelogin(user)
 		# info_dict = Famcy.FManager.http_client.
 		# Authenticate
-		self.postlogin(self, user, info_dict):
+		self.postlogin(self, user, info_dict)
 
 	def load_famcy_user(self, user_id):
 		# info_dict = Famcy.FManager.http_client.
-		self.postlogin(Famcy.FamcyUser(), info_dict)
+		# self.postlogin(Famcy.FamcyUser(), info_dict)
+		pass
 
 	def prelogin(self, user):
 		pass
@@ -58,7 +59,7 @@ class LoginPage(Famcy.FamcyPage):
 	def login_submit(self, submission_obj, info_list):
 		response = Famcy.RedirectPage()
 		response.info_dict = {"redirect_url": "/"}
-		return Famcy.RedirectPage()
+		return response
 
 CustomLoginManager().register()
 login = LoginPage()
@@ -133,77 +134,77 @@ PAGE_CONTENT = [
 	}
 ]
 """
-import Famcy
-import json
-# from flask import url_for
+# import Famcy
+# import json
+# # from flask import url_for
 
 
-PAGE_HEADER = {
-    "title": ["Famcy 登入"],
-    "size": ["login_section"],
-    "type": ["input_form"]
-}
+# PAGE_HEADER = {
+#     "title": ["Famcy 登入"],
+#     "size": ["login_section"],
+#     "type": ["input_form"]
+# }
 
-phone_content = Famcy.input_form.generate_values_content("pureInput")
-phone_content.update({
-        "type": "pureInput",
-        "title": "帳號(電話號碼)",
-        "desc": "",
-        "input_type": "number",                               # text / number
-        "placeholder": "0900123456",
-        "mandatory": True
-    })
-password_content = Famcy.input_form.generate_values_content("inputPassword")
-password_content.update({
-        "type": "inputPassword",
-        "title": "密碼",
-        "desc": "",
-        "mandatory": True
-    })
-save_info_content = Famcy.input_form.generate_values_content("singleChoiceRadioInput")
-save_info_content.update({
-        "type": "singleChoiceRadioInput",
-        "title": "是否記住帳號密碼？",
-        "desc": "",
-        "mandatory": True,
-        "value": ["是", "否"]
-    })
+# phone_content = Famcy.input_form.generate_values_content("pureInput")
+# phone_content.update({
+#         "type": "pureInput",
+#         "title": "帳號(電話號碼)",
+#         "desc": "",
+#         "input_type": "number",                               # text / number
+#         "placeholder": "0900123456",
+#         "mandatory": True
+#     })
+# password_content = Famcy.input_form.generate_values_content("inputPassword")
+# password_content.update({
+#         "type": "inputPassword",
+#         "title": "密碼",
+#         "desc": "",
+#         "mandatory": True
+#     })
+# save_info_content = Famcy.input_form.generate_values_content("singleChoiceRadioInput")
+# save_info_content.update({
+#         "type": "singleChoiceRadioInput",
+#         "title": "是否記住帳號密碼？",
+#         "desc": "",
+#         "mandatory": True,
+#         "value": ["是", "否"]
+#     })
 
-url_btn_content = Famcy.input_form.generate_values_content("urlBtn")
-url_btn_content.update({
-        "title": "是否記住帳號密碼？",
-        "desc": "",
-        "url": "/iam/forgotPassword",
-        "button_name": "簡訊傳送密碼",
-        "style": "link_style",
-        "desc": "忘記密碼?"
+# url_btn_content = Famcy.input_form.generate_values_content("urlBtn")
+# url_btn_content.update({
+#         "title": "是否記住帳號密碼？",
+#         "desc": "",
+#         "url": "/iam/forgotPassword",
+#         "button_name": "簡訊傳送密碼",
+#         "style": "link_style",
+#         "desc": "忘記密碼?"
 
-    })
+#     })
 
-input_form_content = Famcy.input_form.generate_template_content([phone_content, password_content, save_info_content, url_btn_content])
-input_form_content.update({
-        "main_button_name": ["登入"], # btn name in same section must not be same
-        "action_after_post": "save",                    # (clean / save)
-        "main_desc": "",
-        "loader": True
-    })
-
-
-def login_submission(submission_list, **configs):
-    phone_num = submission_list[0][0]
-    password = submission_list[1][0]
-    remember = True if submission_list[2][0] == "是" else False
-
-    login_user = Famcy.user()
-    login_user.id = phone_num                                                     # need a generate id function
-    Famcy.LOGIN_API.update({"user_phone": phone_num})
-
-    Famcy.login(login_user, remember=remember)
-
-    submission_dict_handler = Famcy.SijaxSubmit("redirect_page")
-    return submission_dict_handler.return_submit_info(msg='main.home')
+# input_form_content = Famcy.input_form.generate_template_content([phone_content, password_content, save_info_content, url_btn_content])
+# input_form_content.update({
+#         "main_button_name": ["登入"], # btn name in same section must not be same
+#         "action_after_post": "save",                    # (clean / save)
+#         "main_desc": "",
+#         "loader": True
+#     })
 
 
-PAGE_CONTENT = [input_form_content]
+# def login_submission(submission_list, **configs):
+#     phone_num = submission_list[0][0]
+#     password = submission_list[1][0]
+#     remember = True if submission_list[2][0] == "是" else False
 
-PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT, [login_submission])
+#     login_user = Famcy.user()
+#     login_user.id = phone_num                                                     # need a generate id function
+#     Famcy.LOGIN_API.update({"user_phone": phone_num})
+
+#     Famcy.login(login_user, remember=remember)
+
+#     submission_dict_handler = Famcy.SijaxSubmit("redirect_page")
+#     return submission_dict_handler.return_submit_info(msg='main.home')
+
+
+# PAGE_CONTENT = [input_form_content]
+
+# PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT, [login_submission])
