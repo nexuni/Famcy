@@ -101,22 +101,22 @@ def create_app(famcy_id, production=False):
     # Import Fblocks from default and custom folders. 
     # ------------------------------
     # Get all sources of fblocks definitions 
-    system_items = FManager.importclassdir(FManager.main + "/_items_", FamcyFileImportMode.name, "", 
+    system_items = FManager.importclassdir(FManager.main + "/", "_items_", FamcyFileImportMode.name, "", 
         exclude=["_", "."], otherwise=[], recursive=True)
     FManager.assign_to_global(globals(), system_items)
 
     # Get all sources of fresponse definitions 
-    system_responses = FManager.importclassdir(FManager.main + "/_responses_", FamcyFileImportMode.name, "", 
+    system_responses = FManager.importclassdir(FManager.main + "/", "_responses_", FamcyFileImportMode.name, "", 
         exclude=["_", "."], otherwise=[], recursive=True)
     FManager.assign_to_global(globals(), system_responses)
 
     # Get all sources of fstyle definitions 
-    system_styles = FManager.importclassdir(FManager.main + "/_style_", FamcyFileImportMode.name, "", 
+    system_styles = FManager.importclassdir(FManager.main + "/", "_style_", FamcyFileImportMode.name, "", 
         exclude=["_", "."], otherwise=[], recursive=True)
     FManager.assign_to_global(globals(), system_styles)
 
     # Import module recursively for all pages in the console folder
-    class_dir = FManager.importclassdir(FManager.console, FamcyFileImportMode.fixed, "page", recursive=True, 
+    class_dir = FManager.importclassdir(FManager.console, "", FamcyFileImportMode.fixed, "page", recursive=True, 
             exclude=["_", "."], otherwise=None)
 
     # Register the main blueprint that is used in the FamcyPage
