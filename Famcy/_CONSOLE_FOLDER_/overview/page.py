@@ -115,3 +115,60 @@ import json
 
 # PAGE_CONTENT = [card_section]
 # PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT)
+
+class OverviewPage(Famcy.FamcyPage):
+    def __init__(self):
+        super(OverviewPage, self).__init__("/overview", Famcy.ClassicStyle(), background_thread=False)
+
+        self.card_1 = self.card1()
+        self.card_2 = self.card2()
+        self.card_3 = self.card3()
+
+        self.layout.addWidget(self.card_1, 0, 0)
+        self.layout.addWidget(self.card_2, 0, 1)
+        self.layout.addWidget(self.card_3, 1, 0, 1, 2)
+
+    def card1(self):
+        card1 = Famcy.FamcyCard()
+
+        pie_chart = Famcy.pie_chart()
+        
+        card1.layout.addWidget(pie_chart, 0, 0)
+        return card1
+
+    def card2(self):
+        card2 = Famcy.FamcyCard()
+
+        line_chart = Famcy.line_chart()
+
+        card2.layout.addWidget(line_chart, 0, 0)
+        return card2
+
+    def card3(self):
+        card3 = Famcy.FamcyCard()
+
+        bar_chart = Famcy.table()
+        bar_chart.update({
+              
+          })
+
+        card3.layout.addWidget(bar_chart, 0, 0)
+        return card3
+
+    def get_history_order(self):
+        send_dict = {
+            "service": "member",
+            "operation": "get_history_order",
+            "user_phone": "0905860683"
+        }
+        res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
+        res_ind = json.loads(res_str)["indicator"]
+        res_msg = json.loads(res_str)["message"]
+
+        self.table_info = res_msg
+        self.card_1.layout.content[0][0].update({
+            "data": self.table_info
+        })
+
+page = OverviewPage()
+page.register()
