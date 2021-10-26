@@ -86,7 +86,7 @@ def create_app(famcy_id, production=False):
     # ------------------------
     app = Flask(__name__)
     # Some sort of security here -> TODO check on this
-    app.config['SECRET_KEY'] = FManager.read(FManager["ConsoleConfig"]["credentials_url"])["flask_secret_key"].encode("utf-8")
+    app.config['SECRET_KEY'] = FManager.get_credentials("flask_secret_key", "").encode("utf-8")
 
     # Init Sijax
     FManager["Sijax"].Sijax().init_app(app)
