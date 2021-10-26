@@ -6,7 +6,12 @@ class CustomLoginManager(Famcy.FamcyLogin):
 	def __init__(self, always_remember=True):
 		super(CustomLoginManager, self).__init__(always_remember=always_remember)
 
-	def login(self, user):
+	def login(self, info_list):
+		"""
+		This is the main login function
+		to process user input and login
+		user to famcy and return login status
+		"""
 		self.prelogin(user)
 		# info_dict = Famcy.FManager.http_client.
 		# Authenticate
@@ -31,35 +36,72 @@ class LoginPage(Famcy.FamcyPage):
 	def __init__(self):
 		super(LoginPage, self).__init__("/iam/login", style)
 		self.main_form = self.login_form()
+		self.layout.addWidget(self.main_form, 0, 0)
 
 	def login_form(self):
 		login_input_form = Famcy.input_form()
+		login_input_form.loader = True
 
-		light_selection = Famcy.inputList()
-		light_selection.update({
-				"type": "inputList",
-				"title": "inputList1",
-				"desc": "some description some description some description some description some description some description some description some description some description some description some description",
-				"mandatory": False,
-				"value": ["red", "yellow", "green"],
-			})
-		light_selection["action_after_post"] = "save"
+		phone_content = Famcy.pureInput()
+		phone_content.update({
+		        "type": "pureInput",
+		        "title": "帳號(電話號碼)",
+		        "desc": "",
+		        "input_type": "number",
+		        "placeholder": "0900123456",
+		        "mandatory": True,
+		        "action_after_post": "save"
+		    })
+		password_content = Famcy.inputPassword()
+		password_content.update({
+		        "type": "inputPassword",
+		        "title": "密碼",
+		        "desc": "",
+		        "mandatory": True,
+		        "action_after_post": "save"
+		    })
+		save_info_content = Famcy.singleChoiceRadioInput()
+		save_info_content.update({
+		        "type": "singleChoiceRadioInput",
+		        "title": "是否記住帳號密碼？",
+		        "desc": "",
+		        "mandatory": True,
+		        "value": ["是", "否"],
+		        "action_after_post": "save"
+		    })
+
+		url_btn_content = Famcy.urlBtn()
+		url_btn_content.update({
+		        "title": "是否記住帳號密碼？",
+		        "desc": "",
+		        "url": "/iam/forgotPassword",
+		        "button_name": "簡訊傳送密碼",
+		        "style": "link_style",
+		        "desc": "忘記密碼?"
+		    })
 
 		submission_btn = Famcy.submitBtn()
 		submission_btn.update({
-			"title": "送出"
+			"title": "登入"
 		})
 
 		submission_btn.connect(self.login_submit, target=login_input_form)
 
-		login_input_form.layout.addWidget(light_selection, 0, 0)
-		login_input_form.layout.addWidget(submission_btn, 1, 0)
+		login_input_form.layout.addWidget(phone_content, 0, 0)
+		login_input_form.layout.addWidget(password_content, 1, 0)
+		login_input_form.layout.addWidget(save_info_content, 2, 0)
+		login_input_form.layout.addWidget(url_btn_content, 3, 0)
+		login_input_form.layout.addWidget(submission_btn, 4, 0)
 
 		return login_input_form
 
 	def login_submit(self, submission_obj, info_list):
-		response = Famcy.RedirectPage()
-		response.info_dict = {"redirect_url": "/"}
+		if Famcy.FamcyLoginManger.login(info_list):
+			response = Famcy.RedirectPage()
+			response.info_dict = {"redirect_url": "/"}
+		else:
+			response = Famcy.UpdateAlert()
+			response.info_dict = {"alert_type":"alert-warning", "alert_message":"登入驗證失敗", "alert_position":"prepend"}
 		return response
 
 CustomLoginManager().register()
