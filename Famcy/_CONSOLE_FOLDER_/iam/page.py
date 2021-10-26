@@ -22,6 +22,7 @@ class CustomLoginManager(Famcy.FamcyLogin):
 
 	def postlogin(self, user, user_info_dict):
 		user.id = user_info_dict["user_id"]
+		user.level = user_info_dict["membership_level"]
 		user.phone_num = user_info_dict["user_phone"]
 		user.name = user_info_dict["username"] if user_info_dict["username"] != "" else Famcy.FManager.get("default_name", "")
 		user.profile_pic_url = user_info_dict["profile_pic_url"] if user_info_dict["profile_pic_url"] != "" else Famcy.FManager.get("default_profile_pic_url", "")

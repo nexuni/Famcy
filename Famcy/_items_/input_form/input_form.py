@@ -40,10 +40,10 @@ class input_form(Famcy.FamcyCard):
 						}
 					}
 
-					console.log(response_dict)
 					var flag = checkform(form_element)
+					var token = document.head.querySelector("[name~=csrf-token][content]").content
 
-					Sijax.request('famcy_submission_handler', ['%s', response_dict]);
+					Sijax.request('famcy_submission_handler', ['%s', response_dict], { data: { csrf_token: token } });
 				});""" % (widget.id, json.dumps(widget.loader), self.id, str(id(widget.submission_obj)))
 
 		inner_html += """</script>"""

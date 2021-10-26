@@ -2,6 +2,7 @@ var Sijax = {};
 
 Sijax.PARAM_REQUEST = 'sijax_rq';
 Sijax.PARAM_ARGS = 'sijax_args';
+Sijax.PARAM_CSRF = 'csrf_token'
 
 Sijax.requestUri = null;
 

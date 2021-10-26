@@ -7,6 +7,11 @@ from os import listdir
 from gadgethiServerUtils.GadgethiClient import *
 from gadgethiServerUtils.file_basics import *
 
+import hmac
+from hashlib import sha1
+from flask import session, request, abort
+from werkzeug.security import safe_str_cmp
+
 class FamcyFileImportMode(enum.IntEnum):
 	name = 0
 	fixed = 1
@@ -67,6 +72,14 @@ class FamcyManager:
 
 	def init_http_client(self, **configs):
 		self.http_client = GadgetHiClient(**configs)
+
+	def get_pruned_url(self, url):
+		"""
+		This is the helper function
+		to get the pruned url without
+		/ at the beginning
+		"""
+		return url if len(url) == 0 or url[0] != "/" else url[1:]
 
 	def get_module_name(self, module):
 		"""
@@ -204,10 +217,38 @@ class FamcyManager:
 					# Extend recursively
 					directory_list.extend(sub_dir_list)
 
-				# Add the current full path f
-				if path != "":
-					directory_list.append(path + "/" + f)
-				else:
-					directory_list.append(f)
+				# Add the current path f
+				directory_list.append(self.get_pruned_url(path + "/" + f))
 
 		return directory_list
+
+	def register_csrf(self, app):
+		"""
+		This is the security method to 
+		prevent csrf. Prereq: MainBlueprint
+		needs to be defined
+		"""
+		def csrf_token():
+			"""
+			Generate a token string from bytes arrays. The token in the session is user
+			specific.
+			"""
+			if "_csrf_token" not in session:
+				session["_csrf_token"] = os.urandom(128)
+			return hmac.new(app.secret_key, session["_csrf_token"],
+					digestmod=sha1).hexdigest()
+
+		def check_csrf_token():
+			"""Checks that token is correct, aborting if not"""
+			if request.method in ("GET",): # not exhaustive list
+				return
+			token = request.form.get("csrf_token")
+			if token is None:
+				app.logger.warning("Expected CSRF Token: not present")
+				abort(400)
+			if not safe_str_cmp(token, csrf_token()):
+				app.logger.warning("CSRF Token incorrect")
+				abort(400)
+
+		app.template_global('csrf_token')(csrf_token)
+		app.before_request(check_csrf_token)

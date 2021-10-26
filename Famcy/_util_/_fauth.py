@@ -42,6 +42,9 @@ class FLogin(metaclass=abc.ABCMeta):
 
 # Define Famcy User
 class FUser(UserMixin):
+	def __init__(self):
+		self.id = str(id(self))
+		self.level = 0
 
 	@classmethod
 	def setup_user_loader(cls):

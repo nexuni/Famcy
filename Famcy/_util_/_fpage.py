@@ -132,11 +132,12 @@ class FPage(FamcyWidget):
 		"""
 		pass
 
-	def background_main_comet_handler(self, obj_response):
+	def background_main_comet_handler(self, obj_response, **kwargs):
 		"""
 		This is the main handler
 		for sijax comet plugin
 		"""
+		print("B: ", kwargs)
 		while True:
 			self.sijax_response = obj_response
 			try:
