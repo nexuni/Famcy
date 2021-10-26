@@ -128,6 +128,7 @@ class FStyleNavBar(FStyle):
 class FStyleSideBar(FStyle):
 	def __init__(self):
 		super(FStyleSideBar, self).__init__()
+		self.side_bar_title_href = Famcy.FManager["ConsoleConfig"]["main_page"]
 		self.side_bar_title = Famcy.FManager["ConsoleConfig"]["side_bar_title"]
 		self.side_bar_hierarchy = Famcy.FManager["ConsoleConfig"]["side_bar_hierachy"]
 		self.title_style = "bx-game"
@@ -175,7 +176,7 @@ class FStyleSideBar(FStyle):
 				icon = self.side_bar_style[main_title]
 
 			if not isinstance(top_level[main_title], list):
-				btn_html += '<div><button type="submit" name="side_bar_btn" value="' + top_level[main_title] + '" class="nav_link toggle_class display_flex"><i class="bx ' + icon + ' nav_icon"></i><span class="nav_name">' + main_title + '</span></button></div>'
+				btn_html += '<div><a href="' + top_level[main_title] + '" class="nav_link toggle_class display_flex"><i class="bx ' + icon + ' nav_icon"></i><span class="nav_name">' + main_title + '</span></a></div>'
 
 			else:
 				sub_btn_html = ''
@@ -184,27 +185,27 @@ class FStyleSideBar(FStyle):
 					sub_icon = defalut_icon
 					if sub_title in list_of_icon:
 						sub_icon = self.side_bar_style[sub_title]
-					sub_btn_html += '<button type="submit" name="side_bar_btn" value="' + sub_level[sub_title] + '" class="nav_link toggle_class display_flex"><i class="bx ' + sub_icon + ' nav_icon"></i><span class="nav_name">' + sub_title + '</span></button>'
+					sub_btn_html += '<a href="' + sub_level[sub_title] + '" class="nav_link toggle_class display_flex"><i class="bx ' + sub_icon + ' nav_icon"></i><span class="nav_name">' + sub_title + '</span></a>'
 				btn_html += '<div><div onclick="btnClickedFunc(this)" class="nav_link toggle_class display_flex"><i class="bx ' + icon + ' nav_icon"></i><span class="nav_name">' + main_title + '</span></div><div class="sub_title">' + sub_btn_html + '</div></div>'
 
 
-		return"""<form id="side-bar" action="/dashboard" method="post">
+		return"""<div id="side-bar">
 		<div class="l-navbar" id="nav-bar">
 			<div class="nav">
 				<div>
-					<button type="submit" name="side_bar_btn" value="-" class="nav_logo toggle_class display_flex">
+					<a href="%s" class="nav_logo toggle_class display_flex">
 						<i class='bx %s nav_logo-icon'></i>
 						<span class="nav_logo-name nav_name">%s</span>
-					</button>
+					</a>
 					<div class="nav_list">%s</div>
 				</div>
-				<button type="submit" name="side_bar_btn" value="logout" class="nav_link toggle_class display_flex %s">
+				<a href="logout" class="nav_link toggle_class display_flex %s">
 					<i class='bx bx-log-out nav_icon'></i>
 					<span class="nav_name">登出</span>
-				</button>
+				</a>
 			</div>
 		</div>
-		</form>""" % (self.title_style, self.side_bar_title, btn_html, login_class)
+		</div>""" % (self.side_bar_title_href, self.title_style, self.side_bar_title, btn_html, login_class)
 
 	def render(self):
 		return self.setDashboardSideBar()

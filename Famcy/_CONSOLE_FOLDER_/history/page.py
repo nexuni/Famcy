@@ -58,74 +58,156 @@ import Famcy
 import json
 
 
-send_dict = {
-    "service": "member",
-    "operation": "get_history_order",
-    "user_phone": Famcy._current_user.phone_num
-}
-res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
-res_ind = json.loads(res_str)["indicator"]
-res_msg = json.loads(res_str)["message"]
+# send_dict = {
+#     "service": "member",
+#     "operation": "get_history_order",
+#     "user_phone": Famcy._current_user.phone_num
+# }
+# res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
+# res_ind = json.loads(res_str)["indicator"]
+# res_msg = json.loads(res_str)["message"]
 
-table_info = []
+# table_info = []
 
-if res_ind:
-    table_info = res_msg
+# if res_ind:
+#     table_info = res_msg
 
 
-PAGE_HEADER = {
-	"title": ["豆日子歷史訂單"],
-	"size": ["inner_section"],
-	"type": ["table"]
-}
+# PAGE_HEADER = {
+# 	"title": ["豆日子歷史訂單"],
+# 	"size": ["inner_section"],
+# 	"type": ["table"]
+# }
 
-table_content = Famcy.table.generate_template_content()
-table_content.update({
-		"main_button_name": [],
-		"input_button": "none",
-        "page_detail": False,
-        "page_detail_content": ["<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>"],
-        "page_footer": True,
-        "page_footer_detail": {
-            "page_size": 10,
-            "page_list": [10, 20, "all"]
-        },
-        "column": [[{
-                "title": 'datetime',
-                "field": 'datetime',
-                "rowspan": 1,
-                "align": 'center',
-                "valign": 'middle',
-                "sortable": True
-            },
-            {
-                "title": 'order',
-                "field": 'order',
-                "rowspan": 1,
-                "align": 'center',
-                "valign": 'middle',
-                "sortable": True
-            },
-            {
-                "title": 'total_price',
-                "field": 'total_price',
-                "rowspan": 1,
-                "align": 'center',
-                "valign": 'middle',
-                "sortable": True
-            },
-            {
-                "title": 'used_point',
-                "field": 'used_point',
-                "rowspan": 1,
-                "align": 'center',
-                "valign": 'middle',
-                "sortable": True
-            }
-        ]],
-        "data": table_info
-	})
+# table_content = Famcy.table.generate_template_content()
+# table_content.update({
+# 		"main_button_name": [],
+# 		"input_button": "none",
+#         "page_detail": False,
+#         "page_detail_content": ["<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>"],
+#         "page_footer": True,
+#         "page_footer_detail": {
+#             "page_size": 10,
+#             "page_list": [10, 20, "all"]
+#         },
+#         "column": [[{
+#                 "title": 'datetime',
+#                 "field": 'datetime',
+#                 "rowspan": 1,
+#                 "align": 'center',
+#                 "valign": 'middle',
+#                 "sortable": True
+#             },
+#             {
+#                 "title": 'order',
+#                 "field": 'order',
+#                 "rowspan": 1,
+#                 "align": 'center',
+#                 "valign": 'middle',
+#                 "sortable": True
+#             },
+#             {
+#                 "title": 'total_price',
+#                 "field": 'total_price',
+#                 "rowspan": 1,
+#                 "align": 'center',
+#                 "valign": 'middle',
+#                 "sortable": True
+#             },
+#             {
+#                 "title": 'used_point',
+#                 "field": 'used_point',
+#                 "rowspan": 1,
+#                 "align": 'center',
+#                 "valign": 'middle',
+#                 "sortable": True
+#             }
+#         ]],
+#         "data": table_info
+# 	})
 
-PAGE_CONTENT = [table_content]
+# PAGE_CONTENT = [table_content]
 
-PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT)
+# PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT)
+
+class HistoryPage(Famcy.FamcyPage):
+    def __init__(self):
+        super(HistoryPage, self).__init__("/history", Famcy.ClassicStyle(), background_thread=False)
+        
+        self.table_info = []
+
+        self.card_1 = self.card1()
+        self.layout.addWidget(self.card_1, 0, 0)
+
+    def card1(self):
+        card1 = Famcy.FamcyCard()
+
+        card1.preload = self.get_history_order
+
+        table_content = Famcy.table()
+        table_content.update({
+              "main_button_name": [],
+              "input_button": "none",
+                "page_detail": False,
+                "page_detail_content": ["<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>"],
+                "page_footer": True,
+                "page_footer_detail": {
+                    "page_size": 10,
+                    "page_list": [10, 20, "all"]
+                },
+                "column": [[{
+                        "title": 'datetime',
+                        "field": 'datetime',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": 'order',
+                        "field": 'order',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": 'total_price',
+                        "field": 'total_price',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": 'used_point',
+                        "field": 'used_point',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    }
+                ]],
+                "data": self.table_info
+          })
+
+        card1.layout.addWidget(table_content, 0, 0)
+        return card1
+
+    def get_history_order(self):
+        send_dict = {
+            "service": "member",
+            "operation": "get_history_order",
+            "user_phone": "0905860683"
+        }
+        res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
+        res_ind = json.loads(res_str)["indicator"]
+        res_msg = json.loads(res_str)["message"]
+
+        self.table_info = res_msg
+        self.card_1.layout.content[0][0].update({
+            "data": self.table_info
+        })
+
+page = HistoryPage()
+page.register()
