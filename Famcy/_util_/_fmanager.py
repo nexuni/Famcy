@@ -67,11 +67,15 @@ class FamcyManager:
 	def get(self, key, default=None):
 		return self.global_var_dict.get(key, default)
 
+	def get_credentials(self, key, default=""):
+		return self.read(self["ConsoleConfig"]["credentials_url"]).get(key, default)
+
 	def read(self, path):
 		return read_config_yaml(path)
 
 	def init_http_client(self, **configs):
-		self.http_client = GadgetHiClient(**configs)
+		self.http_client = GadgetHiClient(custom_credentials_loc=self["ConsoleConfig"]["credentials_url"], 
+				**configs)
 
 	def get_pruned_url(self, url):
 		"""
@@ -243,6 +247,7 @@ class FamcyManager:
 			if request.method in ("GET",): # not exhaustive list
 				return
 			token = request.form.get("csrf_token")
+			print(request.form)
 			if token is None:
 				app.logger.warning("Expected CSRF Token: not present")
 				abort(400)

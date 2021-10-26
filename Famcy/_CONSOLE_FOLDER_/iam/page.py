@@ -6,27 +6,41 @@ class CustomLoginManager(Famcy.FamcyLogin):
 	def __init__(self, always_remember=True):
 		super(CustomLoginManager, self).__init__(always_remember=always_remember)
 
+	def get_user_api(self, user_id):
+		"""
+		This is the function to get
+		the user object from the user_id
+		"""
+		user.id = user_info_dict["user_id"]
+
+	def authenticate_user(self, user, password):
+		"""
+		This is the function to authenticate
+		the user info. The input user should
+		at least have the id attribute. 
+		"""
+		pass
+
 	def login(self, info_list):
 		"""
 		This is the main login function
 		to process user input and login
 		user to famcy and return login status
 		"""
-		self.prelogin(user)
-		# info_dict = Famcy.FManager.http_client.
-		# Authenticate
-		self.postlogin(self, user, info_dict)
+		user = Famcy.FamcyUser()
+		user.id = info_list[0][0]
+		user.password = info_list[1][0]
+		info_dict = self.authenticate_user(user, user.password)
+		self.postlogin(user, info_dict)
 
 	def load_famcy_user(self, user_id):
-		# info_dict = Famcy.FManager.http_client.
-		# self.postlogin(Famcy.FamcyUser(), info_dict)
-		pass
-
-	def prelogin(self, user):
-		pass
+		user = Famcy.FamcyUser()
+		user.id = user_id
+		info_dict = self.get_user_info(user)
+		self.postlogin(user, info_dict)
+		return user
 
 	def postlogin(self, user, user_info_dict):
-		user.id = user_info_dict["user_id"]
 		user.level = user_info_dict["membership_level"]
 		user.phone_num = user_info_dict["user_phone"]
 		user.name = user_info_dict["username"] if user_info_dict["username"] != "" else Famcy.FManager.get("default_name", "")
@@ -96,7 +110,7 @@ class LoginPage(Famcy.FamcyPage):
 		return login_input_form
 
 	def login_submit(self, submission_obj, info_list):
-		if Famcy.FamcyLoginManger.login(info_list):
+		if Famcy.FamcyLoginManager.login(info_list):
 			response = Famcy.RedirectPage()
 			response.info_dict = {"redirect_url": "/"}
 		else:
