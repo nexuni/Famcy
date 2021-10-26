@@ -2,6 +2,7 @@ import abc
 import enum
 import Famcy
 import _ctypes
+from Famcy._responses_.UpdateAlert
 
 # GLOBAL HELPER
 def get_fsubmission_obj(obj_id):
@@ -9,14 +10,42 @@ def get_fsubmission_obj(obj_id):
 	return _ctypes.PyObj_FromPtr(int(obj_id))
 
 def exception_handler(func):
+	"""
+	This is the decorator to 
+	assign the exception response
+	when there is an exception.
+	"""
+	def alert_response(info_dict, form_id):
+		"""
+		Template for generating alert response
+		"""
+		inner_text = '''
+		<div class="alert %s" id="alert_msg_%s" role="alert">
+			%s
+		</div>
+		''' % (info_dict["alert_type"], form_id, info_dict["alert_message"])
+
+		extra_script = '''
+		$("#alert_msg_%s").fadeTo(2000, 500).slideUp(500, function(){
+			$("#alert_msg_%s").slideUp(500);
+			$("#alert_msg_%s").remove();
+		});
+		''' % (form_id, form_id, form_id)
+
+		return inner_text, extra_script
+
 	def inner_function(*args, **kwargs):
 		try:
 			func(*args, **kwargs)
 		except:
-			inner_text, extra_script = generate_alert({"alert_type":"alert-warning", "alert_message":"系統異常", "alert_position":"prepend"}, args[1])
-			args[0].html_prepend('#'+args[3], inner_text)
+			# Arg1 is intend to be the submission id of the submission object
+			fsubmission_obj = get_fsubmission_obj(args[1])
+			inner_text, extra_script = alert_response({"alert_type":"alert-warning", "alert_message":"系統異常", "alert_position":"prepend"}, fsubmission_obj.origin.id)
+			# args[0] is the sijax response object
+			args[0].html_prepend('#'+fsubmission_obj.target.id, inner_text)
 			args[0].script(extra_script)
 			args[0].script("$('#loading_holder').css('display','none');")
+
 	return inner_function
 
 def put_submissions_to_list(sub_dict):
@@ -53,7 +82,7 @@ class FSubmissionSijaxHandler(object):
 	and offer a response. 
 	"""
 	@staticmethod
-	# @exception_handler
+	@exception_handler
 	def famcy_submission_handler(obj_response, fsubmission_id, info_dict):
 		"""
 		This is the main submission handler that handles all
