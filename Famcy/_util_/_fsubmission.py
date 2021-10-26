@@ -2,7 +2,6 @@ import abc
 import enum
 import Famcy
 import _ctypes
-from Famcy._responses_.UpdateAlert
 
 # GLOBAL HELPER
 def get_fsubmission_obj(obj_id):

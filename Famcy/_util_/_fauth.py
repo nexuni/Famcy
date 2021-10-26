@@ -42,7 +42,6 @@ class FLogin(metaclass=abc.ABCMeta):
 
 # Define Famcy User
 class FUser(UserMixin):
-	login_manager = Famcy.FamcyLoginManager
 
 	@classmethod
 	def setup_user_loader(cls):
@@ -51,7 +50,7 @@ class FUser(UserMixin):
 		login manager user loader function. 
 		"""
 		def load_user(user_id):
-			return self.login_manager.load_famcy_user(user_id)
+			return Famcy.FamcyLoginManager.load_famcy_user(user_id)
 
 		Famcy.FManager["LoginManager"].user_loader(load_user)
 
