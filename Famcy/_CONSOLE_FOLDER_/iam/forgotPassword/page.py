@@ -2,7 +2,10 @@ import Famcy
 import json
 # from flask import url_for
 
-
+class ForgotPasswordPage(Famcy.FamcyPage):
+	def __init__(self):
+		super(ForgotPasswordPage, self).__init__("/iam/fpw", style)
+		
 PAGE_HEADER = {
 	"title": ["Famcy 修改密碼"],
 	"size": ["login_section"],
