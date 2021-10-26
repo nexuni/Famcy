@@ -38,6 +38,9 @@ FamcyUser = FUser
 FamcyLogin = FLogin
 FamcyLoginManager = None
 
+# Layout Related
+FamcyLayoutMode = FLayoutMode
+
 # Style Related
 FamcyStyle = FStyle
 FamcyStyleLoader = FStyleLoader
