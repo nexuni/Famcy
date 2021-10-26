@@ -82,11 +82,12 @@ class FSubmissionSijaxHandler(object):
 	"""
 	@staticmethod
 	@exception_handler
-	def famcy_submission_handler(obj_response, fsubmission_id, info_dict):
+	def famcy_submission_handler(obj_response, fsubmission_id, info_dict, **kwargs):
 		"""
 		This is the main submission handler that handles all
 		the submission traffics. 
 		"""
+		print("SUB ARGS: ", kwargs)
 		# Get the submission object
 		fsubmission_obj = get_fsubmission_obj(fsubmission_id)
 		info_list = put_submissions_to_list(info_dict)

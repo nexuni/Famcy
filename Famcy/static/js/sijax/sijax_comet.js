@@ -1,8 +1,12 @@
 var sjxComet = {};
 
-sjxComet.request = function (functionName, callArgs) {
+sjxComet.request = function (functionName, callArgs, token) {
 	if (callArgs === undefined) {
 		callArgs = [];
+	}
+
+	if (token === undefined) {
+		token = "";
 	}
 
 	var iframe = document.createElement('iframe'),
@@ -45,6 +49,12 @@ sjxComet.request = function (functionName, callArgs) {
 	element.setAttribute('type', 'hidden');
 	element.setAttribute('name', Sijax.PARAM_ARGS);
 	element.setAttribute('value', JSON.stringify(callArgs));
+	formObject.append(element);
+
+	var element = document.createElement('input');
+	element.setAttribute('type', 'hidden');
+	element.setAttribute('name', Sijax.PARAM_CSRF);
+	element.setAttribute('value', token);
 	formObject.append(element);
 
 	formObject.trigger('submit');

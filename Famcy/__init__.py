@@ -45,7 +45,6 @@ FamcyColorTheme = FColorTheme
 FamcyStyleSideBar = FStyleSideBar
 FamcyStyleNavBar = FStyleNavBar
 
-
 def create_app(famcy_id, production=False):
     """
     Main creation function of the famcy application. 
@@ -84,13 +83,15 @@ def create_app(famcy_id, production=False):
     # ------------------------
     app = Flask(__name__)
     # Some sort of security here -> TODO check on this
-    app.config['SECRET_KEY'] = '00famcy00!2'
+    app.config['SECRET_KEY'] = FManager.read(FManager["ConsoleConfig"]["credentials_url"])["flask_secret_key"].encode("utf-8")
 
     # Init Sijax
     FManager["Sijax"].Sijax().init_app(app)
 
     # Init http client
     FManager.init_http_client(**FManager["ConsoleConfig"])
+    # Security Enhance
+    FManager.register_csrf(app)
 
     # User Static Data
     @MainBlueprint.route('/asset/<path:filename>')
