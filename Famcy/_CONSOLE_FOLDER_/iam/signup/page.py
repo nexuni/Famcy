@@ -1,5 +1,9 @@
 import Famcy
 
+class SignupPage(Famcy.FamcyPage):
+    def __init__(self):
+        super(SignupPage, self).__init__("/iam/signup", style)
+
 PAGE_HEADER = {
     "title": ["Famcy 會員註冊"],
     "size": ["login_section"],
