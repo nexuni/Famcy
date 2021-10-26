@@ -18,6 +18,7 @@ from Famcy._util_._fstyle import *
 from Famcy._util_._fpermissions import *
 from Famcy._util_._fthread import *
 from Famcy._util_._flayout import *
+from Famcy._util_._fstyle import *
 from Famcy._util_._fsubmission import *
 
 __codename__ = "Xinhai"
@@ -32,6 +33,11 @@ FamcyPermissions = FPermissions
 FamcyInputBlock = FInputBlock
 FamcyResponse = FResponse
 FamcyPriority = FPriority
+
+FamcyStyleLoader = FStyleLoader
+FamcyColorTheme = FColorTheme
+FamcyStyleSideBar = FStyleSideBar
+FamcyStyleNavBar = FStyleNavBar
 
 # Famcy Manager that manage all global vars, imports, 
 # file systems, http
