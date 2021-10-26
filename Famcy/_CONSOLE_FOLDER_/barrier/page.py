@@ -1,8 +1,6 @@
 import Famcy
 import random
 
-style = Famcy.ClassicStyle()
-
 class VideoStream1(Famcy.FamcyPage):
 	def __init__(self):
 		super(VideoStream1, self).__init__("/video_1", Famcy.VideoStreamStyle("/video_1"))
@@ -12,7 +10,7 @@ v1.register()
 
 class BarrierPage(Famcy.FamcyPage):
 	def __init__(self):
-		super(BarrierPage, self).__init__("/barrier", style, background_thread=True)
+		super(BarrierPage, self).__init__("/barrier", Famcy.ClassicStyle(), background_thread=True)
 		self.card_1 = self.card1()
 		self.card_2 = self.card2()
 		self.card_3 = self.card3()

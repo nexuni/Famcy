@@ -61,7 +61,7 @@ html{
     min-width: 40px !important;
 }
 
-.nav button {
+.nav a {
 	text-decoration: none !important;
 	background-color: transparent;
 	border: 0;
@@ -77,6 +77,7 @@ html{
 }
 
 .nav_logo {
+	text-decoration: none;
     margin: 20px 0;
 }
 
@@ -92,12 +93,14 @@ html{
 }
 
 .nav_link {
+	text-decoration: none;
     color: var(--white-color);
     transition: .3s;
     cursor: pointer !important;
 }
 
 .nav_link:hover {
+	text-decoration: none;
     color: var(--white-color);
     background-color: var(--sub-color);
 }
@@ -119,11 +122,13 @@ html{
 }
 
 .sub_title .nav_link {
+	text-decoration: none;
     color: var(--white-color);
     background-color: var(--dark-color);
 }
 
 .sub_title .nav_link:hover {
+	text-decoration: none;
     color: var(--white-color);
     background-color: var(--sub-color);
 }

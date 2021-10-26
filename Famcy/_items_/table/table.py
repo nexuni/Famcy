@@ -7,7 +7,20 @@ class table(Famcy.FamcyBlock):
     table. 
     """
     def __init__(self, **kwargs):
+        self.value = table.generate_template_content()
         super(table, self).__init__(**kwargs)
+
+        self.header_script += """
+        <!--table-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
+        <link href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css" rel="stylesheet">
+        <script src="https://unpkg.com/tableexport.jquery.plugin/tableExport.min.js"></script>
+        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table-locale-all.min.js"></script>
+        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/extensions/export/bootstrap-table-export.min.js"></script>
+        """
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -18,8 +31,6 @@ class table(Famcy.FamcyBlock):
         - Return a content dictionary
         """
         return {
-            "main_button_name": ["送出資料1", "送出資料2"],
-            
             "input_button": "checkbox",                     # ("checkbox" / "radio" / "none")
             "input_value_col_field": "col_title1",          # if input_button != "none"
 
@@ -32,8 +43,6 @@ class table(Famcy.FamcyBlock):
                 "page_size": 1,
                 "page_list": [1, 2, "all"]
             },
-            "submit_type": "update_block_html",
-            "loader": False,
             "column": [[{
                     "title": 'col_title1 name',
                     "field": 'col_title1',
@@ -75,33 +84,16 @@ class table(Famcy.FamcyBlock):
                     "col_title2": "row_content32",
                     "col_title3": "row_content33"
                 }
-            ],
-            "js_after_func_dict": {},
-            "js_after_func_name": "empty_func",             # extra script which add after fblock item
-            "header_script": "",            # extra script which add in header section
-            "before_function": [],          # python function that you want to run before page refresh
+            ]
         }
 
-    def render_html(self, context, **configs):
-
-        for action in context["before_function"]:
-            action(context, **configs)
-
-        main_button_html = ""
-        index = 0
-        for main_button_str in context["main_button_name"]:
-            main_button_html += '<input id="mb_' + str(index) + context["id"] +'" class="main_submit_btn" type="submit" name="send" value="' + main_button_str + '">'
-            index += 1
+    def render_inner(self):
 
         return """
-        
-        <form id="%s" action="%s" method="%s" onsubmit="return false;">
-            <div class="table_holder">
-            <div id="toolbar_%s"></div>
-            <table id="table_%s"></table>
-            %s
-            </div>
-        </form>
+        <div class="table_holder">
+        <div id="toolbar_%s"></div>
+        <table id="table_%s"></table>
+        </div>
         
         <script>
             var table_value = %s;
@@ -178,41 +170,4 @@ class table(Famcy.FamcyBlock):
                 initTable%s()
             })
         </script>
-        <script type="text/javascript">
-            for(var i=0; i < %s; i++) {
-                $('#mb_' + i + '%s').bind('click', (e) => {
-                    if (%s) {
-                        $('#loading_holder').css("display","flex");
-                    }
-                    var form_element = document.getElementById('%s')
-                    var formData = new FormData(form_element)
-                    var response_dict = {}
-                    response_dict[e.currentTarget.id] = [e.currentTarget.value]
-                    for (var pair of formData.entries()) {
-                        if (!(pair[0] in response_dict)) {
-                            response_dict[pair[0]] = [pair[1]]
-                        }
-                        else {
-                            response_dict[pair[0]].push(pair[1])
-                        }
-                    }
-                    Sijax.request('update_page', ["%s", "%s", "%s", response_dict]);
-                });
-            }
-        </script>
-        <script>%s('%s', %s)</script>
-        """ % (context["id"], context["action"], context["method"], context["id"], context["id"], main_button_html, json.dumps(context), context["id"], context["id"], context["id"], context["id"], context["id"], len(context["main_button_name"]), context["id"], context["loader"], context["id"], context["id"], context["action"], context["target_id"], context["js_after_func_name"], context["id"], json.dumps(context["js_after_func_dict"]))
-
-    def extra_script(self, header_script, **configs):
-        return"""
-        <!--table-->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
-        <link href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css" rel="stylesheet">
-        <script src="https://unpkg.com/tableexport.jquery.plugin/tableExport.min.js"></script>
-        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
-        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table-locale-all.min.js"></script>
-        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/extensions/export/bootstrap-table-export.min.js"></script>
-        %s
-        """ % (header_script)
+        """ % (self.id, self.id, json.dumps(self.value), self.id, self.id, self.id, self.id, self.id)

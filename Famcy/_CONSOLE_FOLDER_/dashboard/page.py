@@ -121,22 +121,4 @@ card_section.update({
 PAGE_CONTENT = [card_section]
 PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT)
 
-# PAGE_HEADER = {
-# 	"title": ["Nexuni 員工後台"],
-#     "size": ["inner_section"],
-#     "type": ["video_stream"]
-# }
 
-# video_stream_block = Famcy.video_stream.generate_template_content()
-# video_stream_block.update({
-# 		"rtsp_address": ["rtsp://admin:tungtung12@192.168.8.20:554/Streaming/Channels/101", 
-# 						 "rtsp://admin:tungtung12@192.168.8.20:554/Streaming/Channels/201", 
-# 						 "rtsp://admin:tungtung12@192.168.8.20:554/Streaming/Channels/301"],
-# 		"holder_width": ["50%", "50%", "50%"],
-# 		"holder_height": ["300px", "300px", "300px"],
-# 		"video_timeout": [5, 5, 5]
-# 	})
-
-# PAGE_CONTENT = [video_stream_block]
-
-# PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT)
