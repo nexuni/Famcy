@@ -1,4 +1,5 @@
 import os
+import sys
 import enum
 import importlib
 from os import listdir
@@ -43,6 +44,9 @@ class FamcyManager:
 		self.main = famcy_url
 		self.console = os.path.join(self.main, self.USER_DEFAULT_FOLDER) if not production else self.PRODUCTION_FOLDER
 		self.http_client = None
+		# Append famcy system path and user console folder path
+		sys.path.append(self.main)
+		sys.path.append(self.console)
 
 		# Init header definition
 		self.global_var_dict = {}
@@ -105,8 +109,8 @@ class FamcyManager:
 			block = self.get_module_name(module)
 			global_dict[block] = getattr(module, block)
 
-	def importclassdir(self, module_url, file_import_mode, import_arg, exclude=[], 
-			recursive=False, otherwise=None):
+	def importclassdir(self, header_url, module_url, file_import_mode, import_arg, 
+			exclude=[], recursive=False, otherwise=None):
 		"""
 		This is the helper function to import
 		all classes from a directory. The way
@@ -122,6 +126,9 @@ class FamcyManager:
 			* import the module with the name import_arg
 
 		- Input:
+			* header_url: a string that defines the url to the module. 
+				the path must be separated with / and ends without /.
+				Need to prune when importing modules
 			* module_url: a string that defines the url to the module. 
 				the path must be separated with / and ends without /
 			* file_import_mode: FamcyFileImportMode
@@ -131,8 +138,8 @@ class FamcyManager:
 		ret_list = otherwise
 
 		# Get all dir path
-		dir_list = self.listdir_exclude(module_url, exclude_list=exclude, recursive=recursive, 
-				only_dir=True)
+		dir_list = self.listdir_exclude(header_url, module_url, exclude_list=exclude, 
+				recursive=recursive, only_dir=True)
 
 		import_dir_list = []
 		for dir_path in dir_list:
@@ -144,7 +151,7 @@ class FamcyManager:
 
 			# Import class instance. 
 			# Prune root directory
-			pruned_url = dir_path.replace(self.main, self.PACKAGE_NAME) + "/" + module_name
+			pruned_url = dir_path + "/" + module_name
 			module_string = pruned_url.replace("/", ".").replace("\\", ".")
 			try:
 				class_inst = importlib.import_module(module_string)
@@ -162,7 +169,7 @@ class FamcyManager:
 
 		return ret_list
 
-	def listdir_exclude(self, path, exclude_list=[], recursive=False, 
+	def listdir_exclude(self, header, path, exclude_list=[], recursive=False, 
 			only_dir=False):
 		"""
 		This is the helper function to list
@@ -178,8 +185,8 @@ class FamcyManager:
 			list. [Full Path]
 		"""
 		directory_list = []
-		for f in listdir(path):
-			full_path_f = path + "/" + f
+		for f in listdir(header + path):
+			full_path_f = header + path + "/" + f
 			# If we only want to return directories, 
 			# Check this condition. 
 			if only_dir and not os.path.isdir(full_path_f):
@@ -192,12 +199,15 @@ class FamcyManager:
 			else:
 				# If recursive mode and the file is a directory
 				if recursive and os.path.isdir(full_path_f):
-					sub_dir_list = self.listdir_exclude(full_path_f, exclude_list=exclude_list, recursive=recursive, 
+					sub_dir_list = self.listdir_exclude(header, path + "/" + f, exclude_list=exclude_list, recursive=recursive, 
 						only_dir=only_dir)
 					# Extend recursively
 					directory_list.extend(sub_dir_list)
 
 				# Add the current full path f
-				directory_list.append(full_path_f)
+				if path != "":
+					directory_list.append(path + "/" + f)
+				else:
+					directory_list.append(f)
 
 		return directory_list
