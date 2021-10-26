@@ -9,7 +9,7 @@ import Famcy
 import json
 
 from Famcy._util_._fmanager import *
-from Famcy._util_._fuser import *
+from Famcy._util_._fauth import *
 from Famcy._util_._fblock import *
 from Famcy._util_._fpage import *
 from Famcy._util_._fcard import *
@@ -26,6 +26,7 @@ famcy_dir = os.path.dirname(Famcy.__file__)
 
 # Create Imports for User usage
 FamcyBlock = FBlock
+FamcyLogin = FLogin
 FamcyPage = FPage
 FamcyCard = FCard
 FamcyStyle = FStyle
@@ -33,46 +34,48 @@ FamcyPermissions = FPermissions
 FamcyInputBlock = FInputBlock
 FamcyResponse = FResponse
 FamcyPriority = FPriority
-
 FamcyStyleLoader = FStyleLoader
 FamcyColorTheme = FColorTheme
 FamcyStyleSideBar = FStyleSideBar
 FamcyStyleNavBar = FStyleNavBar
 
-# Famcy Manager that manage all global vars, imports, 
-# file systems, http
-FManager = FamcyManager(famcy_dir)
-
-# Header definitions
-FManager["CUSTOM_STATIC_PATH"] = FManager.console + "_static_"
-
-# Sijax, submission related
-FManager["Sijax"] = flask_sijax
-# FManager["SijaxSubmit"] = SubmitType
-FManager["SijaxStaticPath"] = FManager.main + 'static/js/sijax/'
-FManager["SijaxJsonUri"] = '/static/js/sijax/json2.js'
-
-# User, login related init
-FManager["FamcyUser"] = FManager.importclass(FManager.console + "famcy_user", "CustomFamcyUser", otherwise=FamcyUser)
-FManager["LoginManager"] = LoginManager()
-FManager["CurrentUser"] = current_user
-
-# System Wide blueprints and application object
-MainBlueprint = Blueprint('MainBlueprint', __name__)
-FManager["MainBlueprint"] = MainBlueprint
-FManager["CurrentApp"] = current_app
-
-# Webpage related configs
-FManager["ConsoleConfig"] = FManager.read(FManager.console + "/famcy.yaml")
-
-# Init print statement, also make sure blueprint didn't change for all time
-print("===== Famcy Init Version Id ===== ", id(FManager["MainBlueprint"]))
-
-def create_app():
+def create_app(famcy_id, production=False):
     """
     Main creation function of the famcy application. 
     Can set to different factory settings in the future. 
     """
+    # Famcy Manager that manage all global vars, imports, 
+    # file systems, http
+    FManager = FamcyManager(famcy_id, famcy_dir, production=production)
+
+    # Header definitions
+    FManager["CUSTOM_STATIC_PATH"] = FManager.console + "_static_"
+
+    # Sijax, submission related
+    FManager["Sijax"] = flask_sijax
+    # FManager["SijaxSubmit"] = SubmitType
+    FManager["SijaxStaticPath"] = FManager.main + 'static/js/sijax/'
+    FManager["SijaxJsonUri"] = '/static/js/sijax/json2.js'
+
+    # User, login related init
+    FManager["FamcyUser"] = FamcyUser
+    FManager["LoginManager"] = LoginManager()
+    FManager["CurrentUser"] = current_user
+
+    # System Wide blueprints and application object
+    MainBlueprint = Blueprint('MainBlueprint', __name__)
+    FManager["MainBlueprint"] = MainBlueprint
+    FManager["CurrentApp"] = current_app
+
+    # Webpage related configs
+    FManager["ConsoleConfig"] = FManager.read(FManager.console + "/famcy.yaml")
+
+    # Init print statement, also make sure blueprint didn't change for all time
+    print("===== Famcy Init Version Id ===== ", id(FManager["MainBlueprint"]))
+
+    # ------------------------
+    # --- Main app start zone
+    # ------------------------
     app = Flask(__name__)
     # Some sort of security here -> TODO check on this
     app.config['SECRET_KEY'] = '00famcy00!2'

@@ -21,10 +21,13 @@ class FPermissions:
 	def __init__(self, lowest_permission):
 		self.lowest_permission = lowest_permission
 
+	def required_login(self):
+		return self.lowest_permission > int(FamcyPermissionLevel.Guest)
+
 	def verify(self, current_user):
 		"""
 		This is the method to verify whether
 		current Famcy user met the req of 
 		the permission. 
 		"""
-		pass
+		return current_user.level >= self.lowest_permission
