@@ -54,6 +54,9 @@ class FamcyManager:
 	def __setitem__(self, key, item):
 		self.global_var_dict[key] = item
 
+	def get(self, key, default=None):
+		return self.global_var_dict.get(key, default)
+
 	def read(self, path):
 		return read_config_yaml(path)
 

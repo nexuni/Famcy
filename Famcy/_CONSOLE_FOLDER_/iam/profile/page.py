@@ -1,5 +1,9 @@
 import Famcy
 
+class ProfilePage(Famcy.FamcyPage):
+    def __init__(self):
+        super(ProfilePage, self).__init__("/iam/profile", style)
+
 CHANGE_PROFILE_INFO_BTN_NAME = "送出修改"
 CHANGE_PROFILE_PIC_BTN_NAME = "更新大頭貼"
 

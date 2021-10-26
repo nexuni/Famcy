@@ -33,7 +33,11 @@ class FLogin(metaclass=abc.ABCMeta):
 		pass
 
 	@abc.abstractmethod
-	def postlogin(self, user):
+	def login(self, user):
+		pass
+
+	@abc.abstractmethod
+	def postlogin(self, user, user_info_dict):
 		pass
 
 # Define Famcy User
