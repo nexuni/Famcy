@@ -8,9 +8,10 @@ class line_chart(Famcy.FamcyBlock):
     line_chart. 
     """
     def __init__(self):
+        self.value = line_chart.generate_template_content()
         super(line_chart, self).__init__()
-        self.title = "line_chart"
-        self.configs["labels"] = ["line1", "line2", "line3"]
+
+        self.header_script += '<script src="/static/js/line_chart.js"></script>'
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -20,48 +21,38 @@ class line_chart(Famcy.FamcyBlock):
         for the given fblock. 
         - Return a content dictionary
         """
-        return [{
-                "x": [1, 2, 3, 4],
-                "y": [12, 9, 15, 12],
-                "mode": "lines+markers",
-                "color": "rgb(128, 0, 128)",
-                "marker_size": 8,
-                "line_width": 1
-            },
-            {
-                "x": [1, 2, 3, 4],
-                "y": [2, 9, 1, 3],
-                "mode": "lines",
-                "color": "rgb(2, 0, 128)",
-                "marker_size": 8,
-                "line_width": 3
-            },
-            {
-                "x": [1, 2, 3, 4],
-                "y": [4, 3, 7, 13],
-                "mode": "markers",
-                "color": "rgb(128, 0, 2)",
-                "marker_size": 12,
-                "line_width": 1
-            }]
+        return {
+                "title": "line_chart",
+                "labels": ["line1", "line2", "line3"],
+                "values": [{
+                    "x": [1, 2, 3, 4],
+                    "y": [12, 9, 15, 12],
+                    "mode": "lines+markers",
+                    "color": "rgb(128, 0, 128)",
+                    "marker_size": 8,
+                    "line_width": 1
+                },
+                {
+                    "x": [1, 2, 3, 4],
+                    "y": [2, 9, 1, 3],
+                    "mode": "lines",
+                    "color": "rgb(2, 0, 128)",
+                    "marker_size": 8,
+                    "line_width": 3
+                },
+                {
+                    "x": [1, 2, 3, 4],
+                    "y": [4, 3, 7, 13],
+                    "mode": "markers",
+                    "color": "rgb(128, 0, 2)",
+                    "marker_size": 12,
+                    "line_width": 1
+                }]
+            }
 
     def render_inner(self):
-        """
-        context = {
-            "values": [{
-                "x": [1, 2, 3, 4],
-                "y": [12, 9, 15, 12],
-                "mode": "lines+markers" (or "lines", "markers"),
-                "color": "rgb(128, 0, 128)",
-                "marker_size": 8,
-                "line_width": 1
-            }],
-            "labels": ["line1"],
-            "title": "line_chart"
-        }
-        """
         data = []
-        for dict, label in zip(self.values, self.configs["labels"]):
+        for dict, label in zip(self.value["values"], self.value["labels"]):
             
             temp = {}
             temp["x"] = dict["x"]
@@ -94,6 +85,6 @@ class line_chart(Famcy.FamcyBlock):
             data.append(temp)
 
         json_line_dict_values = json.dumps(data)
-        json_line_dict_title = json.dumps(self.title)
+        json_line_dict_title = json.dumps(self.value["title"])
 
-        return"""<div id="%s"></div><script>generateLineChart("%s", %s, %s)</script><script>%s('%s', %s)</script>""" % (self.id, self.id, json_line_dict_values, json_line_dict_title, self.js_after_func_name, self.id, json.dumps(self.js_after_func_dict))
+        return"""<div id="%s"></div><script>generateLineChart("%s", %s, %s)</script>""" % (self.id, self.id, json_line_dict_values, json_line_dict_title)

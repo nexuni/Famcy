@@ -240,12 +240,13 @@ class FamcyLayout:
 
 	def render(self):
 		layout_css = self.setLayout()
-
+		header_script = ""
 		render_html = ""
 		for _card, _, _, _, _ in self.content:
+			header_script += _card.header_script
 			render_html += _card.render()
 
-		return layout_css, render_html
+		return header_script + layout_css, render_html
 
 # Tests
 # -----------
