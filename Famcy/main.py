@@ -3,7 +3,7 @@ import argparse
 import subprocess
 import pkg_resources
 
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 from Famcy import __codename__ as codename
 
