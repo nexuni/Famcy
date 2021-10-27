@@ -7,8 +7,8 @@ class input_form(Famcy.FamcyCard):
 	that group all submittable
 	blocks together. 
 	"""
-	def __init__(self):
-		super(input_form, self).__init__()
+	def __init__(self, layout_mode=Famcy.FamcyLayoutMode.recommend):
+		super(input_form, self).__init__(layout_mode=layout_mode)
 		self.configs["method"] = "post"
 
 	def render_inner(self):

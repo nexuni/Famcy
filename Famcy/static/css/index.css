@@ -284,19 +284,21 @@ html{
 .inner_section{
 	background-color: var(--white-color);
 	padding: 1.25vw;
-	display: grid;
-	grid-auto-columns: 1fr;
-  	grid-auto-flow: column;
-  	align-content: center;
-  	justify-content: center;
+	display: flex;
+	flex-flow: column;
 
 	overflow-x: hidden;
 }
 
 .inner_section_content{
 	overflow-x: auto;
-	/*width: 50em;*/
+	display: grid;
+	row-gap: .75vw;
+	column-gap: .75vw;
+}
 
+.inner_section_content form{
+	overflow-x: auto;
 	display: grid;
 	row-gap: .75vw;
 	column-gap: .75vw;
@@ -583,7 +585,7 @@ html{
 
 .inputList h3{
 	padding: 0 !important;
-	margin: 0 0 2% 0;
+	margin: 0 0 calc(var(--normal-text) * 0.5) 0;
 	font-size: var(--normal-text);
 	line-height: var(--normal-text);
 	padding: calc(var(--normal-text)*0.5);
@@ -607,7 +609,7 @@ html{
 .select-selected:after {
 	position: absolute;
 	content: "";
-	bottom: calc(var(--normal-text)*0.5);
+	top: calc(var(--normal-text) * 2.5);
 	right: 20px;
 	width: 0;
 	height: 0;
@@ -618,7 +620,7 @@ html{
 /* Point the arrow upwards when the select box is open (active): */
 .select-selected.select-arrow-active:after {
 	border-color: transparent transparent var(--dark-color) transparent;
-	bottom: calc(var(--normal-text)*1);
+	top: calc(var(--normal-text) * 2);
 }
 
 /* style the items (options), including the selected item: */
@@ -663,7 +665,7 @@ html{
 }
 
 .singleChoiceRadioInput h3{
-	margin: 0 0 2% 0;
+	margin: 0 0 calc(var(--normal-text) * 0.5) 0;
 	font-size: var(--normal-text);
 	font-weight: 600;
 	color: var(--dark-color);
@@ -681,7 +683,7 @@ html{
 }
 
 .multipleChoicesRadioInput h3{
-	margin: 0 0 2% 0;
+	margin: 0 0 calc(var(--normal-text) * 0.5) 0;
 	font-size: var(--normal-text);
 	font-weight: 600;
 	color: var(--dark-color);
@@ -799,7 +801,7 @@ html{
 }
 
 .displayParagraph h3{
-	margin: 0 0 2% 0;
+	margin: 0 0 calc(var(--normal-text) * 0.5) 0;
 	font-size: var(--normal-text);
 	font-weight: 600;
 	color: var(--dark-color);
@@ -819,7 +821,7 @@ html{
 }
 
 .displayImage h3{
-	margin: 0 0 2% 0;
+	margin: 0 0 calc(var(--normal-text) * 0.5) 0;
 	font-size: var(--normal-text);
 	font-weight: 600;
 	color: var(--dark-color);
@@ -841,7 +843,7 @@ html{
 }
 
 .videoStream h3{
-	margin: 0 0 2% 0;
+	margin: 0 0 calc(var(--normal-text) * 0.5) 0;
 	font-size: var(--normal-text);
 	font-weight: 600;
 	color: var(--dark-color);

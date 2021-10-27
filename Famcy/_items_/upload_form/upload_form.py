@@ -3,69 +3,17 @@ from flask import flash
 from flask import current_app
 import json
 
-class upload_form(Famcy.FamcyBlock):
+class upload_form(Famcy.FamcyCard):
     """
     Represents the block to upload 
     all kinds of files. 
     """
-    def __init__(self, **kwargs):
-        super(upload_form, self).__init__(**kwargs)
+    def __init__(self, layout_mode=Famcy.FamcyLayoutMode.recommend):
+        super(upload_form, self).__init__(layout_mode=layout_mode)
+        self.configs["method"] = "post"
 
-    @classmethod
-    def get_fblock_types(cls):
-        """
-        This is the class method
-        that gets all different types
-        of display that it possess
-        """
-        return ["uploadFile"]
-
-    @classmethod
-    def generate_values_content(cls, fblock_type=None):
-        """
-        This is the function that
-        returns the template content 
-        for the given fblock. 
-        - Return a content dictionary
-        """
-        if fblock_type:
-            # Check whether the type is valid
-            assert fblock_type in cls.get_fblock_types()
-
-            if fblock_type == "uploadFile":
-                return {
-                    "type": "uploadFile",
-                    "title": "uploadFile11",
-                    "file_num": "multiple",                     # ("single", "multiple")
-                    "accept_type": ["png", "jpg"],
-                    "file_path": '/__submissions__'
-                }
-                
-    @classmethod
-    def generate_template_content(cls, fblock_values=None):
-        """
-        This is the function that
-        returns the template content 
-        for the given fblock. 
-        - Return a content dictionary
-        """
-        return {
-            "submit_type": "update_alert",
-            "loader": False,
-            "main_button_name": ["送出資料1", "送出資料2"], # btn name in same section must not be same
-            "values": fblock_values,
-            "js_after_func_dict": {},
-            "js_after_func_name": "empty_func",             # extra script which add after fblock item
-            "header_script": "",            # extra script which add in header section
-            "before_function": [],          # python function that you want to run before page refresh
-        }
-
-    def render_html(self, context, **configs):
-
-        for action in context["before_function"]:
-            action(context, **configs)
-
-        style_script = """
+    def render_inner(self):
+        self.header_script += """
         <link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
         <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/js/plugins/piexif.min.js" type="text/javascript"></script>
         <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/js/plugins/sortable.min.js" type="text/javascript"></script>
@@ -73,66 +21,35 @@ class upload_form(Famcy.FamcyBlock):
         <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/js/fileinput.min.js"></script>
         """
 
-        main_button_html = ""
-        index = 0
-        for main_button_str in context["main_button_name"]:
-            main_button_html += '<input id="mb_' + str(index) + context["id"] +'" class="main_submit_btn" type="submit" name="send" value="' + main_button_str + '">'
-            index += 1
-        action = context["action"]
-        input_html = ""
+        header_script, content_render = self.layout.render()
+        if header_script not in self.header_script:
+            self.header_script += header_script
 
-        index = len(context["values"])
+        inner_html = """<form id="%s" enctype="multipart/form-data" onsubmit="return false;" method="%s" action="%s">%s</form>
+        """ % (self.id, self.configs["method"], self.action, content_render)
 
-        for value in context["values"]:
+        inner_html += """<script type="text/javascript">"""
 
-            file_type = ""
-            if value["file_num"] == "multiple":
-                file_type = " multiple"
+        for widget, _, _, _, _ in self.layout.content:
+            if widget.clickable:
+                inner_html += """$('#%s').bind('click', (e) => {
 
-            accept_type = ""
-            for accept_file in value["accept_type"]:
-                accept_type += accept_file + ", "
-            accept_type = accept_type[:-2]
+                    if (%s) {
+                        $('#loading_holder').css("display","flex");
+                    }
 
-            input_html += '''
-            <div class="uploadFile file-loading">
-                <input id="%s" name="%s" type="file" %s>
-            </div>
-            <script>
-            $(document).ready(function() {
-                
-                $("#%s").fileinput({
-                    allowedFileExtensions: %s
-                });
-            });
-            </script>
-            ''' % (value["id"], value["id"], file_type, value["id"], json.dumps(value["accept_type"]))
+                    var reader
+                    var response_dict = {}
+                    upload_file(response_dict, submit_id)
+                    
 
-            
-            # input_html += '<div class="uploadFile"><input class="file" data-browse-on-zone-click="true" type="file" accept="' + accept_type + '" id="' + value["id"] + '" name="' + value["name"] + '"' + file_type + '></div>'
-                
+                });""" % (widget.id, json.dumps(widget.loader), str(id(widget.submission_obj)))
 
-        extra_script = ""
-
-        return """%s<form id="%s" enctype="multipart/form-data" onsubmit="return false;" method="%s" action="%s">%s%s</form>%s
-        <script type="text/javascript">
-
+        inner_html += """
             $(function() {
-                for(var i=0; i < %s; i++) {
-                    $('#mb_' + i + '%s').bind('click', (e) => {
-                        if (%s) {
-                            $('#loading_holder').css("display","flex");
-                        } 
-                        var reader
-                        var response_dict = {}
-                        for (var j=0; j < %s; j++) {
-                            upload_file(j, response_dict, i, [e.currentTarget.value])
-                        }
-                    });
-                }
 
-                function upload_file(i, response_dict, btn_index, btn_name) {
-                    var file = document.getElementById("%s-" + i)
+                function upload_file(response_dict, submit_id) {
+                    var file = document.getElementById("%s")
                     var reader = new FileReader();
                     var file_name = document.getElementsByClassName("file-caption-info")
                     function readFile(index) {
@@ -142,9 +59,8 @@ class upload_form(Famcy.FamcyBlock):
                         var f = file.files[index];
                         reader.readAsDataURL(f);
                         reader.onload = function(e) {
-                            response_dict["%s-" + i] = [e.target.result.split(",")[1], file_name[index].innerText, i]
-                            response_dict["mb" + btn_index + "%s"] = btn_name
-                            Sijax.request('update_page', ["%s", "%s", "%s", response_dict]);
+                            response_dict["%s"] = [e.target.result.split(",")[1], file_name[index].innerText, i]
+                            Sijax.request('famcy_submission_handler', [submit_id, response_dict], { data: { csrf_token: token } });
                             readFile(index+1)
                         }
                     }
@@ -152,8 +68,6 @@ class upload_form(Famcy.FamcyBlock):
                 }
             });
         </script>
-        <script>%s('%s', %s)</script>
-        """ % (style_script, context["id"], context["method"], action, input_html, main_button_html, extra_script, len(context["main_button_name"]), context["id"], json.dumps(context["loader"]), index, context["id"], context["id"], context["id"], context["id"], action, context["target_id"], context["js_after_func_name"], context["id"], json.dumps(context["js_after_func_dict"]))
+        """ % (self.id, self.id)
 
-    def extra_script(self, header_script, **configs):
-        return header_script
+        return inner_html

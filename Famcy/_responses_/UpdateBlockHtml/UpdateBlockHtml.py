@@ -10,5 +10,4 @@ class UpdateBlockHtml(Famcy.FamcyResponse):
 
 	def response(self, sijax_response):
 		sijax_response.html('#'+self.target.id, self.target.render_inner())
-		sijax_response.script(self.target.header_script)
 		sijax_response.script(self.finish_loading_script)
