@@ -65,6 +65,12 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.submission_obj.origin = self
 		self.submission_obj.target = target if target else self
 
+	def disconnect(self):
+		self.clickable = False
+		self.submission_obj.func = lambda *a, **k: None
+		self.submission_obj.origin = self
+		self.submission_obj.target = self
+
 	@abc.abstractmethod
 	def render_inner(self):
 		"""

@@ -15,8 +15,8 @@ class submitBtn(Famcy.FamcyInputBlock):
     def generate_template_content(cls):
         return {
             "title": "inputBtn",
-            "mandatory": True,
-            "action_after_post": "save",                    # (clean / save)
+            "mandatory": False,
+            "action_after_post": "clean",                    # (clean / save)
         }
 
     def render_inner(self):
