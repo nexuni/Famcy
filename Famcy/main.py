@@ -53,6 +53,10 @@ Example commands:
         from Famcy.scripts import famcy_upgrade
         famcy_upgrade.main(args.args)
 
+    elif args.command == "deploy":
+        from Famcy.scripts import deploy
+        deploy.main(args.args)
+
     else:
         print("Unknown command %s" % args.command)
         sys.exit(-1)
