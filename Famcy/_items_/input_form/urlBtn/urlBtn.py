@@ -14,13 +14,13 @@ class urlBtn(Famcy.FamcyInputBlock):
     @classmethod
     def generate_template_content(cls):
         return {
-            "title": "urlBtn1",
-            "style": "btn_style",                          # (link_style, btn_style)
-            "url": "http://127.0.0.1:5000/login",
+            "title": "urlBtn",
+            "style": "btn_style",                               # (link_style, btn_style)
+            "url": "",
             "desc": "",
-            "mandatory": True,                          # this is useless
-            "button_name": "送出",                        # btn name in same section must not be same
-            "action_after_post": "save",                    # (clean / save)
+            "mandatory": False,                                 # this is useless
+            "button_name": "送出",                              # btn name in same section must not be same
+            "action_after_post": "clean",                       # (clean / save)
         }
 
     def render_inner(self):
