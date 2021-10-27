@@ -8,7 +8,15 @@ class with_btn_calendar(Famcy.FamcyBlock):
     calendar with buttons. 
     """
     def __init__(self, **kwargs):
+        self.value = with_btn_calendar.generate_template_content()
         super(with_btn_calendar, self).__init__(**kwargs)
+
+        self.header_script += """
+        <!--with btn calendar-->
+        <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" type="text/css" href="/static/css/mark-your-calendar.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" rel="stylesheet"  />
+        """
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -20,10 +28,8 @@ class with_btn_calendar(Famcy.FamcyBlock):
         """
         return {
             "title": "Selected dates / times:",
+            "mandatory": False,
             "action_after_post": "save",                    # (clean / save)
-            "submit_type": "update_alert",
-            "main_button_name": ["送出資料1", "送出資料2"],                                                     # btn name in same section must not be same
-            "loader": False,
             "weekdays": ['SUN', 'MON', 'TUE', 'WED', 'THURS', 'FRI', 'SAT'],
             "months": ['JAN', 'FEB', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUG', 'SEPT', 'OCT', 'NOV', 'DEC'],
             "week_avail": [
@@ -51,33 +57,17 @@ class with_btn_calendar(Famcy.FamcyBlock):
                 "month": "SEPT",
                 "first_date": "7",
                 "mode": 1
-            }],
-            "js_after_func_dict": {},
-            "js_after_func_name": "empty_func",             # extra script which add after fblock item
-            "header_script": "",            # extra script which add in header section
-            "before_function": [],          # python function that you want to run before page refresh
+            }]
         }
 
-    def render_html(self, context, **configs):
-
-        for action in context["before_function"]:
-            action(context, **configs)
-
-        main_button_html = ""
-        index = 0
-        for main_button_str in context["main_button_name"]:
-            main_button_html += '<input id="mb_' + str(index) + context["id"] +'" class="main_submit_btn" type="submit" name="send" value="' + main_button_str + '">'
-            index += 1
+    def render_inner(self):
         return """
         <div id="picker"></div>
-        <form id="%s" action="%s" method="%s" onsubmit="return false;">
-            <div class="selected_list">
-                <p>%s</p>
-                <input type="hidden" name="%s" id="picked_time">
-                <div id="selected-dates"></div>
-            </div>
-            %s
-        </form>
+        <div class="selected_list">
+            <p>%s</p>
+            <input type="hidden" name="%s" id="picked_time">
+            <div id="selected-dates"></div>
+        </div>
             
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <script type="text/javascript">
@@ -310,7 +300,7 @@ class with_btn_calendar(Famcy.FamcyBlock):
                             html += `<p>` + d + ` ` + t + `</p>`;
                         });
                         $('#selected-dates').html(html);
-                        saveMultValue("calendar", data)
+                        saveMultValue(input_calendar_dict["id"], data)
                         document.getElementById("picked_time").value = getMultSavedValue(input_calendar_dict["id"])
                     },
                     onClickNavigator: function(ev, instance) {
@@ -323,36 +313,4 @@ class with_btn_calendar(Famcy.FamcyBlock):
                 });
             })(jQuery);
         </script>
-        <script type="text/javascript">
-            for(var i=0; i < %s; i++) {
-                $('#mb_' + i + '%s').bind('click', (e) => {
-                    if (%s) {
-                        $('#loading_holder').css("display","flex");
-                    } 
-                    var form_element = document.getElementById('%s')
-                    var formData = new FormData(form_element)
-                    var response_dict = {}
-                    response_dict[e.currentTarget.id] = [e.currentTarget.value]
-                    for (var pair of formData.entries()) {
-                        if (!(pair[0] in response_dict)) {
-                            response_dict[pair[0]] = [pair[1]]
-                        }
-                        else {
-                            response_dict[pair[0]].push(pair[1])
-                        }
-                    }
-                    Sijax.request('update_page', ["%s", "%s", "%s", response_dict]);
-                });
-            }
-        </script>
-        <script>%s('%s', %s)</script>
-        """ % (context["id"], context["action"], context["method"], context["title"], context["id"], main_button_html, json.dumps(context), len(context["main_button_name"]), context["id"], context["loader"], context["id"], context["id"], context["action"], context["target_id"], context["js_after_func_name"], context["id"], json.dumps(context["js_after_func_dict"]))
-
-    def extra_script(self, header_script, **configs):
-        return """
-        <!--with btn calendar-->
-        <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" type="text/css" href="%s/static/css/mark-your-calendar.css">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" rel="stylesheet"  />
-        %s
-        """ % (current_app.config.get("main_url", ""), header_script)
+        """ % (self.value["title"], self.id, json.dumps(self.value))

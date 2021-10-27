@@ -8,6 +8,7 @@ class event_calendar(Famcy.FamcyBlock):
     event_calendar. 
     """
     def __init__(self, **kwargs):
+        self.value = event_calendar.generate_template_content()
         super(event_calendar, self).__init__(**kwargs)
 
     @classmethod
@@ -33,24 +34,17 @@ class event_calendar(Famcy.FamcyBlock):
                             "allDay": False,
                             "className": 'important'
                         }
-                    ],
-            "js_after_func_dict": {},
-            "js_after_func_name": "empty_func",             # extra script which add after fblock item
-            "header_script": "",            # extra script which add in header section
-            "before_function": [],          # python function that you want to run before page refresh
+                    ]
         }
 
-    def render_html(self, context, **configs):
+    def render_inner(self):
 
-        for action in context["before_function"]:
-            action(context, **configs)
-
-        if context["language"] == "zh-TW":
+        if self.value["language"] == "zh-TW":
             prompt_msg = "請加入活動名稱:"
-            language_script = '<script src="' + current_app.config.get("main_url", "") + '/static/js/fullcalendar_zh.js" type="text/javascript"></script>'
+            language_script = '<script src="/static/js/fullcalendar_zh.js" type="text/javascript"></script>'
         else:
             prompt_msg = "Event Title:"
-            language_script = '<script src="' + current_app.config.get("main_url", "") + '/static/js/fullcalendar.js" type="text/javascript"></script>'
+            language_script = '<script src="/static/js/fullcalendar.js" type="text/javascript"></script>'
 
         return """
         %s
@@ -177,9 +171,4 @@ class event_calendar(Famcy.FamcyBlock):
             <div id='calendar'></div>
         </div>
 
-        <script>%s('%s', %s)</script>
-
-        """ % (language_script, json.dumps(context), prompt_msg, context["js_after_func_name"], context["id"], json.dumps(context["js_after_func_dict"]))
-
-    def extra_script(self, header_script, **configs):
-        return header_script
+        """ % (language_script, json.dumps(self.value), prompt_msg)

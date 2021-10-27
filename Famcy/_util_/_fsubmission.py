@@ -63,7 +63,6 @@ def put_submissions_to_list(sub_dict):
 class FResponse(metaclass=abc.ABCMeta):
 	def __init__(self, target=None):
 		self.target = target
-		self.info_dict = {}
 		self.finish_loading_script = "$('#loading_holder').css('display','none');"
 
 	@abc.abstractmethod

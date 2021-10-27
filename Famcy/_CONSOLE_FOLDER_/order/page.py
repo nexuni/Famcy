@@ -124,5 +124,80 @@ import json
 # 	})
 
 
+class OrderPage(Famcy.FamcyPage):
+    def __init__(self):
+        super(OrderPage, self).__init__("/order", Famcy.ClassicStyle(), background_thread=False)
 
+        self.card_1 = self.card1()
+        self.card_2 = self.card2()
+
+        self.layout.addWidget(self.card_1, 0, 0)
+        self.layout.addWidget(self.card_2, 1, 0)
+
+    def card1(self):
+        card1 = Famcy.FamcyCard()
+
+        input_form = Famcy.input_form(layout_mode=Famcy.FamcyLayoutMode.custom)
+
+        pure_input = Famcy.pureInput()
+        input_btn = Famcy.inputBtn()
+        input_list = Famcy.inputList()
+        input_paragraph = Famcy.inputParagraph()
+        input_password = Famcy.inputPassword()
+        multiple_choices = Famcy.multipleChoicesRadioInput()
+        single_choices = Famcy.singleChoiceRadioInput()
+        url_btn = Famcy.urlBtn()
+        submit_btn = Famcy.submitBtn()
+
+        input_form.layout.addWidget(pure_input, 0, 0)
+        input_form.layout.addWidget(input_btn, 0, 1)
+        input_form.layout.addWidget(input_paragraph, 1, 0, 1, 2)
+        input_form.layout.addWidget(input_list, 2, 0)
+        input_form.layout.addWidget(input_password, 2, 1)
+        input_form.layout.addWidget(url_btn, 3, 0, 1, 2)
+        input_form.layout.addWidget(multiple_choices, 4, 0)
+        input_form.layout.addWidget(single_choices, 4, 1)
+        input_form.layout.addWidget(submit_btn, 5, 0, 1, 2)
+
+        input_form.layout.addCusWidget(pure_input, 0, 0)
+        input_form.layout.addCusWidget(input_btn, 1, 0)
+        input_form.layout.addCusWidget(input_paragraph, 2, 0)
+        input_form.layout.addCusWidget(input_list, 3, 0)
+        input_form.layout.addCusWidget(url_btn, 4, 0)
+        input_form.layout.addCusWidget(input_password, 5, 0)
+        input_form.layout.addCusWidget(multiple_choices, 6, 0)
+        input_form.layout.addCusWidget(single_choices, 7, 0)
+        input_form.layout.addCusWidget(submit_btn, 8, 0)
+        input_form.layout.updateCustomLayoutContent(_max="540px")
+
+        upload_form = Famcy.upload_form()
+
+        upload_file = Famcy.uploadFile()
+        submit_file = Famcy.submitBtn()
+
+        upload_form.layout.addWidget(upload_file, 0, 0)
+        upload_form.layout.addWidget(submit_file, 1, 0)
+
+        card1.layout.addWidget(input_form, 0, 0)
+        card1.layout.addWidget(upload_form, 1, 0)
+        return card1
+
+    def card2(self):
+        card2 = Famcy.FamcyCard()
+
+        display_image = Famcy.displayImage()
+        display_light = Famcy.displayLight()
+        display_tag = Famcy.displayTag()
+        display_paragraph = Famcy.displayParagraph()
+        display_step_loader = Famcy.displayStepLoader()
+
+        card2.layout.addWidget(display_image, 0, 0)
+        card2.layout.addWidget(display_light, 1, 0)
+        card2.layout.addWidget(display_tag, 2, 0)
+        card2.layout.addWidget(display_paragraph, 3, 0)
+        card2.layout.addWidget(display_step_loader, 4, 0)
+        return card2
+
+page = OrderPage()
+page.register()
 
