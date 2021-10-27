@@ -14,11 +14,11 @@ class singleChoiceRadioInput(Famcy.FamcyInputBlock):
     @classmethod
     def generate_template_content(cls):
         return {
-                "title": "multipleChoicesRadioInput1",
+                "title": "singleChoiceRadioInput",
                 "desc": "",
-                "mandatory": True,
-                "value": ["check1", "check2", "check3"],
-                "action_after_post": "save",                    # (clean / save)
+                "mandatory": False,
+                "value": [],
+                "action_after_post": "clean",                    # (clean / save)
             }
 
     def render_inner(self):
