@@ -14,12 +14,11 @@ class inputList(Famcy.FamcyInputBlock):
     @classmethod
     def generate_template_content(cls):
         return {
-            "title": "inputList1",
+            "title": "inputList",
             "desc": "",
-            "mandatory": True,
-            "value": ["list1", "list2", "list3"],
-            # "list_selected_action": None,
-            "action_after_post": "save",                    # (clean / save)
+            "mandatory": False,
+            "value": [],
+            "action_after_post": "clean",                    # (clean / save)
         }
 
     def render_inner(self):
@@ -27,8 +26,5 @@ class inputList(Famcy.FamcyInputBlock):
         for list_value in self.value["value"]:
             temp += '<option name="' + self.name + '" value="' + list_value + '">' + list_value + '</option>'
 
-        # selected_action_flag = "True" if self.value["list_selected_action"] else "False"
-
-        # TODO: check list sijax
         inner_html = '<div id="' + self.id + '" class="inputList ' + self.mandatory + '_list"><h3>' + self.value["title"] + '</h3><p>' + self.value["desc"] + '</p><select after_action="' + self.after_action + '"><option name="' + self.name + '" value="---">---</option>' + temp + '</select></div><script>generate_list("' + self.id + '", "' + str(id(self.submission_obj)) + '")</script>'
         return inner_html

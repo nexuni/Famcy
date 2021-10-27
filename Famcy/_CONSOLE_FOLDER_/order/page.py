@@ -149,6 +149,50 @@ class OrderPage(Famcy.FamcyPage):
         url_btn = Famcy.urlBtn()
         submit_btn = Famcy.submitBtn()
 
+        pure_input.update({
+                "mandatory": True,
+                "action_after_post": "save"
+            })
+
+        input_btn.update({
+                "mandatory": False,
+                "action_after_post": "save"
+            })
+
+        input_paragraph.update({
+                "mandatory": False,
+                "action_after_post": "save"
+            })
+
+        input_password.update({
+                "mandatory": False,
+                "action_after_post": "save"
+            })
+
+        multiple_choices.update({
+                "value": ["multiple_choices1", "multiple_choices2", "multiple_choices3"],
+                "mandatory": False,
+                "action_after_post": "save"
+            })
+
+        single_choices.update({
+                "value": ["single_choices1", "single_choices2", "single_choices3"],
+                "mandatory": True,
+                "action_after_post": "save"
+            })
+
+        input_list.update({
+                "value": ["input_list1", "input_list2", "input_list3"],
+                "mandatory": False,
+                "action_after_post": "save"
+            })
+
+        url_btn.update({
+                "url": "https://www.google.com/"
+            })
+
+        submit_btn.connect(self.submit_input, target=card1)
+
         input_form.layout.addWidget(pure_input, 0, 0)
         input_form.layout.addWidget(input_btn, 0, 1)
         input_form.layout.addWidget(input_paragraph, 1, 0, 1, 2)
@@ -197,6 +241,9 @@ class OrderPage(Famcy.FamcyPage):
         card2.layout.addWidget(display_paragraph, 3, 0)
         card2.layout.addWidget(display_step_loader, 4, 0)
         return card2
+
+    def submit_input(self, submission_obj, info_list):
+        return Famcy.UpdateAlert(alert_message=str(info_list))  
 
 page = OrderPage()
 page.register()

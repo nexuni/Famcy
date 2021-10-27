@@ -1,4 +1,4 @@
-function checkform(form_item, failure_msg="資料輸入有誤") {
+function checkform(form_item, submit_id, failure_msg="資料輸入有誤") {
     var flag = [(form_item.checkValidity()).toString()]
     // check mandatory
     var required_list = form_item.getElementsByClassName("required_list")
@@ -42,8 +42,10 @@ function checkform(form_item, failure_msg="資料輸入有誤") {
     });
 
     if (flag.includes("false")) {
-        response_dict = {"alert_type":"alert-danger", "alert_message":failure_msg, "alert_position":"prepend"}
-        Sijax.request('update_alert', ["", "", "b_" + form_item.id, response_dict]);
+        response_dict = {"jsAlert": true, "alert_type":"alert-danger", "alert_message":failure_msg, "alert_position":"prepend"}
+        var token = document.head.querySelector("[name~=csrf-token][content]").content
+        
+        Sijax.request('famcy_submission_handler', [submit_id, response_dict], { data: { csrf_token: token } });
         return false
     }
     else{
