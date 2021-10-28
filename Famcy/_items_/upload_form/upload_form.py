@@ -30,7 +30,12 @@ class upload_form(Famcy.FamcyCard):
 
         inner_html += """<script type="text/javascript">"""
 
+        upload_file_list = []
         for widget, _, _, _, _ in self.layout.content:
+
+            if getattr(widget, "upload", None):
+                upload_file_list.append(widget.id + "_input")
+
             if widget.clickable:
                 inner_html += """$('#%s').bind('click', (e) => {
 
@@ -40,34 +45,34 @@ class upload_form(Famcy.FamcyCard):
 
                     var reader
                     var response_dict = {}
-                    upload_file(response_dict, submit_id)
-                    
+                    var upload_file_list = %s
+                    for (var i=0; i < upload_file_list.length; i++) {
+                        upload_file(response_dict, upload_file_list[i], %s)
+                    }
 
-                });""" % (widget.id, json.dumps(widget.loader), str(id(widget.submission_obj)))
+                });""" % (widget.id, json.dumps(widget.loader), json.dumps(upload_file_list), str(id(widget.submission_obj)))
 
         inner_html += """
-            $(function() {
-
-                function upload_file(response_dict, submit_id) {
-                    var file = document.getElementById("%s")
-                    var reader = new FileReader();
-                    var file_name = document.getElementsByClassName("file-caption-info")
-                    function readFile(index) {
-                        if( index >= file.files.length ) {
-                            return;
-                        }
-                        var f = file.files[index];
-                        reader.readAsDataURL(f);
-                        reader.onload = function(e) {
-                            response_dict["%s"] = [e.target.result.split(",")[1], file_name[index].innerText, i]
-                            Sijax.request('famcy_submission_handler', [submit_id, response_dict], { data: { csrf_token: token } });
-                            readFile(index+1)
-                        }
+            function upload_file(response_dict, widget_id, submit_id) {
+                var file = document.getElementById(widget_id)
+                var reader = new FileReader();
+                var file_name = document.getElementsByClassName("file-caption-info")
+                function readFile(index) {
+                    if( index >= file.files.length ) {
+                        return;
                     }
-                    readFile(0);
+                    var f = file.files[index];
+                    reader.readAsDataURL(f);
+                    reader.onload = function(e) {
+                        response_dict["%s"] = [e.target.result.split(",")[1], file_name[index].innerText, i]
+                        var token = document.head.querySelector("[name~=csrf-token][content]").content
+                        Sijax.request('famcy_submission_handler', [submit_id, response_dict], { data: { csrf_token: token } });
+                        readFile(index+1)
+                    }
                 }
-            });
+                readFile(0);
+            }
         </script>
-        """ % (self.id, self.id)
+        """ % (self.id)
 
         return inner_html

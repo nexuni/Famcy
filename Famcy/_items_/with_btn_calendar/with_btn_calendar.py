@@ -29,7 +29,7 @@ class with_btn_calendar(Famcy.FamcyBlock):
         return {
             "title": "Selected dates / times:",
             "mandatory": False,
-            "action_after_post": "save",                    # (clean / save)
+            "action_after_post": "clean",                    # (clean / save)
             "weekdays": ['SUN', 'MON', 'TUE', 'WED', 'THURS', 'FRI', 'SAT'],
             "months": ['JAN', 'FEB', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUG', 'SEPT', 'OCT', 'NOV', 'DEC'],
             "week_avail": [

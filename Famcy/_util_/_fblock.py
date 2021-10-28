@@ -120,3 +120,9 @@ class FInputBlock(FBlock):
             self.mandatory = " required"
         else:
             self.mandatory = ""
+
+class FUploadBlock(FBlock):
+    def __init__(self):
+        super(FUploadBlock, self).__init__()
+        self.upload = True
+        
