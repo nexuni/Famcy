@@ -14,9 +14,9 @@ class displayLight(Famcy.FamcyBlock):
     @classmethod
     def generate_template_content(cls):
         return {
-            "title": "Traffic light",
+            "title": "displayLight",
             "status": {"red": "bulb_red", "yellow": "", "green": ""}, 
-            "light_size": "30%",
+            "light_size": "100%",
         }
 
     def render_inner(self):

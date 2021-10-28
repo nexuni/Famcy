@@ -33,9 +33,9 @@ class BarrierPage(Famcy.FamcyPage):
 
 		itype = ["/asset/image/barrier_gif_close.gif", "/asset/image/barrier_gif_close.gif", "/asset/image/barrier_gif.gif"]
 
-		responseObj = Famcy.UpdateBlockHtml(self.card_2.layout.content[1][0])
-		responseObj2 = Famcy.UpdateBlockHtml(self.card_3.layout.content[0][0])
-		responseObj3 = Famcy.UpdateBlockHtml(self.card_4.layout.content[0][0])
+		responseObj = Famcy.UpdateBlockHtml(target=self.card_2.layout.content[1][0])
+		responseObj2 = Famcy.UpdateBlockHtml(target=self.card_3.layout.content[0][0])
+		responseObj3 = Famcy.UpdateBlockHtml(target=self.card_4.layout.content[0][0])
 
 		if r > 30:
 			ridx = random.randint(0, 2)

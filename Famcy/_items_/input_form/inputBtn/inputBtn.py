@@ -16,7 +16,7 @@ class inputBtn(Famcy.FamcyInputBlock):
         return {
             "title": "inputBtn",
             "desc": "",
-            "input_type": "number",                         # ("number" / "text" / "password")
+            "input_type": "text",                           # ("number" / "text" / "password")
             "num_range": None,                              # if type == number ([0, 10] / None)
             "placeholder": "",
             "mandatory": False,

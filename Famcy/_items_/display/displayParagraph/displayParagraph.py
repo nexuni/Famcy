@@ -14,7 +14,7 @@ class displayParagraph(Famcy.FamcyBlock):
     @classmethod
     def generate_template_content(cls):
         return {
-                "title": "",
+                "title": "displayParagraph",
                 "content": '''
 **Nexuni 会社ウェブサイトの案内** 
 
