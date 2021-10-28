@@ -32,7 +32,7 @@ class bar_chart(Famcy.FamcyBlock):
                 "y": [200, 246, 132, 120, 198, 110],
                 "color": "rgb(55, 83, 109)"
             }],
-            "labels": ["bar1", "bar2", "bar3"],
+            "labels": ["bar1", "bar2"],
             "title": "bar_chart",
             "xy_axis_title": ["x_title", "y_title"]
         }

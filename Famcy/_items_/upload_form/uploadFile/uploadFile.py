@@ -2,7 +2,7 @@ import markdown
 import Famcy
 import json
 
-class uploadFile(Famcy.FamcyBlock):
+class uploadFile(Famcy.FamcyUploadBlock):
     """
     Represents the block to display
     paragraph. 
@@ -34,17 +34,17 @@ class uploadFile(Famcy.FamcyBlock):
         accept_type = accept_type[:-2]
 
         inner_html = '''
-        <div class="uploadFile file-loading">
-            <input id="%s" name="%s" type="file" %s>
+        <div class="uploadFile file-loading" id="%s">
+            <input id="%s_input" name="%s" type="file" %s>
         </div>
         <script>
         $(document).ready(function() {
             
-            $("#%s").fileinput({
+            $("#%s_input").fileinput({
                 allowedFileExtensions: %s
             });
         });
         </script>
-        ''' % (self.id, self.id, file_type, self.id, json.dumps(self.value["accept_type"]))
+        ''' % (self.id, self.id, self.name, file_type, self.id, json.dumps(self.value["accept_type"]))
 
         return inner_html

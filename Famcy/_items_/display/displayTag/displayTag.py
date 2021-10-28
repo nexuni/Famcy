@@ -14,8 +14,8 @@ class displayTag(Famcy.FamcyBlock):
     @classmethod
     def generate_template_content(cls):
         return {
-            "title": "測試不知道這是用來幹嘛的Layout",
-            "content": "到底Display Tag有什麼不一樣？",
+            "title": "displayTag",
+            "content": "displayTag content",
         }
 
     def render_inner(self):

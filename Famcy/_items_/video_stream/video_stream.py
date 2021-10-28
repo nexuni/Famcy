@@ -26,11 +26,11 @@ class video_stream(Famcy.FamcyBlock):
             "stop_stream": "停止",
             "title": "videoStream",
             "desc": "",
-            "rtsp_address": ["", "", ""],
-            "video_timeout": [5, 5, 5],
-            "holder_width": ["50%", "50%", "50%"],
-            "holder_height": ["300px", "300px", "300px"],
-            "img_path": ["/video_1", "/video_2", "/video_3"]
+            "rtsp_address": [],
+            "video_timeout": [],
+            "holder_width": [],
+            "holder_height": [],
+            "img_path": []
         }
 
     def render_inner(self):
@@ -54,8 +54,8 @@ class video_stream(Famcy.FamcyBlock):
             </script>
             """ % (index, self.id, path + '?' + urllib.parse.urlencode({"address": address, "timeout": timeout}), index, self.id)
 
-            temp += '<div style="width:' + w + ';" class="video_holder"><img id="' + self.id + '" style="height:' + h + ';" src="' + path + '?' + urllib.parse.urlencode({"address": address, "timeout": timeout, "datetime": time.time()}) + '"><div><button id="mbr' + str(index) + "_" + self.id +'" class="video_submit_btn">' + self.value["refreash_stream"] + '</button><button id="mbd' + str(index) + "_" + self.id +'" class="video_submit_btn">' + self.value["stop_stream"] + '</button></div></div>' + temp_script
+            temp += '<div style="width:' + w + ';" class="video_holder"><img style="height:' + h + ';" src="' + path + '?' + urllib.parse.urlencode({"address": address, "timeout": timeout, "datetime": time.time()}) + '"><div><button id="mbr' + str(index) + "_" + self.id +'" class="video_submit_btn">' + self.value["refreash_stream"] + '</button><button id="mbd' + str(index) + "_" + self.id +'" class="video_submit_btn">' + self.value["stop_stream"] + '</button></div></div>' + temp_script
             index += 1
 
-        inner_html += '<div class="videoStream"><h3>' + self.value["title"] + '</h3><p>' + self.value["desc"] + '</p><div>' + temp + '</div></div>'
+        inner_html += '<div class="videoStream" id="' + self.id + '"><h3>' + self.value["title"] + '</h3><p>' + self.value["desc"] + '</p><div>' + temp + '</div></div>'
         return inner_html

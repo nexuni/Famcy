@@ -14,9 +14,9 @@ class displayImage(Famcy.FamcyBlock):
     @classmethod
     def generate_template_content(cls):
         return {
-                "title": "下面這個解析度也太糟糕了吧",
-                "img_name": [],
-                "img_size": []
+                "title": "displayImage",
+                "img_name": ["/static/image/test.jpg"],
+                "img_size": ["100%"]
             }
 
     def render_inner(self):

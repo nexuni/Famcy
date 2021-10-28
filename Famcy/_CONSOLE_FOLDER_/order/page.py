@@ -127,6 +127,8 @@ import json
 class OrderPage(Famcy.FamcyPage):
     def __init__(self):
         super(OrderPage, self).__init__("/order", Famcy.ClassicStyle(), background_thread=False)
+        self.p_card = self.prompt_card()
+        self.layout.addPromptWidget(self.p_card)
 
         self.card_1 = self.card1()
         self.card_2 = self.card2()
@@ -191,7 +193,7 @@ class OrderPage(Famcy.FamcyPage):
                 "url": "https://www.google.com/"
             })
 
-        submit_btn.connect(self.submit_input, target=card1)
+        submit_btn.connect(self.submit_input, target=self.p_card)
 
         input_form.layout.addWidget(pure_input, 0, 0)
         input_form.layout.addWidget(input_btn, 0, 1)
@@ -219,6 +221,8 @@ class OrderPage(Famcy.FamcyPage):
         upload_file = Famcy.uploadFile()
         submit_file = Famcy.submitBtn()
 
+        submit_file.connect(self.submit_pic, target=card1)
+
         upload_form.layout.addWidget(upload_file, 0, 0)
         upload_form.layout.addWidget(submit_file, 1, 0)
 
@@ -236,14 +240,35 @@ class OrderPage(Famcy.FamcyPage):
         display_step_loader = Famcy.displayStepLoader()
 
         card2.layout.addWidget(display_image, 0, 0)
-        card2.layout.addWidget(display_light, 1, 0)
-        card2.layout.addWidget(display_tag, 2, 0)
-        card2.layout.addWidget(display_paragraph, 3, 0)
-        card2.layout.addWidget(display_step_loader, 4, 0)
+        card2.layout.addWidget(display_light, 0, 1)
+        card2.layout.addWidget(display_tag, 1, 0, 1, 2)
+        card2.layout.addWidget(display_paragraph, 2, 0, 1, 2)
+        card2.layout.addWidget(display_step_loader, 3, 0, 1, 2)
         return card2
 
+    def prompt_card(self):
+        pcard = Famcy.FamcyCard()
+
+        display_image = Famcy.displayImage()
+        display_light = Famcy.displayLight()
+        display_tag = Famcy.displayTag()
+        display_paragraph = Famcy.displayParagraph()
+        display_step_loader = Famcy.displayStepLoader()
+
+        pcard.layout.addWidget(display_image, 0, 0)
+        pcard.layout.addWidget(display_light, 1, 0)
+        pcard.layout.addWidget(display_tag, 2, 0)
+        pcard.layout.addWidget(display_paragraph, 3, 0)
+        pcard.layout.addWidget(display_step_loader, 4, 0)
+        return pcard
+
     def submit_input(self, submission_obj, info_list):
-        return Famcy.UpdateAlert(alert_message=str(info_list))  
+        return Famcy.UpdatePrompt()
+        # return Famcy.UpdateRemoveElement()
+        # return Famcy.UpdateAlert(alert_message=str(info_list))
+
+    def submit_pic(self, submission_obj, info_list):
+        return Famcy.UpdateAlert(alert_message=str(info_list))
 
 page = OrderPage()
 page.register()
