@@ -1,6 +1,6 @@
 import Famcy
 
-LOCAL_USER = "~/.local/share/famcy"
+LOCAL_USER = "/home/\%U/.local/share/famcy"
 
 def main(args):
 	# Write famcy.ini
@@ -12,6 +12,8 @@ socket = /tmp/%s.sock
 chmod-socket = 660
 vacuum = true
 die-on-term = true
+enable-threads = true
+single-interpreter = true
 logto = %s""" % (args[0], LOCAL_USER + "/" + args[0] + "/logs/" + args[0] + ".log")
 
 	f = open(Famcy.famcy_dir + "/famcy.ini", "w")
