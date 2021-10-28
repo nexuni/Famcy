@@ -142,6 +142,7 @@ class FamcyLayout:
 
 		self.content = []
 		self.cusContent = []
+		self.promptContent = []
 		self._check_rep()
 
 	def _check_rep(self):
@@ -149,6 +150,9 @@ class FamcyLayout:
 		Rep Invariant
 		"""
 		pass
+
+	def addPromptWidget(self, card):
+		self.promptContent.append(card)
 
 	def addWidget(self, card, start_row, start_col, height=1, width=1):
 		card.parent = self.parent
@@ -212,6 +216,11 @@ class FamcyLayout:
 			else:
 				cssLayout += '<style type="text/css" media="' + k + '">'
 				cssLayout += self.setDeviceLayout(v)
+			cssLayout += '</style>'
+
+		for _prompt in self.promptContent:
+			cssLayout += '<style type="text/css">'
+			cssLayout += _prompt.layout.setLayout()
 			cssLayout += '</style>'
 
 		return cssLayout

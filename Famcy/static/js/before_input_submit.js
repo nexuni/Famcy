@@ -44,7 +44,7 @@ function checkform(form_item, submit_id, failure_msg="資料輸入有誤") {
     if (flag.includes("false")) {
         response_dict = {"jsAlert": true, "alert_type":"alert-danger", "alert_message":failure_msg, "alert_position":"prepend"}
         var token = document.head.querySelector("[name~=csrf-token][content]").content
-        
+
         Sijax.request('famcy_submission_handler', [submit_id, response_dict], { data: { csrf_token: token } });
         return false
     }
