@@ -1,6 +1,24 @@
 import Famcy
 
+LOCAL_USER = "~/.local/share/famcy"
+
 def main(args):
+	# Write famcy.ini
+	content = """[uwsgi]
+module = wsgi:app
+master = true
+processes = 5
+socket = /tmp/%s.sock
+chmod-socket = 660
+vacuum = true
+die-on-term = true
+logto = %s""" % (args[0], LOCAL_USER + "/" + args[0] + "/logs/" + args[0] + ".log")
+
+	f = open(Famcy.famcy_dir + "/famcy.ini", "w")
+	f.write(content)
+	f.close()
+	
+	# Write wsgi.py
 	content = """from Famcy import create_app
 
 app = create_app('%s',True)
