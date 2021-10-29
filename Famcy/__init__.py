@@ -92,7 +92,7 @@ def create_app(famcy_id, production=False):
 
     # Init Sijax
     FManager["Sijax"].Sijax().init_app(app)
-    # famcy_websocket = WebSocket(app)
+    famcy_WebSocket = WebSocket(app)
 
     # Init http client
     FManager.init_http_client(**FManager["ConsoleConfig"])
@@ -105,17 +105,15 @@ def create_app(famcy_id, production=False):
         # Usage in template {{ url_for('user_custom_asset', filename='doday_icon.png') }}
         return send_from_directory(FManager.console + "/" + FManager.USER_STATIC_FOLDER, filename)
 
-    @MainBlueprint.route('/test')
-    def test_background():
-        print("test_background")
-        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
-
-    # @famcy_websocket.route('/echo')
-    # def echo(ws):
-    #     while True:
-    #         msg = ws.receive()
-    #         print("msg: ", msg)
-    #         ws.send(msg)
+    @famcy_WebSocket.route('/echo')
+    def echo(ws):
+        print("Enter")
+        while True:
+            msg = ws.receive()
+            print("msg: ", msg)
+            if msg is not None:
+                ws.send(msg)
+            else: return
 
     # Import Fblocks from default and custom folders. 
     # ------------------------------

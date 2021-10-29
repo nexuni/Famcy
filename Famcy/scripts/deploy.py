@@ -1,6 +1,6 @@
 import Famcy
 
-LOCAL_USER = "/home/\%U/.local/share/famcy"
+LOCAL_USER = "/home/%U/.local/share/famcy"
 
 def main(args):
 	# Write famcy.ini
