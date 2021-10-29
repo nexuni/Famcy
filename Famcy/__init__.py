@@ -2,7 +2,7 @@
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
-from flask_uwsgi_websocket import GeventWebSocket
+from flask_uwsgi_websocket import WebSocket
 
 import os
 import importlib
@@ -92,7 +92,7 @@ def create_app(famcy_id, production=False):
 
     # Init Sijax
     FManager["Sijax"].Sijax().init_app(app)
-    famcy_GeventWebSocket = GeventWebSocket(app)
+    famcy_WebSocket = WebSocket(app)
 
     # Init http client
     FManager.init_http_client(**FManager["ConsoleConfig"])
@@ -105,13 +105,15 @@ def create_app(famcy_id, production=False):
         # Usage in template {{ url_for('user_custom_asset', filename='doday_icon.png') }}
         return send_from_directory(FManager.console + "/" + FManager.USER_STATIC_FOLDER, filename)
 
-    @famcy_GeventWebSocket.route('/echo')
+    @famcy_WebSocket.route('/echo')
     def echo(ws):
         print("Enter")
         while True:
             msg = ws.receive()
             print("msg: ", msg)
-            ws.send(msg)
+            if msg is not None:
+                ws.send(msg)
+            else: return
 
     # Import Fblocks from default and custom folders. 
     # ------------------------------
