@@ -20,12 +20,27 @@
         {{ g.sijax.get_js()|safe }}
     </script>
     <script type="text/javascript">
-    	var webSocket = new WebSocket("wss://pms.nexuni.com/echo");
-    	webSocket.onmessage = function (event) {
-    		console.log(event.data);
-    		var token = document.head.querySelector("[name~=csrf-token][content]").content
-			// Sijax.request('famcy_submission_handler', ['%s', response_dict], { data: { csrf_token: token } });
-		}
+    	$(document).ready(function() {
+            if (!window.WebSocket) {
+                if (window.MozWebSocket) {
+                    window.WebSocket = window.MozWebSocket;
+                } else {
+                    console.log("<li>Your browser doesn't support WebSockets.</li>");
+                }
+            }
+            const ws = new WebSocket("wss://"+window.location.host+"/echo");
+            ws.onopen = function(evt) {
+                console.log("onopen");
+            }
+
+            ws.onmessage = function(evt) {
+                console.log("onmessage");
+            }
+
+            ws.onclose = function(evt) {
+                console.log("onclose");
+            }
+        });
     </script>
 
 </head>
