@@ -20,7 +20,7 @@
         {{ g.sijax.get_js()|safe }}
     </script>
     <script type="text/javascript">
-    	var webSocket = new WebSocket("wss://demo.piesocket.com/v3/channel_1?api_key=oCdCMcMPQpbvNjUIzqtvF1d2X2okWpDQj4AwARJuAgtjhzKxVEjQU6IdCjwm&notify_self");
+    	var webSocket = new WebSocket("wss://pms.nexuni.com/echo");
     	webSocket.onmessage = function (event) {
     		console.log(event.data);
     		var token = document.head.querySelector("[name~=csrf-token][content]").content
