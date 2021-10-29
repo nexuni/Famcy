@@ -1,6 +1,7 @@
 flask
 flask_login
 flask_sijax
+Flask-uWSGI-WebSocket
 gadgethiServerUtils
 markdown
 dash

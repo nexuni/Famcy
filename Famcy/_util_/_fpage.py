@@ -137,8 +137,8 @@ class FPage(FamcyWidget):
 		This is the main handler
 		for sijax comet plugin
 		"""
-		print("B: ", kwargs)
 		while True:
+			time.sleep(int(1/self.comet_update_freq))
 			self.sijax_response = obj_response
 			try:
 				baction = self.background_queue.pop()
@@ -147,8 +147,6 @@ class FPage(FamcyWidget):
 				continue
 
 			yield self.sijax_response
-
-			time.sleep(int(1/self.comet_update_freq))
 
 	# Functions that can be overwritten
 	# ---------------------------------
