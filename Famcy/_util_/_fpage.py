@@ -37,8 +37,7 @@ class FPage(FamcyWidget):
 	"""	
 	def __init__(self, route, style, permission_level=0, 
 			layout_mode=FLayoutMode.recommend, 
-			background_thread=False, background_freq=1, 
-			comet_update_freq=1):
+			background_thread=False, background_freq=1):
 
 		super(FPage, self).__init__()
 		self.route = route
@@ -48,10 +47,8 @@ class FPage(FamcyWidget):
 		self.background_thread_flag = background_thread
 
 		if self.background_thread_flag:
-			self.comet_update_freq = comet_update_freq
 			self.background_freq = background_freq
-			self.background_queue = FamcyPriorityQueue()
-			self.sijax_response = None
+			# self.sijax_response = None
 			# Necessary header script for comet
 			self.header_script += '<script type="text/javascript" src="/static/js/sijax/sijax_comet.js"></script>'
 			
@@ -94,8 +91,9 @@ class FPage(FamcyWidget):
 		if g.sijax.is_sijax_request:
 			g.sijax.register_object(FSubmissionSijaxHandler)
 
-			if self.background_thread_flag:
-				g.sijax.register_comet_callback('background_work', self.background_main_comet_handler)
+			# No more comet, not compatible with uwsgi
+			# if self.background_thread_flag:
+			# 	g.sijax.register_comet_callback('background_work', self.background_main_comet_handler)
 
 			return g.sijax.process_request()
 
@@ -115,20 +113,12 @@ class FPage(FamcyWidget):
 		"""
 		while True:
 			time.sleep(int(1/self.background_freq))
+			self.background_thread_inner()
 
-			if not self.sijax_response:
-				continue
-
-			self.background_thread_inner(self.sijax_response)
-			
-
-	def background_thread_inner(self, sijax_response):
+	def background_thread_inner(self):
 		"""
 		This is the background thread
 		inner content for fpage. 
-		* Input:
-			sijax_response: the object that can
-			help trigger sijax response
 		"""
 		pass
 
@@ -137,16 +127,17 @@ class FPage(FamcyWidget):
 		This is the main handler
 		for sijax comet plugin
 		"""
-		while True:
-			time.sleep(int(1/self.comet_update_freq))
-			self.sijax_response = obj_response
-			try:
-				baction = self.background_queue.pop()
-				baction()
-			except:
-				continue
+		# while True:
+		# 	time.sleep(int(1/self.comet_update_freq))
+		# 	self.sijax_response = obj_response
+		# 	try:
+		# 		baction = self.background_queue.pop()
+		# 		baction()
+		# 	except:
+		# 		continue
 
-			yield self.sijax_response
+		# 	yield self.sijax_response
+		pass
 
 	# Functions that can be overwritten
 	# ---------------------------------

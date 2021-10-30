@@ -135,4 +135,14 @@ class FSubmission:
 		"""
 		print("jsAlertHandler")
 		return Famcy.UpdateAlert(alert_type=info_dict["alert_type"], alert_message=info_dict["alert_message"], alert_position=info_dict["alert_position"])
+	
+class FBackgroundTask(FSubmission):
+	"""
+	This is the background task submission
+	object for the background loop.
+	"""
+	def __init__(self, origin):
+		super(FBackgroundTask, self).__init__(self, origin)
 
+	def tojson(self):
+		pass
