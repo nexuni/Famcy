@@ -26,31 +26,32 @@ class BarrierPage(Famcy.FamcyPage):
 		This is the inner loop of 
 		the background thread. 
 		"""
-		r = random.randint(1, 100)
 		rtype = [{"red": "", "yellow": "bulb_yellow", "green": ""},
 {"red": "", "yellow": "", "green": "bulb_green"},
 {"red": "bulb_red", "yellow": "", "green": ""}]
 
 		itype = ["/asset/image/barrier_gif_close.gif", "/asset/image/barrier_gif_close.gif", "/asset/image/barrier_gif.gif"]
 
-		submission_obj.func
-		submission_obj.target
-		Famcy.FamcyBackgroundTask(self)
+		def task_a_func(self, submission_obj, info_list):
+			ridx = random.randint(0, 2)
+			submission_obj.target.update({"status": rtype[ridx]})
 
-		responseObj = Famcy.UpdateBlockHtml(target=self.card_2.layout.content[1][0])
-		responseObj2 = Famcy.UpdateBlockHtml(target=self.card_3.layout.content[0][0])
-		responseObj3 = Famcy.UpdateBlockHtml(target=self.card_4.layout.content[0][0])
+		def task_bc_func(self, submission_obj, info_list):
+			ridx = random.randint(0, 2)
+			submission_obj.target.update({"img_name": [itype[ridx]]})
 
-		if r > 30:
-			ridx = random.randint(0, 2)
-			responseObj.target.update({"status": rtype[ridx]})
-			ridx = random.randint(0, 2)
-			responseObj2.target.update({"img_name": [itype[ridx]]})
-			ridx = random.randint(0, 2)
-			responseObj3.target.update({"img_name": [itype[ridx]]})
-			self.background_queue.add(lambda: responseObj.response(sijax_response), Famcy.FamcyPriority.Standard)
-			self.background_queue.add(lambda: responseObj2.response(sijax_response), Famcy.FamcyPriority.Standard)
-			self.background_queue.add(lambda: responseObj3.response(sijax_response), Famcy.FamcyPriority.Standard)
+		task_a = Famcy.FamcyBackgroundTask(self)
+		task_a.associate(task_a_func, info_dict={}, target=self.card_2.layout.content[1][0])
+
+		task_b = Famcy.FamcyBackgroundTask(self)
+		task_b.associate(task_bc_func, info_dict={}, target=self.card_3.layout.content[0][0])
+
+		task_c = Famcy.FamcyBackgroundTask(self)
+		task_c.associate(task_bc_func, info_dict={}, target=self.card_4.layout.content[0][0])
+
+		Famcy.FamcyBackgroundQueue.add(task_a, Famcy.FamcyPriority.Standard)
+		Famcy.FamcyBackgroundQueue.add(task_b, Famcy.FamcyPriority.Standard)
+		Famcy.FamcyBackgroundQueue.add(task_c, Famcy.FamcyPriority.Standard)
 
 	def card1(self):
 		card1 = Famcy.FamcyCard()
