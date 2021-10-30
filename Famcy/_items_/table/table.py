@@ -142,7 +142,7 @@ class table(Famcy.FamcyBlock):
 
                 table_init["columns"][0].unshift(temp)
                 table_init["idField"] = table_value["input_value_col_field"]
-                table_init["selectItemName"] = %s
+                table_init["selectItemName"] = "%s"
                         
             }
 
