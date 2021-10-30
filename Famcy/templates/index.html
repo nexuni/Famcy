@@ -19,7 +19,9 @@
     <script type="text/javascript">
         {{ g.sijax.get_js()|safe }}
     </script>
-    <script type="text/javascript">
+
+</head>
+<script type="text/javascript">
     	$(document).ready(function() {
             if (!window.WebSocket) {
                 if (window.MozWebSocket) {
@@ -46,8 +48,6 @@
             }
         });
     </script>
-
-</head>
 <body id="root" onload="{% if body_on_load %}{{ body_on_load|safe }}{% endif %}">
 
 	{% if side_bar %} 
