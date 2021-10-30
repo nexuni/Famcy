@@ -89,8 +89,8 @@ class FStyle:
 		<script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
 		"""
 	
-	def render(self, extra_script, content, background_flag=False):
-		return self._FamcyStyle.render(extra_script, content, background_flag=False)
+	def render(self, extra_script, content, page_id="", background_flag=False):
+		return self._FamcyStyle.render(extra_script, content, page_id=page_id, background_flag=False)
 
 class FStyleNavBar(FStyle):
 	def __init__(self):
