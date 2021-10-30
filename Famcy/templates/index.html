@@ -34,7 +34,8 @@
             }
 
             ws.onmessage = function(evt) {
-                console.log("onmessage");
+                console.log("onmessage", evt);
+                console.log(evt.data)
             }
 
             ws.onclose = function(evt) {
