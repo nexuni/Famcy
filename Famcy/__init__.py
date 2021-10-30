@@ -117,7 +117,7 @@ def create_app(famcy_id, production=False):
             try:
                 btask = FamcyBackgroundQueue.pop()
             except:
-                return
+                continue
 
             ws.send(btask.tojson(str_format=True))
 
