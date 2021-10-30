@@ -20,7 +20,7 @@ class ClassicStyle(Famcy.FamcyStyle):
 		if desc:
 			self.desc = desc
 
-	def render(self, extra_script, content, background_flag=False):
+	def render(self, extra_script, content, page_id="", background_flag=False):
 
 		html_header = self.setDashboardHTMLHeader()
 		end_js = self.setDashboardJavaScript()
@@ -30,5 +30,5 @@ class ClassicStyle(Famcy.FamcyStyle):
 		side_bar = self.side_bar.render()
 		nav_bar = self.nav_bar.render()
 
-		body_on_load = "var token = document.head.querySelector('[name~=csrf-token][content]').content; sjxComet.request('background_work', [], token);" if background_flag else ""
-		return render_template("index.html", load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, side_bar=side_bar, nav_bar=nav_bar, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)
+		body_on_load = "var token = document.head.querySelector('[name~=csrf-token][content]').content;" if background_flag else ""
+		return render_template("index.html", page_id=page_id, load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, side_bar=side_bar, nav_bar=nav_bar, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)

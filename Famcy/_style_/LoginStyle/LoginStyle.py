@@ -25,5 +25,5 @@ class LoginStyle(Famcy.FamcyStyle):
 		color_theme = self.color_theme.render()
 		load_spinner = self.loader.render()
 
-		body_on_load = "var token = document.head.querySelector('[name~=csrf-token][content]').content; sjxComet.request('background_work', [], token);" if background_flag else ""
-		return render_template("login.html", load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)
+		body_on_load = "var token = document.head.querySelector('[name~=csrf-token][content]').content;" if background_flag else ""
+		return render_template("login.html", page_id=page_id, load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)
