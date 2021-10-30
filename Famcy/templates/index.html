@@ -39,6 +39,7 @@
                 var token = document.head.querySelector("[name~=csrf-token][content]").content
                 console.log(evt.data)
                 if (evt.data.page_id  === "{% if page_id %}{{ page_id|safe }}{% endif %}") {
+                	console.log("Enter If")
                 	Sijax.request('famcy_submission_handler', [evt.data.submission_id, evt.data.data], { data: { csrf_token: token } });
                 }
             }
