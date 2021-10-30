@@ -35,10 +35,12 @@ class BarrierPage(Famcy.FamcyPage):
 		def task_a_func(self, submission_obj, info_list):
 			ridx = random.randint(0, 2)
 			submission_obj.target.update({"status": rtype[ridx]})
+			return Famcy.UpdateBlockHtml()
 
 		def task_bc_func(self, submission_obj, info_list):
 			ridx = random.randint(0, 2)
 			submission_obj.target.update({"img_name": [itype[ridx]]})
+			return Famcy.UpdateBlockHtml()
 
 		task_a = Famcy.FamcyBackgroundTask(self)
 		task_a.associate(task_a_func, info_dict={}, target=self.card_2.layout.content[1][0])
