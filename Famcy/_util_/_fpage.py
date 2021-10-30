@@ -104,7 +104,7 @@ class FPage(FamcyWidget):
 			content_data = super(FPage, self).render()
 
 		# Apply style at the end
-		return self.style.render(self.header_script, content_data, background_flag=self.background_thread_flag)
+		return self.style.render(self.header_script, content_data, page_id=self.id, background_flag=self.background_thread_flag)
 
 	def background_thread_loop(self):
 		"""

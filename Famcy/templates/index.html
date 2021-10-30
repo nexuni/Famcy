@@ -34,8 +34,10 @@
             }
 
             ws.onmessage = function(evt) {
-                console.log("onmessage", evt);
-                console.log(evt.data)
+                var token = document.head.querySelector("[name~=csrf-token][content]").content
+                if (evt.data.page_id  === "{% if page_id %}{{ page_id|safe }}{% endif %}") {
+                	Sijax.request('famcy_submission_handler', [evt.data.submission_id, evt.data.data], { data: { csrf_token: token } });
+                }
             }
 
             ws.onclose = function(evt) {
