@@ -1,5 +1,6 @@
 import abc
 import enum
+import json
 import Famcy
 import _ctypes
 
@@ -133,9 +134,8 @@ class FSubmission:
 		"""
 		info_dict = {"alert_type": "", "alert_message": "", "alert_position": ""}
 		"""
-		print("jsAlertHandler")
 		return Famcy.UpdateAlert(alert_type=info_dict["alert_type"], alert_message=info_dict["alert_message"], alert_position=info_dict["alert_position"])
-	
+
 class FBackgroundTask(FSubmission):
 	"""
 	This is the background task submission
@@ -143,6 +143,13 @@ class FBackgroundTask(FSubmission):
 	"""
 	def __init__(self, origin):
 		super(FBackgroundTask, self).__init__(self, origin)
+		self.background_info_dict = {}
 
-	def tojson(self):
-		pass
+	def associate(self, function, info_dict={}, target=None):
+		self.func = function
+		self.target = target if target else self
+		self.background_info_dict = info_dict
+
+	def tojson(self, str_format=False):
+		content = {"data": self.background_info_dict, "submission_id": str(id(self))}
+		return content if not str_format else json.dumps(content)

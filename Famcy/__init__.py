@@ -8,6 +8,7 @@ import os
 import importlib
 import Famcy
 import json
+import time
 
 from Famcy._util_._fmanager import *
 from Famcy._util_._fauth import *
@@ -94,6 +95,7 @@ def create_app(famcy_id, production=False):
     # Init Sijax
     FManager["Sijax"].Sijax().init_app(app)
     FamcyWebSocket = WebSocket(app)
+    FamcyWebSocketLoopDelay = 2.5
     FamcyBackgroundQueue = FamcyPriorityQueue()
     globals()["FamcyBackgroundQueue"] = FamcyBackgroundQueue
 
@@ -111,12 +113,13 @@ def create_app(famcy_id, production=False):
     @FamcyWebSocket.route('/fws')
     def fws(ws):
         while True:
+            time.sleep(FamcyWebSocketLoopDelay)
             try:
                 btask = FamcyBackgroundQueue.pop()
             except:
                 return
 
-            ws.send(btask.tojson())
+            ws.send(btask.tojson(str_format=True))
 
     # Import Fblocks from default and custom folders. 
     # ------------------------------
