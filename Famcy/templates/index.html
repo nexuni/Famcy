@@ -19,9 +19,7 @@
     <script type="text/javascript">
         {{ g.sijax.get_js()|safe }}
     </script>
-
-</head>
-<script type="text/javascript">
+    <script type="text/javascript">
     	$(document).ready(function() {
             if (!window.WebSocket) {
                 if (window.MozWebSocket) {
@@ -39,7 +37,7 @@
                 var token = document.head.querySelector("[name~=csrf-token][content]").content
                 console.log(evt.data)
                 var data = JSON.parse(evt.data)
-                console.log(data, data.id)
+                console.log(data, data.page_id)
                 if (data.page_id  === "{% if page_id %}{{ page_id|safe }}{% endif %}") {
                 	console.log("Enter If")
                 	Sijax.request('famcy_submission_handler', [data.submission_id, data.data], { data: { csrf_token: token } });
@@ -51,6 +49,8 @@
             }
         });
     </script>
+</head>
+
 <body id="root" onload="{% if body_on_load %}{{ body_on_load|safe }}{% endif %}">
 
 	{% if side_bar %} 

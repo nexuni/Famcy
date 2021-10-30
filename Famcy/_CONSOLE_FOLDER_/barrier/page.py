@@ -21,6 +21,10 @@ class BarrierPage(Famcy.FamcyPage):
 		self.layout.addWidget(self.card_3, 0, 2)
 		self.layout.addWidget(self.card_4, 1, 0, 1, 3)
 
+		self.task_a = Famcy.FamcyBackgroundTask(self)
+		self.task_b = Famcy.FamcyBackgroundTask(self)
+		self.task_c = Famcy.FamcyBackgroundTask(self)
+
 	def background_thread_inner(self):
 		"""
 		This is the inner loop of 
@@ -42,18 +46,15 @@ class BarrierPage(Famcy.FamcyPage):
 			submission_obj.target.update({"img_name": [itype[ridx]]})
 			return Famcy.UpdateBlockHtml()
 
-		task_a = Famcy.FamcyBackgroundTask(self)
-		task_a.associate(task_a_func, info_dict={}, target=self.card_2.layout.content[1][0])
+		self.task_a.associate(task_a_func, info_dict={}, target=self.card_2.layout.content[1][0])
 
-		task_b = Famcy.FamcyBackgroundTask(self)
-		task_b.associate(task_bc_func, info_dict={}, target=self.card_3.layout.content[0][0])
+		self.task_b.associate(task_bc_func, info_dict={}, target=self.card_3.layout.content[0][0])
 
-		task_c = Famcy.FamcyBackgroundTask(self)
-		task_c.associate(task_bc_func, info_dict={}, target=self.card_4.layout.content[0][0])
+		self.task_c.associate(task_bc_func, info_dict={}, target=self.card_4.layout.content[0][0])
 
-		Famcy.FamcyBackgroundQueue.add(task_a, Famcy.FamcyPriority.Standard)
-		Famcy.FamcyBackgroundQueue.add(task_b, Famcy.FamcyPriority.Standard)
-		Famcy.FamcyBackgroundQueue.add(task_c, Famcy.FamcyPriority.Standard)
+		Famcy.FamcyBackgroundQueue.add(self.task_a, Famcy.FamcyPriority.Standard)
+		Famcy.FamcyBackgroundQueue.add(self.task_b, Famcy.FamcyPriority.Standard)
+		Famcy.FamcyBackgroundQueue.add(self.task_c, Famcy.FamcyPriority.Standard)
 
 	def card1(self):
 		card1 = Famcy.FamcyCard()
