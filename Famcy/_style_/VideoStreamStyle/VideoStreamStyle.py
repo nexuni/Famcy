@@ -49,7 +49,7 @@ class VideoStreamStyle(Famcy.FamcyStyle):
 		self.is_decoded = False
 		super(VideoStreamStyle, self).__init__()
 
-	def render(self, _script, _html, background_flag=False):
+	def render(self, _script, _html, background_flag=False, **kwargs):
 		address = request.args.get('address')
 		timeout = request.args.get('timeout')
 		return Response(self.video_camera.create_camera_response(address, timeout), mimetype='multipart/x-mixed-replace; boundary=frame')
