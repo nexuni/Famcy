@@ -28,13 +28,14 @@
                     console.log("<li>Your browser doesn't support WebSockets.</li>");
                 }
             }
-            const ws = new WebSocket("wss://"+window.location.host+"/echo");
+            const ws = new WebSocket("wss://"+window.location.host+"/fws");
             ws.onopen = function(evt) {
                 console.log("onopen");
             }
 
             ws.onmessage = function(evt) {
-                console.log("onmessage");
+                console.log("onmessage", evt);
+                console.log(evt.data)
             }
 
             ws.onclose = function(evt) {
