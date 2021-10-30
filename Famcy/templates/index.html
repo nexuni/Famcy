@@ -38,7 +38,7 @@
             ws.onmessage = function(evt) {
                 var token = document.head.querySelector("[name~=csrf-token][content]").content
                 console.log(evt.data)
-                var data = json.parse(evt.data)
+                var data = JSON.parse(evt.data)
                 console.log(data, data.id)
                 if (data.page_id  === "{% if page_id %}{{ page_id|safe }}{% endif %}") {
                 	console.log("Enter If")
