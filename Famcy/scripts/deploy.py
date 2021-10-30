@@ -15,7 +15,7 @@ die-on-term = true
 enable-threads = true
 single-interpreter = true
 http-websockets = true
-logto = %s""" % (args[0], LOCAL_USER + "/" + args[0] + "/logs/" + args[0] + ".log")
+logto = %s""" % (LOCAL_USER + "/" + args[0] + "/logs/" + args[0] + ".log")
 
 	f = open(Famcy.famcy_dir + "/famcy.ini", "w")
 	f.write(content)
