@@ -37,10 +37,12 @@
 
             ws.onmessage = function(evt) {
                 var token = document.head.querySelector("[name~=csrf-token][content]").content
-                console.log(evt.data.page_id)
-                if (evt.data.page_id  === "{% if page_id %}{{ page_id|safe }}{% endif %}") {
+                console.log(evt.data)
+                var data = json.parse(evt.data)
+                console.log(data, data.id)
+                if (data.page_id  === "{% if page_id %}{{ page_id|safe }}{% endif %}") {
                 	console.log("Enter If")
-                	Sijax.request('famcy_submission_handler', [evt.data.submission_id, evt.data.data], { data: { csrf_token: token } });
+                	Sijax.request('famcy_submission_handler', [data.submission_id, data.data], { data: { csrf_token: token } });
                 }
             }
 
