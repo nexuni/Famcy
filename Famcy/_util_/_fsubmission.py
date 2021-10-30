@@ -142,7 +142,7 @@ class FBackgroundTask(FSubmission):
 	object for the background loop.
 	"""
 	def __init__(self, origin):
-		super(FBackgroundTask, self).__init__(self, origin)
+		super(FBackgroundTask, self).__init__(origin)
 		self.background_info_dict = {}
 
 	def associate(self, function, info_dict={}, target=None):
@@ -151,5 +151,6 @@ class FBackgroundTask(FSubmission):
 		self.background_info_dict = info_dict
 
 	def tojson(self, str_format=False):
-		content = {"data": self.background_info_dict, "submission_id": str(id(self))}
+		content = {"data": self.background_info_dict, "submission_id": str(id(self)), 
+			"page_id": self.origin.id}
 		return content if not str_format else json.dumps(content)
