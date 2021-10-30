@@ -21,7 +21,7 @@ class BarrierPage(Famcy.FamcyPage):
 		self.layout.addWidget(self.card_3, 0, 2)
 		self.layout.addWidget(self.card_4, 1, 0, 1, 3)
 
-	def background_thread_inner(self, sijax_response):
+	def background_thread_inner(self):
 		"""
 		This is the inner loop of 
 		the background thread. 
@@ -32,6 +32,10 @@ class BarrierPage(Famcy.FamcyPage):
 {"red": "bulb_red", "yellow": "", "green": ""}]
 
 		itype = ["/asset/image/barrier_gif_close.gif", "/asset/image/barrier_gif_close.gif", "/asset/image/barrier_gif.gif"]
+
+		submission_obj.func
+		submission_obj.target
+		Famcy.FamcyBackgroundTask(self)
 
 		responseObj = Famcy.UpdateBlockHtml(target=self.card_2.layout.content[1][0])
 		responseObj2 = Famcy.UpdateBlockHtml(target=self.card_3.layout.content[0][0])

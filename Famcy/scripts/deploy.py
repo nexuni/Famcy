@@ -8,12 +8,13 @@ def main(args):
 module = wsgi:app
 master = true
 processes = 5
-socket = /tmp/%s.sock
+http-socket = :9090
 chmod-socket = 660
 vacuum = true
 die-on-term = true
 enable-threads = true
 single-interpreter = true
+http-websockets = true
 logto = %s""" % (args[0], LOCAL_USER + "/" + args[0] + "/logs/" + args[0] + ".log")
 
 	f = open(Famcy.famcy_dir + "/famcy.ini", "w")

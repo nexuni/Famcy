@@ -49,6 +49,7 @@ FamcyStyleLoader = FStyleLoader
 FamcyColorTheme = FColorTheme
 FamcyStyleSideBar = FStyleSideBar
 FamcyStyleNavBar = FStyleNavBar
+FamcyBackgroundTask = FBackgroundTask
 
 def create_app(famcy_id, production=False):
     """
@@ -92,7 +93,9 @@ def create_app(famcy_id, production=False):
 
     # Init Sijax
     FManager["Sijax"].Sijax().init_app(app)
-    famcy_WebSocket = WebSocket(app)
+    FamcyWebSocket = WebSocket(app)
+    FamcyBackgroundQueue = FamcyPriorityQueue()
+    globals()["FamcyBackgroundQueue"] = FamcyBackgroundQueue
 
     # Init http client
     FManager.init_http_client(**FManager["ConsoleConfig"])
@@ -105,15 +108,15 @@ def create_app(famcy_id, production=False):
         # Usage in template {{ url_for('user_custom_asset', filename='doday_icon.png') }}
         return send_from_directory(FManager.console + "/" + FManager.USER_STATIC_FOLDER, filename)
 
-    @famcy_WebSocket.route('/echo')
-    def echo(ws):
-        print("Enter")
+    @FamcyWebSocket.route('/fws')
+    def fws(ws):
         while True:
-            msg = ws.receive()
-            print("msg: ", msg)
-            if msg is not None:
-                ws.send(msg)
-            else: return
+            try:
+                btask = FamcyBackgroundQueue.pop()
+            except:
+                return
+
+            ws.send(btask.tojson())
 
     # Import Fblocks from default and custom folders. 
     # ------------------------------
