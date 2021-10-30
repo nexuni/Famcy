@@ -18,7 +18,7 @@ class LoginStyle(Famcy.FamcyStyle):
 		if desc:
 			self.desc = desc
 
-	def render(self, extra_script, content, background_flag=False):
+	def render(self, extra_script, content, page_id="", background_flag=False):
 
 		html_header = self.setDashboardHTMLHeader()
 		end_js = self.setDashboardJavaScript()
