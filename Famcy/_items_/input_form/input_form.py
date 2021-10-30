@@ -32,11 +32,13 @@ class input_form(Famcy.FamcyCard):
 					var formData = new FormData(form_element)
 					var response_dict = {}
 					for (var pair of formData.entries()) {
-						if (!(pair[0] in response_dict)) {
-							response_dict[pair[0]] = [pair[1]]
-						}
-						else {
-							response_dict[pair[0]].push(pair[1])
+						if (pair[0] !== "btSelectAll") {
+							if (!(pair[0] in response_dict)) {
+								response_dict[pair[0]] = [pair[1]]
+							}
+							else {
+								response_dict[pair[0]].push(pair[1])
+							}
 						}
 					}
 
