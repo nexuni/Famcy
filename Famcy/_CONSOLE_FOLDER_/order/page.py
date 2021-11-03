@@ -128,7 +128,7 @@ class OrderPage(Famcy.FamcyPage):
     def __init__(self):
         super(OrderPage, self).__init__("/order", Famcy.ClassicStyle(), background_thread=False)
         self.p_card = self.prompt_card()
-        self.layout.addPromptWidget(self.p_card)
+        self.layout.addPromptWidget(self.p_card, 50)
 
         self.card_1 = self.card1()
         self.card_2 = self.card2()
@@ -249,23 +249,22 @@ class OrderPage(Famcy.FamcyPage):
     def prompt_card(self):
         pcard = Famcy.FamcyCard()
 
-        display_image = Famcy.displayImage()
-        display_light = Famcy.displayLight()
-        display_tag = Famcy.displayTag()
-        display_paragraph = Famcy.displayParagraph()
-        display_step_loader = Famcy.displayStepLoader()
+        input_form = Famcy.input_form()
+        submit_btn = Famcy.submitBtn()
+        submit_btn.connect(self.submit_remove, target=pcard)
 
-        pcard.layout.addWidget(display_image, 0, 0)
-        pcard.layout.addWidget(display_light, 1, 0)
-        pcard.layout.addWidget(display_tag, 2, 0)
-        pcard.layout.addWidget(display_paragraph, 3, 0)
-        pcard.layout.addWidget(display_step_loader, 4, 0)
+        input_form.layout.addWidget(submit_btn, 0, 0)
+
+        pcard.layout.addWidget(input_form, 0, 0)
         return pcard
 
     def submit_input(self, submission_obj, info_list):
         return Famcy.UpdatePrompt()
         # return Famcy.UpdateRemoveElement()
         # return Famcy.UpdateAlert(alert_message=str(info_list))
+
+    def submit_remove(self, submission_obj, info_list):
+        return Famcy.UpdateRemoveElement(prompt_flag=True)
 
     def submit_pic(self, submission_obj, info_list):
         return Famcy.UpdateAlert(alert_message=str(info_list))

@@ -32,6 +32,9 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.js_after_func_dict = {} # post js script input
 		self.js_after_func_name = "" # post js script function name
 
+		# Style related
+		self.css_style_dict = {}
+
 		# Submission related
 		self.submission_obj = FSubmission(self)
 		self.post_submission_js = ""
