@@ -16,7 +16,7 @@ class displayImage(Famcy.FamcyBlock):
         return {
                 "title": "displayImage",
                 "img_name": ["/static/image/test.jpg"],
-                "img_size": ["100%"]
+                "img_size": ["100%"],
             }
 
     def render_inner(self):
