@@ -10,8 +10,7 @@ class bar_chart(Famcy.FamcyBlock):
     def __init__(self, **kwargs):
         self.value = bar_chart.generate_template_content()
         super(bar_chart, self).__init__(**kwargs)
-
-        self.header_script += '<script src="/static/js/bar_chart.js"></script>'
+        self.init_block()
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -36,6 +35,18 @@ class bar_chart(Famcy.FamcyBlock):
             "title": "bar_chart",
             "xy_axis_title": ["x_title", "y_title"]
         }
+
+    def init_block(self):
+        self.header_script += '<script src="/static/js/bar_chart.js"></script>'
+
+        self.body = Famcy.div()
+        self.body["id"] = self.id
+
+        div_temp = Famcy.div()
+        script = Famcy.script()
+
+        self.body.addElement(div_temp)
+        self.body.addElement(script)
 
     def render_inner(self):
         """
@@ -70,5 +81,7 @@ class bar_chart(Famcy.FamcyBlock):
         json_line_dict_values = json.dumps(data)
         json_line_dict_title = json.dumps(self.value["title"])
         json_line_dict_xy_title = json.dumps(self.value["xy_axis_title"])
+
+        self.body.children[1].innerHTML = 'generateBarChart("%s", %s, %s, %s)' % (self.id, json_line_dict_values, json_line_dict_title, json_line_dict_xy_title)
         
-        return"""<div id="%s"></div><script>generateBarChart("%s", %s, %s, %s)</script>""" % (self.id, self.id, json_line_dict_values, json_line_dict_title, json_line_dict_xy_title)
+        return self.body.render_inner()

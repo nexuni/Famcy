@@ -24,6 +24,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.action = ""
 		self.loader = False
 		self.parent = None
+		self.body = None
 		self.clickable = False
 		self.configs = {}
 

@@ -34,7 +34,7 @@ Dependencies:
         var options = this.options;
         var mandatory;
 
-        if (this.element.attr('class').split(/\s+/).includes("required_password")) {
+        if (this.element[0].classList.contains("required_password")) {
             mandatory = "required"
         }
         else {
