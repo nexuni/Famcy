@@ -14,8 +14,7 @@ class pie_chart(Famcy.FamcyBlock):
     def __init__(self, **kwargs):
         self.value = pie_chart.generate_template_content()
         super(pie_chart, self).__init__(**kwargs)
-
-        self.header_script += '<script src="/static/js/pie_chart.js"></script>'
+        self.init_block()
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -44,6 +43,18 @@ class pie_chart(Famcy.FamcyBlock):
             "size": [400, 400], # width, height
         }
 
+    def init_block(self):
+        self.header_script += '<script src="/static/js/pie_chart.js"></script>'
+
+        self.body = Famcy.div()
+        self.body["id"] = self.id
+
+        div_temp = Famcy.div()
+        script = Famcy.script()
+
+        self.body.addElement(div_temp)
+        self.body.addElement(script)
+
     def render_inner(self):
         pie_values = []
         for num in self.value["values"]:
@@ -53,6 +64,7 @@ class pie_chart(Famcy.FamcyBlock):
         json_pie_dict_labels = json.dumps(self.value["labels"])
         json_pie_dict_size = json.dumps(self.value["size"])
 
-        return """<div id="%s"></div><script>generatePieChart("%s", %s, %s, %s)</script>""" % (self.id, self.id, json_pie_dict_values, json_pie_dict_labels, json_pie_dict_size)
-
+        self.body.children[1].innerHTML = 'generatePieChart("%s", %s, %s, %s)' % (self.id, json_pie_dict_values, json_pie_dict_labels, json_pie_dict_size)
+        
+        return self.body.render_inner()
         

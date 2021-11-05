@@ -63,7 +63,7 @@ PAGE_HEADER = {
 	"type": ["table", ["display", "input_form"]]
 }
 
-table_content = Famcy.table.generate_template_content()
+table_content = Famcy.table_block.generate_template_content()
 
 display_light_block = Famcy.display.generate_values_content("displayLight")
 

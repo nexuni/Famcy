@@ -29,7 +29,6 @@ html{
     right: 0;
     width: 100vw;
     height: 100vh;
-    padding: 10vh 30vw;
     display: flex;
     flex-flow: column;
     justify-content: center;

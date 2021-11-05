@@ -80,46 +80,78 @@ class FInputBlock(FBlock):
 
         # Need to instantiate some important headers that are related
         # to required settings
-        self.update_input_headers()
+    #     self.update_input_headers()
 
-    def __setitem__(self, k, v):
-        super(FInputBlock, self).__setitem__(k, v)
-        if k in self.REQUIRED_KEYS:
-            self.update_input_headers()
+    # def __setitem__(self, k, v):
+    #     super(FInputBlock, self).__setitem__(k, v)
+    #     if k in self.REQUIRED_KEYS:
+    #         self.update_input_headers()
 
-    def update(self, updated_dict):
-        super(FInputBlock, self).update(updated_dict)
-        # Update input headers
-        for k in self.REQUIRED_KEYS:
-            if k in self.value.keys():
-                self.update_input_headers()
-                break
+    # def update(self, updated_dict):
+    #     super(FInputBlock, self).update(updated_dict)
+    #     # Update input headers
+    #     for k in self.REQUIRED_KEYS:
+    #         if k in self.value.keys():
+    #             self.update_input_headers()
+    #             break
 
-    def update_input_headers(self):
-        # Settings for action after post
-        # ------------------------------
-        self.after_action = self.value["action_after_post"]
+    # def update_input_headers(self):
+    #     # Settings for action after post
+    #     # ------------------------------
+    #     self.after_action = self.value["action_after_post"]
 
-        self.extra_keyup = ""
-        self.extra_script = ""
-        self.extra_onclick_btn = ""
-        self.extra_onclick_mult_btn = ""
-        self.extra_script_btn = ""
-        self.extra_script_mult_btn = ""
-        if "save" in self.after_action:
-            self.extra_keyup = ' onkeyup="saveValue(\'' + self.id + '\', this.value);"'
-            self.extra_script = '<script type="text/javascript">document.getElementById("' + self.id + '_input").value = getSavedValue("' + self.id + '");</script>'
-            self.extra_onclick_btn = ' onclick="saveValue(\'' + self.id + '\', \'' + self.id + '\' + this.value);"'
-            self.extra_onclick_mult_btn = ' onclick="saveMultValue(\'' + self.id + '\', \'' + self.id + '\' + this.value);"'
-            self.extra_script_btn = '<script type="text/javascript">if(getSavedValue("' + self.id + '") != ""){document.getElementById(getSavedValue("' + self.id + '")).checked = true;}</script>'
-            self.extra_script_mult_btn = '<script type="text/javascript">for(var i = 0; i < getMultSavedValue("' + self.id + '").length; i++){document.getElementById(getMultSavedValue("' + self.id + '")[i]).checked = true;}</script>'
+    #     self.extra_keyup = ""
+    #     self.extra_script = ""
+    #     self.extra_onclick_btn = ""
+    #     self.extra_onclick_mult_btn = ""
+    #     self.extra_script_btn = ""
+    #     self.extra_script_mult_btn = ""
+    #     if "save" in self.after_action:
+    #         self.extra_keyup = ' onkeyup="saveValue(\'' + self.id + '\', this.value);"'
+    #         self.extra_script = '<script type="text/javascript">document.getElementById("' + self.id + '_input").value = getSavedValue("' + self.id + '");</script>'
+    #         self.extra_onclick_btn = ' onclick="saveValue(\'' + self.id + '\', \'' + self.id + '\' + this.value);"'
+    #         self.extra_onclick_mult_btn = ' onclick="saveMultValue(\'' + self.id + '\', \'' + self.id + '\' + this.value);"'
+    #         self.extra_script_btn = '<script type="text/javascript">if(getSavedValue("' + self.id + '") != ""){document.getElementById(getSavedValue("' + self.id + '")).checked = true;}</script>'
+    #         self.extra_script_mult_btn = '<script type="text/javascript">for(var i = 0; i < getMultSavedValue("' + self.id + '").length; i++){document.getElementById(getMultSavedValue("' + self.id + '")[i]).checked = true;}</script>'
 
-        # Settings for mandatory
-        # ------------------------------
-        if self.value["mandatory"]:
-            self.mandatory = " required"
-        else:
-            self.mandatory = ""
+    #     # Settings for mandatory
+    #     # ------------------------------
+    #     if self.value["mandatory"]:
+    #         self.mandatory = " required"
+    #     else:
+    #         self.mandatory = ""
+
+    # def update_input_script(self, element, _type=""):
+    #     if self.value["mandatory"]:
+    #         element["required"] = "required"
+
+    #     if "save" in self.value["action_after_post"]:
+    #         if _type in ["inputBtn"]:
+    #             element["onkeyup"] = 'saveValue(\'' + self.id + '\', this.value);'
+
+    # def update_mandatory(self, element):
+    #     element["required"] = "required"
+
+    # def update_action_after_post(self, element):
+    #     element["onkeyup"] = 'saveValue(\'' + self.id + '\', this.value);'
+
+    #     element["onclick"] = 'saveValue(\'' + self.id + '\', \'' + self.id + '\' + this.value);'
+
+    #     # element["onclick"] = 'saveMultValue(\'' + self.id + '\', \'' + self.id + '\' + this.value);'
+
+    # def update_action_after_post_script(self):
+
+    #     script = Famcy.script()
+    #     script.innerHTML = 'document.getElementById("' + self.id + '_input").value = getSavedValue("' + self.id + '");'
+
+    #     # script = Famcy.script()
+    #     # script.innerHTML = 'if(getSavedValue("' + self.id + '") != ""){document.getElementById(getSavedValue("' + self.id + '")).checked = true;}'
+
+    #     # script = Famcy.script()
+    #     # script.innerHTML = 'for(var i = 0; i < getMultSavedValue("' + self.id + '").length; i++){document.getElementById(getMultSavedValue("' + self.id + '")[i]).checked = true;}'
+
+    #     self.body.addElement(script)
+
 
 class FUploadBlock(FBlock):
     def __init__(self):

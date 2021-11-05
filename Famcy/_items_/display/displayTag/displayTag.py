@@ -10,6 +10,7 @@ class displayTag(Famcy.FamcyBlock):
     def __init__(self):
         self.value = displayTag.generate_template_content()
         super(displayTag, self).__init__()
+        self.init_block()
 
     @classmethod
     def generate_template_content(cls):
@@ -18,6 +19,19 @@ class displayTag(Famcy.FamcyBlock):
             "content": "displayTag content",
         }
 
+    def init_block(self):
+        self.body = Famcy.div()
+        self.body["id"] = self.id
+        self.body["className"] = "displayTag"
+
+        h3_temp = Famcy.h3()
+        h4_temp = Famcy.h4()
+
+        self.body.addElement(h3_temp)
+        self.body.addElement(h4_temp)
+
     def render_inner(self):
-        inner_html = '<div id="' + self.id + '" class="displayTag"><h3>' + self.value["title"] + '</h3><h4>' + self.value["content"] + '</h4></div>'
-        return inner_html
+        self.body.children[0].innerHTML = self.value["title"]
+        self.body.children[1].innerHTML = self.value["content"]
+
+        return self.body.render_inner()

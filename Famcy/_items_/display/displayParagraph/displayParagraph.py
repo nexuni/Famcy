@@ -10,6 +10,7 @@ class displayParagraph(Famcy.FamcyBlock):
     def __init__(self):
         self.value = displayParagraph.generate_template_content()
         super(displayParagraph, self).__init__()
+        self.init_block()
 
     @classmethod
     def generate_template_content(cls):
@@ -32,6 +33,19 @@ class displayParagraph(Famcy.FamcyBlock):
 '''
         }
 
+    def init_block(self):
+        self.body = Famcy.div()
+        self.body["id"] = self.id
+        self.body["className"] = "displayParagraph"
+
+        h3_temp = Famcy.h3()
+        h4_temp = Famcy.h4()
+
+        self.body.addElement(h3_temp)
+        self.body.addElement(h4_temp)
+
     def render_inner(self):
-        inner_html = '<div id="' + self.id + '" class="displayParagraph"><h3>' + self.value["title"] + '</h3><h4>' + markdown.markdown(self.value["content"]) + '</h4></div>'
-        return inner_html
+        self.body.children[0].innerHTML = self.value["title"]
+        self.body.children[1].innerHTML = markdown.markdown(self.value["content"])
+
+        return self.body.render_inner()

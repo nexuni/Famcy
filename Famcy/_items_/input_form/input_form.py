@@ -10,16 +10,24 @@ class input_form(Famcy.FamcyCard):
 	def __init__(self, layout_mode=Famcy.FamcyLayoutMode.recommend):
 		super(input_form, self).__init__(layout_mode=layout_mode)
 		self.configs["method"] = "post"
+		self.init_block()
+
+	def init_block(self):
+		self.body = Famcy.form()
+		self.body["id"] = self.id
+		self.body["method"] = self.configs["method"]
+		self.body["action"] = self.action
+		self.body["onsubmit"] = "return false;"
 
 	def render_inner(self):
 		header_script, content_render = self.layout.render()
 		if header_script not in self.header_script:
 			self.header_script += header_script
-		inner_html = """<form id="%s" method="%s" action="%s" onsubmit="return false;">%s</form>
-		""" % (self.id, self.configs["method"], self.action, content_render)
 
-		inner_html += """<script type="text/javascript">"""
+		self.body.innerHTML = content_render
 
+		script = Famcy.script()
+		inner_html = ""
 		for widget, _, _, _, _ in self.layout.content:
 			if widget.clickable:
 				inner_html += """$('#%s').bind('click', (e) => {
@@ -47,9 +55,9 @@ class input_form(Famcy.FamcyCard):
 					if (flag) {
 						Sijax.request('famcy_submission_handler', ['%s', response_dict], { data: { csrf_token: token } });
 					}
-				});""" % (widget.id, json.dumps(widget.loader), self.id, str(id(widget.submission_obj)), str(id(widget.submission_obj)))
+				});""" % (widget.id, json.dumps(widget.loader), self.id, str(id(self.parent.submission_obj)), str(id(widget.submission_obj)))
 
-		inner_html += """</script>"""
+		script.innerHTML = inner_html
 
-		return inner_html
+		return self.body.render_inner() + script.render_inner()
 		
