@@ -11,8 +11,9 @@ class upload_form(Famcy.FamcyCard):
     def __init__(self, layout_mode=Famcy.FamcyLayoutMode.recommend):
         super(upload_form, self).__init__(layout_mode=layout_mode)
         self.configs["method"] = "post"
+        self.init_block()
 
-    def render_inner(self):
+    def init_block(self):
         self.header_script += """
         <link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
         <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/js/plugins/piexif.min.js" type="text/javascript"></script>
@@ -21,15 +22,21 @@ class upload_form(Famcy.FamcyCard):
         <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/js/fileinput.min.js"></script>
         """
 
+        self.body = Famcy.form()
+        self.body["id"] = self.id
+        self.body["method"] = self.configs["method"]
+        self.body["action"] = self.action
+        self.body["onsubmit"] = "return false;"
+        self.body["enctype"] = "multipart/form-data"
+
+    def render_inner(self):
         header_script, content_render = self.layout.render()
         if header_script not in self.header_script:
             self.header_script += header_script
 
-        inner_html = """<form id="%s" enctype="multipart/form-data" onsubmit="return false;" method="%s" action="%s">%s</form>
-        """ % (self.id, self.configs["method"], self.action, content_render)
+        self.body.innerHTML = content_render
 
-        inner_html += """<script type="text/javascript">"""
-
+        inner_html = ""
         upload_file_list = []
         for widget, _, _, _, _ in self.layout.content:
 
@@ -72,7 +79,9 @@ class upload_form(Famcy.FamcyCard):
                 }
                 readFile(0);
             }
-        </script>
         """ % (self.id)
 
-        return inner_html
+        script = Famcy.script()
+        script.innerHTML = inner_html
+
+        return self.body.render_inner() + script.render_inner()

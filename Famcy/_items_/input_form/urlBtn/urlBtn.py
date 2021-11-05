@@ -10,6 +10,7 @@ class urlBtn(Famcy.FamcyInputBlock):
     def __init__(self):
         self.value = urlBtn.generate_template_content()
         super(urlBtn, self).__init__()
+        self.init_block()
 
     @classmethod
     def generate_template_content(cls):
@@ -23,6 +24,27 @@ class urlBtn(Famcy.FamcyInputBlock):
             "action_after_post": "clean",                       # (clean / save)
         }
 
+    def init_block(self):
+        self.body = Famcy.div()
+        self.body["id"] = self.id
+        self.body["className"] = "urlBtn"
+
+        p_temp = Famcy.p()
+        p_temp["className"] = self.value["style"] + '_p'
+
+        btn_temp = Famcy.button()
+        btn_temp["type"] = "button"
+
+        self.body.addElement(p_temp)
+        self.body.addElement(btn_temp)
+
     def render_inner(self):
-        input_html = '<div id="' + self.id + '" class="urlBtn"><p class="' + self.value["style"] + '_p">' + self.value["desc"] + '</p><button type="button" class="' + self.value["style"] + '" onclick="window.location.href=\'' + self.value["url"] + '\'">' + self.value["button_name"] + '</button></div>'
-        return input_html
+        self.body.children[0].innerHTML = self.value["desc"]
+
+        self.body.children[1]["className"] = self.value["style"]
+        self.body.children[1]["onclick"] = 'window.location.href=\'' + self.value["url"] + '\''
+        self.body.children[1].innerHTML = self.value["button_name"]
+
+        return self.body.render_inner()
+
+

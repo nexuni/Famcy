@@ -10,9 +10,8 @@ class line_chart(Famcy.FamcyBlock):
     def __init__(self):
         self.value = line_chart.generate_template_content()
         super(line_chart, self).__init__()
-
-        self.header_script += '<script src="/static/js/line_chart.js"></script>'
-
+        self.init_block()
+        
     @classmethod
     def generate_template_content(cls, fblock_type=None):
         """
@@ -49,6 +48,18 @@ class line_chart(Famcy.FamcyBlock):
                     "line_width": 1
                 }]
             }
+
+    def init_block(self):
+        self.header_script += '<script src="/static/js/line_chart.js"></script>'
+
+        self.body = Famcy.div()
+        self.body["id"] = self.id
+
+        div_temp = Famcy.div()
+        script = Famcy.script()
+
+        self.body.addElement(div_temp)
+        self.body.addElement(script)
 
     def render_inner(self):
         data = []
@@ -87,4 +98,6 @@ class line_chart(Famcy.FamcyBlock):
         json_line_dict_values = json.dumps(data)
         json_line_dict_title = json.dumps(self.value["title"])
 
-        return"""<div id="%s"></div><script>generateLineChart("%s", %s, %s)</script>""" % (self.id, self.id, json_line_dict_values, json_line_dict_title)
+        self.body.children[1].innerHTML = 'generateLineChart("%s", %s, %s)' % (self.id, json_line_dict_values, json_line_dict_title)
+        
+        return self.body.render_inner()

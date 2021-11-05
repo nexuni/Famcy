@@ -24,6 +24,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.action = ""
 		self.loader = False
 		self.parent = None
+		self.body = None
 		self.clickable = False
 		self.configs = {}
 
@@ -31,6 +32,9 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.header_script = ""
 		self.js_after_func_dict = {} # post js script input
 		self.js_after_func_name = "" # post js script function name
+
+		# Style related
+		self.css_style_dict = {}
 
 		# Submission related
 		self.submission_obj = FSubmission(self)

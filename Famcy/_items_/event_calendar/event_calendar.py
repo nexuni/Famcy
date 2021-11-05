@@ -10,6 +10,7 @@ class event_calendar(Famcy.FamcyBlock):
     def __init__(self, **kwargs):
         self.value = event_calendar.generate_template_content()
         super(event_calendar, self).__init__(**kwargs)
+        self.init_block()
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -37,18 +38,30 @@ class event_calendar(Famcy.FamcyBlock):
                     ]
         }
 
+    def init_block(self):
+        self.body = Famcy.div()
+        self.body["id"] = "wrap"
+
+        lang_script = Famcy.script()
+        lang_script["type"] = "text/javascript"
+        script = Famcy.script()
+        div_temp = Famcy.div()
+        div_temp["id"] = "calendar"
+
+        self.body.addElement(lang_script)
+        self.body.addElement(script)
+        self.body.addElement(div_temp)
+
     def render_inner(self):
 
         if self.value["language"] == "zh-TW":
             prompt_msg = "請加入活動名稱:"
-            language_script = '<script src="/static/js/fullcalendar_zh.js" type="text/javascript"></script>'
+            self.body.children[0]["src"] = "/static/js/fullcalendar_zh.js"
         else:
             prompt_msg = "Event Title:"
-            language_script = '<script src="/static/js/fullcalendar.js" type="text/javascript"></script>'
+            self.body.children[0]["src"] = "/static/js/fullcalendar.js"
 
-        return """
-        %s
-        <script>
+        self.body.children[1].innerHTML = """
             var event_calendar_dict = %s;
 
             $(document).ready(function() {
@@ -163,12 +176,6 @@ class event_calendar(Famcy.FamcyBlock):
 
             });
 
-        </script>
-        <style>
+        """ % (json.dumps(self.value), prompt_msg)
 
-        </style>
-        <div id='wrap'>
-            <div id='calendar'></div>
-        </div>
-
-        """ % (language_script, json.dumps(self.value), prompt_msg)
+        return self.body.render_inner()

@@ -90,7 +90,6 @@ class FSubmissionSijaxHandler(object):
 
 		# Get the submission object
 		fsubmission_obj = get_fsubmission_obj(fsubmission_id)
-
 		if "jsAlert" in info_dict.keys():
 			response_obj = fsubmission_obj.jsAlertHandler(fsubmission_obj, info_dict)
 		else:
@@ -134,6 +133,7 @@ class FSubmission:
 		"""
 		info_dict = {"alert_type": "", "alert_message": "", "alert_position": ""}
 		"""
+		print("jsAlertHandler=============")
 		return Famcy.UpdateAlert(alert_type=info_dict["alert_type"], alert_message=info_dict["alert_message"], alert_position=info_dict["alert_position"])
 
 class FBackgroundTask(FSubmission):

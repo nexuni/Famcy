@@ -151,8 +151,8 @@ class FamcyLayout:
 		"""
 		pass
 
-	def addPromptWidget(self, card):
-		self.promptContent.append(card)
+	def addPromptWidget(self, card, width=50):
+		self.promptContent.append([card, width])
 
 	def addWidget(self, card, start_row, start_col, height=1, width=1):
 		card.parent = self.parent
@@ -218,9 +218,13 @@ class FamcyLayout:
 				cssLayout += self.setDeviceLayout(v)
 			cssLayout += '</style>'
 
-		for _prompt in self.promptContent:
-			cssLayout += '<style type="text/css">'
+		for _prompt, _width in self.promptContent:
 			cssLayout += _prompt.layout.setLayout()
+			cssLayout += '<style type="text/css">'
+			cssLayout += """
+				#%s {
+					width: %svw;
+				}""" % (str(_prompt.id), str(_width))
 			cssLayout += '</style>'
 
 		return cssLayout

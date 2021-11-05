@@ -146,7 +146,7 @@ class HistoryPage(Famcy.FamcyPage):
 
         input_form = Famcy.input_form()
 
-        table_content = Famcy.table()
+        table_content = Famcy.table_block()
         table_content.update({
                 "input_button": "checkbox",
                 "input_value_col_field": "datetime",

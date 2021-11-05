@@ -47,9 +47,7 @@ class BarrierPage(Famcy.FamcyPage):
 			return Famcy.UpdateBlockHtml()
 
 		self.task_a.associate(task_a_func, info_dict={}, target=self.card_2.layout.content[1][0])
-
 		self.task_b.associate(task_bc_func, info_dict={}, target=self.card_3.layout.content[0][0])
-
 		self.task_c.associate(task_bc_func, info_dict={}, target=self.card_4.layout.content[0][0])
 
 		Famcy.FamcyBackgroundQueue.add(self.task_a, Famcy.FamcyPriority.Standard)

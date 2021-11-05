@@ -10,6 +10,7 @@ class submitBtn(Famcy.FamcyInputBlock):
     def __init__(self):
         self.value = submitBtn.generate_template_content()
         super(submitBtn, self).__init__()
+        self.init_block()
 
     @classmethod
     def generate_template_content(cls):
@@ -19,6 +20,13 @@ class submitBtn(Famcy.FamcyInputBlock):
             "action_after_post": "clean",                    # (clean / save)
         }
 
+    def init_block(self):
+        self.body = Famcy.input()
+        self.body["id"] = self.id
+        self.body["className"] = "main_submit_btn"
+        self.body["type"] = "submit"
+        self.body["name"] = "send"
+
     def render_inner(self):
-        inner_html = '<input id="' + self.id + '" class="main_submit_btn" type="submit" name="send" value="' + self.value["title"] + '">'
-        return inner_html
+        self.body["value"] = self.value["title"]
+        return self.body.render_inner()

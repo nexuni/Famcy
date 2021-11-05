@@ -1,4 +1,3 @@
-import markdown
 import Famcy
 import json
 
@@ -10,6 +9,7 @@ class inputList(Famcy.FamcyInputBlock):
     def __init__(self):
         self.value = inputList.generate_template_content()
         super(inputList, self).__init__()
+        self.init_block()
 
     @classmethod
     def generate_template_content(cls):
@@ -21,10 +21,46 @@ class inputList(Famcy.FamcyInputBlock):
             "action_after_post": "clean",                    # (clean / save)
         }
 
-    def render_inner(self):
-        temp = ""
-        for list_value in self.value["value"]:
-            temp += '<option name="' + self.name + '" value="' + list_value + '">' + list_value + '</option>'
+    def init_block(self):
+        self.body = Famcy.div()
+        self.body["id"] = self.id
+        self.body["className"] = "inputList"
 
-        inner_html = '<div id="' + self.id + '" class="inputList ' + self.mandatory + '_list"><h3>' + self.value["title"] + '</h3><p>' + self.value["desc"] + '</p><div id="' + self.id + '_inputList" class="inputList_holder"><select after_action="' + self.after_action + '"><option name="' + self.name + '" value="---">---</option>' + temp + '</select></div></div><script>generate_list("' + self.id + '", "' + str(id(self.submission_obj)) + '")</script>'
-        return inner_html
+        h3_temp = Famcy.h3()
+        p_temp = Famcy.p()
+        div_temp = Famcy.div()
+        div_temp["id"] = self.id + '_inputList'
+        div_temp["className"] = "inputList_holder"
+        sel_temp = Famcy.select()
+
+        div_temp.addElement(sel_temp)
+
+        script = Famcy.script()
+        script.innerHTML = 'generate_list("' + self.id + '", "' + str(id(self.submission_obj)) + '")'
+
+        self.body.addElement(h3_temp)
+        self.body.addElement(p_temp)
+        self.body.addElement(div_temp)
+        self.body.addElement(script)
+
+    def render_inner(self):
+        self.body.children[2].children[0].children = []
+        self.value["value"].insert(0, "---")
+        for list_value in self.value["value"]:
+            opt_temp = Famcy.option()
+            opt_temp["name"] = self.name
+            opt_temp["value"] = list_value
+            opt_temp.innerHTML = list_value
+            self.body.children[2].children[0].addElement(opt_temp)
+
+        if self.value["mandatory"]:
+            self.body["className"] = "required_list"
+        else:
+            if "required_list" in self.body.classList:
+                self.body.classList.remove("required_list")
+
+        self.body.children[0].innerHTML = self.value["title"]
+        self.body.children[1].innerHTML = self.value["desc"]
+        self.body.children[2].children[0]["after_action"] = self.value["action_after_post"]
+
+        return self.body.render_inner()
