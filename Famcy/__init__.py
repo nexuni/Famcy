@@ -12,6 +12,7 @@ import time
 
 from Famcy._util_._fmanager import *
 from Famcy._util_._fauth import *
+from Famcy._util_._felement import *
 from Famcy._util_._fblock import *
 from Famcy._util_._fpage import *
 from Famcy._util_._fcard import *
@@ -27,6 +28,7 @@ __codename__ = "Xinhai"
 famcy_dir = os.path.dirname(Famcy.__file__)
 
 # Create Global Var for User usage
+FamcyElement = FElement
 FamcyBlock = FBlock
 FamcyPage = FPage
 FamcyCard = FCard
@@ -123,6 +125,11 @@ def create_app(famcy_id, production=False):
 
     # Import Fblocks from default and custom folders. 
     # ------------------------------
+    # Get all sources of felements definitions 
+    system_styles = FManager.importclassdir(FManager.main + "/", "_elements_", FamcyFileImportMode.name, "", 
+        exclude=["_", "."], otherwise=[], recursive=True)
+    FManager.assign_to_global(globals(), system_styles)
+
     # Get all sources of fblocks definitions 
     system_items = FManager.importclassdir(FManager.main + "/", "_items_", FamcyFileImportMode.name, "", 
         exclude=["_", "."], otherwise=[], recursive=True)

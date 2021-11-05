@@ -10,13 +10,7 @@ class with_btn_calendar(Famcy.FamcyBlock):
     def __init__(self, **kwargs):
         self.value = with_btn_calendar.generate_template_content()
         super(with_btn_calendar, self).__init__(**kwargs)
-
-        self.header_script += """
-        <!--with btn calendar-->
-        <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" type="text/css" href="/static/css/mark-your-calendar.css">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" rel="stylesheet"  />
-        """
+        self.init_block()
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -60,17 +54,49 @@ class with_btn_calendar(Famcy.FamcyBlock):
             }]
         }
 
+    def init_block(self):
+        self.header_script += """
+        <!--with btn calendar-->
+        <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" type="text/css" href="/static/css/mark-your-calendar.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" rel="stylesheet"  />
+        """
+
+        self.body = Famcy.div()
+
+        picker_temp = Famcy.div()
+        picker_temp["id"] = "picker"
+
+        selected_temp = Famcy.div()
+        selected_temp["className"] = "selected_list"
+
+        p_temp = Famcy.p()
+
+        input_temp = Famcy.input()
+        input_temp["id"] = "picked_time"
+        input_temp["type"] = "hidden"
+        input_temp["name"] = self.id
+
+        table_temp = Famcy.div()
+        table_temp["id"] = "selected-dates"
+
+        selected_temp.addElement(p_temp)
+        selected_temp.addElement(input_temp)
+        selected_temp.addElement(table_temp)
+
+        script_1 = Famcy.script()
+        script_1["src"] = "https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"
+        script_2 = Famcy.script()
+        script_2["type"] = "text/javascript"
+
+        self.body.addElement(picker_temp)
+        self.body.addElement(selected_temp)
+        self.body.addElement(script_1)
+        self.body.addElement(script_2)
+
     def render_inner(self):
-        return """
-        <div id="picker"></div>
-        <div class="selected_list">
-            <p>%s</p>
-            <input type="hidden" name="%s" id="picked_time">
-            <div id="selected-dates"></div>
-        </div>
-            
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-        <script type="text/javascript">
+        self.body.children[1].children[0].innerHTML = self.value["title"]
+        self.body.children[3].innerHTML = """
             var input_calendar_dict = %s;
             (function($) {
                 // https://stackoverflow.com/questions/563406/add-days-to-javascript-date
@@ -312,5 +338,6 @@ class with_btn_calendar(Famcy.FamcyBlock):
                     }
                 });
             })(jQuery);
-        </script>
-        """ % (self.value["title"], self.id, json.dumps(self.value))
+        """ % (json.dumps(self.value))
+
+        return self.body.render_inner()

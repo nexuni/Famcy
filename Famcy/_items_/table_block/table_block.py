@@ -1,26 +1,15 @@
 import json
 import Famcy
 
-class table(Famcy.FamcyBlock):
+class table_block(Famcy.FamcyBlock):
     """
     Represents the block to display
-    table. 
+    table_block. 
     """
     def __init__(self, **kwargs):
-        self.value = table.generate_template_content()
-        super(table, self).__init__(**kwargs)
-
-        self.header_script += """
-        <!--table-->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
-        <link href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css" rel="stylesheet">
-        <script src="https://unpkg.com/tableexport.jquery.plugin/tableExport.min.js"></script>
-        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
-        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table-locale-all.min.js"></script>
-        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/extensions/export/bootstrap-table-export.min.js"></script>
-        """
+        self.value = table_block.generate_template_content()
+        super(table_block, self).__init__(**kwargs)
+        self.init_block()
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -87,15 +76,35 @@ class table(Famcy.FamcyBlock):
             ]
         }
 
-    def render_inner(self):
+    def init_block(self):
+        self.header_script += """
+        <!--table-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
+        <link href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css" rel="stylesheet">
+        <script src="https://unpkg.com/tableexport.jquery.plugin/tableExport.min.js"></script>
+        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table-locale-all.min.js"></script>
+        <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/extensions/export/bootstrap-table-export.min.js"></script>
+        """
+        self.body = Famcy.div()
+        self.body["className"] = "table_holder"
 
-        return """
-        <div class="table_holder">
-        <div id="toolbar_%s"></div>
-        <table id="table_%s"></table>
-        </div>
-        
-        <script>
+        toolbar_temp = Famcy.div()
+        toolbar_temp["id"] = "toolbar_" + self.id
+
+        table_temp = Famcy.table()
+        table_temp["id"] = "table_" + self.id
+
+        script = Famcy.script()
+
+        self.body.addElement(toolbar_temp)
+        self.body.addElement(table_temp)
+        self.body.addElement(script)
+
+    def render_inner(self):
+        self.body.children[2].innerHTML = """
             var table_value = %s;
             
             var table_init = {
@@ -169,5 +178,6 @@ class table(Famcy.FamcyBlock):
             $(function() {
                 initTable%s()
             })
-        </script>
-        """ % (self.id, self.id, json.dumps(self.value), self.id, self.id, self.id, self.id, self.id)
+        """ % (json.dumps(self.value), self.id, self.id, self.id, self.id, self.id)
+
+        return self.body.render_inner()

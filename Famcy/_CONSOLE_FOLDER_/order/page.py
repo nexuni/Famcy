@@ -167,7 +167,7 @@ class OrderPage(Famcy.FamcyPage):
             })
 
         input_password.update({
-                "mandatory": False,
+                "mandatory": True,
                 "action_after_post": "save"
             })
 
@@ -185,7 +185,7 @@ class OrderPage(Famcy.FamcyPage):
 
         input_list.update({
                 "value": ["input_list1", "input_list2", "input_list3"],
-                "mandatory": False,
+                "mandatory": True,
                 "action_after_post": "save"
             })
 
@@ -237,6 +237,8 @@ class OrderPage(Famcy.FamcyPage):
         display_light = Famcy.displayLight()
         display_tag = Famcy.displayTag()
         display_paragraph = Famcy.displayParagraph()
+        display_paragraph.body.children[0].style = "font-size: 50px;"
+
         display_step_loader = Famcy.displayStepLoader()
 
         card2.layout.addWidget(display_image, 0, 0)
