@@ -219,7 +219,6 @@ class FamcyLayout:
 			cssLayout += '</style>'
 
 		for _prompt, _width in self.promptContent:
-			cssLayout += _prompt.layout.setLayout()
 			cssLayout += '<style type="text/css">'
 			cssLayout += """
 				#%s {
@@ -249,6 +248,10 @@ class FamcyLayout:
 		render_html = ""
 		for _card, _, _, _, _ in self.content:
 			render_html += _card.render()
+			header_script += _card.header_script
+
+		for _card, _ in self.promptContent:
+			_ = _card.render()
 			header_script += _card.header_script
 
 		return header_script + layout_css, render_html
