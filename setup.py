@@ -10,7 +10,7 @@ with open(os.path.join(os.path.dirname(__file__), "requirements.txt"), "r") as f
 
 setuptools.setup(
     name="Famcy", # Replace with your own username
-    version="0.1.8",
+    version="0.2.3",
     author="Nexuni Co Ltd. Develop Team",
     author_email="developers@nexuni.com",
     description="Nexuni Co Ltd. Famcy management console framework",
@@ -24,7 +24,7 @@ setuptools.setup(
     },
     install_requires=requirements,
     package_dir={"Famcy": "Famcy"},
-    package_data=package_data_with_recursive_dirs({"Famcy":["bower_components", "node_modules", "templates", "static", "scripts", "famcy.ini", "_style_", "_responses_", "_items_"]}),
+    package_data=package_data_with_recursive_dirs({"Famcy":["bower_components", "node_modules", "templates", "static", "scripts", "famcy.ini", "_style_", "_responses_", "_items_", "_elements_"]}),
     test_suite="Famcy.tests",
     classifiers=[
         "Intended Audience :: Developers",
