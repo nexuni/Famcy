@@ -14,95 +14,68 @@ class PortfolioPage(Famcy.FamcyPage):
         card1 = Famcy.FamcyCard()
         # card1.title = "test"
 
-        card1.preload = self.get_history_order
-        card1.body.style += "padding: 50px;"
+        # card1.body.style += "padding: 0 10vw;"
+        pic_word1 = Famcy.displayPicWord()
+        pic_word1.update({
+                "title": "test",
+                "content": "cotent contentcotent contentcotent contentcotent contentcotent contentcotent contentcotent content",
+                "img_src": "/static/image/FamcyUserProfilePic.png"
+            })
 
-        input_form = Famcy.input_form()
+        pic_word2 = Famcy.displayPicWord()
+        pic_word2.update({
+                "title": "test",
+                "content": "cotent content",
+                "img_src": "/static/image/FamcyUserProfilePic.png"
+            })
 
-        table_content = Famcy.table_block()
-        table_content.update({
-                "input_button": "checkbox",
-                "input_value_col_field": "datetime",
-                "page_detail": False,
-                "page_detail_content": ["<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>"],
-                "page_footer": True,
-                "page_footer_detail": {
-                    "page_size": 10,
-                    "page_list": [10, 20, "all"]
-                },
-                "column": [[{
-                        "title": 'datetime',
-                        "field": 'datetime',
-                        "rowspan": 1,
-                        "align": 'center',
-                        "valign": 'middle',
-                        "sortable": True
-                    },
-                    {
-                        "title": 'order',
-                        "field": 'order',
-                        "rowspan": 1,
-                        "align": 'center',
-                        "valign": 'middle',
-                        "sortable": True
-                    },
-                    {
-                        "title": 'total_price',
-                        "field": 'total_price',
-                        "rowspan": 1,
-                        "align": 'center',
-                        "valign": 'middle',
-                        "sortable": True
-                    },
-                    {
-                        "title": 'used_point',
-                        "field": 'used_point',
-                        "rowspan": 1,
-                        "align": 'center',
-                        "valign": 'middle',
-                        "sortable": True
-                    }
-                ]],
-                "data": self.table_info
-          })
+        pic_word3 = Famcy.displayPicWord()
+        pic_word3.update({
+                "title": "test",
+                "content": "cotent content",
+                "img_src": "/static/image/FamcyUserProfilePic.png"
+            })
 
-        submit_btn = Famcy.submitBtn()
-        submit_btn.connect(self.submit_table, target=card1)
+        input_block1 = Famcy.inputBlockSec()
+        input_block1.update({
+                "title": "input_block",
+                "content": "input_blockinput_blockinput_blockinput_blockinput_block",
+                "img_src": "/static/image/FamcyUserProfilePic.png",
+                "btn_name": "btn_name"
+            })
 
-        input_form.layout.addWidget(table_content, 0, 0)
-        input_form.layout.addWidget(submit_btn, 1, 0)
+        input_block2 = Famcy.inputBlockSec()
+        input_block2.update({
+                "title": "input_block",
+                "content": "input_blockinput_blockinput_blockinput_blockinput_block",
+                "img_src": "/static/image/FamcyUserProfilePic.png",
+                "btn_name": "btn_name"
+            })
 
-        card1.layout.addWidget(input_form, 0, 0)
+        input_block3 = Famcy.inputBlockSec()
+        input_block3.update({
+                "title": "input_block",
+                "content": "input_blockinput_blockinput_blockinput_blockinput_block",
+                "img_src": "/static/image/FamcyUserProfilePic.png",
+                "btn_name": "btn_name"
+            })
+
+        input_block4 = Famcy.inputBlockSec()
+        input_block4.update({
+                "title": "input_block",
+                "content": "input_blockinput_blockinput_blockinput_blockinput_block",
+                "img_src": "/static/image/FamcyUserProfilePic.png",
+                "btn_name": "btn_name"
+            })
+
+        card1.layout.addWidget(pic_word1, 0, 0)
+        card1.layout.addWidget(pic_word2, 0, 1)
+        card1.layout.addWidget(pic_word3, 0, 2)
+        card1.layout.addWidget(input_block1, 1, 0)
+        card1.layout.addWidget(input_block2, 1, 1)
+        card1.layout.addWidget(input_block3, 1, 2)
+        card1.layout.addWidget(input_block4, 1, 3)
         return card1
-
-    def get_history_order(self):
-        send_dict = {
-            "service": "member",
-            "operation": "get_history_order",
-            "user_phone": "0905860683"
-        }
-        res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
-        res_ind = json.loads(res_str)["indicator"]
-        res_msg = json.loads(res_str)["message"]
-
-        self.table_info = [{
-                    "datetime": "1",
-                    "order": "2",
-                    "total_price": "3",
-                    "used_point": "4"
-                },
-                {
-                    "datetime": "5",
-                    "order": "6",
-                    "total_price": "7",
-                    "used_point": "8"
-                }]
-        self.card_1.layout.content[0][0].layout.content[0][0].update({
-            "data": self.table_info
-        })
-
-    def submit_table(self, submission_obj, info_list):
-        return Famcy.UpdateAlert(alert_message=str(info_list))
 
 page = PortfolioPage()
 page.register()
