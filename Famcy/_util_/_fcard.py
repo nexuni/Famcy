@@ -14,6 +14,7 @@ class FCard(FamcyWidget):
 
 		self.title = ""
 		self.layout = FamcyLayout(self, layout_mode)
+		self.body = None
 		self._check_rep()
 
 	def _check_rep(self):
@@ -34,17 +35,30 @@ class FCard(FamcyWidget):
 		header_script, content = self.layout.render()
 		if header_script not in self.header_script:
 			self.header_script += header_script
-		title = '<div class="title_holder"><h2 class="section_title">' + self.title + '</h2></div>' if self.title != "" else ""
 
-		return """
-		<div class="inner_section" id="{0}">
-			{1}
 
-			<div class="inner_section_content">
-				{2}
-			</div>
-		</div>
-		""".format(self.id, title, content)
+		self.body = Famcy.div()
+		self.body["id"] = self.id
+		self.body["className"] = "inner_section"
+
+		if self.title != "":
+			title = Famcy.div()
+			title["className"] = "title_holder"
+
+			h2_temp = Famcy.h2()
+			h2_temp["className"] = "section_title"
+			h2_temp.innerHTML = self.title
+
+			title.addElement(h2_temp)
+			self.body.addElement(title)
+
+		inner_section = Famcy.div()
+		inner_section["className"] = "inner_section_content"
+		inner_section.innerHTML = content
+
+		self.body.addElement(inner_section)
+
+		return self.body.render_inner()
 
 	def preload(self):
 		"""

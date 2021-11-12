@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="csrf-token" content="{{ csrf_token() }}">
+	<link href="{{ url_for('static', filename='css/constant.css') }}" rel="stylesheet" media="screen">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {% if html_header %} 
+	{{ html_header|safe }}
+	{% endif %}
+	{% if color_theme %} 
+	{{ color_theme|safe }}
+	{% endif %}
+
+	{% if extra_script %}
+	{{ extra_script|safe }}
+	{% endif %}
+
+	<script type="text/javascript" src="/static/js/sijax/sijax.js"></script>
+    <script type="text/javascript">
+        {{ g.sijax.get_js()|safe }}
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            if (!window.WebSocket) {
+                if (window.MozWebSocket) {
+                    window.WebSocket = window.MozWebSocket;
+                } else {
+                    console.log("<li>Your browser doesn't support WebSockets.</li>");
+                }
+            }
+            const ws = new WebSocket("wss://"+window.location.host+"/fws");
+            ws.onopen = function(evt) {
+                console.log("onopen");
+            }
+
+            ws.onmessage = function(evt) {
+                var token = document.head.querySelector("[name~=csrf-token][content]").content
+                var data = JSON.parse(evt.data)
+                if (data.page_id  === "{% if page_id %}{{ page_id|safe }}{% endif %}") {
+                    Sijax.request('famcy_submission_handler', [data.submission_id, data.data], { data: { csrf_token: token } });
+                }
+            }
+
+            ws.onclose = function(evt) {
+                console.log("onclose");
+            }
+        });
+    </script>
+</head>
+<body id="root" onload={% if body_on_load %}
+    {{ body_on_load|safe }}
+    {% endif %}>
+
+	<div class="main_win portfolio_win">
+
+        {% if nav_bar %} 
+        {{ nav_bar|safe }}
+        {% endif %}
+
+		{% if content %}
+		{% set extra_class="portfolio_content" %}
+		{% include 'content.html' %}
+		{% endif %}
+
+	</div>
+
+	{% if load_spinner %} 
+    {{ load_spinner|safe }}
+    {% endif %}
+
+	{% if end_js %} 
+	{{ end_js|safe }}
+	{% endif %}
+	
+</body>
+</html>
