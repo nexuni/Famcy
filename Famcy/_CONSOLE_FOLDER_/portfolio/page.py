@@ -15,6 +15,7 @@ class PortfolioPage(Famcy.FamcyPage):
         # card1.title = "test"
 
         card1.preload = self.get_history_order
+        card1.body.style += "padding: 50px;"
 
         input_form = Famcy.input_form()
 

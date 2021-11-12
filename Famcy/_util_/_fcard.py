@@ -15,6 +15,7 @@ class FCard(FamcyWidget):
 		self.title = ""
 		self.layout = FamcyLayout(self, layout_mode)
 		self.body = None
+		self.init_card()
 		self._check_rep()
 
 	def _check_rep(self):
@@ -23,6 +24,27 @@ class FCard(FamcyWidget):
 			- Famcy layout in bound
 		"""
 		pass
+
+	def init_card(self):
+		self.body = Famcy.div()
+		self.body["id"] = self.id
+		self.body["className"] = "inner_section"
+
+		title = Famcy.div()
+		title["className"] = "title_holder"
+
+		h2_temp = Famcy.h2()
+		h2_temp["className"] = "section_title"
+
+		title.addElement(h2_temp)
+		self.body.addElement(title)
+
+		inner_section = Famcy.div()
+		inner_section["className"] = "inner_section_content"
+
+		self.body.addElement(inner_section)
+
+
 
 	# Functions that can be overwritten
 	# ---------------------------------
@@ -36,27 +58,13 @@ class FCard(FamcyWidget):
 		if header_script not in self.header_script:
 			self.header_script += header_script
 
-
-		self.body = Famcy.div()
-		self.body["id"] = self.id
-		self.body["className"] = "inner_section"
-
 		if self.title != "":
-			title = Famcy.div()
-			title["className"] = "title_holder"
+			self.body.children[0].children[0].innerHTML = self.title
 
-			h2_temp = Famcy.h2()
-			h2_temp["className"] = "section_title"
-			h2_temp.innerHTML = self.title
+		elif self.title == "" and len(self.body.children) == 2:
+			del self.body.children[0]
 
-			title.addElement(h2_temp)
-			self.body.addElement(title)
-
-		inner_section = Famcy.div()
-		inner_section["className"] = "inner_section_content"
-		inner_section.innerHTML = content
-
-		self.body.addElement(inner_section)
+		self.body.children[-1].innerHTML = content
 
 		return self.body.render_inner()
 
