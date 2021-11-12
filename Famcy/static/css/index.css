@@ -619,6 +619,70 @@ html{
 
 }
 
+/*inputBlockSec*/
+.inputBlockSec{
+	/*padding: 20px 15%;*/
+	width: 100%;
+	overflow: hidden;
+	font-family: 'Karma', sans-serif, arial, serif !important;
+
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+
+	position: relative;
+}
+
+.inputBlockSec:after {
+	content: "";
+	display: block;
+	padding-bottom: 100%;
+}
+
+.inputBlockSec div {
+	max-width: 86%;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	left: 7%;
+	display: flex;
+	flex-flow: column;
+	justify-content: center;
+	align-items: flex-start;
+
+	overflow: hidden;
+}
+
+.inputBlockSec div h3{
+	max-width: 70%;
+	margin: 2.5vh 0 1.5vh 0;
+	font-size: var(--normal-text);
+	font-weight: 600;
+	color: var(--main-color);
+	word-wrap: break-word!important;
+	text-align: left;
+}
+
+.inputBlockSec div h4{
+	max-width: 70%;
+	font-size: calc(0.8 * var(--normal-text));
+	line-height: calc(1.2 * var(--normal-text));
+	color: var(--dark-color);
+	word-wrap: break-word!important;
+	text-align: left;
+}
+
+.inputBlockSec div button{
+	font-size: calc(0.8 * var(--normal-text));
+	line-height: calc(1.2 * var(--normal-text));
+	color: var(--white-color);
+	background-color: var(--main-color);
+	border-radius: 5px;
+	border: none;
+	word-wrap: break-word!important;
+	text-align: left;
+}
+
 /*inputBtn*/
 .inputPassword {
 	width: 100%;
@@ -885,6 +949,46 @@ html{
 
 .displayParagraph h4{
 	font-size: var(--normal-text);
+	color: var(--dark-color);
+	word-wrap: break-word!important;
+}
+
+/*displayPicWord*/
+.displayPicWord{
+	width: 100%;
+	margin: 10px 0;
+	overflow: hidden;
+	display: flex;
+	flex-flow: column;
+	justify-content: flex-start;
+	align-items: center;
+	font-family: 'Karma', sans-serif, arial, serif !important;
+}
+
+.displayPicWord img {
+	width: 60%;
+	border-radius: 100%;
+}
+
+.displayPicWord img:after {
+	content: "";
+	display: block;
+	padding-bottom: 100%;
+}
+
+.displayPicWord h3{
+	max-width: 70%;
+	margin: 2.5vh 0 1.5vh 0;
+	font-size: var(--normal-text);
+	font-weight: 600;
+	color: var(--main-color);
+	word-wrap: break-word!important;
+}
+
+.displayPicWord h4{
+	max-width: 70%;
+	font-size: calc(0.8 * var(--normal-text));
+	line-height: calc(1.2 * var(--normal-text));
 	color: var(--dark-color);
 	word-wrap: break-word!important;
 }
