@@ -52,6 +52,7 @@ FamcyStyleLoader = FStyleLoader
 FamcyColorTheme = FColorTheme
 FamcyStyleSideBar = FStyleSideBar
 FamcyStyleNavBar = FStyleNavBar
+FamcyStyleNavBtns = FStyleNavBtns
 FamcyBackgroundTask = FBackgroundTask
 
 def create_app(famcy_id, production=False):
