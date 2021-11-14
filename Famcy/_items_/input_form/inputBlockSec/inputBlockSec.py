@@ -2,7 +2,7 @@ import markdown
 import Famcy
 import json
 
-class inputBlockSec(Famcy.FamcyBlock):
+class inputBlockSec(Famcy.FamcyInputBlock):
     """
     Represents the block to display
     paragraph. 
