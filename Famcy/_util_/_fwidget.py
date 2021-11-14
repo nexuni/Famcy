@@ -38,7 +38,10 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 
 		# Submission related
 		self.submission_obj = FSubmission(self)
+		self.submission_obj_key = str(next(Famcy.FManager["GetSubmissionObjectKey"]))
 		self.post_submission_js = ""
+
+    	Famcy.FManager["SubmissionObjectTable"][self.submission_obj_key] = self.submission_obj
 
 	def render(self):
 		"""

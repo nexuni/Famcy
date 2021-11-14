@@ -7,7 +7,8 @@ import _ctypes
 # GLOBAL HELPER
 def get_fsubmission_obj(obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
-	return _ctypes.PyObj_FromPtr(int(obj_id))
+	# return _ctypes.PyObj_FromPtr(int(obj_id))
+	return Famcy.FManager["SubmissionObjectTable"][obj_id]
 
 def exception_handler(func):
 	"""

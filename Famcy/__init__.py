@@ -90,10 +90,9 @@ def create_app(famcy_id, production=False):
     FManager["ConsoleConfig"] = FManager.read(FManager.console + "/famcy.yaml")
 
     ## Generate Submission Object table
-
     # This is to generate unique submission object key.
     def submission_object_key():
-        seed = random.getrandbits(6)
+        seed = random.getrandbits(8)
         while True:
            yield str(seed)
            seed += 1
