@@ -4,7 +4,10 @@ document.getElementById("header-toggle").addEventListener("click", function() {
 
 	for (var i = 0; i < document.getElementsByClassName("toggle_class").length; i++) {
 		document.getElementsByClassName("toggle_class")[i].classList.toggle("display_flex")
-		document.getElementsByClassName("toggle_class")[i].children[1].classList.toggle("display_block")
+
+		if (document.getElementsByClassName("toggle_class")[i].children[1]) {
+			document.getElementsByClassName("toggle_class")[i].children[1].classList.toggle("display_block")
+		}
 	}
 });
 
