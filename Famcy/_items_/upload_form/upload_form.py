@@ -57,7 +57,7 @@ class upload_form(Famcy.FamcyCard):
                         upload_file(response_dict, upload_file_list[i], %s)
                     }
 
-                });""" % (widget.id, json.dumps(widget.loader), json.dumps(upload_file_list), str(id(widget.submission_obj)))
+                });""" % (widget.id, json.dumps(widget.loader), json.dumps(upload_file_list), str(widget.submission_obj_key))
 
         inner_html += """
             function upload_file(response_dict, widget_id, submit_id) {
