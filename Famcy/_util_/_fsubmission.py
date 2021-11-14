@@ -8,7 +8,6 @@ import _ctypes
 def get_fsubmission_obj(obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
 	# return _ctypes.PyObj_FromPtr(int(obj_id))
-	print(Famcy.FManager["SubmissionObjectTable"])
 	return Famcy.FManager["SubmissionObjectTable"][obj_id]
 
 def exception_handler(func):
@@ -100,6 +99,10 @@ class FSubmissionSijaxHandler(object):
 			# Will assume all data ready at this point
 			response_obj = fsubmission_obj.func(fsubmission_obj, info_list)
 			
+		print(fsubmission_obj)
+		print(fsubmission_obj.target)
+		print(response_obj)
+		print(response_obj.target)
 		response_obj.target = fsubmission_obj.target
 
 		# Response according to the return response
