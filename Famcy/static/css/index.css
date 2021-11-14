@@ -417,16 +417,22 @@ html{
 	background-color: var(--main-color);
 }
 
+.table td{
+	padding: 5px;
+}
+
 
 /*input_form*/
 .main_submit_btn{
 	width: 100%;
 
-	margin: calc(var(--semi-large-text)*0.5) 0;
+	margin: 0;
+	padding: 5px 0;
+	/*margin: calc(var(--semi-large-text)*0.5) 0;*/
 
-	padding: calc(var(--semi-large-text)*0.5);
-	font-size: var(--semi-large-text);
-	line-height: var(--semi-large-text);
+	/*padding: calc(var(--semi-large-text)*0.5);*/
+	font-size: var(--normal-text);
+	line-height: var(--normal-text);
 
 	border-radius: 4px;
 	
