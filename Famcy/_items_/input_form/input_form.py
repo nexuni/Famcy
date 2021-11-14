@@ -55,7 +55,7 @@ class input_form(Famcy.FamcyCard):
 					if (flag) {
 						Sijax.request('famcy_submission_handler', ['%s', response_dict], { data: { csrf_token: token } });
 					}
-				});""" % (widget.id, json.dumps(widget.loader), self.id, str(self.submission_obj_key), str(widget.parent.submission_obj_key))
+				});""" % (widget.id, json.dumps(widget.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
 
 		script.innerHTML = inner_html
 
