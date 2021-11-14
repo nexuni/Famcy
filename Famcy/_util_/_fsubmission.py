@@ -8,6 +8,7 @@ import _ctypes
 def get_fsubmission_obj(obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
 	# return _ctypes.PyObj_FromPtr(int(obj_id))
+	print("in", type(obj_id), Famcy.SubmissionObjectTable)
 	return Famcy.SubmissionObjectTable[obj_id]
 
 def exception_handler(func):
@@ -90,6 +91,7 @@ class FSubmissionSijaxHandler(object):
 		"""
 
 		# Get the submission object
+		print("out", type(fsubmission_id), fsubmission_id)
 		fsubmission_obj = get_fsubmission_obj(fsubmission_id)
 		if "jsAlert" in info_dict.keys():
 			response_obj = fsubmission_obj.jsAlertHandler(fsubmission_obj, info_dict)
