@@ -52,6 +52,7 @@ FamcyStyle = FStyle
 FamcyStyleLoader = FStyleLoader
 FamcyColorTheme = FColorTheme
 FamcyStyleSideBar = FStyleSideBar
+FamcyStyleSideBtns = FStyleSideBtns
 FamcyStyleNavBar = FStyleNavBar
 FamcyStyleNavBtns = FStyleNavBtns
 FamcyBackgroundTask = FBackgroundTask

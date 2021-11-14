@@ -132,7 +132,7 @@ import json
 
 class HistoryPage(Famcy.FamcyPage):
     def __init__(self):
-        super(HistoryPage, self).__init__("/history", Famcy.ClassicStyle(), background_thread=False)
+        super(HistoryPage, self).__init__("/history", Famcy.ClassicSideStyle(), background_thread=False)
         
         self.table_info = []
 
