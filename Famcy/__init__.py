@@ -9,6 +9,7 @@ import importlib
 import Famcy
 import json
 import time
+import random
 
 from Famcy._util_._fmanager import *
 from Famcy._util_._fauth import *
@@ -87,6 +88,20 @@ def create_app(famcy_id, production=False):
 
     # Webpage related configs
     FManager["ConsoleConfig"] = FManager.read(FManager.console + "/famcy.yaml")
+
+    ## Generate Submission Object table
+
+    # This is to generate unique submission object key.
+    def submission_object_key():
+        seed = random.getrandbits(6)
+        while True:
+           yield str(seed)
+           seed += 1
+
+    GetSubmissionObjectKey = submission_object_key()
+    SubmissionObjectTable = {}
+    FManager["GetSubmissionObjectKey"] = GetSubmissionObjectKey
+    FManager["SubmissionObjectTable"] = SubmissionObjectTable
 
     # ------------------------
     # --- Main app start zone
