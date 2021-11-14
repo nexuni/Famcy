@@ -417,7 +417,7 @@ html{
 	background-color: var(--main-color);
 }
 
-.table td{
+table td{
 	padding: 5px;
 }
 
@@ -957,6 +957,10 @@ html{
 	font-size: var(--normal-text);
 	color: var(--dark-color);
 	word-wrap: break-word!important;
+}
+
+.displayParagraph h4 p {
+	margin: 0;
 }
 
 /*displayPicWord*/
