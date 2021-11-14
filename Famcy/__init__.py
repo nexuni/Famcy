@@ -57,6 +57,8 @@ FamcyStyleNavBar = FStyleNavBar
 FamcyStyleNavBtns = FStyleNavBtns
 FamcyBackgroundTask = FBackgroundTask
 
+SubmissionObjectTable = {}
+
 def create_app(famcy_id, production=False):
     """
     Main creation function of the famcy application. 
@@ -89,19 +91,6 @@ def create_app(famcy_id, production=False):
 
     # Webpage related configs
     FManager["ConsoleConfig"] = FManager.read(FManager.console + "/famcy.yaml")
-
-    ## Generate Submission Object table
-    # This is to generate unique submission object key.
-    def submission_object_key():
-        seed = random.getrandbits(8)
-        while True:
-           yield str(seed)
-           seed += 1
-
-    GetSubmissionObjectKey = submission_object_key()
-    SubmissionObjectTable = {}
-    FManager["GetSubmissionObjectKey"] = GetSubmissionObjectKey
-    FManager["SubmissionObjectTable"] = SubmissionObjectTable
 
     # ------------------------
     # --- Main app start zone
