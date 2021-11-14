@@ -8,6 +8,7 @@ import _ctypes
 def get_fsubmission_obj(obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
 	# return _ctypes.PyObj_FromPtr(int(obj_id))
+	print(Famcy.FManager["SubmissionObjectTable"])
 	return Famcy.FManager["SubmissionObjectTable"][obj_id]
 
 def exception_handler(func):
@@ -145,6 +146,8 @@ class FBackgroundTask(FSubmission):
 	def __init__(self, origin):
 		super(FBackgroundTask, self).__init__(origin)
 		self.background_info_dict = {}
+		self.obj_key = str(next(Famcy.FManager["GetSubmissionObjectKey"]))
+		Famcy.FManager["SubmissionObjectTable"][self.obj_key] = self
 
 	def associate(self, function, info_dict={}, target=None):
 		self.func = function
@@ -152,6 +155,6 @@ class FBackgroundTask(FSubmission):
 		self.background_info_dict = info_dict
 
 	def tojson(self, str_format=False):
-		content = {"data": self.background_info_dict, "submission_id": str(id(self)), 
+		content = {"data": self.background_info_dict, "submission_id": str(self.obj_key), 
 			"page_id": self.origin.id}
 		return content if not str_format else json.dumps(content)
