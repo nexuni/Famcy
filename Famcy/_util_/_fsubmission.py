@@ -8,7 +8,7 @@ import _ctypes
 def get_fsubmission_obj(obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
 	# return _ctypes.PyObj_FromPtr(int(obj_id))
-	return Famcy.FManager["SubmissionObjectTable"][obj_id]
+	return Famcy.SubmissionObjectTable[obj_id]
 
 def exception_handler(func):
 	"""
@@ -99,10 +99,6 @@ class FSubmissionSijaxHandler(object):
 			# Will assume all data ready at this point
 			response_obj = fsubmission_obj.func(fsubmission_obj, info_list)
 			
-		print(fsubmission_obj)
-		print(fsubmission_obj.target)
-		print(response_obj)
-		print(response_obj.target)
 		response_obj.target = fsubmission_obj.target
 
 		# Response according to the return response
@@ -149,8 +145,8 @@ class FBackgroundTask(FSubmission):
 	def __init__(self, origin):
 		super(FBackgroundTask, self).__init__(origin)
 		self.background_info_dict = {}
-		self.obj_key = str(next(Famcy.FManager["GetSubmissionObjectKey"]))
-		Famcy.FManager["SubmissionObjectTable"][self.obj_key] = self
+		self.obj_key = "background"+str(id(self))
+		Famcy.SubmissionObjectTable[self.obj_key] = self
 
 	def associate(self, function, info_dict={}, target=None):
 		self.func = function
