@@ -68,11 +68,11 @@ class video_stream(Famcy.FamcyBlock):
 
             div_temp = Famcy.div()
             div_temp["className"] = "video_holder"
-            div_temp.style += 'width:' + w + ';'
+            div_temp.style['width'] = w
 
             img_temp = Famcy.img()
             img_temp["src"] = path + '?' + urllib.parse.urlencode({"address": address, "timeout": timeout, "datetime": time.time()})
-            img_temp.style += 'height:' + h + ';'
+            img_temp.style['height'] = h
 
             btn1_temp = Famcy.button()
             btn1_temp["id"] = 'mbr' + str(index) + "_" + self.id
