@@ -58,6 +58,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.preload()
 		render_data = self.render_inner()
 		render_data += '<script>' + self.js_after_func_name + '("' + self.id + '", ' + json.dumps(self.js_after_func_dict) + ')</script>'
+		print("fwidget parent_card: ", self, self.parent_card)
 
 		# Set daemon to true to ensure thread dies when main thread dies
 		post_thread = FamcyThread(target=self.postload, daemon=True)

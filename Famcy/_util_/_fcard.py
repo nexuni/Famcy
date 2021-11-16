@@ -54,6 +54,11 @@ class FCard(FamcyWidget):
 		render the layout and
 		apply style. 
 		"""
+		parent_card = self.parent_card if self.parent_card else self
+		print("fcard parent_card: ", self.parent_card, parent_card)
+		for item, _, _, _, _ in self.layout.content:
+			item.parent_card = parent_card
+
 		header_script, content = self.layout.render()
 		if header_script not in self.header_script:
 			self.header_script += header_script
@@ -65,10 +70,6 @@ class FCard(FamcyWidget):
 			del self.body.children[0]
 
 		self.body.children[-1].innerHTML = content
-
-		parent_card = self.parent_card if self.parent_card else self
-		for item, _, _, _, _ in self.layout.content:
-			item.parent_card = parent_card
 
 		return self.body.render_inner()
 
