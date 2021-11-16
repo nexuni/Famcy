@@ -37,7 +37,7 @@ class displayImage(Famcy.FamcyBlock):
         self.body.children[1].children = []
         for img_name, img_size in zip(self.value["img_name"], self.value["img_size"]):
             i_temp = Famcy.img()
-            i_temp.style += "width: " + img_size + ";" if "width: " + img_size not in i_temp.style else ""
+            i_temp.style["width"] = img_size
             i_temp["src"] = img_name
             self.body.children[1].addElement(i_temp)
 

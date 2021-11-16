@@ -103,10 +103,10 @@ class FSubmissionSijaxHandler(object):
 		# Response according to the return response
 		if isinstance(response_obj, list):
 			for res_obj in response_obj:
-				res_obj.target = fsubmission_obj.target
+				res_obj.target = res_obj.target if res_obj.target else fsubmission_obj.target
 				res_obj.response(obj_response)
 		else:
-			response_obj.target = fsubmission_obj.target
+			response_obj.target = response_obj.target if response_obj.target else fsubmission_obj.target
 			response_obj.response(obj_response)
 
 

@@ -54,7 +54,6 @@ class inputBlockSec(Famcy.FamcyInputBlock):
         else:
             del self.body.children[0].children[0]
 
-        if "background-image: url('" + self.value["img_src"] + "');" not in self.body.style:
-            self.body.style += "background-image: url('" + self.value["img_src"] + "');"
+        self.body.style["background-image"] =  "url('" + self.value["img_src"] + "')"
 
         return self.body.render_inner()

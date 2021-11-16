@@ -66,6 +66,10 @@ class FCard(FamcyWidget):
 
 		self.body.children[-1].innerHTML = content
 
+		parent_card = self.parent_card if self.parent_card else self
+		for item, _, _, _, _ in self.layout.content:
+			item.parent_card = parent_card
+
 		return self.body.render_inner()
 
 	def preload(self):
