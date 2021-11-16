@@ -228,6 +228,7 @@ class OrderPage(Famcy.FamcyPage):
 
         card1.layout.addWidget(input_form, 0, 0)
         card1.layout.addWidget(upload_form, 1, 0)
+        card1.layout.addWidget(input_list2, 2, 0)
         return card1
 
     def card2(self):
