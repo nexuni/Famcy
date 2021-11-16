@@ -45,7 +45,8 @@ class inputList(Famcy.FamcyInputBlock):
 
     def render_inner(self):
         self.body.children[2].children[0].children = []
-        self.value["value"].insert(0, "---")
+        if "---" not in self.value["value"]:
+            self.value["value"].insert(0, "---")
         for list_value in self.value["value"]:
             opt_temp = Famcy.option()
             opt_temp["name"] = self.name

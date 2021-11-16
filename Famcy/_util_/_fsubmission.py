@@ -91,7 +91,6 @@ class FSubmissionSijaxHandler(object):
 		"""
 
 		# Get the submission object
-		print("out", type(fsubmission_id), fsubmission_id)
 		fsubmission_obj = get_fsubmission_obj(fsubmission_id)
 		if "jsAlert" in info_dict.keys():
 			response_obj = fsubmission_obj.jsAlertHandler(fsubmission_obj, info_dict)
@@ -100,11 +99,15 @@ class FSubmissionSijaxHandler(object):
 			# Run user defined handle submission
 			# Will assume all data ready at this point
 			response_obj = fsubmission_obj.func(fsubmission_obj, info_list)
-			
-		response_obj.target = fsubmission_obj.target
 
 		# Response according to the return response
-		response_obj.response(obj_response)
+		if isinstance(response_obj, list):
+			for res_obj in response_obj:
+				res_obj.target = fsubmission_obj.target
+				res_obj.response(obj_response)
+		else:
+			response_obj.target = fsubmission_obj.target
+			response_obj.response(obj_response)
 
 
 class FSubmission:
