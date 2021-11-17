@@ -24,7 +24,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.action = ""
 		self.loader = False
 		self.parent = None
-		self.parent_card = None
 		self.body = None
 		self.clickable = False
 		self.configs = {}
@@ -45,6 +44,15 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		table = Famcy.SubmissionObjectTable
 		table[self.submission_obj_key] = self.submission_obj
 
+	def find_parent(self, item, className):
+	    if not type(item.parent).__name__ == className:
+	        if item.parent:
+	            return find_parent(item.parent, className)
+	        else:
+	            return None
+	    else:
+	        return item.parent
+
 	def render(self):
 		"""
 		The main render flow is as
@@ -58,8 +66,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.preload()
 		render_data = self.render_inner()
 		render_data += '<script>' + self.js_after_func_name + '("' + self.id + '", ' + json.dumps(self.js_after_func_dict) + ')</script>'
-		print("fwidget parent_card: ", self, self.parent_card)
-
+		
 		# Set daemon to true to ensure thread dies when main thread dies
 		post_thread = FamcyThread(target=self.postload, daemon=True)
 		post_thread.start()

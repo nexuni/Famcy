@@ -54,11 +54,6 @@ class FCard(FamcyWidget):
 		render the layout and
 		apply style. 
 		"""
-		parent_card = self.parent_card if self.parent_card else self
-		print("fcard parent_card: ", self.parent_card, parent_card)
-		for item, _, _, _, _ in self.layout.content:
-			item.parent_card = parent_card
-
 		header_script, content = self.layout.render()
 		if header_script not in self.header_script:
 			self.header_script += header_script
@@ -87,3 +82,10 @@ class FCard(FamcyWidget):
 		apply async post load function. 
 		"""
 		pass
+
+class FPromptCard(FCard):
+    def __init__(self):
+        super(FPromptCard, self).__init__()
+        self.last_card = None
+        self.next_card = None
+        self.attributes = {}
