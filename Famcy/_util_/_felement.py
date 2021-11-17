@@ -19,6 +19,9 @@ class FElement(metaclass=abc.ABCMeta):
 		else:
 			self.attributes[key] = value
 
+	def __getitem__(self, key):
+		return self.attributes[key]
+
 	def __delitem__(self, item):
 		if item in self.attributes.keys():
 			del self.attributes[item]
