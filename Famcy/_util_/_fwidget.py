@@ -45,13 +45,13 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		table[self.submission_obj_key] = self.submission_obj
 
 	def find_parent(self, item, className):
-	    if not type(item.parent).__name__ == className:
-	        if item.parent:
-	            return self.find_parent(item.parent, className)
-	        else:
-	            return None
-	    else:
-	        return item.parent
+		if not type(item.parent).__name__ == className:
+			if item.parent:
+				return self.find_parent(item.parent, className)
+			else:
+				return item.parent
+		else:
+			return item.parent
 
 	def render(self):
 		"""
