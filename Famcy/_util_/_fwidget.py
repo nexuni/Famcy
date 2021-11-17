@@ -47,7 +47,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 	def find_parent(self, item, className):
 	    if not type(item.parent).__name__ == className:
 	        if item.parent:
-	            return find_parent(item.parent, className)
+	            return self.find_parent(item.parent, className)
 	        else:
 	            return None
 	    else:
