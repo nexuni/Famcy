@@ -195,7 +195,7 @@ class OrderPage(Famcy.FamcyPage):
 
         submit_btn.connect(self.submit_input, target=self.p_card)
 
-        card1.postload = lambda: print("parent_card: ", submit_btn.parent_card)
+        card1.postload = lambda: print("parent_card: ", submit_btn.parent_form)
 
         input_form.layout.addWidget(pure_input, 0, 0)
         input_form.layout.addWidget(input_btn, 0, 1)
