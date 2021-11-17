@@ -84,8 +84,15 @@ class FCard(FamcyWidget):
 		pass
 
 class FPromptCard(FCard):
-    def __init__(self):
-        super(FPromptCard, self).__init__()
-        self.last_card = None
-        self.next_card = None
-        self.attributes = {}
+	def __init__(self):
+		super(FPromptCard, self).__init__()
+		self.last_card = None
+		self.next_card = None
+		self.attributes = {}
+
+	def __setitem__(self, key, value):
+		self.attributes[key] = value
+
+	def __delitem__(self, item):
+		if item in self.attributes.keys():
+			del self.attributes[item]
