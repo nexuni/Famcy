@@ -10,6 +10,6 @@ class style(Famcy.FamcyElement):
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
-
+        self.html = html
         html += "</style>"
         return html
