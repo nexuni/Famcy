@@ -6,7 +6,7 @@ class label(Famcy.FamcyElement):
         super(label, self).__init__()
 
     def render_inner(self):
-        html = "<label" + self.setAttrTag() + ">"
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -16,5 +16,4 @@ class label(Famcy.FamcyElement):
                 html += child.render_inner()
                 child.parentElement = self
         self.html = html
-        html += "</label>"
-        return html
+        return "<label" + self.setAttrTag() + ">" + html + "</label>"

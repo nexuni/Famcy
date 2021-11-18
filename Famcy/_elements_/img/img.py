@@ -6,7 +6,7 @@ class img(Famcy.FamcyElement):
         super(img, self).__init__()
 
     def render_inner(self):
-        html = "<img" + self.setAttrTag() + ">"
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -16,5 +16,4 @@ class img(Famcy.FamcyElement):
                 html += child.render_inner()
                 child.parentElement = self
         self.html = html
-        html += "</img>"
-        return html
+        return "<img" + self.setAttrTag() + ">" + html + "</img>"

@@ -6,7 +6,7 @@ class span(Famcy.FamcyElement):
         super(span, self).__init__()
 
     def render_inner(self):
-        html = "<span" + self.setAttrTag() + ">"
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -16,5 +16,4 @@ class span(Famcy.FamcyElement):
                 html += child.render_inner()
                 child.parentElement = self
         self.html = html
-        html += "</span>"
-        return html
+        return "<span" + self.setAttrTag() + ">" + html + "</span>"

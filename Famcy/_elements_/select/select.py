@@ -6,7 +6,7 @@ class select(Famcy.FamcyElement):
         super(select, self).__init__()
 
     def render_inner(self):
-        html = "<select" + self.setAttrTag() + ">"
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -16,5 +16,4 @@ class select(Famcy.FamcyElement):
                 html += child.render_inner()
                 child.parentElement = self
         self.html = html
-        html += "</select>"
-        return html
+        return "<select" + self.setAttrTag() + ">" + html + "</select>"

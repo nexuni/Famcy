@@ -6,7 +6,7 @@ class button(Famcy.FamcyElement):
         super(button, self).__init__()
 
     def render_inner(self):
-        html = "<button" + self.setAttrTag() + ">"
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -16,5 +16,4 @@ class button(Famcy.FamcyElement):
                 html += child.render_inner()
                 child.parentElement = self
         self.html = html
-        html += "</button>"
-        return html
+        return "<button" + self.setAttrTag() + ">" + html + "</button>"
