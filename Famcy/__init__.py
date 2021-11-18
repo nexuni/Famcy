@@ -59,6 +59,7 @@ FamcyStyleNavBtns = FStyleNavBtns
 FamcyBackgroundTask = FBackgroundTask
 
 SubmissionObjectTable = {}
+print("__init__ SubmissionObjectTable: ", SubmissionObjectTable)
 
 def create_app(famcy_id, production=False):
     """
