@@ -42,8 +42,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.submission_obj_key = self.id
 		self.post_submission_js = ""
 
-		table = Famcy.SubmissionObjectTable
-		table[self.submission_obj_key] = self.submission_obj
+		Famcy.SubmissionObjectTable[self.submission_obj_key] = self.submission_obj
 
 	def __setitem__(self, key, value):
 		self.attributes[key] = value
