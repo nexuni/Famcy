@@ -43,6 +43,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 
 		table = Famcy.SubmissionObjectTable
 		table[self.submission_obj_key] = self.submission_obj
+		print("_widget SubmissionObjectTable: ", table)
 
 	def find_parent(self, item, className):
 		if not type(item.parent).__name__ == className:
