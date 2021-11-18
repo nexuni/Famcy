@@ -27,6 +27,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.body = None
 		self.clickable = False
 		self.configs = {}
+		self.attributes = {}
 
 		# Header script
 		self.header_script = ""
@@ -43,7 +44,16 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 
 		table = Famcy.SubmissionObjectTable
 		table[self.submission_obj_key] = self.submission_obj
-		print("_widget SubmissionObjectTable: ", table)
+
+	def __setitem__(self, key, value):
+		self.attributes[key] = value
+
+	def __getitem__(self, key):
+		return self.attributes[key]
+
+	def __delitem__(self, item):
+		if item in self.attributes.keys():
+			del self.attributes[item]
 
 	def find_parent(self, item, className):
 		if not type(item.parent).__name__ == className:
