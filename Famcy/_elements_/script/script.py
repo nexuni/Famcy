@@ -6,10 +6,9 @@ class script(Famcy.FamcyElement):
         super(script, self).__init__()
 
     def render_inner(self):
-        html = "<script" + self.setAttrTag() + ">"
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
         self.html = html
-        html += "</script>"
-        return html
+        return "<script" + self.setAttrTag() + ">" + html + "</script>"

@@ -6,7 +6,7 @@ class div(Famcy.FamcyElement):
         super(div, self).__init__()
 
     def render_inner(self):
-        html = "<div" + self.setAttrTag() + ">"
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -17,5 +17,4 @@ class div(Famcy.FamcyElement):
                 child.parentElement = self
 
         self.html = html
-        html += "</div>"
-        return html
+        return "<div" + self.setAttrTag() + ">" + html + "</div>"

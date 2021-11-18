@@ -6,7 +6,7 @@ class option(Famcy.FamcyElement):
         super(option, self).__init__()
 
     def render_inner(self):
-        html = "<option" + self.setAttrTag() + ">"
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -16,5 +16,4 @@ class option(Famcy.FamcyElement):
                 html += child.render_inner()
                 child.parentElement = self
         self.html = html
-        html += "</option>"
-        return html
+        return "<option" + self.setAttrTag() + ">" + html + "</option>"

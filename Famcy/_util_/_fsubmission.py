@@ -53,16 +53,19 @@ def exception_handler(func):
 
 	return inner_function
 
-def put_submissions_to_list(sub_dict):
+def put_submissions_to_list(fsubmission_obj, sub_dict):
     """
     This is the helper function to put the
     submission content to a list of arguments
     - Input:
         * sub_dict: submission dictionary
     """
+    input_parent = fsubmission_obj.origin.find_parent(fsubmission_obj.origin, "input_form")
+
     ordered_submission_list = []
-    for key in sorted(list(sub_dict.keys())):
-        ordered_submission_list.append(sub_dict[key])
+    for child, _, _, _, _ in input_parent.layout.content:
+    	if child.name in sub_dict.keys():
+    		ordered_submission_list.append(sub_dict[child.name])
 
     return ordered_submission_list
 
@@ -100,7 +103,7 @@ class FSubmissionSijaxHandler(object):
 			response_obj = temp_func(fsubmission_obj, info_list)
 			# response_obj = fsubmission_obj.jsAlertHandler(fsubmission_obj, info_dict)
 		else:
-			info_list = put_submissions_to_list(info_dict)
+			info_list = put_submissions_to_list(fsubmission_obj, info_dict)
 			# Run user defined handle submission
 			# Will assume all data ready at this point
 			temp_func = fsubmission_obj.func

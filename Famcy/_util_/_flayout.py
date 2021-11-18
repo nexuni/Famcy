@@ -205,8 +205,28 @@ class FamcyLayout:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipadH=self.cusContent)
 			self.clearCusContent()
 
+	def update_layout(self, sijax_response):
+		layoutDict = self.layoutType.getLayoutDict()
+		for i, (k, v) in enumerate(layoutDict.items()):
+			if k == "default":
+				for card in v:
+					sijax_response.css("#"+card[0].id, "grid-row-start", str(card[1] + 1))
+					sijax_response.css("#"+card[0].id, "grid-column-start", str(card[2] + 1))
+					sijax_response.css("#"+card[0].id, "grid-column-end", str(card[2] + card[4] + 1))
+					sijax_response.css("#"+card[0].id, "grid-row-end", str(card[1] + card[3] + 1))
+			else:
+				for card in v:
+					sijax_response.css("#"+card[0].id, "grid-row-start", str(card[1] + 1))
+					sijax_response.css("#"+card[0].id, "grid-column-start", str(card[2] + 1))
+					sijax_response.css("#"+card[0].id, "grid-column-end", str(card[2] + card[4] + 1))
+					sijax_response.css("#"+card[0].id, "grid-row-end", str(card[1] + card[3] + 1))
+
+		for _prompt, _width in self.promptContent:
+			sijax_response.css("#"+_prompt.id, "width", str(_width))
+
 	def setLayout(self):
 		layoutDict = self.layoutType.getLayoutDict()
+
 		cssLayout = ""
 
 		for i, (k, v) in enumerate(layoutDict.items()):

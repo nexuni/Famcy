@@ -6,7 +6,7 @@ class li(Famcy.FamcyElement):
         super(li, self).__init__()
 
     def render_inner(self):
-        html = "<li" + self.setAttrTag() + ">"
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -16,5 +16,4 @@ class li(Famcy.FamcyElement):
                 html += child.render_inner()
                 child.parentElement = self
         self.html = html
-        html += "</li>"
-        return html
+        return "<li" + self.setAttrTag() + ">" + html + "</li>"

@@ -6,7 +6,7 @@ class table(Famcy.FamcyElement):
         super(table, self).__init__()
 
     def render_inner(self):
-        html = "<table" + self.setAttrTag() + ">"
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -16,5 +16,4 @@ class table(Famcy.FamcyElement):
                 html += child.render_inner()
                 child.parentElement = self
         self.html = html
-        html += "</table>"
-        return html
+        return "<table" + self.setAttrTag() + ">" + html + "</table>"

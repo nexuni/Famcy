@@ -6,7 +6,7 @@ class form(Famcy.FamcyElement):
         super(form, self).__init__()
 
     def render_inner(self):
-        html = "<form" + self.setAttrTag() + ">"
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -16,5 +16,4 @@ class form(Famcy.FamcyElement):
                 html += child.render_inner()
                 child.parentElement = self
         self.html = html
-        html += "</form>"
-        return html
+        return "<form" + self.setAttrTag() + ">" + html + "</form>"

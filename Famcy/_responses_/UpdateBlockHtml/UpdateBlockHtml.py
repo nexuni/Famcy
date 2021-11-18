@@ -12,5 +12,6 @@ class UpdateBlockHtml(Famcy.FamcyResponse):
 	def response(self, sijax_response):
 		body_html = self.target.render_inner()
 		sijax_response.html('#'+self.target.id, self.target.body.html)
+		self.target.layout.update_layout(sijax_response)
 		sijax_response.script(self.extra_script)
 		sijax_response.script(self.finish_loading_script)
