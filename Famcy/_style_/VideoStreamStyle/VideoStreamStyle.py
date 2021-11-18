@@ -12,6 +12,7 @@ class VideoCamera(object):
         self.stop_time  = self.start_time + int(timeout)
         self.is_decoded = False
         self.timeout = int(timeout)
+        self.delay = 0.1
     
     def __del__(self):
         self.video.release()
@@ -26,6 +27,7 @@ class VideoCamera(object):
         camera.stop_time = camera.start_time + int(timeout)
 
         while True:
+            time.sleep(self.delay)
             frame, is_decoded = camera.get_frame()
             # 使用generator函式輸出視頻流， 每次請求輸出的content型別是image/jpeg
             if is_decoded:
