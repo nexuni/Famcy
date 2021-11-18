@@ -8,10 +8,10 @@ import _ctypes
 def get_fsubmission_obj(obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
 	# return _ctypes.PyObj_FromPtr(int(obj_id))
-	if obj_id in Famcy.SubmissionObjectTable.keys():
-		print("=========yesssssssssssss=========")
-	else:
-		print("========nooooooooooooooo=========")
+	# if obj_id in Famcy.SubmissionObjectTable.keys():
+	# 	print("=========yesssssssssssss=========")
+	# else:
+	# 	print("========nooooooooooooooo=========", obj_id, Famcy.SubmissionObjectTable.keys())
 	return Famcy.SubmissionObjectTable[obj_id]
 
 def exception_handler(func):
