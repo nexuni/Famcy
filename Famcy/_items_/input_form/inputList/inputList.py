@@ -36,7 +36,7 @@ class inputList(Famcy.FamcyInputBlock):
         div_temp.addElement(sel_temp)
 
         script = Famcy.script()
-        script.innerHTML = 'generate_list("' + self.id + '", "' + str(self.submission_obj_key) + '")'
+        script.innerHTML = 'generate_list("' + self.id + '")'
 
         self.body.addElement(h3_temp)
         self.body.addElement(p_temp)
