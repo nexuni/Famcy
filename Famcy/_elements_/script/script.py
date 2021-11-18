@@ -10,6 +10,6 @@ class script(Famcy.FamcyElement):
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
-
+        self.html = html
         html += "</script>"
         return html

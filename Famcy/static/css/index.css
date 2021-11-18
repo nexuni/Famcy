@@ -338,6 +338,7 @@ html{
 	row-gap: 1.25vw;
 	column-gap: 1.25vw;
 	overflow-y: scroll;
+
 	max-height: calc(90% - var(--normal-text)*1.5);
 }
 
@@ -350,9 +351,8 @@ html{
 	padding: 1.25vw;
 	display: flex;
 	flex-flow: column;
-
-	overflow-x: hidden;
-	overflow-y: visible;
+	height: fit-content;
+	overflow: visible;
 }
 
 .portfolio_content .inner_section{

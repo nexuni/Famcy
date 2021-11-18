@@ -82,3 +82,9 @@ class FCard(FamcyWidget):
 		apply async post load function. 
 		"""
 		pass
+
+class FPromptCard(FCard):
+	def __init__(self):
+		super(FPromptCard, self).__init__()
+		self.last_card = None
+		self.next_card = None

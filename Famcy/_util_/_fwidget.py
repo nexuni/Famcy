@@ -27,6 +27,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.body = None
 		self.clickable = False
 		self.configs = {}
+		self.attributes = {}
 
 		# Header script
 		self.header_script = ""
@@ -41,8 +42,26 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.submission_obj_key = self.id
 		self.post_submission_js = ""
 
-		table = Famcy.SubmissionObjectTable
-		table[self.submission_obj_key] = self.submission_obj
+		Famcy.SubmissionObjectTable.update({self.submission_obj_key: self.submission_obj})
+
+	def __setitem__(self, key, value):
+		self.attributes[key] = value
+
+	def __getitem__(self, key):
+		return self.attributes[key]
+
+	def __delitem__(self, item):
+		if item in self.attributes.keys():
+			del self.attributes[item]
+
+	def find_parent(self, item, className):
+		if not type(item.parent).__name__ == className:
+			if item.parent:
+				return self.find_parent(item.parent, className)
+			else:
+				return item.parent
+		else:
+			return item.parent
 
 	def render(self):
 		"""
@@ -57,7 +76,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.preload()
 		render_data = self.render_inner()
 		render_data += '<script>' + self.js_after_func_name + '("' + self.id + '", ' + json.dumps(self.js_after_func_dict) + ')</script>'
-
+		
 		# Set daemon to true to ensure thread dies when main thread dies
 		post_thread = FamcyThread(target=self.postload, daemon=True)
 		post_thread.start()
