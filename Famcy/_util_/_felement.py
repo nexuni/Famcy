@@ -4,11 +4,12 @@ import Famcy
 
 class FElement(metaclass=abc.ABCMeta):
 	def __init__(self):
-		self.style = ""
+		self.style = {}
 		self.classList = []
 		self.attributes = {}
 
 		self.innerHTML = ""
+		self.html = ""
 		self.parentElement = None
 		self.children = []
 
@@ -16,9 +17,11 @@ class FElement(metaclass=abc.ABCMeta):
 		if key == "className":
 			if value not in self.classList:
 				self.classList.append(value)
-
 		else:
 			self.attributes[key] = value
+
+	def __getitem__(self, key):
+		return self.attributes[key]
 
 	def __delitem__(self, item):
 		if item in self.attributes.keys():
@@ -33,7 +36,11 @@ class FElement(metaclass=abc.ABCMeta):
 		All input should be string
 		"""
 		return_attr = ""
-		return_attr += ' style="' + self.style + '"' if self.style != "" else ""
+
+		_ = ""
+		for key, val in self.style.items():
+			_ += key + ': ' + val + ';'
+		return_attr += ' style="' + _ + '"' if _ != "" else ""
 
 		_ = ""
 		for _class in self.classList:

@@ -36,6 +36,7 @@ FamcyCard = FCard
 FamcyPermissions = FPermissions
 FamcyInputBlock = FInputBlock
 FamcyUploadBlock = FUploadBlock
+FamcyPromptCard = FPromptCard
 FamcyResponse = FResponse
 FamcyPriority = FPriority
 

@@ -8,6 +8,10 @@ import _ctypes
 def get_fsubmission_obj(obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
 	# return _ctypes.PyObj_FromPtr(int(obj_id))
+	# if obj_id in Famcy.SubmissionObjectTable.keys():
+	# 	print("=========yesssssssssssss=========")
+	# else:
+	# 	print("========nooooooooooooooo=========", obj_id, Famcy.SubmissionObjectTable.keys())
 	return Famcy.SubmissionObjectTable[obj_id]
 
 def exception_handler(func):
@@ -92,17 +96,25 @@ class FSubmissionSijaxHandler(object):
 		# Get the submission object
 		fsubmission_obj = get_fsubmission_obj(fsubmission_id)
 		if "jsAlert" in info_dict.keys():
-			response_obj = fsubmission_obj.jsAlertHandler(fsubmission_obj, info_dict)
+			temp_func = fsubmission_obj.jsAlertHandler
+			response_obj = temp_func(fsubmission_obj, info_list)
+			# response_obj = fsubmission_obj.jsAlertHandler(fsubmission_obj, info_dict)
 		else:
 			info_list = put_submissions_to_list(info_dict)
 			# Run user defined handle submission
 			# Will assume all data ready at this point
-			response_obj = fsubmission_obj.func(fsubmission_obj, info_list)
-			
-		response_obj.target = fsubmission_obj.target
+			temp_func = fsubmission_obj.func
+			response_obj = temp_func(fsubmission_obj, info_list)
+			# response_obj = fsubmission_obj.func(fsubmission_obj, info_list)
 
 		# Response according to the return response
-		response_obj.response(obj_response)
+		if isinstance(response_obj, list):
+			for res_obj in response_obj:
+				res_obj.target = res_obj.target if res_obj.target else fsubmission_obj.target
+				res_obj.response(obj_response)
+		else:
+			response_obj.target = response_obj.target if response_obj.target else fsubmission_obj.target
+			response_obj.response(obj_response)
 
 
 class FSubmission:

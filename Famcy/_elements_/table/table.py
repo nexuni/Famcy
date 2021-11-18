@@ -15,6 +15,6 @@ class table(Famcy.FamcyElement):
             for child in self.children:
                 html += child.render_inner()
                 child.parentElement = self
-
+        self.html = html
         html += "</table>"
         return html

@@ -29,3 +29,5 @@ SUB_COLOR: "#f0e260"
 
 # loader type
 LOADER: "Double_Ring"
+
+main_http_url: "http://10.0.200.184:5061"

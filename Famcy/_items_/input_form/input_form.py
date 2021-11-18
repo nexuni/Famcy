@@ -20,6 +20,7 @@ class input_form(Famcy.FamcyCard):
 		self.body["onsubmit"] = "return false;"
 
 	def render_inner(self):
+			
 		header_script, content_render = self.layout.render()
 		if header_script not in self.header_script:
 			self.header_script += header_script

@@ -16,5 +16,6 @@ class div(Famcy.FamcyElement):
                 html += child.render_inner()
                 child.parentElement = self
 
+        self.html = html
         html += "</div>"
         return html
