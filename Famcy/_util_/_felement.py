@@ -9,6 +9,7 @@ class FElement(metaclass=abc.ABCMeta):
 		self.attributes = {}
 
 		self.innerHTML = ""
+		self.html = ""
 		self.parentElement = None
 		self.children = []
 

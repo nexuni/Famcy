@@ -7,4 +7,5 @@ class input(Famcy.FamcyElement):
 
     def render_inner(self):
         html = "<input" + self.setAttrTag() + ">"
+        self.html = html
         return html
