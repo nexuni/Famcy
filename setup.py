@@ -19,9 +19,6 @@ setuptools.setup(
     url="https://github.com/nexuni/Famcy.git",
     license="Apache-2.0",
     packages=setuptools.find_packages(),
-    entry_points={
-        "console_scripts": ["famcy = Famcy.main:command_line_interface"]
-    },
     install_requires=requirements,
     package_dir={"Famcy": "Famcy"},
     package_data=package_data_with_recursive_dirs({"Famcy":["bower_components", "node_modules", "templates", "static", "scripts", "famcy.ini", "_style_", "_responses_", "_items_", "_elements_"]}),
