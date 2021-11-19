@@ -1,12 +1,12 @@
 console_title: "doday會員管理系統"
 console_description: "這是doday會員的後台管理系統"
-main_page: dashboard
+main_page: overview
 
-side_bar_title: "doday"
+side_bar_title: "dashboard"
 side_bar_hierachy:
   - 總覽: overview
-  - 歷史訂單: history
-  - 豆漿預約: order
+  - 車輛管理: car_management
+  - 月票管理: season
 
 user_defined_content_header_var: PAGE_HEADER
 user_defined_content_var: PAGE_CONTENT

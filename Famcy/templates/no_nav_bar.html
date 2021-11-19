@@ -59,6 +59,7 @@
 
 	<div class="main_win" id="main_win">
 		{% if content %}
+        {% set extra_class="no_nav_section" %}
 		{% include 'content.html' %}
 		{% endif %}
 	</div>
