@@ -218,15 +218,7 @@ class CarManagementPage(Famcy.FamcyPage):
         if len(info_list[0]) > 0 and len(info_list[1]) > 0 and len(info_list[1][0]) == 15:
             license_num = str(info_list[0][0])
             time_num = str(info_list[1][0])
-
-            modified_time = ""
-            current_time = datetime.datetime.now()
-            modified_time += str(current_time.year)[2:]
-            modified_time += str(current_time.month) if len(str(current_time.month)) == 2 else "0" + str(current_time.month)
-            modified_time += str(current_time.day) if len(str(current_time.day)) == 2 else "0" + str(current_time.day)
-            modified_time += str(current_time.hour) if len(str(current_time.hour)) == 2 else "0" + str(current_time.hour)
-            modified_time += str(current_time.minute) if len(str(current_time.minute)) == 2 else "0" + str(current_time.minute)
-            modified_time += "00000"
+            modified_time = self.generate_modified_time()
 
             if self.post_insert(license_num, time_num, modified_time):
                 self.get_car_queue()
@@ -236,25 +228,42 @@ class CarManagementPage(Famcy.FamcyPage):
         return [Famcy.UpdateAlert(alert_message=msg), Famcy.UpdateBlockHtml(target=self.card_2)]
 
     def update_delete(self, submission_obj, info_list):
-        msg = "資料填寫有誤"
+        msg = "系統異常，請重新再試"
         if len(info_list[0]) > 0:
-            license_num = str(info_list[0][0])
+            license_num = str(info_list[0][0])          # "XXXXXX"
+            modified_time = self.generate_modified_time()
 
-            modified_time = ""
-            current_time = datetime.datetime.now()
-            modified_time += str(current_time.year)[2:]
-            modified_time += str(current_time.month) if len(str(current_time.month)) == 2 else "0" + str(current_time.month)
-            modified_time += str(current_time.day) if len(str(current_time.day)) == 2 else "0" + str(current_time.day)
-            modified_time += str(current_time.hour) if len(str(current_time.hour)) == 2 else "0" + str(current_time.hour)
-            modified_time += str(current_time.minute) if len(str(current_time.minute)) == 2 else "0" + str(current_time.minute)
-            modified_time += "00000"
-
-            if self.post_delete(license_num, modified_time):
+            if self.post_update(license_num, modified_time):
                 self.get_car_queue()
                 self.generate_car_block(self.card_2)
                 msg = "成功刪除資料"
 
         return [Famcy.UpdateAlert(alert_message=msg), Famcy.UpdateBlockHtml(target=self.card_2)]
+
+    def submit_platenum(self, submission_obj, info_list):
+        msg = "系統異常，請重新再試"
+        license_num = submission_obj.origin.find_parent(submission_obj.origin, "input_form").layout.content[1][0].value["placeholder"]
+        modified_time = submission_obj.origin.value["modified_time"]
+
+        if self.post_update(license_num, modified_time, comments="checked"):
+            self.get_car_queue()
+            self.generate_car_block(self.card_2)
+            msg = "成功確認資料"
+
+        return [Famcy.UpdateBlockHtml(), Famcy.UpdateAlert(alert_message=msg)]
+
+    def modify_platenum(self, submission_obj, info_list):
+        msg = "系統異常，請重新再試"
+        if len(info_list[0]) > 0:
+            license_num = str(info_list[0][0])
+            modified_time = submission_obj.origin.value["modified_time"]
+
+            if self.post_update(license_num, modified_time):
+                self.get_car_queue()
+                self.generate_car_block(self.card_2)
+                msg = "成功修改資料"
+
+        return [Famcy.UpdateBlockHtml(), Famcy.UpdateAlert(alert_message=msg)]
     # ====================================================
     # ====================================================
 
@@ -294,7 +303,7 @@ class CarManagementPage(Famcy.FamcyPage):
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
         return json.loads(res_msg)["indicator"]
 
-    def post_delete(self, license_num, modified_time):
+    def post_update(self, license_num, modified_time, comments=None):
         send_dict = {
             "service": "pms",
             "operation": "update_movement",
@@ -303,6 +312,11 @@ class CarManagementPage(Famcy.FamcyPage):
             "platenum": license_num,
             "carpark_id": self.carpark_id
         }
+
+        print("send_dict:                      ", send_dict)
+
+        if comments:
+            send_dict["comments"] = comments
 
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
         return json.loads(res_msg)["indicator"]
@@ -336,12 +350,12 @@ class CarManagementPage(Famcy.FamcyPage):
             license_num.update({"title":"車牌號碼", "input_type":"text", "placeholder": temp["platenum"]})
 
             update_btn = Famcy.submitBtn()
-            update_btn.update({"title":"修改車牌"})
-            # update_btn.connect(self.prompt_submit_input)
+            update_btn.update({"title":"修改車牌", "modified_time": temp["modified_time"]})
+            update_btn.connect(self.modify_platenum, target=card)
 
             submit_btn = Famcy.submitBtn()
-            submit_btn.update({"title":"車牌正確"})
-            # submit_btn.connect(self.prompt_submit_input)
+            submit_btn.update({"title":"車牌正確", "modified_time": temp["modified_time"]})
+            submit_btn.connect(self.submit_platenum, target=card)
 
             input_form.layout.addWidget(car_pic, 0, 0, 1, 2)
             input_form.layout.addWidget(license_num, 1, 0, 1, 2)
@@ -349,6 +363,19 @@ class CarManagementPage(Famcy.FamcyPage):
             input_form.layout.addWidget(submit_btn, 2, 1)
 
             card.layout.addWidget(input_form, ((i-1)//col_num)*2, (i-1)%col_num)
+
+
+    def generate_modified_time(self):
+        modified_time = ""
+        current_time = datetime.datetime.now()
+        modified_time += str(current_time.year)[2:]
+        modified_time += str(current_time.month) if len(str(current_time.month)) == 2 else "0" + str(current_time.month)
+        modified_time += str(current_time.day) if len(str(current_time.day)) == 2 else "0" + str(current_time.day)
+        modified_time += str(current_time.hour) if len(str(current_time.hour)) == 2 else "0" + str(current_time.hour)
+        modified_time += str(current_time.minute) if len(str(current_time.minute)) == 2 else "0" + str(current_time.minute)
+        modified_time += "00000"
+
+        return modified_time
     # ====================================================
     # ====================================================
 

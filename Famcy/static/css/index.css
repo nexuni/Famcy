@@ -272,6 +272,11 @@ html{
 	color: var(--main-color);
 }
 
+.no_nav_section {
+	min-height: 100vh !important;
+	max-height: 100vh !important;
+}
+
 
 
 .main_win{
