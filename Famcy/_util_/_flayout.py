@@ -205,7 +205,7 @@ class FamcyLayout:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipadH=self.cusContent)
 			self.clearCusContent()
 
-	def update_layout(self, sijax_response):
+	def setSijaxLayout(self, sijax_response):
 		layoutDict = self.layoutType.getLayoutDict()
 		for i, (k, v) in enumerate(layoutDict.items()):
 			if k == "default":
@@ -223,6 +223,10 @@ class FamcyLayout:
 
 		for _prompt, _width in self.promptContent:
 			sijax_response.css("#"+_prompt.id, "width", str(_width))
+
+		for _card, _, _, _, _ in self.content:
+			if hasattr(_card, 'layout'):
+				_card.layout.setSijaxLayout(sijax_response)
 
 	def setLayout(self):
 		layoutDict = self.layoutType.getLayoutDict()

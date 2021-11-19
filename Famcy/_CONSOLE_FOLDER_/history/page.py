@@ -132,7 +132,7 @@ class CarManagementPage(Famcy.FamcyPage):
     # prompt card
     # ====================================================
     def prompt_insert(self):
-        p_card = Famcy.FamcyCard()
+        p_card = Famcy.FamcyPromptCard()
 
         input_form = Famcy.input_form()
 
@@ -160,7 +160,7 @@ class CarManagementPage(Famcy.FamcyPage):
         return p_card
 
     def prompt_delete(self):
-        p_card = Famcy.FamcyCard()
+        p_card = Famcy.FamcyPromptCard()
 
         input_form = Famcy.input_form()
 
