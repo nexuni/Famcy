@@ -87,6 +87,8 @@ class FPage(FamcyWidget):
 		This is the main render function, i.e.
 		the flask route function top level. 
 		"""
+		if "SubmissionObjectTable" not in g:
+			g.SubmissionObjectTable = Famcy.SubmissionObjectTable
 		# First setup the submission handler
 		if g.sijax.is_sijax_request:
 			g.sijax.register_object(FSubmissionSijaxHandler)
