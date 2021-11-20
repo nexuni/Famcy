@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory, g
+from flask_session import Session
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
 from flask_uwsgi_websocket import WebSocket
+from multiprocessing import Manager
 
 import os
 import importlib
@@ -59,6 +61,7 @@ FamcyStyleNavBtns = FStyleNavBtns
 FamcyBackgroundTask = FBackgroundTask
 
 SubmissionObjectTable = {}
+# SubmissionObjectProcess = Manager().list()
 
 def create_app(famcy_id, production=False):
     """
@@ -112,6 +115,8 @@ def create_app(famcy_id, production=False):
     # Security Enhance
     FManager.register_csrf(app)
 
+    # Session(app)
+
     # User Static Data
     @MainBlueprint.route('/asset/<path:filename>')
     def user_custom_asset(filename):
@@ -158,6 +163,9 @@ def create_app(famcy_id, production=False):
     # Register the main blueprint that is used in the FamcyPage
     app.register_blueprint(MainBlueprint)
 
+    # for p in SubmissionObjectProcess:
+    #     p.join()
+
     # Init Login Manager and Related Stuffs
     if FManager["ConsoleConfig"]["with_login"]:
         # Init login manager
@@ -169,3 +177,8 @@ def create_app(famcy_id, production=False):
     return app
 
 # ------ above is the flask part -----------
+
+
+# p = Process(target=get_table, args=())
+# p.start()
+# p.join()

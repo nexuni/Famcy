@@ -2,6 +2,7 @@ import abc
 import enum
 import json
 import Famcy
+from flask import g
 import _ctypes
 
 # GLOBAL HELPER
@@ -12,7 +13,7 @@ def get_fsubmission_obj(obj_id):
 	# 	print("=========yesssssssssssss=========")
 	# else:
 	# 	print("========nooooooooooooooo=========", obj_id, Famcy.SubmissionObjectTable.keys())
-	return Famcy.SubmissionObjectTable[obj_id]
+	return g.SubmissionObjectTable[obj_id]
 
 def exception_handler(func):
 	"""
@@ -133,6 +134,7 @@ class FSubmission:
 	"""
 	def __init__(self, origin):
 		self.func = lambda *a, **k: None
+		# self.func = None
 		self.origin = origin
 		self.target = origin
 
