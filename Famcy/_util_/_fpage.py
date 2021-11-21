@@ -50,7 +50,7 @@ class FPage(FamcyWidget):
 			self.background_freq = background_freq
 			# self.sijax_response = None
 			# Necessary header script for comet
-			self.header_script += '<script type="text/javascript" src="/static/js/sijax/sijax_comet.js"></script>'
+			# self.header_script += '<script type="text/javascript" src="/static/js/sijax/sijax_comet.js"></script>'
 			
 			# Check loop correctness
 			assert getattr(self, "background_thread_inner", None), "Must implement background_thread_inner"

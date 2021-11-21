@@ -90,7 +90,7 @@ class FSubmissionSijaxHandler(object):
 		This is the main submission handler that handles all
 		the submission traffics. 
 		"""
-
+		print("==========================famcy_submission_handler")
 		# Get the submission object
 		fsubmission_obj = get_fsubmission_obj(fsubmission_id)
 		if "jsAlert" in info_dict.keys():
