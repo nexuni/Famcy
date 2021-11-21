@@ -28,12 +28,13 @@
                     console.log("<li>Your browser doesn't support WebSockets.</li>");
                 }
             }
-            const ws = new WebSocket("wss://"+window.location.host+"/fws");
+            const ws = new WebSocket("ws://127.0.0.1:8765");
             ws.onopen = function(evt) {
                 console.log("onopen");
             }
 
             ws.onmessage = function(evt) {
+                console.log(evt)
                 var token = document.head.querySelector("[name~=csrf-token][content]").content
                 console.log(evt.data)
                 var data = JSON.parse(evt.data)
