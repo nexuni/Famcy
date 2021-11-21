@@ -115,8 +115,8 @@ def create_app(famcy_id, production=False):
 
 	# Init Sijax
 	FManager["Sijax"].Sijax().init_app(app)
-	FamcyWebSocket = WebSocket(app)
-	FamcyWebSocketLoopDelay = 2.5
+	# FamcyWebSocket = WebSocket(app)
+	# FamcyWebSocketLoopDelay = 2.5
 	FamcyBackgroundQueue = FamcyPriorityQueue()
 	globals()["FamcyBackgroundQueue"] = FamcyBackgroundQueue
 
@@ -131,16 +131,16 @@ def create_app(famcy_id, production=False):
 		# Usage in template {{ url_for('user_custom_asset', filename='doday_icon.png') }}
 		return send_from_directory(FManager.console + "/" + FManager.USER_STATIC_FOLDER, filename)
 
-	@FamcyWebSocket.route('/fws')
-	def fws(ws):
-	    while True:
-	        time.sleep(FamcyWebSocketLoopDelay)
-	        try:
-	            btask = FamcyBackgroundQueue.pop()
-	        except:
-	            continue
+	# @FamcyWebSocket.route('/fws')
+	# def fws(ws):
+	#     while True:
+	#         time.sleep(FamcyWebSocketLoopDelay)
+	#         try:
+	#             btask = FamcyBackgroundQueue.pop()
+	#         except:
+	#             continue
 
-	        ws.send(btask.tojson(str_format=True))
+	#         ws.send(btask.tojson(str_format=True))
 
 	# Import Fblocks from default and custom folders. 
 	# ------------------------------
