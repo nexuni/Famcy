@@ -12,7 +12,7 @@ v1.register()
 
 class OverviewPage(Famcy.FamcyPage):
     def __init__(self):
-        super(OverviewPage, self).__init__("/overview", Famcy.ClassicSideStyle(), background_thread=False)
+        super(OverviewPage, self).__init__("/overview", Famcy.ClassicSideStyle(), background_thread=True, background_freq=0.2)
 
 
         # for declaration
@@ -29,9 +29,6 @@ class OverviewPage(Famcy.FamcyPage):
         self.device_btn_list = self.get_device_configs()
         self.error_msg = ''
 
-        # self.current_prompt = None
-        # self.current_ip = None
-        # self.current_btn_name = None
         self.prompt_info = {"apm": {}, "station": {}, "ipcam": {}, "led": {}, "update_info": {}, "confirm": {}}
 
         self.confirm_card = self.confirm_block()
@@ -61,6 +58,48 @@ class OverviewPage(Famcy.FamcyPage):
         self.layout.addWidget(self.card_2, 0, 4, 1, 6)
         self.layout.addWidget(self.card_3, 1, 0, 3, 7)
         self.layout.addWidget(self.card_4, 1, 7, 3, 3)
+
+        self.thread_update_msg = Famcy.FamcyBackgroundTask(self)
+        self.thread_update_device_btn = Famcy.FamcyBackgroundTask(self)
+        self.thread_update_table = Famcy.FamcyBackgroundTask(self)
+        self.thread_update_info = Famcy.FamcyBackgroundTask(self)
+
+    def background_thread_inner(self):
+        """
+        This is the inner loop of 
+        the background thread. 
+        """
+        def update_msg_action(submission_obj, info_list):
+            self.get_error_msg()
+            return Famcy.UpdateBlockHtml()
+
+        def update_device_btn_action(submission_obj, info_list):
+            self.get_error_msg()
+            return Famcy.UpdateBlockHtml()
+
+        def update_table_action(submission_obj, info_list):
+            _ = self.get_device_configs()
+            return Famcy.UpdateBlockHtml()
+
+        def update_info_action(submission_obj, info_list):
+            self.get_hopper_available_lot()
+            return Famcy.UpdateBlockHtml()
+
+        self.thread_update_msg.associate(update_msg_action, info_dict={}, target=self.card_2.layout.content[1][0])
+        self.ws.send_to_websocket(self.thread_update_msg.tojson())
+        # Famcy.FamcyBackgroundQueue.add(self.thread_update_msg, Famcy.FamcyPriority.Standard)
+
+        self.thread_update_device_btn.associate(update_device_btn_action, info_dict={}, target=self.card_2.layout.content[0][0])
+        self.ws.send_to_websocket(self.thread_update_device_btn.tojson())
+        # Famcy.FamcyBackgroundQueue.add(self.thread_update_device_btn, Famcy.FamcyPriority.Standard)
+
+        self.thread_update_table.associate(update_table_action, info_dict={}, target=self.card_3.layout.content[0][0].layout.content[0][0])
+        self.ws.send_to_websocket(self.thread_update_table.tojson())
+        # Famcy.FamcyBackgroundQueue.add(self.thread_update_table, Famcy.FamcyPriority.Standard)
+
+        self.thread_update_info.associate(update_info_action, info_dict={}, target=self.card_1.layout.content[0][0])
+        self.ws.send_to_websocket(self.thread_update_info.tojson())
+        # Famcy.FamcyBackgroundQueue.add(self.thread_update_info, Famcy.FamcyPriority.Standard)
 
 
     # card
