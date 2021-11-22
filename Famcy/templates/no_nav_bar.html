@@ -28,7 +28,7 @@
                     console.log("<li>Your browser doesn't support WebSockets.</li>");
                 }
             }
-            const ws = new WebSocket("ws://127.0.0.1:8000");
+            const ws = new WebSocket("wss://pms.nexuni.com/ws");
             ws.onopen = function(evt) {
                 console.log("onopen");
             }

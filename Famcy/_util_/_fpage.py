@@ -17,7 +17,8 @@ class FamcyWebsocketClient(object):
 	doday business.
 	"""
 	def __init__(self, ip, port, **configs):
-		self.ws = websocket.create_connection("ws://" + ip + ":" + port)
+		# self.ws = websocket.create_connection("wss://" + ip + ":" + port)
+		self.ws = websocket.create_connection("wss://pms.nexuni.com/ws")
 
 	# The websocket communication function
 	# ====================================================================================
