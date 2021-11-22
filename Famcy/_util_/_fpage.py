@@ -8,6 +8,42 @@ from flask_login import login_required
 import Famcy
 import time
 import abc
+import _thread
+import websocket
+
+class FamcyWebsocketClient(object):
+	"""
+	This is the websocket client for 
+	doday business.
+	"""
+	def __init__(self, ip, port, **configs):
+		self.ws = websocket.create_connection("ws://" + ip + ":" + port)
+
+	# The websocket communication function
+	# ====================================================================================
+	def receiving(self, **kwargs):
+		"""
+		The function which will receive the websocket message continuously
+		"""
+		while True:
+			try:
+				msg = self.ws.recv()
+				print(msg)
+			except Exception as e:
+				print("[WebsocketClient Inner Thread Error] FamcyUtilError: "+str(e))
+
+		_thread.exit_thread()
+
+	def send_to_websocket(self, input_dict, **kwargs):
+		"""
+		The function to send message to websocket OnMessage.
+		This function will prepare the basic information of the service from authentication.txt file.
+		Input:
+			- input_dict: the data which want to send, MUST contain the action type and data etc.
+				ex. {"action":"modify_queue", "data":"test"}
+		"""
+		json_msg = json.dumps(input_dict)
+		self.ws.send(json_msg)
 
 class FPage(FamcyWidget):
 	"""
@@ -34,7 +70,7 @@ class FPage(FamcyWidget):
 		* register(): register the page to the Famcy env
 		* preload(): action before the rendering
 		* postload(): actions after the rendering
-	"""	
+	""" 
 	def __init__(self, route, style, permission_level=0, 
 			layout_mode=FLayoutMode.recommend, 
 			background_thread=False, background_freq=1):
@@ -45,12 +81,11 @@ class FPage(FamcyWidget):
 		self.layout = FamcyLayout(self, layout_mode)
 		self.permission = FPermissions(permission_level)
 		self.background_thread_flag = background_thread
+		self.ws = None
 
 		if self.background_thread_flag:
+			self.ws = FamcyWebsocketClient("127.0.0.1", "8000")
 			self.background_freq = background_freq
-			# self.sijax_response = None
-			# Necessary header script for comet
-			# self.header_script += '<script type="text/javascript" src="/static/js/sijax/sijax_comet.js"></script>'
 			
 			# Check loop correctness
 			assert getattr(self, "background_thread_inner", None), "Must implement background_thread_inner"
@@ -93,7 +128,7 @@ class FPage(FamcyWidget):
 
 			# No more comet, not compatible with uwsgi
 			# if self.background_thread_flag:
-			# 	g.sijax.register_comet_callback('background_work', self.background_main_comet_handler)
+			#   g.sijax.register_comet_callback('background_work', self.background_main_comet_handler)
 
 			return g.sijax.process_request()
 
@@ -128,15 +163,15 @@ class FPage(FamcyWidget):
 		for sijax comet plugin
 		"""
 		# while True:
-		# 	time.sleep(int(1/self.comet_update_freq))
-		# 	self.sijax_response = obj_response
-		# 	try:
-		# 		baction = self.background_queue.pop()
-		# 		baction()
-		# 	except:
-		# 		continue
+		#   time.sleep(int(1/self.comet_update_freq))
+		#   self.sijax_response = obj_response
+		#   try:
+		#       baction = self.background_queue.pop()
+		#       baction()
+		#   except:
+		#       continue
 
-		# 	yield self.sijax_response
+		#   yield self.sijax_response
 		pass
 
 	# Functions that can be overwritten

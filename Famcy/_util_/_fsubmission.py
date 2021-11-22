@@ -56,11 +56,12 @@ def put_submissions_to_list(fsubmission_obj, sub_dict):
         * sub_dict: submission dictionary
     """
     input_parent = fsubmission_obj.origin.find_parent(fsubmission_obj.origin, "input_form")
-
     ordered_submission_list = []
-    for child, _, _, _, _ in input_parent.layout.content:
-    	if child.name in sub_dict.keys():
-    		ordered_submission_list.append(sub_dict[child.name])
+
+    if input_parent:
+	    for child, _, _, _, _ in input_parent.layout.content:
+	    	if child.name in sub_dict.keys():
+	    		ordered_submission_list.append(sub_dict[child.name])
 
     return ordered_submission_list
 
