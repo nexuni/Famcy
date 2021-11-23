@@ -120,7 +120,13 @@ def create_app(famcy_id, production=False):
 
 	@MainBlueprint.route('/bgloop')
 	def background_loop():
-		return json.dumps({"data": "test"})
+		try:
+			baction = FamcyBackgroundQueue.pop()
+			return json.dumps({"indicator": True, "message": baction.tojson()})
+
+		except Exception as e:
+			return json.dumps({"indicator": False, "message": e})
+		
 
 
 	# @FamcyWebSocket.route('/fws')
