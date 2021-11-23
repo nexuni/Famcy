@@ -14,7 +14,6 @@ class OverviewPage(Famcy.FamcyPage):
     def __init__(self):
         super(OverviewPage, self).__init__("/overview", Famcy.ClassicSideStyle(), background_thread=True, background_freq=0.2)
 
-
         # for declaration
         # ===============
         self.table_info = []
@@ -86,20 +85,20 @@ class OverviewPage(Famcy.FamcyPage):
             return Famcy.UpdateBlockHtml()
 
         self.thread_update_msg.associate(update_msg_action, info_dict={}, target=self.card_2.layout.content[1][0])
-        self.ws.send_to_websocket(self.thread_update_msg.tojson())
-        # Famcy.FamcyBackgroundQueue.add(self.thread_update_msg, Famcy.FamcyPriority.Standard)
+        # self.ws.send_to_websocket(self.thread_update_msg.tojson())
+        Famcy.FamcyBackgroundQueue.add(self.thread_update_msg, Famcy.FamcyPriority.Standard)
 
         self.thread_update_device_btn.associate(update_device_btn_action, info_dict={}, target=self.card_2.layout.content[0][0])
-        self.ws.send_to_websocket(self.thread_update_device_btn.tojson())
-        # Famcy.FamcyBackgroundQueue.add(self.thread_update_device_btn, Famcy.FamcyPriority.Standard)
+        # self.ws.send_to_websocket(self.thread_update_device_btn.tojson())
+        Famcy.FamcyBackgroundQueue.add(self.thread_update_device_btn, Famcy.FamcyPriority.Standard)
 
         self.thread_update_table.associate(update_table_action, info_dict={}, target=self.card_3.layout.content[0][0].layout.content[0][0])
-        self.ws.send_to_websocket(self.thread_update_table.tojson())
-        # Famcy.FamcyBackgroundQueue.add(self.thread_update_table, Famcy.FamcyPriority.Standard)
+        # self.ws.send_to_websocket(self.thread_update_table.tojson())
+        Famcy.FamcyBackgroundQueue.add(self.thread_update_table, Famcy.FamcyPriority.Standard)
 
         self.thread_update_info.associate(update_info_action, info_dict={}, target=self.card_1.layout.content[0][0])
-        self.ws.send_to_websocket(self.thread_update_info.tojson())
-        # Famcy.FamcyBackgroundQueue.add(self.thread_update_info, Famcy.FamcyPriority.Standard)
+        # self.ws.send_to_websocket(self.thread_update_info.tojson())
+        Famcy.FamcyBackgroundQueue.add(self.thread_update_info, Famcy.FamcyPriority.Standard)
 
 
     # card

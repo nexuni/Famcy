@@ -11,7 +11,8 @@ class UpdateRemoveElement(Famcy.FamcyResponse):
 		self.prompt_flag = prompt_flag
 
 	def response(self, sijax_response):
-		target_id = "prompt_holder" if self.prompt_flag else self.target.id
-		sijax_response.remove('#' + target_id)
-		sijax_response.script(self.extra_script)
-		sijax_response.script(self.finish_loading_script)
+		if self.target:
+			target_id = "prompt_holder" if self.prompt_flag else self.target.id
+			sijax_response.remove('#' + target_id)
+			sijax_response.script(self.extra_script)
+			sijax_response.script(self.finish_loading_script)

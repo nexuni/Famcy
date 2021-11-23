@@ -10,7 +10,7 @@ v1.register()
 
 class BarrierPage(Famcy.FamcyPage):
 	def __init__(self):
-		super(BarrierPage, self).__init__("/barrier", Famcy.ClassicStyle(), background_thread=True)
+		super(BarrierPage, self).__init__("/barrier", Famcy.ClassicSideStyle(), background_thread=True)
 		self.card_1 = self.card1()
 		self.card_2 = self.card2()
 		self.card_3 = self.card3()
@@ -36,12 +36,12 @@ class BarrierPage(Famcy.FamcyPage):
 
 		itype = ["/asset/image/barrier_gif_close.gif", "/asset/image/barrier_gif_close.gif", "/asset/image/barrier_gif.gif"]
 
-		def task_a_func(self, submission_obj, info_list):
+		def task_a_func(submission_obj, info_list):
 			ridx = random.randint(0, 2)
 			submission_obj.target.update({"status": rtype[ridx]})
 			return Famcy.UpdateBlockHtml()
 
-		def task_bc_func(self, submission_obj, info_list):
+		def task_bc_func(submission_obj, info_list):
 			ridx = random.randint(0, 2)
 			submission_obj.target.update({"img_name": [itype[ridx]]})
 			return Famcy.UpdateBlockHtml()
