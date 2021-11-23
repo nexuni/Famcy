@@ -19,36 +19,6 @@
     <script type="text/javascript">
         {{ g.sijax.get_js()|safe }}
     </script>
-    <!-- <script type="text/javascript">
-    	$(document).ready(function() {
-            if (!window.WebSocket) {
-                if (window.MozWebSocket) {
-                    window.WebSocket = window.MozWebSocket;
-                } else {
-                    console.log("<li>Your browser doesn't support WebSockets.</li>");
-                }
-            }
-            const ws = new WebSocket("wss://pms.nexuni.com/ws");
-            ws.onopen = function(evt) {
-                console.log("onopen");
-            }
-
-            ws.onmessage = function(evt) {
-                var token = document.head.querySelector("[name~=csrf-token][content]").content
-                console.log(evt.data)
-                var data = JSON.parse(evt.data)
-                console.log(data, data.page_id)
-                if (data.page_id  === "{% if page_id %}{{ page_id|safe }}{% endif %}") {
-                	console.log("Enter If")
-                	Sijax.request('famcy_submission_handler', [data.submission_id, data.data], { data: { csrf_token: token } });
-                }
-            }
-
-            ws.onclose = function(evt) {
-                console.log("onclose");
-            }
-        });
-    </script> -->
 
 </head>
 
