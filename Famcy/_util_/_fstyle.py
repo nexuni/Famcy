@@ -79,7 +79,10 @@ class FStyle:
 		<script src="%s/static/js/fblock_extra_func.js"></script>
 		<script src="%s/asset/js/fblock_cus_func.js"></script>
 
-		""" % tuple([self.main_url for _ in range(12)])
+		<!--background loop-->
+		<script src="%s/static/js/background_loop.js"></script>
+
+		""" % tuple([self.main_url for _ in range(13)])
 
 	def setDashboardJavaScript(self):
 		return"""

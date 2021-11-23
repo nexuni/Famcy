@@ -118,6 +118,11 @@ def create_app(famcy_id, production=False):
 		# Usage in template {{ url_for('user_custom_asset', filename='doday_icon.png') }}
 		return send_from_directory(FManager.console + "/" + FManager.USER_STATIC_FOLDER, filename)
 
+	@MainBlueprint.route('/bgloop')
+	def background_loop():
+		return json.dumps({"data": "test"})
+
+
 	# @FamcyWebSocket.route('/fws')
 	# def fws(ws):
 	#     while True:
