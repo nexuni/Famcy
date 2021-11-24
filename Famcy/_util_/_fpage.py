@@ -49,11 +49,11 @@ class FPage(FamcyWidget):
 
 		if self.background_thread_flag:
 			# self.ws = FamcyWebsocketClient("127.0.0.1", "8000")
-			self.comet_update_freq = comet_update_freq
+			# self.comet_update_freq = comet_update_freq
 			self.background_freq = background_freq
-			self.background_queue = Famcy.FamcyBackgroundQueue
+			# self.background_queue = Famcy.FamcyBackgroundQueue
 			self.sijax_response = None
-			self.header_script += '<script type="text/javascript" src="/static/js/sijax/sijax_comet.js"></script>'
+			# self.header_script += '<script type="text/javascript" src="/static/js/sijax/sijax_comet.js"></script>'
 			
 			# Check loop correctness
 			assert getattr(self, "background_thread_inner", None), "Must implement background_thread_inner"

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory, g
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory, g, Response
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
 # from flask_uwsgi_websocket import WebSocket
@@ -120,12 +120,20 @@ def create_app(famcy_id, production=False):
 
 	@MainBlueprint.route('/bgloop')
 	def background_loop():
-		try:
-			baction = FamcyBackgroundQueue.pop()
-			return json.dumps({"indicator": True, "message": baction.tojson()})
+		def generate():
+			# while True:
+			# 	print("background_loop")
+			# 	time.sleep(2)
+			try:
+				baction = FamcyBackgroundQueue.pop()
+				yield json.dumps({"indicator": True, "message": baction.tojson()})
+				# yield "hello"
 
-		except Exception as e:
-			return json.dumps({"indicator": False, "message": e})
+			except Exception as e:
+				yield json.dumps({"indicator": False, "message": str(e)})
+				# yield "error"
+
+		return Response(generate(), mimetype='text/event-stream')
 		
 
 
