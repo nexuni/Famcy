@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory, g, Response
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory, g, Response, stream_with_context
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
 # from flask_uwsgi_websocket import WebSocket
@@ -117,36 +117,6 @@ def create_app(famcy_id, production=False):
 	def user_custom_asset(filename):
 		# Usage in template {{ url_for('user_custom_asset', filename='doday_icon.png') }}
 		return send_from_directory(FManager.console + "/" + FManager.USER_STATIC_FOLDER, filename)
-
-	@MainBlueprint.route('/bgloop')
-	def background_loop():
-		def generate():
-			# while True:
-			# 	print("background_loop")
-			# 	time.sleep(2)
-			try:
-				baction = FamcyBackgroundQueue.pop()
-				yield json.dumps({"indicator": True, "message": baction.tojson()})
-				# yield "hello"
-
-			except Exception as e:
-				yield json.dumps({"indicator": False, "message": str(e)})
-				# yield "error"
-
-		return Response(generate(), mimetype='text/event-stream')
-		
-
-
-	# @FamcyWebSocket.route('/fws')
-	# def fws(ws):
-	#     while True:
-	#         time.sleep(FamcyWebSocketLoopDelay)
-	#         try:
-	#             btask = FamcyBackgroundQueue.pop()
-	#         except:
-	#             continue
-
-	#         ws.send(btask.tojson(str_format=True))
 
 	# Import Fblocks from default and custom folders. 
 	# ------------------------------

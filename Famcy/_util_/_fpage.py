@@ -3,7 +3,7 @@ from Famcy._util_._flayout import *
 from Famcy._util_._fsubmission import *
 from Famcy._util_._fpermissions import *
 from Famcy._util_._fthread import *
-from flask import g
+from flask import g, Response
 from flask_login import login_required
 import Famcy
 import time
@@ -37,7 +37,7 @@ class FPage(FamcyWidget):
 	""" 
 	def __init__(self, route, style, permission_level=0, 
 			layout_mode=FLayoutMode.recommend, 
-			background_thread=False, background_freq=0.5, comet_update_freq=0.5):
+			background_thread=False, background_freq=0.5):
 
 		super(FPage, self).__init__()
 		self.route = route
@@ -48,12 +48,8 @@ class FPage(FamcyWidget):
 		# self.ws = None
 
 		if self.background_thread_flag:
-			# self.ws = FamcyWebsocketClient("127.0.0.1", "8000")
-			# self.comet_update_freq = comet_update_freq
 			self.background_freq = background_freq
-			# self.background_queue = Famcy.FamcyBackgroundQueue
 			self.sijax_response = None
-			# self.header_script += '<script type="text/javascript" src="/static/js/sijax/sijax_comet.js"></script>'
 			
 			# Check loop correctness
 			assert getattr(self, "background_thread_inner", None), "Must implement background_thread_inner"
@@ -85,6 +81,14 @@ class FPage(FamcyWidget):
 		else:
 			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, self.route)(route_func)
 
+		if self.background_thread_flag:
+			if self.permission.required_login():
+				# Register the page render to the main blueprint
+				Famcy.FManager["MainBlueprint"].route(self.route+"/bgloop")(login_required(self.background_generator_loop))
+			else:
+				Famcy.FManager["MainBlueprint"].route(self.route+"/bgloop")(self.background_generator_loop)
+		
+
 	def render(self, *args, **kwargs):
 		"""
 		This is the main render function, i.e.
@@ -93,10 +97,6 @@ class FPage(FamcyWidget):
 		# First setup the submission handler
 		if g.sijax.is_sijax_request:
 			g.sijax.register_object(FSubmissionSijaxHandler)
-
-			# No more comet, not compatible with uwsgi
-			if self.background_thread_flag:
-			  g.sijax.register_comet_callback('background_work', self.background_main_comet_handler)
 
 			return g.sijax.process_request()
 
@@ -107,7 +107,19 @@ class FPage(FamcyWidget):
 			content_data = super(FPage, self).render()
 
 		# Apply style at the end
-		return self.style.render(self.header_script, content_data, page_id=self.id, background_flag=self.background_thread_flag)
+		return self.style.render(self.header_script, content_data, background_flag=self.background_thread_flag, route=self.route, time=int(1/self.background_freq)*1000)
+
+	def background_generator_loop(self):
+		def generate():
+			print("background_loop")
+			try:
+				baction = FamcyBackgroundQueue.pop()
+				yield json.dumps({"indicator": True, "message": baction.tojson()})
+
+			except Exception as e:
+				yield json.dumps({"indicator": False, "message": str(e)})
+
+		return Response(generate(), mimetype='text/plain')
 
 	def background_thread_loop(self):
 		"""
@@ -124,26 +136,6 @@ class FPage(FamcyWidget):
 		inner content for fpage. 
 		"""
 		pass
-
-	def background_main_comet_handler(self, obj_response, **kwargs):
-		"""
-		This is the main handler
-		for sijax comet plugin
-		"""
-		while True:
-			time.sleep(int(1/self.comet_update_freq))
-			self.sijax_response = obj_response
-			try:
-				baction = self.background_queue.pop()
-				responseObj = baction.func(baction, [])
-				responseObj.target = responseObj.target if responseObj.target else baction.target
-				responseObj.response(self.sijax_response)
-
-			except Exception as e:
-				continue
-
-			yield self.sijax_response
-			pass
 
 	# Functions that can be overwritten
 	# ---------------------------------

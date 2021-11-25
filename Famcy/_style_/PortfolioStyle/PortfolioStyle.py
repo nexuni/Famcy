@@ -19,7 +19,7 @@ class PortfolioStyle(Famcy.FamcyStyle):
 		if desc:
 			self.desc = desc
 
-	def render(self, extra_script, content, page_id="", background_flag=False):
+	def render(self, extra_script, content, background_flag=False, route="", time=5000):
 
 		html_header = self.setDashboardHTMLHeader()
 		end_js = self.setDashboardJavaScript()
@@ -28,5 +28,5 @@ class PortfolioStyle(Famcy.FamcyStyle):
 
 		nav_bar = self.nav_bar.render()
 
-		body_on_load = "var token = document.head.querySelector('[name~=csrf-token][content]').content;sjxComet.request('background_work', [], token);" if background_flag else ""
-		return render_template("portfolio.html", nav_bar=nav_bar, page_id=page_id, load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)
+		body_on_load = "background_loop('" + self.main_url + str(route) + "/bgloop" + "', '" + str(route) + "', " + str(time) + ");console.log('start!')" if background_flag else ""
+		return render_template("portfolio.html", nav_bar=nav_bar, load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)

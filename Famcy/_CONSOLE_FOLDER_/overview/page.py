@@ -70,27 +70,27 @@ class OverviewPage(Famcy.FamcyPage):
         """
         def update_msg_action(submission_obj, info_list):
             self.get_error_msg()
-            return Famcy.UpdateBlockHtml()
+            # return Famcy.UpdateBlockHtml()
 
         def update_device_btn_action(submission_obj, info_list):
             self.get_error_msg()
-            return Famcy.UpdateBlockHtml()
+            # return Famcy.UpdateBlockHtml()
 
         def update_table_action(submission_obj, info_list):
             _ = self.get_device_configs()
-            return Famcy.UpdateBlockHtml()
+            # return Famcy.UpdateBlockHtml()
 
         def update_info_action(submission_obj, info_list):
             self.get_hopper_available_lot()
-            return Famcy.UpdateBlockHtml()
+            # return Famcy.UpdateBlockHtml()
 
         self.thread_update_msg.associate(update_msg_action, info_dict={}, target=self.card_2.layout.content[1][0])
         # self.ws.send_to_websocket(self.thread_update_msg.tojson())
         Famcy.FamcyBackgroundQueue.add(self.thread_update_msg, Famcy.FamcyPriority.Standard)
 
-        self.thread_update_device_btn.associate(update_device_btn_action, info_dict={}, target=self.card_2.layout.content[0][0])
+        # self.thread_update_device_btn.associate(update_device_btn_action, info_dict={}, target=self.card_2.layout.content[0][0])
         # self.ws.send_to_websocket(self.thread_update_device_btn.tojson())
-        Famcy.FamcyBackgroundQueue.add(self.thread_update_device_btn, Famcy.FamcyPriority.Standard)
+        # Famcy.FamcyBackgroundQueue.add(self.thread_update_device_btn, Famcy.FamcyPriority.Standard)
 
         self.thread_update_table.associate(update_table_action, info_dict={}, target=self.card_3.layout.content[0][0].layout.content[0][0])
         # self.ws.send_to_websocket(self.thread_update_table.tojson())
