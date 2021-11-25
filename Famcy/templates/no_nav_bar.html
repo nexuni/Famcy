@@ -22,8 +22,7 @@
 
 </head>
 
-<body id="root" onload="{% if body_on_load %}{{ body_on_load|safe }}{% endif %}">
-
+<body id="root">
 	{% if side_bar %} 
 	{{ side_bar|safe }}
 	{% endif %}
@@ -48,6 +47,7 @@
 
 <script type="text/javascript">
 	document.getElementById('loading_holder').style.display = "none";
+    {% if body_on_load %}{{ body_on_load|safe }}{% endif %}
 </script>
 
 </html>
