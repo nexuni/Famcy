@@ -82,11 +82,14 @@ class FPage(FamcyWidget):
 			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, self.route)(route_func)
 
 		if self.background_thread_flag:
+			bg_func = lambda: self.background_generator_loop()
+			bg_func.__name__ = "bgloop_" + self.id
+
 			if self.permission.required_login():
 				# Register the page render to the main blueprint
-				Famcy.FManager["MainBlueprint"].route(self.route+"/bgloop")(login_required(self.background_generator_loop))
+				Famcy.FManager["MainBlueprint"].route(self.route+"/bgloop")(login_required(bg_func))
 			else:
-				Famcy.FManager["MainBlueprint"].route(self.route+"/bgloop")(self.background_generator_loop)
+				Famcy.FManager["MainBlueprint"].route(self.route+"/bgloop")(bg_func)
 		
 
 	def render(self, *args, **kwargs):
