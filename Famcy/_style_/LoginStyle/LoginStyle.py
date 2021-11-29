@@ -18,7 +18,7 @@ class LoginStyle(Famcy.FamcyStyle):
 		if desc:
 			self.desc = desc
 
-	def render(self, extra_script, content, background_flag=False, route="", time=5000):
+	def render(self, extra_script, content, background_flag=False, route="", time=5000, form_init_js=None):
 
 		html_header = self.setDashboardHTMLHeader()
 		end_js = self.setDashboardJavaScript()
@@ -26,4 +26,4 @@ class LoginStyle(Famcy.FamcyStyle):
 		load_spinner = self.loader.render()
 
 		body_on_load = "background_loop('" + self.main_url + str(route) + "/bgloop" + "', '" + str(route) + "', " + str(time) + ");console.log('start!')" if background_flag else ""
-		return render_template("login.html", load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)
+		return render_template("login.html", form_init_js=form_init_js, load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)

@@ -24,6 +24,13 @@ sjxUpload.prepareForm = function (formId, callbackName) {
 
 	if (! $object[attrOrProp](Sijax.PARAM_REQUEST)) {
 		//Initial registration
+		var token = document.head.querySelector("[name~=csrf-token][content]").content
+		element = document.createElement('input');
+		element.setAttribute('type', 'hidden');
+		element.setAttribute('name', Sijax.PARAM_CSRF);
+		element.setAttribute('value', token);
+		$object.append(element);
+
 		element = document.createElement('input');
 		element.setAttribute('type', 'hidden');
 		element.setAttribute('name', Sijax.PARAM_REQUEST);

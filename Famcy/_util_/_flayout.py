@@ -159,8 +159,24 @@ class FamcyLayout:
 		self.content.append([card, int(start_row), int(start_col), int(height), int(width)])
 		self.layoutType.layoutClass.setDefaultContent(self.content)
 
+	def removeWidget(self, card=None, start_row=None, start_col=None):
+		i = 0
+		for _card, _row, _col, _, _ in self.content:
+			if card == _card or (_row == start_row and _col == start_col):
+				del self.content[i]
+				break
+			i += 1
+
 	def addCusWidget(self, card, start_row, start_col, height=1, width=1):
 		self.cusContent.append([card, int(start_row), int(start_col), int(height), int(width)])
+
+	def removeCusWidget(self, card=None, start_row=None, start_col=None):
+		i = 0
+		for _card, _row, _col, _, _ in self.cusContent:
+			if card == _card or (_row == start_row and _col == start_col):
+				del self.cusContent[i]
+				break
+			i += 1
 
 	def clearCusContent(self):
 		self.cusContent = []

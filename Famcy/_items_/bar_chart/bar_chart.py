@@ -33,20 +33,22 @@ class bar_chart(Famcy.FamcyBlock):
             }],
             "labels": ["bar1", "bar2"],
             "title": "bar_chart",
-            "xy_axis_title": ["x_title", "y_title"]
+            "xy_axis_title": ["x_title", "y_title"],
+            "size": [500, 500]
         }
 
     def init_block(self):
-        self.header_script += '<script src="/static/js/bar_chart.js"></script>'
-
         self.body = Famcy.div()
         self.body["id"] = self.id
 
         div_temp = Famcy.div()
         script = Famcy.script()
+        script["src"] = "/static/js/bar_chart.js"
+        script2 = Famcy.script()
 
         self.body.addElement(div_temp)
         self.body.addElement(script)
+        self.body.addElement(script2)
 
     def render_inner(self):
         """
@@ -81,7 +83,8 @@ class bar_chart(Famcy.FamcyBlock):
         json_line_dict_values = json.dumps(data)
         json_line_dict_title = json.dumps(self.value["title"])
         json_line_dict_xy_title = json.dumps(self.value["xy_axis_title"])
+        json_size = json.dumps(self.value["size"])
 
-        self.body.children[1].innerHTML = 'generateBarChart("%s", %s, %s, %s)' % (self.id, json_line_dict_values, json_line_dict_title, json_line_dict_xy_title)
+        self.body.children[2].innerHTML = 'generateBarChart("%s", %s, %s, %s, %s)' % (self.id, json_line_dict_values, json_line_dict_title, json_line_dict_xy_title, json_size)
         
         return self.body.render_inner()
