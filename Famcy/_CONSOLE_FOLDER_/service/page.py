@@ -3,6 +3,7 @@ import os
 import json
 import datetime
 import requests
+import pandas as pd
 
 class SeasonPage(Famcy.FamcyPage):
 	def __init__(self):
@@ -34,50 +35,15 @@ class SeasonPage(Famcy.FamcyPage):
 
 		input_form = Famcy.input_form()
 
-		input_year = Famcy.inputList()
-		input_month = Famcy.inputList()
-		input_date = Famcy.inputList()
-		input_time = Famcy.inputList()
+		input_date = Famcy.pureInput()
+		input_time = Famcy.pureInput()
+		input_date2 = Famcy.pureInput()
+		input_time2 = Famcy.pureInput()
 
-		input_year.update({
-				"title": "輸入起始年份",
-				"value": [str(int(datetime.datetime.now().year)-1), str(int(datetime.datetime.now().year)), str(int(datetime.datetime.now().year)+1), str(int(datetime.datetime.now().year)+2), str(int(datetime.datetime.now().year)+3)],
-			})
-		input_month.update({
-				"title": "輸入起始月份",
-				"value": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-			})
-		input_date.update({
-				"title": "輸入起始日期",
-				"value": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
-			})
-		input_time.update({
-				"title": "輸入起始時間",
-				"value": ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
-			})
-
-
-		input_year2 = Famcy.inputList()
-		input_month2 = Famcy.inputList()
-		input_date2 = Famcy.inputList()
-		input_time2 = Famcy.inputList()
-
-		input_year2.update({
-				"title": "輸入結束年份",
-				"value": [str(int(datetime.datetime.now().year)-1), str(int(datetime.datetime.now().year)), str(int(datetime.datetime.now().year)+1), str(int(datetime.datetime.now().year)+2), str(int(datetime.datetime.now().year)+3)],
-			})
-		input_month2.update({
-				"title": "輸入結束月份",
-				"value": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-			})
-		input_date2.update({
-				"title": "輸入結束日期",
-				"value": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
-			})
-		input_time2.update({
-				"title": "輸入起始時間",
-				"value": ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
-			})
+		input_date.update({"title": "輸入起始日期", "input_type": "date"})
+		input_time.update({"title": "輸入起始時間", "input_type": "time"})
+		input_date2.update({"title": "輸入結束日期", "input_type": "date"})
+		input_time2.update({"title": "輸入結束時間", "input_type": "time"})
 
 
 		input_license = Famcy.pureInput()
@@ -103,23 +69,24 @@ class SeasonPage(Famcy.FamcyPage):
 		cancel_btn.update({"title": "刪除"})
 		cancel_btn.connect(self.prompt_submit_input, target=self.p_del_card)
 
-		input_form.layout.addWidget(input_year, 0, 0, 4, 1)
-		input_form.layout.addWidget(input_month, 0, 1, 4, 1)
-		input_form.layout.addWidget(input_date, 0, 2, 4, 1)
-		input_form.layout.addWidget(input_time, 0, 3, 4, 1)
+		download_btn = Famcy.submitBtn()
+		download_btn.update({"title": "下載表格"})
+		download_btn.connect(self.download_table, target=card1)
 
-		input_form.layout.addWidget(input_year2, 4, 0, 4, 1)
-		input_form.layout.addWidget(input_month2, 4, 1, 4, 1)
-		input_form.layout.addWidget(input_date2, 4, 2, 4, 1)
-		input_form.layout.addWidget(input_time2, 4, 3, 4, 1)
 
-		input_form.layout.addWidget(input_license, 8, 0, 4, 2)
-		input_form.layout.addWidget(input_phone, 8, 2, 4, 2)
+		input_form.layout.addWidget(input_date, 0, 0, 2, 1)
+		input_form.layout.addWidget(input_time, 0, 1, 2, 1)
+		input_form.layout.addWidget(input_date2, 0, 2, 2, 1)
+		input_form.layout.addWidget(input_time2, 0, 3, 2, 1)
 
-		input_form.layout.addWidget(search_btn, 0, 4, 3, 1)
-		input_form.layout.addWidget(insert_btn, 3, 4, 3, 1)
-		input_form.layout.addWidget(new_btn, 6, 4, 3, 1)
-		input_form.layout.addWidget(cancel_btn, 9, 4, 3, 1)
+		input_form.layout.addWidget(input_license, 2, 0, 2, 1)
+		input_form.layout.addWidget(input_phone, 2, 1, 2, 1)
+		input_form.layout.addWidget(download_btn, 2, 3, 2, 1)
+
+		input_form.layout.addWidget(search_btn, 0, 4)
+		input_form.layout.addWidget(insert_btn, 1, 4)
+		input_form.layout.addWidget(new_btn, 2, 4)
+		input_form.layout.addWidget(cancel_btn, 3, 4)
 
 		card1.layout.addWidget(input_form, 0, 0)
 
@@ -138,8 +105,8 @@ class SeasonPage(Famcy.FamcyPage):
 				"page_detail_content": ["<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>", "<div style='display: flex;'><p style='width: 50%;'>交易紀錄: </p><p style='width: 50%;text-align: right;'>一些紀錄</p></div>"],
 				"page_footer": True,
 				"page_footer_detail": {
-					"page_size": 7,
-					"page_list": [7, "all"]
+					"page_size": 15,
+					"page_list": [15, "all"]
 				},
 				"column": [[
 					{
@@ -214,11 +181,15 @@ class SeasonPage(Famcy.FamcyPage):
 		license_num = Famcy.pureInput()
 		license_num.update({"title":"車牌號碼:", "input_type":"text"})
 
-		start_time = Famcy.pureInput()
-		start_time.update({"title":"起始時間:", "input_type":"number"})
+		input_date = Famcy.pureInput()
+		input_time = Famcy.pureInput()
+		input_date2 = Famcy.pureInput()
+		input_time2 = Famcy.pureInput()
 
-		end_time = Famcy.pureInput()
-		end_time.update({"title":"結束時間:", "input_type":"number"})
+		input_date.update({"title": "輸入起始日期", "input_type": "date"})
+		input_time.update({"title": "輸入起始時間", "input_type": "time"})
+		input_date2.update({"title": "輸入結束日期", "input_type": "date"})
+		input_time2.update({"title": "輸入結束時間", "input_type": "time"})
 
 		database_name = Famcy.inputList()
 		database_name.update({
@@ -248,14 +219,16 @@ class SeasonPage(Famcy.FamcyPage):
 
 		input_form.layout.addWidget(phonenum, 0, 0)
 		input_form.layout.addWidget(license_num, 0, 1)
-		input_form.layout.addWidget(start_time, 1, 0)
-		input_form.layout.addWidget(end_time, 1, 1)
-		input_form.layout.addWidget(database_name, 2, 0)
-		input_form.layout.addWidget(season_type, 2, 1)
-		input_form.layout.addWidget(month_fee, 3, 0)
-		input_form.layout.addWidget(comments, 3, 1)
-		input_form.layout.addWidget(cancel_btn, 4, 0)
-		input_form.layout.addWidget(submit_btn, 4, 1)
+		input_form.layout.addWidget(input_date, 1, 0)
+		input_form.layout.addWidget(input_time, 1, 1)
+		input_form.layout.addWidget(input_date2, 2, 0)
+		input_form.layout.addWidget(input_time2, 2, 1)
+		input_form.layout.addWidget(database_name, 3, 0)
+		input_form.layout.addWidget(season_type, 3, 1)
+		input_form.layout.addWidget(month_fee, 4, 0)
+		input_form.layout.addWidget(comments, 4, 1)
+		input_form.layout.addWidget(cancel_btn, 5, 0)
+		input_form.layout.addWidget(submit_btn, 5, 1)
 
 		p_card.layout.addWidget(input_form, 0, 0)
 
@@ -272,11 +245,15 @@ class SeasonPage(Famcy.FamcyPage):
 		license_num = Famcy.pureInput()
 		license_num.update({"title":"車牌號碼:", "input_type":"text"})
 
-		start_time = Famcy.pureInput()
-		start_time.update({"title":"起始時間:", "input_type":"number"})
+		input_date = Famcy.pureInput()
+		input_time = Famcy.pureInput()
+		input_date2 = Famcy.pureInput()
+		input_time2 = Famcy.pureInput()
 
-		end_time = Famcy.pureInput()
-		end_time.update({"title":"結束時間:", "input_type":"number"})
+		input_date.update({"title": "輸入起始日期", "input_type": "date"})
+		input_time.update({"title": "輸入起始時間", "input_type": "time"})
+		input_date2.update({"title": "輸入結束日期", "input_type": "date"})
+		input_time2.update({"title": "輸入結束時間", "input_type": "time"})
 
 		comments = Famcy.pureInput()
 		comments.update({"title":"備註:", "input_type":"text"})
@@ -291,8 +268,10 @@ class SeasonPage(Famcy.FamcyPage):
 
 		input_form.layout.addWidget(input_id, 0, 0, 1, 2)
 		input_form.layout.addWidget(license_num, 1, 0, 1, 2)
-		input_form.layout.addWidget(start_time, 2, 0, 1, 2)
-		input_form.layout.addWidget(end_time, 3, 0, 1, 2)
+		input_form.layout.addWidget(input_date, 2, 0)
+		input_form.layout.addWidget(input_time, 2, 1)
+		input_form.layout.addWidget(input_date2, 3, 0)
+		input_form.layout.addWidget(input_time2, 3, 1)
 		input_form.layout.addWidget(comments, 4, 0, 1, 2)
 		input_form.layout.addWidget(cancel_btn, 5, 0)
 		input_form.layout.addWidget(submit_btn, 5, 1)
@@ -343,10 +322,10 @@ class SeasonPage(Famcy.FamcyPage):
 				flag = False
 				break
 		if flag:
-			start_time = str(info_list[0][0]) + str(info_list[1][0]) + str(info_list[2][0]) + str(info_list[3][0]) + "0000000"
-			end_time = str(info_list[4][0]) + str(info_list[5][0]) + str(info_list[6][0]) + str(info_list[7][0]) + "0000000"
-			license_num = str(info_list[8][0])
-			phonenum = str(info_list[9][0])
+			start_time = info_list[0][0][:4] + info_list[0][0][5:7] + info_list[0][0][8:10] + info_list[1][0][:2] + info_list[1][0][3:] + "00000"
+			end_time = info_list[2][0][:4] + info_list[2][0][5:7] + info_list[2][0][8:10] + info_list[3][0][:2] + info_list[3][0][3:] + "00000"
+			license_num = str(info_list[4][0])
+			phonenum = str(info_list[5][0])
 
 			self.get_season_data(phonenum=phonenum, start_time=start_time, end_time=end_time, platenum=license_num)
 			return Famcy.UpdateBlockHtml(target=self.card_2)
@@ -375,9 +354,9 @@ class SeasonPage(Famcy.FamcyPage):
 		if flag:
 			_id = str(info_list[0][0])
 			license_num = str(info_list[1][0])
-			start_time = str(info_list[2][0])
-			end_time = str(info_list[3][0])
-			comments = str(info_list[4][0])
+			start_time = info_list[2][0][:4] + info_list[2][0][5:7] + info_list[2][0][8:10] + info_list[3][0][:2] + info_list[3][0][3:] + "00000"
+			end_time = info_list[4][0][:4] + info_list[4][0][5:7] + info_list[4][0][8:10] + info_list[5][0][:2] + info_list[5][0][3:] + "00000"
+			comments = str(info_list[6][0])
 
 			if self.post_modify(_id, license_num, start_time=start_time, end_time=end_time, comments=comments):
 				self.get_season_data()
@@ -395,18 +374,31 @@ class SeasonPage(Famcy.FamcyPage):
 		if flag:
 			phonenum = str(info_list[0][0])
 			license_num = str(info_list[1][0])
-			start_num = str(info_list[2][0])
-			end_num = str(info_list[3][0])
-			database_name = str(info_list[4][0])
-			season_type = str(info_list[5][0])
-			month_fee = str(info_list[6][0])
-			comments = str(info_list[7][0])
+			start_num = info_list[2][0][2:4] + info_list[2][0][5:7] + info_list[2][0][8:10] + info_list[3][0][:2] + info_list[3][0][3:] + "00000"
+			end_num = info_list[4][0][2:4] + info_list[4][0][5:7] + info_list[4][0][8:10] + info_list[5][0][:2] + info_list[5][0][3:] + "00000"
+			database_name = str(info_list[6][0])
+			season_type = str(info_list[7][0])
+			month_fee = str(info_list[8][0])
+			comments = str(info_list[9][0])
 
 			if self.post_insert(phonenum, license_num, start_num, end_num, database_name, season_type, month_fee, comments):
 				self.get_season_data()
 				msg = "成功加入資料"
 
 		return [Famcy.UpdateAlert(alert_message=msg), Famcy.UpdateBlockHtml(target=self.card_2)]
+
+	def download_table(self, submission_obj, info_list):
+		msg = "資料填寫有誤"
+
+		try:
+			df1 = pd.DataFrame.from_records(self.table_info)
+			df1.to_excel("output.xlsx",sheet_name='sheet1')
+
+			msg = "成功加入資料"
+		except Exception as e:
+			pass
+
+		return Famcy.UpdateAlert(alert_message=msg)
 	# ====================================================
 	# ====================================================
 

@@ -3,7 +3,7 @@ from Famcy._util_._flayout import *
 from Famcy._util_._fsubmission import *
 from Famcy._util_._fpermissions import *
 from Famcy._util_._fthread import *
-from flask import g, Response
+from flask import g, Response, request
 from flask_login import login_required
 import Famcy
 import time
@@ -45,10 +45,9 @@ class FPage(FamcyWidget):
 		self.layout = FamcyLayout(self, layout_mode)
 		self.permission = FPermissions(permission_level)
 		self.background_thread_flag = background_thread
-		# self.ws = None
+		self.background_freq = background_freq
 
 		if self.background_thread_flag:
-			self.background_freq = background_freq
 			self.sijax_response = None
 			
 			# Check loop correctness
@@ -98,6 +97,12 @@ class FPage(FamcyWidget):
 		the flask route function top level. 
 		"""
 		# First setup the submission handler
+
+		form_init_js = ''
+		upload_list = self.find_class(self, "upload_form")
+		for _item in upload_list:
+			form_init_js += g.sijax.register_upload_callback(_item.id, FSubmissionSijaxHandler.form_one_handler)
+
 		if g.sijax.is_sijax_request:
 			g.sijax.register_object(FSubmissionSijaxHandler)
 
@@ -110,7 +115,7 @@ class FPage(FamcyWidget):
 			content_data = super(FPage, self).render()
 
 		# Apply style at the end
-		return self.style.render(self.header_script, content_data, background_flag=self.background_thread_flag, route=self.route, time=int(1/self.background_freq)*1000)
+		return self.style.render(self.header_script, content_data, background_flag=self.background_thread_flag, route=self.route, time=int(1/self.background_freq)*1000, form_init_js=form_init_js)
 
 	def background_generator_loop(self):
 		def generate():

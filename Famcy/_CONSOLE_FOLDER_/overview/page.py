@@ -291,15 +291,15 @@ class OverviewPage(Famcy.FamcyPage):
 
         input_form = Famcy.input_form()
 
-        total_lots_input = Famcy.pureInput()
-        total_lots_input.update({"title":"修改總車格","input_type":"number","num_range":[0,10000],"placeholder":self.total_lots})
+        # total_lots_input = Famcy.pureInput()
+        # total_lots_input.update({"title":"修改總車格","input_type":"number","num_range":[0,10000],"placeholder":self.total_lots})
 
-        total_lots_input_submit_btn = Famcy.submitBtn()
-        total_lots_input_submit_btn.update({"title":"送出總車格"})
-        total_lots_input_submit_btn.connect(self.update_total_lot, target=pcard)
+        # total_lots_input_submit_btn = Famcy.submitBtn()
+        # total_lots_input_submit_btn.update({"title":"送出總車格"})
+        # total_lots_input_submit_btn.connect(self.update_total_lot, target=pcard)
 
-        input_form.layout.addWidget(total_lots_input, 0, 0, 1, 2)
-        input_form.layout.addWidget(total_lots_input_submit_btn, 0, 2)
+        # input_form.layout.addWidget(total_lots_input, 0, 0, 1, 2)
+        # input_form.layout.addWidget(total_lots_input_submit_btn, 0, 2)
 
 
         occupied_lots_input = Famcy.pureInput()
@@ -309,8 +309,8 @@ class OverviewPage(Famcy.FamcyPage):
         occupied_lots_input_submit_btn.update({"title":"送出佔用車格"})
         occupied_lots_input_submit_btn.connect(self.update_occupied_lot, target=pcard)
 
-        input_form.layout.addWidget(occupied_lots_input, 1, 0, 1, 2)
-        input_form.layout.addWidget(occupied_lots_input_submit_btn, 1, 2)
+        input_form.layout.addWidget(occupied_lots_input, 0, 0, 1, 2)
+        input_form.layout.addWidget(occupied_lots_input_submit_btn, 0, 2)
 
 
         select_coin_type = Famcy.inputList()
@@ -327,9 +327,9 @@ class OverviewPage(Famcy.FamcyPage):
         coin_input_submit_btn.update({"title":"送出零錢數量"})
         coin_input_submit_btn.connect(self.update_coin, target=pcard)
 
-        input_form.layout.addWidget(select_coin_type, 2, 0)
-        input_form.layout.addWidget(coin_input, 2, 1)
-        input_form.layout.addWidget(coin_input_submit_btn, 2, 2)
+        input_form.layout.addWidget(select_coin_type, 1, 0)
+        input_form.layout.addWidget(coin_input, 1, 1)
+        input_form.layout.addWidget(coin_input_submit_btn, 1, 2)
 
 
         receipt_input = Famcy.pureInput()
@@ -339,15 +339,15 @@ class OverviewPage(Famcy.FamcyPage):
         receipt_input_submit_btn.update({"title":"送出已列印發票數"})
         receipt_input_submit_btn.connect(self.update_receipt,target=pcard)
 
-        input_form.layout.addWidget(receipt_input, 3, 0, 1, 2)
-        input_form.layout.addWidget(receipt_input_submit_btn, 3, 2)
+        input_form.layout.addWidget(receipt_input, 2, 0, 1, 2)
+        input_form.layout.addWidget(receipt_input_submit_btn, 2, 2)
 
 
         escape_submit_btn = Famcy.submitBtn()
         escape_submit_btn.update({"title":"返回畫面"})
         escape_submit_btn.connect(self.prompt_remove_input,target=self)
 
-        input_form.layout.addWidget(escape_submit_btn, 4, 0, 1, 3)
+        input_form.layout.addWidget(escape_submit_btn, 3, 0, 1, 3)
 
         pcard.layout.addWidget(input_form, 0, 0)
 
@@ -567,21 +567,21 @@ class OverviewPage(Famcy.FamcyPage):
 
         return Famcy.UpdateTabHtml()
 
-    def update_total_lot(self, submission_obj, info_list):
-        if len(info_list[0]) > 0:
-            total_lot = info_list[0][0]
-            if len(total_lot) > 0 and self.post_edit_lot(totallot=str(total_lot)):
-                self.total_lots = total_lot
-                self.card_1.layout.content[0][0].layout.content[0][0].update({
-                    "content":'總車格數: %s<br>總佔位數: %s<br>總空位數: %s'%(str(self.total_lots),str(self.total_occupied_lots),str(int(self.total_lots)-int(self.total_occupied_lots)))
-                })
-                return Famcy.UpdateAlert(alert_message="已成功修改總車格: "+str(total_lot))
+    # def update_total_lot(self, submission_obj, info_list):
+    #     if len(info_list[0]) > 0:
+    #         total_lot = info_list[0][0]
+    #         if len(total_lot) > 0 and self.post_edit_lot(totallot=str(total_lot)):
+    #             self.total_lots = total_lot
+    #             self.card_1.layout.content[0][0].layout.content[0][0].update({
+    #                 "content":'總車格數: %s<br>總佔位數: %s<br>總空位數: %s'%(str(self.total_lots),str(self.total_occupied_lots),str(int(self.total_lots)-int(self.total_occupied_lots)))
+    #             })
+    #             return Famcy.UpdateAlert(alert_message="已成功修改總車格: "+str(total_lot))
 
-        return Famcy.UpdateAlert(alert_message="資料修改失敗")
+    #     return Famcy.UpdateAlert(alert_message="資料修改失敗")
 
     def update_occupied_lot(self, submission_obj, info_list):
-        if len(info_list[1]) > 0:
-            occupied_lot = info_list[1][0]
+        if len(info_list[0]) > 0:
+            occupied_lot = info_list[0][0]
             if len(occupied_lot) > 0 and self.post_edit_lot(occupiedlot=str(occupied_lot)):
                 self.total_occupied_lots = occupied_lot
                 self.card_1.layout.content[0][0].layout.content[0][0].update({
@@ -592,8 +592,8 @@ class OverviewPage(Famcy.FamcyPage):
         return Famcy.UpdateAlert(alert_message="資料修改失敗")
 
     def update_receipt(self, submission_obj, info_list):
-        if len(info_list[4]) > 0:
-            receipt_lot = info_list[4][0]
+        if len(info_list[3]) > 0:
+            receipt_lot = info_list[3][0]
             if len(receipt_lot) > 0 and self.post_receipt(receiptlot=str(receipt_lot)):
                 self.printed_receipt = receipt_lot
                 self.card_1.layout.content[0][0].layout.content[2][0].update({
@@ -604,15 +604,15 @@ class OverviewPage(Famcy.FamcyPage):
         return Famcy.UpdateAlert(alert_message="資料修改失敗")
 
     def update_list(self, submission_obj, info_list):
-        if len(info_list[2]) > 0 and len(info_list[3]) > 0:
-            _coin = info_list[2][0]
-            edit_coin = info_list[3][0]
+        if len(info_list[1]) > 0 and len(info_list[2]) > 0:
+            _coin = info_list[1][0]
+            edit_coin = info_list[2][0]
             if _coin == "5":
-                self.p_edit.layout.content[0][0].layout.content[5][0].update({"placeholder":self.h5})
+                self.p_edit.layout.content[0][0].layout.content[3][0].update({"placeholder":self.h5})
             elif _coin == "10":
-                self.p_edit.layout.content[0][0].layout.content[5][0].update({"placeholder":self.h10})
+                self.p_edit.layout.content[0][0].layout.content[3][0].update({"placeholder":self.h10})
             elif _coin == "50":
-                self.p_edit.layout.content[0][0].layout.content[5][0].update({"placeholder":self.h50})
+                self.p_edit.layout.content[0][0].layout.content[3][0].update({"placeholder":self.h50})
 
             if len(edit_coin) > 0:
                 return self.update_coin(submission_obj, info_list)
@@ -620,9 +620,9 @@ class OverviewPage(Famcy.FamcyPage):
         return Famcy.UpdateBlockHtml()
 
     def update_coin(self, submission_obj, info_list):
-        if len(info_list[2]) > 0 and len(info_list[3]) > 0:
-            _coin = info_list[2][0]
-            edit_coin = info_list[3][0]
+        if len(info_list[1]) > 0 and len(info_list[2]) > 0:
+            _coin = info_list[1][0]
+            edit_coin = info_list[2][0]
             flag = False
             if _coin == "5":
                 if len(edit_coin) > 0 and self.post_edit_coin(h5=edit_coin):
@@ -700,9 +700,8 @@ class OverviewPage(Famcy.FamcyPage):
             })
 
         # update prompt placeholder
-        self.p_edit.layout.content[0][0].layout.content[0][0].update({"placeholder":self.total_lots})
-        self.p_edit.layout.content[0][0].layout.content[2][0].update({"placeholder":self.total_occupied_lots})
-        self.p_edit.layout.content[0][0].layout.content[7][0].update({"placeholder":self.printed_receipt})
+        self.p_edit.layout.content[0][0].layout.content[0][0].update({"placeholder":self.total_occupied_lots})
+        self.p_edit.layout.content[0][0].layout.content[5][0].update({"placeholder":self.printed_receipt})
 
     def get_car_queue(self):
         send_dict = {

@@ -63,6 +63,15 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		else:
 			return item.parent
 
+	def find_class(self, item, className):
+		return_list = []
+		if hasattr(item, "layout"):
+			for _item, _, _, _, _ in item.layout.content:
+				if type(_item).__name__ == className:
+					return_list.append(_item)
+				return_list.extend(self.find_class(_item, className))
+		return return_list
+		
 	def render(self):
 		"""
 		The main render flow is as

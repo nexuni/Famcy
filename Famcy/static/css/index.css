@@ -536,7 +536,7 @@ tbody tr td{
 	margin: 0;
 }
 
-.pureInput input[type=text], .pureInput input[type=number], .pureInput input[type=password]{
+.pureInput input[type=text], .pureInput input[type=number], .pureInput input[type=password], .pureInput input[type=date], .pureInput input[type=time]{
 	width: 100%;
 	margin: 5px 0 0 0;
 	padding: calc(var(--normal-text)*0.5);
@@ -598,7 +598,7 @@ tbody tr td{
 	margin: 0;
 }
 
-.inputBtn input[type=text], .inputBtn input[type=number], .inputBtn input[type=password]{
+.inputBtn input[type=text], .inputBtn input[type=number], .inputBtn input[type=password], .inputBtn input[type=time], .inputBtn input[type=date]{
 	width: 100%;
 	margin: 5px 0 0 0;
 	padding: calc(var(--normal-text)*0.5);
@@ -915,7 +915,7 @@ tbody tr td{
 /*displayTag*/
 .displayTag{
 	width: 100%;
-	margin: 10px 0;
+	/*margin: 10px 0;*/
 
 	display: flex;
 	flex-flow: row;

@@ -32,51 +32,15 @@ class CarManagementPage(Famcy.FamcyPage):
 
         input_form = Famcy.input_form()
 
-        input_year = Famcy.inputList()
-        input_month = Famcy.inputList()
-        input_date = Famcy.inputList()
-        input_time = Famcy.inputList()
+        input_date = Famcy.pureInput()
+        input_time = Famcy.pureInput()
+        input_date2 = Famcy.pureInput()
+        input_time2 = Famcy.pureInput()
 
-        input_year.update({
-                "title": "輸入起始年份",
-                "value": [str(int(datetime.datetime.now().year)-1), str(int(datetime.datetime.now().year)), str(int(datetime.datetime.now().year)+1), str(int(datetime.datetime.now().year)+2), str(int(datetime.datetime.now().year)+3)],
-            })
-        input_month.update({
-                "title": "輸入起始月份",
-                "value": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-            })
-        input_date.update({
-                "title": "輸入起始日期",
-                "value": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
-            })
-        input_time.update({
-                "title": "輸入起始時間",
-                "value": ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
-            })
-
-
-        input_year2 = Famcy.inputList()
-        input_month2 = Famcy.inputList()
-        input_date2 = Famcy.inputList()
-        input_time2 = Famcy.inputList()
-
-        input_year2.update({
-                "title": "輸入結束年份",
-                "value": [str(int(datetime.datetime.now().year)-1), str(int(datetime.datetime.now().year)), str(int(datetime.datetime.now().year)+1), str(int(datetime.datetime.now().year)+2), str(int(datetime.datetime.now().year)+3)],
-            })
-        input_month2.update({
-                "title": "輸入結束月份",
-                "value": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-            })
-        input_date2.update({
-                "title": "輸入結束日期",
-                "value": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
-            })
-        input_time2.update({
-                "title": "輸入起始時間",
-                "value": ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
-            })
-
+        input_date.update({"title": "輸入起始日期", "input_type": "date"})
+        input_time.update({"title": "輸入起始時間", "input_type": "time"})
+        input_date2.update({"title": "輸入結束日期", "input_type": "date"})
+        input_time2.update({"title": "輸入結束時間", "input_type": "time"})
 
         input_license = Famcy.pureInput()
         input_license.update({"title": "輸入車牌號碼"})
@@ -101,20 +65,16 @@ class CarManagementPage(Famcy.FamcyPage):
         cancel_btn.update({"title": "刪除"})
         cancel_btn.connect(self.prompt_submit_input, target=self.del_card)
 
-        input_form.layout.addWidget(input_year, 0, 0)
-        input_form.layout.addWidget(input_month, 0, 1)
-        input_form.layout.addWidget(input_date, 0, 2)
-        input_form.layout.addWidget(input_time, 0, 3)
-        input_form.layout.addWidget(input_year2, 1, 0)
-        input_form.layout.addWidget(input_month2, 1, 1)
-        input_form.layout.addWidget(input_date2, 1, 2)
-        input_form.layout.addWidget(input_time2, 1, 3)
-        input_form.layout.addWidget(input_license, 2, 0, 1, 2)
-        input_form.layout.addWidget(verify_mode, 2, 2, 1, 2)
+        input_form.layout.addWidget(input_date, 0, 0)
+        input_form.layout.addWidget(input_time, 0, 1)
+        input_form.layout.addWidget(input_date2, 0, 2)
+        input_form.layout.addWidget(input_time2, 0, 3)
+        input_form.layout.addWidget(input_license, 1, 0)
+        input_form.layout.addWidget(verify_mode, 1, 1)
 
-        input_form.layout.addWidget(search_btn, 0, 4)
-        input_form.layout.addWidget(new_btn, 1, 4)
-        input_form.layout.addWidget(cancel_btn, 2, 4)
+        input_form.layout.addWidget(new_btn, 0, 4)
+        input_form.layout.addWidget(cancel_btn, 1, 4)
+        input_form.layout.addWidget(search_btn, 1, 3)
 
         card1.layout.addWidget(input_form, 0, 0)
 
@@ -139,8 +99,11 @@ class CarManagementPage(Famcy.FamcyPage):
         license_num = Famcy.pureInput()
         license_num.update({"title":"車牌號碼", "input_type":"text"})
 
-        time_num = Famcy.pureInput()
-        time_num.update({"title":"時間", "input_type":"number"})
+        input_date = Famcy.pureInput()
+        input_time = Famcy.pureInput()
+
+        input_date.update({"title": "輸入起始日期", "input_type": "date"})
+        input_time.update({"title": "輸入起始時間", "input_type": "time"})
 
         cancel_btn = Famcy.submitBtn()
         cancel_btn.update({"title":"返回"})
@@ -151,7 +114,8 @@ class CarManagementPage(Famcy.FamcyPage):
         submit_btn.connect(self.update_insert, target=p_card)
 
         input_form.layout.addWidget(license_num, 0, 0, 1, 2)
-        input_form.layout.addWidget(time_num, 1, 0, 1, 2)
+        input_form.layout.addWidget(input_date, 1, 0)
+        input_form.layout.addWidget(input_time, 1, 1)
         input_form.layout.addWidget(cancel_btn, 2, 0)
         input_form.layout.addWidget(submit_btn, 2, 1)
 
@@ -202,10 +166,10 @@ class CarManagementPage(Famcy.FamcyPage):
                 flag = False
                 break
         if flag:
-            start_time = str(info_list[0][0]) + str(info_list[1][0]) + str(info_list[2][0]) + str(info_list[3][0]) + "0000000"
-            end_time = str(info_list[4][0]) + str(info_list[5][0]) + str(info_list[6][0]) + str(info_list[7][0]) + "0000000"
-            license_num = str(info_list[8][0])
-            verify_mode = str(info_list[9][0])
+            start_time = info_list[0][0][:4] + info_list[0][0][5:7] + info_list[0][0][8:10] + info_list[1][0][:2] + info_list[1][0][3:] + "00000"
+            end_time = info_list[2][0][:4] + info_list[2][0][5:7] + info_list[2][0][8:10] + info_list[3][0][:2] + info_list[3][0][3:] + "00000"
+            license_num = str(info_list[4][0])
+            verify_mode = str(info_list[5][0])
 
             self.get_car_queue(verify_mode=verify_mode, start_time=start_time, end_time=end_time, platenum=license_num)
             self.generate_car_block(self.card_2)
@@ -215,9 +179,9 @@ class CarManagementPage(Famcy.FamcyPage):
 
     def update_insert(self, submission_obj, info_list):
         msg = "資料填寫有誤"
-        if len(info_list[0]) > 0 and len(info_list[1]) > 0 and len(info_list[1][0]) == 15:
+        if len(info_list[0]) > 0 and len(info_list[1]) > 0 and len(info_list[2]) > 0:
             license_num = str(info_list[0][0])
-            time_num = str(info_list[1][0])
+            time_num = info_list[1][0][2:4] + info_list[1][0][5:7] + info_list[1][0][8:10] + info_list[2][0][:2] + info_list[2][0][3:] + "00000"
             modified_time = self.generate_modified_time()
 
             if self.post_insert(license_num, time_num, modified_time):

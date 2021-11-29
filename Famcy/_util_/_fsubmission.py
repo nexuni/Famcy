@@ -50,21 +50,21 @@ def exception_handler(func):
 	return inner_function
 
 def put_submissions_to_list(fsubmission_obj, sub_dict):
-    """
-    This is the helper function to put the
-    submission content to a list of arguments
-    - Input:
-        * sub_dict: submission dictionary
-    """
-    input_parent = fsubmission_obj.origin.find_parent(fsubmission_obj.origin, "input_form")
-    ordered_submission_list = []
+	"""
+	This is the helper function to put the
+	submission content to a list of arguments
+	- Input:
+		* sub_dict: submission dictionary
+	"""
+	input_parent = fsubmission_obj.origin.find_parent(fsubmission_obj.origin, "input_form")
+	ordered_submission_list = []
 
-    if input_parent:
-	    for child, _, _, _, _ in input_parent.layout.content:
-	    	if child.name in sub_dict.keys():
-	    		ordered_submission_list.append(sub_dict[child.name])
+	if input_parent:
+		for child, _, _, _, _ in input_parent.layout.content:
+			if child.name in sub_dict.keys():
+				ordered_submission_list.append(sub_dict[child.name])
 
-    return ordered_submission_list
+	return ordered_submission_list
 
 class FResponse(metaclass=abc.ABCMeta):
 	def __init__(self, target=None):
@@ -115,6 +115,30 @@ class FSubmissionSijaxHandler(object):
 		else:
 			response_obj.target = response_obj.target if response_obj.target else fsubmission_obj.target
 			response_obj.response(obj_response)
+
+	@staticmethod
+	def _dump_data(obj_response, files, form_values, container_id, **kwargs):
+		def dump_files():
+			if 'file' not in files:
+				return 'Bad upload'
+
+			file_data = files['file']
+			file_name = file_data.filename
+			if file_name is None:
+				return 'Nothing uploaded'
+
+			file_type = file_data.content_type
+			file_size = len(file_data.read())
+			return 'Uploaded file %s (%s) - %sB' % (file_name, file_type, file_size)
+
+		html = """Form values: %s<hr />Files: %s"""
+		html = html % (str(form_values), dump_files())
+
+		# obj_response.html('#%s' % container_id, html)
+
+	@staticmethod
+	def form_one_handler(obj_response, files, form_values):
+		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, 'root')
 
 
 class FSubmission:
