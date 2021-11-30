@@ -18,7 +18,6 @@ class upload_form(Famcy.FamcyCard):
         self.body["id"] = self.id
         self.body["method"] = self.configs["method"]
         self.body["action"] = self.action
-        # self.body["onsubmit"] = "return false;"
         self.body["enctype"] = "multipart/form-data"
 
     def render_inner(self):
@@ -27,48 +26,17 @@ class upload_form(Famcy.FamcyCard):
         if header_script not in self.header_script:
             self.header_script += header_script
 
-        self.body.innerHTML = content_render
-
-        upload_id = []
-        for item, _, _, _, _ in self.layout.content:
-            if type(item).__name__ == "FUploadBlock":
-                upload_id.append(item.id)
-
-        script = Famcy.script()
-        inner_html = ""
+        extra_html = ""
         for widget, _, _, _, _ in self.layout.content:
             if widget.clickable:
-                pass
-                # inner_html += """$('#%s').bind('click', (e) => {
 
-                #     if (%s) {
-                #         $('#loading_holder').css("display","flex");
-                #     }
+                input_tag = Famcy.input()
+                input_tag["type"] = "hidden"
+                input_tag["name"] = "fsubmission_obj"
+                input_tag["value"] = str(widget.submission_obj_key)
 
-                #     var fileObj;
-                #     var formData = new FormData()
-                #     upload_id = %s
-                #     for (var i=0; i < upload_id.length; i++) {
-                #         fileObj = document.getElementById(upload_id[i]).files[0];
-                #         formData.append("file", fileObj)
-                #     }
-                    
-                #     var response_dict = {"upload": true}
-                #     for (var pair of formData.entries()) {
-                #         if (pair[0] !== "btSelectAll") {
-                #             if (!(pair[0] in response_dict)) {
-                #                 response_dict[pair[0]] = [pair[1]]
-                #             }
-                #             else {
-                #                 response_dict[pair[0]].push(pair[1])
-                #             }
-                #         }
-                #     }
+                extra_html += input_tag.render_inner()
 
-                #     var token = document.head.querySelector("[name~=csrf-token][content]").content
-                #     Sijax.uploadRequest('famcy_submission_handler', formData, ['%s', response_dict], { data: { csrf_token: token } });
-                # });""" % (widget.id, json.dumps(widget.loader), json.dumps(upload_id), str(widget.submission_obj_key))
+        self.body.innerHTML = content_render + extra_html
 
-        script.innerHTML = inner_html
-
-        return self.body.render_inner() + script.render_inner()
+        return self.body.render_inner()

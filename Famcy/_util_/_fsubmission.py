@@ -4,6 +4,9 @@ import json
 import time
 import Famcy
 import _ctypes
+import os
+import datetime
+from werkzeug.utils import secure_filename
 
 # GLOBAL HELPER
 def get_fsubmission_obj(obj_id):
@@ -66,6 +69,10 @@ def put_submissions_to_list(fsubmission_obj, sub_dict):
 
 	return ordered_submission_list
 
+def allowed_file(filename, extension_list):
+	return '.' in filename and \
+		   filename.rsplit('.', 1)[1].lower() in extension_list
+
 class FResponse(metaclass=abc.ABCMeta):
 	def __init__(self, target=None):
 		self.target = target
@@ -117,7 +124,7 @@ class FSubmissionSijaxHandler(object):
 			response_obj.response(obj_response)
 
 	@staticmethod
-	def _dump_data(obj_response, files, form_values, container_id, **kwargs):
+	def _dump_data(obj_response, files, form_values, fsubmission_obj, **kwargs):
 		def dump_files():
 			if 'file' not in files:
 				return 'Bad upload'
@@ -127,18 +134,34 @@ class FSubmissionSijaxHandler(object):
 			if file_name is None:
 				return 'Nothing uploaded'
 
+			upload_form = fsubmission_obj.origin.find_parent(fsubmission_obj.origin, "upload_form")
+			upload_file = upload_form.find_class(upload_form, "uploadFile")
+
+			for _upload_file in upload_file:
+				if file_data and allowed_file(file_data.filename, _upload_file.value["accept_type"]):
+					filename = secure_filename(file_data.filename)
+					file_data.save(os.path.join("./", filename))
+
 			file_type = file_data.content_type
 			file_size = len(file_data.read())
 			return 'Uploaded file %s (%s) - %sB' % (file_name, file_type, file_size)
 
-		html = """Form values: %s<hr />Files: %s"""
-		html = html % (str(form_values), dump_files())
+		temp_func = fsubmission_obj.func
+		response_obj = temp_func(fsubmission_obj, [[dump_files()]])
 
-		# obj_response.html('#%s' % container_id, html)
+		# Response according to the return response
+		if isinstance(response_obj, list):
+			for res_obj in response_obj:
+				res_obj.target = res_obj.target if res_obj.target else fsubmission_obj.target
+				res_obj.response(obj_response)
+		else:
+			response_obj.target = response_obj.target if response_obj.target else fsubmission_obj.target
+			response_obj.response(obj_response)
 
 	@staticmethod
-	def form_one_handler(obj_response, files, form_values):
-		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, 'root')
+	def upload_form_handler(obj_response, files, form_values):
+		fsubmission_obj = get_fsubmission_obj(form_values["fsubmission_obj"][0])
+		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, fsubmission_obj)
 
 
 class FSubmission:
