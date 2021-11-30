@@ -101,7 +101,7 @@ class FPage(FamcyWidget):
 		form_init_js = ''
 		upload_list = self.find_class(self, "upload_form")
 		for _item in upload_list:
-			form_init_js += g.sijax.register_upload_callback(_item.id, FSubmissionSijaxHandler.form_one_handler)
+			form_init_js += g.sijax.register_upload_callback(_item.id, FSubmissionSijaxHandler.upload_form_handler)
 
 		if g.sijax.is_sijax_request:
 			g.sijax.register_object(FSubmissionSijaxHandler)
