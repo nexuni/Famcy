@@ -38,10 +38,12 @@ class PosPage(Famcy.FamcyPage):
         input_date2 = Famcy.pureInput()
         input_time2 = Famcy.pureInput()
 
-        input_date.update({"title": "輸入起始日期", "input_type": "date"})
-        input_time.update({"title": "輸入起始時間", "input_type": "time"})
-        input_date2.update({"title": "輸入結束日期", "input_type": "date"})
-        input_time2.update({"title": "輸入結束時間", "input_type": "time"})
+        default_date, default_time, default_end_date, default_end_time = self.get_default_date_time()
+
+        input_date.update({"title": "輸入起始日期", "input_type": "date", "defaultValue": default_date})
+        input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": default_time})
+        input_date2.update({"title": "輸入結束日期", "input_type": "date", "defaultValue": default_end_date})
+        input_time2.update({"title": "輸入結束時間", "input_type": "time", "defaultValue": default_end_time})
 
         input_license = Famcy.pureInput()
         input_license.update({"title": "輸入車牌號碼"})
@@ -92,12 +94,10 @@ class PosPage(Famcy.FamcyPage):
         license_num.update({"title":"車牌號碼", "input_type":"text"})
 
         date_num = Famcy.pureInput()
-        date_num.update({"title":"日期", "input_type":"text", "placeholder": "YYYY/MM/DD"})
-        date_num.body.children[2]["onfocus"] = "(this.type='date')"
+        date_num.update({"title":"日期", "input_type":"date"})
 
         time_num = Famcy.pureInput()
-        time_num.update({"title":"時間", "input_type":"text", "placeholder": "HH:MM"})
-        time_num.body.children[2]["onfocus"] = "(this.type='time')"
+        time_num.update({"title":"時間", "input_type":"time"})
 
         cancel_btn = Famcy.submitBtn()
         cancel_btn.update({"title":"返回"})
@@ -170,8 +170,8 @@ class PosPage(Famcy.FamcyPage):
         time = str(input_form.layout.content[2][0].value["content"])
 
         self.pos_card.layout.content[0][0].layout.content[0][0].update({"placeholder": license})
-        self.pos_card.layout.content[0][0].layout.content[1][0].update({"placeholder": "20"+time[:2]+"/"+time[2:4]+"/"+time[4:6]})
-        self.pos_card.layout.content[0][0].layout.content[2][0].update({"placeholder": time[6:8]+":"+time[8:10]})
+        self.pos_card.layout.content[0][0].layout.content[1][0].update({"defaultValue": "20"+time[:2]+"-"+time[2:4]+"-"+time[4:6]})
+        self.pos_card.layout.content[0][0].layout.content[2][0].update({"defaultValue": time[6:8]+":"+time[8:10]})
 
         return Famcy.UpdatePrompt()
 
@@ -181,8 +181,6 @@ class PosPage(Famcy.FamcyPage):
 
         license = str(info_list[4][0])
         self.pos_card.layout.content[0][0].layout.content[0][0].update({"placeholder": license})
-        self.pos_card.layout.content[0][0].layout.content[1][0].update({"placeholder": "YYYY/MM/DD"})
-        self.pos_card.layout.content[0][0].layout.content[2][0].update({"placeholder": "HH:MM"})
 
         return Famcy.UpdatePrompt()
 
@@ -207,23 +205,39 @@ class PosPage(Famcy.FamcyPage):
     def update_pos(self, submission_obj, info_list):
         last_p_card = submission_obj.origin.find_parent(submission_obj.origin, "FPromptCard")
         self.fee_card.layout.content[0][0].layout.content[2][0].connect(self.return_action,target=last_p_card)
-        # msg = "系統異常，請重新再試"
-        # if len(info_list[0]) > 0:
-        #     license_num = str(info_list[0][0])          # "XXXXXX"
-        #     modified_time = self.generate_modified_time()
 
-        #     if self.post_update(license_num, modified_time):
-        #         self.get_car_queue()
-        #         self.generate_car_block(self.card_2)
-        #         msg = "成功刪除資料"
+        if len(info_list[0]) > 0 and len(info_list[1]) > 0 and len(info_list[2]) > 0:
+            license_num = str(info_list[0][0])
+            modified_time = info_list[1][0][2:4] + info_list[1][0][5:7] + info_list[1][0][8:10] + info_list[2][0][:2] + info_list[2][0][3:] + "00000"
 
-        return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdatePrompt()]
+            if self.post_update_movement(license_num, modified_time):
+                self.get_car_queue()
+                self.generate_car_block(self.card_2)
+                return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdatePrompt()]
+
+            else:
+                return Famcy.UpdateAlert(alert_message="系統異常，請重新再試", target=self.pos_card)
+
     # ====================================================
     # ====================================================
 
 
     # http request function
     # ====================================================
+    def post_update_movement(self, platenum, modified_time):
+        send_dict = {
+            "service": "pms",
+            "operation": "update_movement",
+            "carpark_id": self.carpark_id,
+            "entry_station": self.entry_station,
+            "platenum": platenum,
+            "modified_time": modified_time
+        }
+
+        res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
+        return json.loads(res_msg)["indicator"]
+
+
     def get_car_queue(self, start_time=None, end_time=None, platenum=None):
         # TODO: API need to be changed
         send_dict = {
@@ -285,7 +299,6 @@ class PosPage(Famcy.FamcyPage):
 
             card.layout.addWidget(input_form, ((i-1)//col_num)*2, (i-1)%col_num)
 
-
     def generate_modified_time(self):
         modified_time = ""
         current_time = datetime.datetime.now()
@@ -297,6 +310,21 @@ class PosPage(Famcy.FamcyPage):
         modified_time += "00000"
 
         return modified_time
+
+    def get_default_date_time(self):
+        current_time = datetime.datetime.now()
+
+        default_date = ""
+        default_date += str(current_time.year) + "-"
+        default_date += str(current_time.month) + "-" if len(str(current_time.month)) == 2 else "0" + str(current_time.month) + "-"
+        default_date += str(current_time.day) if len(str(current_time.day)) == 2 else "0" + str(current_time.day)
+
+        default_end_date = ""
+        default_end_date += str(current_time.year) + "-"
+        default_end_date += str(current_time.month) + "-" if len(str(current_time.month)) == 2 else "0" + str(current_time.month) + "-"
+        default_end_date += str(int(current_time.day)+1) if len(str(int(current_time.day)+1)) == 2 else "0" + str(int(current_time.day)+1)
+
+        return default_date, "00:00", default_end_date, "00:00"
     # ====================================================
     # ====================================================
 

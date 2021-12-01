@@ -120,8 +120,9 @@ class FPage(FamcyWidget):
 	def background_generator_loop(self):
 		def generate():
 			print("background_loop")
+			print("FamcyBackgroundQueue: ", Famcy.FamcyBackgroundQueue.nodes)
 			try:
-				baction = FamcyBackgroundQueue.pop()
+				baction = Famcy.FamcyBackgroundQueue.pop()
 				yield json.dumps({"indicator": True, "message": baction.tojson()})
 
 			except Exception as e:

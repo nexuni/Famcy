@@ -17,6 +17,7 @@ class pureInput(Famcy.FamcyInputBlock):
         return {
             "title": "pureInput",
             "desc": "",
+            "defaultValue": None,
             "input_type": "text",                               # text / number / password
             "num_range": None,                                  # if type == number
             "placeholder": "",
@@ -55,6 +56,11 @@ class pureInput(Famcy.FamcyInputBlock):
 
         self.body.children[2]["type"] = self.value["input_type"]
         self.body.children[2]["placeholder"] = self.value["placeholder"]
+
+        if self.value["defaultValue"]:
+            self.body.children[2]["value"] = self.value["defaultValue"]
+        else:
+            del self.body.children[2]["value"]
 
         if self.value["mandatory"]:
             self.body.children[2]["required"] = "required"
