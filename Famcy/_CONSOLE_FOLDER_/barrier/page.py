@@ -10,7 +10,7 @@ v1.register()
 
 class BarrierPage(Famcy.FamcyPage):
 	def __init__(self):
-		super(BarrierPage, self).__init__("/barrier", Famcy.ClassicSideStyle(), background_thread=True)
+		super(BarrierPage, self).__init__("/barrier", Famcy.ClassicSideStyle(), background_thread=False)
 		self.card_1 = self.card1()
 		self.card_2 = self.card2()
 		self.card_3 = self.card3()

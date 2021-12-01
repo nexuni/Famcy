@@ -40,10 +40,12 @@ class SeasonPage(Famcy.FamcyPage):
 		input_date2 = Famcy.pureInput()
 		input_time2 = Famcy.pureInput()
 
-		input_date.update({"title": "輸入起始日期", "input_type": "date"})
-		input_time.update({"title": "輸入起始時間", "input_type": "time"})
-		input_date2.update({"title": "輸入結束日期", "input_type": "date"})
-		input_time2.update({"title": "輸入結束時間", "input_type": "time"})
+		default_date, default_time, default_end_date, default_end_time = self.get_default_date_time()
+
+		input_date.update({"title": "輸入起始日期", "input_type": "date", "defaultValue": default_date})
+        input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": default_time})
+        input_date2.update({"title": "輸入結束日期", "input_type": "date", "defaultValue": default_end_date})
+        input_time2.update({"title": "輸入結束時間", "input_type": "time", "defaultValue": default_end_time})
 
 
 		input_license = Famcy.pureInput()
@@ -465,6 +467,21 @@ class SeasonPage(Famcy.FamcyPage):
 		res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
 		print(res_msg)
 		return json.loads(res_msg)["indicator"]
+
+	def get_default_date_time(self):
+        current_time = datetime.datetime.now()
+
+        default_date = ""
+        default_date += str(current_time.year) + "-"
+        default_date += str(current_time.month) + "-" if len(str(current_time.month)) == 2 else "0" + str(current_time.month) + "-"
+        default_date += str(current_time.day) if len(str(current_time.day)) == 2 else "0" + str(current_time.day)
+
+        default_end_date = ""
+        default_end_date += str(current_time.year) + "-"
+        default_end_date += str(current_time.month) + "-" if len(str(current_time.month)) == 2 else "0" + str(current_time.month) + "-"
+        default_end_date += str(int(current_time.day)+1) if len(str(int(current_time.day)+1)) == 2 else "0" + str(int(current_time.day)+1)
+
+        return default_date, "00:00", default_end_date, "00:00"
 	# ====================================================
 	# ====================================================
    
