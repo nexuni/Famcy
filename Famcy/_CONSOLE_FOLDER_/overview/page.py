@@ -781,7 +781,18 @@ class OverviewPage(Famcy.FamcyPage):
         return json.loads(res_msg)["indicator"]
 
     def post_receipt(self, receiptlot=None):
-        return True
+        send_dict = {
+            "service": "pms",
+            "carpark_id": self.carpark_id_,
+            "operation": "update_receipt"
+        }
+
+        if receiptlot:
+            # send_dict["receiptlot"] = str(receiptlot)
+            pass
+        res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
+
+        return json.loads(res_msg)["indicator"]
 
     def post_apm(self, btn_name, ip_info, list_info):
         send_dict = {
