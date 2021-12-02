@@ -344,15 +344,15 @@ class OverviewPage(Famcy.FamcyPage):
         input_form.layout.addWidget(coin_input_submit_btn, 1, 2)
 
 
-        receipt_input = Famcy.pureInput()
-        receipt_input.update({"title":"修改已列印發票數","input_type":"number","num_range":[0,10000],"placeholder":self.printed_receipt})
+        # receipt_input = Famcy.pureInput()
+        # receipt_input.update({"title":"修改已列印發票數","input_type":"number","num_range":[0,10000],"placeholder":self.printed_receipt})
 
         receipt_input_submit_btn = Famcy.submitBtn()
-        receipt_input_submit_btn.update({"title":"送出已列印發票數"})
+        receipt_input_submit_btn.update({"title":"送出修改已列印發票數"})
         receipt_input_submit_btn.connect(self.update_receipt,target=pcard)
 
-        input_form.layout.addWidget(receipt_input, 2, 0, 1, 2)
-        input_form.layout.addWidget(receipt_input_submit_btn, 2, 2)
+        # input_form.layout.addWidget(receipt_input, 2, 0, 1, 2)
+        input_form.layout.addWidget(receipt_input_submit_btn, 2, 0, 1, 3)
 
 
         escape_submit_btn = Famcy.submitBtn()
@@ -604,14 +604,12 @@ class OverviewPage(Famcy.FamcyPage):
         return Famcy.UpdateAlert(alert_message="資料修改失敗")
 
     def update_receipt(self, submission_obj, info_list):
-        if len(info_list[3]) > 0:
-            receipt_lot = info_list[3][0]
-            if len(receipt_lot) > 0 and self.post_receipt(receiptlot=str(receipt_lot)):
-                self.printed_receipt = receipt_lot
-                self.card_1.layout.content[0][0].layout.content[2][0].update({
-                    "content":"已列印: %s<br>剩餘發票數: %s<br>剩餘號碼: %s"%(self.printed_receipt,str(1400-int(self.printed_receipt)),'0')
-                })
-                return Famcy.UpdateAlert(alert_message="已成功修改已列印發票數: "+str(receipt_lot))
+        if self.post_receipt():
+            self.printed_receipt = "1400"
+            self.card_1.layout.content[0][0].layout.content[2][0].update({
+                "content":"已列印: %s<br>剩餘發票數: %s<br>剩餘號碼: %s"%(self.printed_receipt,str(1400-int(self.printed_receipt)),'0')
+            })
+            return Famcy.UpdateAlert(alert_message="已成功修改已列印發票數: "+str(receipt_lot))
 
         return Famcy.UpdateAlert(alert_message="資料修改失敗")
 
@@ -780,16 +778,13 @@ class OverviewPage(Famcy.FamcyPage):
 
         return json.loads(res_msg)["indicator"]
 
-    def post_receipt(self, receiptlot=None):
+    def post_receipt(self):
         send_dict = {
             "service": "pms",
             "carpark_id": self.carpark_id_,
             "operation": "update_receipt"
         }
 
-        if receiptlot:
-            # send_dict["receiptlot"] = str(receiptlot)
-            pass
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
 
         return json.loads(res_msg)["indicator"]
