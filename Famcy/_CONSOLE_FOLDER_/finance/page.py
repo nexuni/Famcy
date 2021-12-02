@@ -11,6 +11,8 @@ class FinancePage(Famcy.FamcyPage):
         self.carpark_id = "park1"
         self.entry_station = "E1"
 
+        self.p_date_card = self.prompt_card_date()
+
         self.card_1 = self.card1()
         self.card_2 = self.card2()
 
@@ -79,7 +81,7 @@ class FinancePage(Famcy.FamcyPage):
                 "title": "檔案上傳",
                 "file_num": "single",
                 "accept_type": ["xls", "xlsx"],
-                "file_path": '',
+                "file_path": 'C:/Users/user/FamcyDownload/',
             })
 
         submit_btn = Famcy.submitBtn()
@@ -107,15 +109,60 @@ class FinancePage(Famcy.FamcyPage):
 
     # prompt card
     # ====================================================
+    def prompt_card_date(self):
+        p_card = Famcy.FamcyPromptCard()
+
+        input_form = Famcy.input_form()
+
+        input_date = Famcy.pureInput()
+        input_date2 = Famcy.pureInput()
+
+        input_date.update({"title": "輸入起始日期", "input_type": "date"})
+        input_date2.update({"title": "輸入結束日期", "input_type": "date"})
+
+        submit_btn = Famcy.submitBtn()
+        submit_btn.update({"title":"確認"})
+        submit_btn.connect(self.send_file_path_to_server)
+
+        cancel_btn = Famcy.submitBtn()
+        cancel_btn.update({"title":"返回"})
+        cancel_btn.connect(self.prompt_remove_input)
+
+        input_form.layout.addWidget(input_date, 0, 0)
+        input_form.layout.addWidget(input_date2, 0, 1)
+        input_form.layout.addWidget(cancel_btn, 1, 0)
+        input_form.layout.addWidget(submit_btn, 1, 1)
+
+        p_card.layout.addWidget(input_form, 0, 0)
+
+        return p_card
     # ====================================================
     # ====================================================
 
 
     # submission function
     # ====================================================
+    def prompt_remove_input(self, submission_obj, info_list):
+        return Famcy.UpdateRemoveElement(prompt_flag=True)
+
     def submit_file(self, submission_obj, info_list):
         print("info_list: ", info_list)
-        return Famcy.UpdateAlert(alert_message="成功上傳檔案")
+        msg = "檔案上傳失敗，請重新再試"
+        if info_list[0][0]["indicator"]:
+            self.p_date_card["file_name"] = info_list[0][0]["message"]
+            return Famcy.UpdatePrompt(target=self.p_date_card)
+        return Famcy.UpdateAlert(alert_message=msg)
+
+    def send_file_path_to_server(self, submission_obj, info_list):
+        msg = "檔案上傳失敗，請重新再試"
+        if len(info_list[0]) > 0 and len(info_list[1]) > 0:
+            start_time = "".join(info_list[0][0].split("-"))[2:] + "000000000"
+            end_time = "".join(info_list[1][0].split("-"))[2:] + "235959000"
+
+            if self.get_receipt_match(start_time, end_time, self.p_date_card["file_name"]):
+                msg = "成功上傳檔案"
+                return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdateAlert(alert_message=msg, target=self.card_2)]
+        return Famcy.UpdateAlert(alert_message=msg)
 
     def generate_chart(self, submission_obj, info_list):
         msg = "資料填寫有誤"
@@ -181,6 +228,18 @@ class FinancePage(Famcy.FamcyPage):
                 self.card_1.layout.content[0][0].layout.addWidget(bar_graph, 2, 0, 1, 4)
 
         return res_ind
+
+    def get_receipt_match(self, start_time, end_time, file_name):
+        send_dict = {
+            "service": "pms",
+            "operation": "receipt_match",
+            "start_time": start_time, 
+            "end_time": end_time,
+            "excel_location": self.card_2.layout.content[0][0].layout.content[0][0].value["file_path"]+file_name
+        }
+
+        res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
+        return json.loads(res_msg)["indicator"]
     # ====================================================
     # ====================================================
 

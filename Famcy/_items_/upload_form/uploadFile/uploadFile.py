@@ -18,7 +18,7 @@ class uploadFile(Famcy.FamcyUploadBlock):
             "title": "uploadFile",
             "file_num": "multiple",                     # ("single", "multiple")
             "accept_type": ["png", "jpg"],
-            "file_path": '',
+            "file_path": './',
             "mandatory": True,
             "action_after_post": "clean",                    # (clean)
         }

@@ -15,6 +15,7 @@ class SeasonPage(Famcy.FamcyPage):
 		self.p_del_card = self.p_card_delete()
 		self.p_update_card = self.p_card_update()
 		self.p_insert_card = self.p_card_insert()
+		self.p_upload_table_card = self.p_card_upload_table()
 
 		self.layout.addPromptWidget(self.p_del_card)
 		self.layout.addPromptWidget(self.p_update_card)
@@ -43,9 +44,9 @@ class SeasonPage(Famcy.FamcyPage):
 		default_date, default_time, default_end_date, default_end_time = self.get_default_date_time()
 
 		input_date.update({"title": "輸入起始日期", "input_type": "date", "defaultValue": default_date})
-        input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": default_time})
-        input_date2.update({"title": "輸入結束日期", "input_type": "date", "defaultValue": default_end_date})
-        input_time2.update({"title": "輸入結束時間", "input_type": "time", "defaultValue": default_end_time})
+		input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": default_time})
+		input_date2.update({"title": "輸入結束日期", "input_type": "date", "defaultValue": default_end_date})
+		input_time2.update({"title": "輸入結束時間", "input_type": "time", "defaultValue": default_end_time})
 
 
 		input_license = Famcy.pureInput()
@@ -71,6 +72,10 @@ class SeasonPage(Famcy.FamcyPage):
 		cancel_btn.update({"title": "刪除"})
 		cancel_btn.connect(self.prompt_submit_input, target=self.p_del_card)
 
+		upload_btn = Famcy.submitBtn()
+		upload_btn.update({"title": "上傳表格"})
+		upload_btn.connect(self.prompt_submit_input, target=self.p_upload_table_card)
+
 		download_btn = Famcy.submitBtn()
 		download_btn.update({"title": "下載表格"})
 		download_btn.connect(self.download_table, target=card1)
@@ -83,6 +88,7 @@ class SeasonPage(Famcy.FamcyPage):
 
 		input_form.layout.addWidget(input_license, 2, 0, 2, 1)
 		input_form.layout.addWidget(input_phone, 2, 1, 2, 1)
+		input_form.layout.addWidget(upload_btn, 2, 2, 2, 1)
 		input_form.layout.addWidget(download_btn, 2, 3, 2, 1)
 
 		input_form.layout.addWidget(search_btn, 0, 4)
@@ -172,6 +178,39 @@ class SeasonPage(Famcy.FamcyPage):
 
 	# prompt card
 	# ====================================================
+	def p_card_upload_table(self):
+		p_card = Famcy.FamcyPromptCard()
+
+		upload_form = Famcy.upload_form()
+
+		upload_file = Famcy.uploadFile()
+		upload_file.update({
+				"title": "檔案上傳",
+				"file_num": "single",
+				"accept_type": ["xls", "xlsx"],
+				"file_path": 'C:/Users/user/FamcyDownload/',
+			})
+
+		upload_form.layout.addWidget(upload_file, 0, 0)
+
+		input_form = Famcy.input_form()
+
+		submit_btn = Famcy.submitBtn()
+		submit_btn.update({"title":"確認"})
+		submit_btn.connect(self.upload_table, target=p_card)
+
+		cancel_btn = Famcy.submitBtn()
+		cancel_btn.update({"title":"返回"})
+		cancel_btn.connect(self.prompt_remove_input)
+
+		input_form.layout.addWidget(cancel_btn, 0, 0)
+		input_form.layout.addWidget(submit_btn, 0, 1)
+
+		p_card.layout.addWidget(upload_form, 0, 0)
+		p_card.layout.addWidget(input_form, 1, 0)
+
+		return p_card
+
 	def p_card_insert(self):
 		p_card = Famcy.FamcyPromptCard()
 
@@ -394,13 +433,24 @@ class SeasonPage(Famcy.FamcyPage):
 
 		try:
 			df1 = pd.DataFrame.from_records(self.table_info)
-			df1.to_excel("output.xlsx",sheet_name='sheet1')
+			df1.to_excel("C:/Users/user/FamcyDownload/"+datetime.datetime.now().strftime("%Y%m%d%H%M%S")+".xlsx",sheet_name='sheet1')
 
 			msg = "成功加入資料"
 		except Exception as e:
 			pass
 
 		return Famcy.UpdateAlert(alert_message=msg)
+
+	def upload_table(self, submission_obj, info_list):
+		msg = "檔案上傳失敗，請重新再試"
+		if info_list[0][0]["indicator"]:
+			file_path = self.card_2.layout.content[0][0].layout.content[0][0].value["file_path"]+info_list[0][0]["message"]
+			table_info = self.read_excel_file(file_path)
+			if self.post_insert(table_info["phonenum"], table_info["platenum"], table_info["start_time"], table_info["end_time"], table_info["database_name"], table_info["season_type"], table_info["months_fee"], table_info["comments"]):
+				self.get_season_data()
+				msg = "成功加入資料"
+			
+		return [Famcy.UpdateAlert(alert_message=msg), Famcy.UpdateBlockHtml(target=self.card_2)]
 	# ====================================================
 	# ====================================================
 
@@ -469,19 +519,37 @@ class SeasonPage(Famcy.FamcyPage):
 		return json.loads(res_msg)["indicator"]
 
 	def get_default_date_time(self):
-        current_time = datetime.datetime.now()
+		current_time = datetime.datetime.now()
 
-        default_date = ""
-        default_date += str(current_time.year) + "-"
-        default_date += str(current_time.month) + "-" if len(str(current_time.month)) == 2 else "0" + str(current_time.month) + "-"
-        default_date += str(current_time.day) if len(str(current_time.day)) == 2 else "0" + str(current_time.day)
+		default_date = ""
+		default_date += str(current_time.year) + "-"
+		default_date += str(current_time.month) + "-" if len(str(current_time.month)) == 2 else "0" + str(current_time.month) + "-"
+		default_date += str(current_time.day) if len(str(current_time.day)) == 2 else "0" + str(current_time.day)
 
-        default_end_date = ""
-        default_end_date += str(current_time.year) + "-"
-        default_end_date += str(current_time.month) + "-" if len(str(current_time.month)) == 2 else "0" + str(current_time.month) + "-"
-        default_end_date += str(int(current_time.day)+1) if len(str(int(current_time.day)+1)) == 2 else "0" + str(int(current_time.day)+1)
+		default_end_date = ""
+		default_end_date += str(current_time.year) + "-"
+		default_end_date += str(current_time.month) + "-" if len(str(current_time.month)) == 2 else "0" + str(current_time.month) + "-"
+		default_end_date += str(int(current_time.day)+1) if len(str(int(current_time.day)+1)) == 2 else "0" + str(int(current_time.day)+1)
 
-        return default_date, "00:00", default_end_date, "00:00"
+		return default_date, "00:00", default_end_date, "00:00"
+	# ====================================================
+	# ====================================================
+
+
+	# http request function
+	# ====================================================
+	def read_excel_file(self, file_path):
+		df = pd.read_excel(file_path, sheet_name=None)
+		write_data = df.to_dict('records')
+		return_dict = {}
+		for row in write_data:
+			for columns in row.keys():
+				try:
+					return_dict[columns].append(row[columns])
+				except:
+					return_dict[columns] = [row[columns]]
+
+		return return_dict
 	# ====================================================
 	# ====================================================
    
