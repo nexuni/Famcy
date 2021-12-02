@@ -137,10 +137,11 @@ class FSubmissionSijaxHandler(object):
 			upload_form = fsubmission_obj.origin.find_parent(fsubmission_obj.origin, "upload_form")
 			upload_file = upload_form.find_class(upload_form, "uploadFile")
 
+			filename = ""
 			for _upload_file in upload_file:
 				if file_data and allowed_file(file_data.filename, _upload_file.value["accept_type"]):
-					filename = secure_filename(file_data.filename)
-					file_data.save(os.path.join(_upload_file.value["file_path"], datetime.datetime.now().strftime("%Y%m%d%H%M%S")+"_"+filename))
+					filename = datetime.datetime.now().strftime("%Y%m%d%H%M%S")+"_"+secure_filename(file_data.filename)
+					file_data.save(os.path.join(_upload_file.value["file_path"], filename))
 
 			file_type = file_data.content_type
 			file_size = len(file_data.read())

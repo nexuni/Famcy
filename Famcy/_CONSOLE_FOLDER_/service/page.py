@@ -20,6 +20,7 @@ class SeasonPage(Famcy.FamcyPage):
 		self.layout.addPromptWidget(self.p_del_card)
 		self.layout.addPromptWidget(self.p_update_card)
 		self.layout.addPromptWidget(self.p_insert_card, 60)
+		self.layout.addPromptWidget(self.p_upload_table_card)
 
 
 		self.card_1 = self.card1()

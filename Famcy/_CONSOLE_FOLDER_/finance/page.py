@@ -13,6 +13,8 @@ class FinancePage(Famcy.FamcyPage):
 
         self.p_date_card = self.prompt_card_date()
 
+        self.layout.addPromptWidget(self.p_date_card)
+
         self.card_1 = self.card1()
         self.card_2 = self.card2()
 
@@ -86,7 +88,7 @@ class FinancePage(Famcy.FamcyPage):
 
         submit_btn = Famcy.submitBtn()
         submit_btn.update({"title": "送出檔案"})
-        submit_btn.connect(self.submit_file , target=card2)
+        submit_btn.connect(self.submit_file , target=self.p_date_card)
 
         upload_form.layout.addWidget(upload_file, 0, 0)
         upload_form.layout.addWidget(submit_btn, 1, 0)
@@ -94,8 +96,8 @@ class FinancePage(Famcy.FamcyPage):
 
         input_form = Famcy.input_form()
 
-        download_btn = Famcy.submitBtn()
-        download_btn.update({"title": "下載檔案"})
+        download_btn = Famcy.downloadFile()
+        download_btn.update({"title": "下載檔案","file_path": 'http://127.0.0.1:5000/robots.txt',"file_name": 'download.txt'})
 
         input_form.layout.addWidget(download_btn, 0, 0)
 
@@ -136,6 +138,7 @@ class FinancePage(Famcy.FamcyPage):
         p_card.layout.addWidget(input_form, 0, 0)
 
         return p_card
+        
     # ====================================================
     # ====================================================
 
@@ -150,8 +153,8 @@ class FinancePage(Famcy.FamcyPage):
         msg = "檔案上傳失敗，請重新再試"
         if info_list[0][0]["indicator"]:
             self.p_date_card["file_name"] = info_list[0][0]["message"]
-            return Famcy.UpdatePrompt(target=self.p_date_card)
-        return Famcy.UpdateAlert(alert_message=msg)
+            return Famcy.UpdatePrompt()
+        return Famcy.UpdateAlert(alert_message=msg, target=self.card_2)
 
     def send_file_path_to_server(self, submission_obj, info_list):
         msg = "檔案上傳失敗，請重新再試"
