@@ -49,12 +49,13 @@ class pie_chart(Famcy.FamcyBlock):
 
         div_temp = Famcy.div()
         script = Famcy.script()
-        script["src"] = "/static/js/pie_chart.js"
-        script2 = Famcy.script()
 
         self.body.addElement(div_temp)
         self.body.addElement(script)
-        self.body.addElement(script2)
+
+        static_script = Famcy.script()
+        static_script["src"] = "/static/js/pie_chart.js"
+        self.body.addStaticScript(static_script)
 
     def render_inner(self):
         pie_values = []
@@ -65,7 +66,7 @@ class pie_chart(Famcy.FamcyBlock):
         json_pie_dict_labels = json.dumps(self.value["labels"])
         json_pie_dict_size = json.dumps(self.value["size"])
 
-        self.body.children[2].innerHTML = 'generatePieChart("%s", %s, %s, %s)' % (self.id, json_pie_dict_values, json_pie_dict_labels, json_pie_dict_size)
+        self.body.children[1].innerHTML = 'generatePieChart("%s", %s, %s, %s)' % (self.id, json_pie_dict_values, json_pie_dict_labels, json_pie_dict_size)
         
-        return self.body.render_inner()
+        return self.body
         

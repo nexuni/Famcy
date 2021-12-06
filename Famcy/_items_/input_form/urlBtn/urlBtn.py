@@ -45,6 +45,6 @@ class urlBtn(Famcy.FamcyInputBlock):
         self.body.children[1]["onclick"] = 'window.location.href=\'' + self.value["url"] + '\''
         self.body.children[1].innerHTML = self.value["button_name"]
 
-        return self.body.render_inner()
+        return self.body
 
 

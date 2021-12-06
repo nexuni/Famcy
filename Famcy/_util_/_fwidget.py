@@ -70,6 +70,11 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 				if type(_item).__name__ == className:
 					return_list.append(_item)
 				return_list.extend(self.find_class(_item, className))
+
+			for _item, _ in item.layout.staticContent:
+				if type(_item).__name__ == className:
+					return_list.append(_item)
+				return_list.extend(self.find_class(_item, className))
 		return return_list
 		
 	def render(self):
@@ -84,7 +89,10 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		"""
 		self.preload()
 		render_data = self.render_inner()
-		render_data += '<script>' + self.js_after_func_name + '("' + self.id + '", ' + json.dumps(self.js_after_func_dict) + ')</script>'
+		if self.js_after_func_name != "" and self.js_after_func_name:
+			script = Famcy.script()
+			script.innerHTML = self.js_after_func_name + '("' + self.id + '", ' + json.dumps(self.js_after_func_dict) + ')'
+			render_data.addElement(script)
 		
 		# Set daemon to true to ensure thread dies when main thread dies
 		post_thread = FamcyThread(target=self.postload, daemon=True)

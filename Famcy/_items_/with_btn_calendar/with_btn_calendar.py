@@ -340,4 +340,4 @@ class with_btn_calendar(Famcy.FamcyBlock):
             })(jQuery);
         """ % (json.dumps(self.value))
 
-        return self.body.render_inner()
+        return self.body

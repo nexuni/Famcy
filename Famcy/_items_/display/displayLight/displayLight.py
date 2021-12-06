@@ -53,4 +53,4 @@ class displayLight(Famcy.FamcyBlock):
         self.body.children[0].children[1]["className"] = self.value["status"]["yellow"]
         self.body.children[0].children[2]["className"] = self.value["status"]["green"]
 
-        return self.body.render_inner()
+        return self.body

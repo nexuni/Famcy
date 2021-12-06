@@ -142,7 +142,7 @@ class FamcyLayout:
 
 		self.content = []
 		self.cusContent = []
-		self.promptContent = []
+		self.staticContent = []
 		self._check_rep()
 
 	def _check_rep(self):
@@ -151,8 +151,9 @@ class FamcyLayout:
 		"""
 		pass
 
-	def addPromptWidget(self, card, width=50):
-		self.promptContent.append([card, width])
+	def addStaticWidget(self, card, width=50):
+		card.parent = self.parent
+		self.staticContent.append([card, width])
 
 	def addWidget(self, card, start_row, start_col, height=1, width=1):
 		card.parent = self.parent
@@ -237,7 +238,7 @@ class FamcyLayout:
 					sijax_response.css("#"+card[0].id, "grid-column-end", str(card[2] + card[4] + 1))
 					sijax_response.css("#"+card[0].id, "grid-row-end", str(card[1] + card[3] + 1))
 
-		for _prompt, _width in self.promptContent:
+		for _prompt, _width in self.staticContent:
 			sijax_response.css("#"+_prompt.id, "width", str(_width))
 
 		for _card, _, _, _, _ in self.content:
@@ -258,7 +259,7 @@ class FamcyLayout:
 				cssLayout += self.setDeviceLayout(v)
 			cssLayout += '</style>'
 
-		for _prompt, _width in self.promptContent:
+		for _prompt, _width in self.staticContent:
 			cssLayout += '<style type="text/css">'
 			cssLayout += """
 				#%s {
@@ -282,44 +283,21 @@ class FamcyLayout:
 
 		return cssLayout
 
-	def render(self):
+	def render(self, body_element=None):
 		layout_css = self.setLayout()
 		header_script = ""
-		render_html = ""
+		_body = body_element if body_element else self.parent.body
 		for _card, _, _, _, _ in self.content:
-			render_html += _card.render()
+			_body.addElement(_card.render())
 			header_script += _card.header_script
 
-		for _card, _ in self.promptContent:
+		for _card, _ in self.staticContent:
 			_ = _card.render()
+			if not set(_body.script).intersection(set(_.script)):
+				_body.script.extend(_.script)
 			header_script += _card.header_script
 
-		return header_script + layout_css, render_html
-
-# Tests
-# -----------
-# class _card:
-# 	def __init__(self):
-# 		self.id = "id_" + str(random.randint(0,1000))
-		
-
-# if __name__ == '__main__':
-# 	layout = FamcyLayout(FLayoutMode.default)
-# 	layout.addWidget(_card(), 0, 0, 2, 1)
-# 	layout.addWidget(_card(), 0, 1)
-# 	layout.addWidget(_card(), 1, 1)
-# 	layout.addWidget(_card(), 2, 0, 1, 2)
-# 	layout.updateDefaultContent()
-
-# 	layout.addWidget(_card(), 0, 0, 2, 1)
-# 	layout.addWidget(_card(), 0, 1)
-# 	layout.addWidget(_card(), 1, 1)
-# 	layout.addWidget(_card(), 2, 0, 1, 2)
-# 	layout.updatePhoneLayoutContent()
-
-
-# 	print(layout.render())
-# ========================================================
+		return header_script + layout_css, _body
 
 
 

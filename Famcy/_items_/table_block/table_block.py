@@ -180,4 +180,4 @@ class table_block(Famcy.FamcyBlock):
             })
         """ % (json.dumps(self.value), self.id, self.id, self.id, self.id, self.id)
 
-        return self.body.render_inner()
+        return self.body

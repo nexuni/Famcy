@@ -56,4 +56,4 @@ class inputBlockSec(Famcy.FamcyInputBlock):
 
         self.body.style["background-image"] =  "url('" + self.value["img_src"] + "')"
 
-        return self.body.render_inner()
+        return self.body

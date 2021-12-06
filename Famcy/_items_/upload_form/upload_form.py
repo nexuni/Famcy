@@ -22,11 +22,10 @@ class upload_form(Famcy.FamcyCard):
 
     def render_inner(self):
 
-        header_script, content_render = self.layout.render()
+        header_script, self.body = self.layout.render()
         if header_script not in self.header_script:
             self.header_script += header_script
 
-        extra_html = ""
         for widget, _, _, _, _ in self.layout.content:
             if widget.clickable:
 
@@ -35,8 +34,6 @@ class upload_form(Famcy.FamcyCard):
                 input_tag["name"] = "fsubmission_obj"
                 input_tag["value"] = str(widget.submission_obj_key)
 
-                extra_html += input_tag.render_inner()
+                self.body.addElement(input_tag)
 
-        self.body.innerHTML = content_render + extra_html
-
-        return self.body.render_inner()
+        return self.body

@@ -78,6 +78,28 @@ class FResponse(metaclass=abc.ABCMeta):
 		self.target = target
 		self.finish_loading_script = "$('#loading_holder').css('display','none');"
 
+	def run_all_script_tag(self, html, sijax_response):
+		pure_html = ""
+
+		def _find_script(_pure_html, _html):
+			start = _html.find("<script>")
+			_pure_html += _html[:start]
+			if start > 0:
+				end = _html.find("</script>")
+				print(_html[start+8:end])
+				sijax_response.script("console.log('test');"+_html[start+8:end])
+				return _pure_html, _html[end+9:]
+			print("end")
+			return _pure_html, False
+
+		print("start while")
+		while html:
+			pure_html, html = _find_script(pure_html, html)
+		print("end while")
+
+		return pure_html
+
+
 	@abc.abstractmethod
 	def response(self, sijax_response):
 		"""

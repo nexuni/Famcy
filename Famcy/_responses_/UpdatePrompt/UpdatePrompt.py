@@ -11,6 +11,12 @@ class UpdatePrompt(Famcy.FamcyResponse):
 
 	def response(self, sijax_response):
 		if self.target:
-			sijax_response.html_append('#root', '<div id="prompt_holder">' + self.target.render_inner() + '</div>')
+			print("UpdatePrompt")
+			# update body html
+			_ = self.target.render_inner()
+			
+			# inner_html = self.run_all_script_tag(self.target.body.render_inner(), sijax_response)
+			print("self.target.body.render_inner(): ", self.target.body.render_inner())
+			sijax_response.html_append('#root', '<div id="prompt_holder">' + self.target.body.render_inner() + '</div>')
 			sijax_response.script(self.extra_script)
 			sijax_response.script(self.finish_loading_script)

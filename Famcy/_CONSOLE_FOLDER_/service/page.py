@@ -1,8 +1,10 @@
 import Famcy
+import io
 import os
 import json
 import datetime
 import requests
+import boto3
 import pandas as pd
 
 class SeasonPage(Famcy.FamcyPage):
@@ -17,10 +19,10 @@ class SeasonPage(Famcy.FamcyPage):
 		self.p_insert_card = self.p_card_insert()
 		self.p_upload_table_card = self.p_card_upload_table()
 
-		self.layout.addPromptWidget(self.p_del_card)
-		self.layout.addPromptWidget(self.p_update_card)
-		self.layout.addPromptWidget(self.p_insert_card, 60)
-		self.layout.addPromptWidget(self.p_upload_table_card)
+		self.layout.addStaticWidget(self.p_del_card)
+		self.layout.addStaticWidget(self.p_update_card)
+		self.layout.addStaticWidget(self.p_insert_card, 60)
+		self.layout.addStaticWidget(self.p_upload_table_card)
 
 
 		self.card_1 = self.card1()
@@ -81,6 +83,9 @@ class SeasonPage(Famcy.FamcyPage):
 		download_btn.update({"title": "下載表格"})
 		download_btn.connect(self.download_table, target=card1)
 
+		download_link = Famcy.downloadFile()
+		download_link.update({"title": "","file_path": 'http://127.0.0.1:5000/robots.xlsx',"file_name": 'season.xlsx'})
+		download_link.body.children[0]["style"] = "visibility: hidden;"
 
 		input_form.layout.addWidget(input_date, 0, 0, 2, 1)
 		input_form.layout.addWidget(input_time, 0, 1, 2, 1)
@@ -96,6 +101,8 @@ class SeasonPage(Famcy.FamcyPage):
 		input_form.layout.addWidget(insert_btn, 1, 4)
 		input_form.layout.addWidget(new_btn, 2, 4)
 		input_form.layout.addWidget(cancel_btn, 3, 4)
+
+		input_form.layout.addWidget(download_link, 4, 0, 1, 5)
 
 		card1.layout.addWidget(input_form, 0, 0)
 
@@ -192,20 +199,20 @@ class SeasonPage(Famcy.FamcyPage):
 				"file_path": 'C:/Users/user/FamcyDownload/',
 			})
 
-		upload_form.layout.addWidget(upload_file, 0, 0)
-
-		input_form = Famcy.input_form()
-
 		submit_btn = Famcy.submitBtn()
 		submit_btn.update({"title":"確認"})
 		submit_btn.connect(self.upload_table, target=p_card)
+
+		upload_form.layout.addWidget(upload_file, 0, 0)
+		upload_form.layout.addWidget(submit_btn, 0, 1)
+
+		input_form = Famcy.input_form()
 
 		cancel_btn = Famcy.submitBtn()
 		cancel_btn.update({"title":"返回"})
 		cancel_btn.connect(self.prompt_remove_input)
 
 		input_form.layout.addWidget(cancel_btn, 0, 0)
-		input_form.layout.addWidget(submit_btn, 0, 1)
 
 		p_card.layout.addWidget(upload_form, 0, 0)
 		p_card.layout.addWidget(input_form, 1, 0)
@@ -431,18 +438,42 @@ class SeasonPage(Famcy.FamcyPage):
 
 	def download_table(self, submission_obj, info_list):
 		msg = "資料填寫有誤"
+		extra_script = ""
 
 		try:
-			df1 = pd.DataFrame.from_records(self.table_info)
-			df1.to_excel("C:/Users/user/FamcyDownload/"+datetime.datetime.now().strftime("%Y%m%d%H%M%S")+".xlsx",sheet_name='sheet1')
+			file_name = datetime.datetime.now().strftime("%Y%m%d%H%M%S")+".xlsx"
+
+			AWS_ACCESS_KEY_ID=""
+			AWS_SECRET_ACCESS_KEY=""
+			s3_client = boto3.client(
+			    "s3",
+			    aws_access_key_id=AWS_ACCESS_KEY_ID,
+			    aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+			)
+
+			books_df = pd.DataFrame(
+			    data=self.change_table_info_to_dict(),
+			    columns=self.change_table_info_to_dict().keys(),
+			)
+
+			with io.StringIO() as csv_buffer:
+			    books_df.to_csv(csv_buffer, index=False)
+
+			    response = s3_client.put_object(
+			        Bucket="minc-hitech.com", Key="pms_download/"+file_name, Body=csv_buffer.getvalue()
+			    )
+
+			self.card_1.layout.content[0][0].layout.content[12][0].update({"file_path": 'http://minc-hitech.com.s3.amazonaws.com/pms_download/'+file_name})
+			extra_script = "document.getElementById('" + self.card_1.layout.content[0][0].layout.content[12][0].id + "_input').click();"
 
 			msg = "成功加入資料"
 		except Exception as e:
-			pass
+			msg=str(e)
 
-		return Famcy.UpdateAlert(alert_message=msg)
+		return [Famcy.UpdateBlockHtml(), Famcy.UpdateAlert(alert_message=msg, extra_script=extra_script)]
 
 	def upload_table(self, submission_obj, info_list):
+		print("======upload_table========")
 		msg = "檔案上傳失敗，請重新再試"
 		if info_list[0][0]["indicator"]:
 			file_path = self.card_2.layout.content[0][0].layout.content[0][0].value["file_path"]+info_list[0][0]["message"]
@@ -544,6 +575,17 @@ class SeasonPage(Famcy.FamcyPage):
 		write_data = df.to_dict('records')
 		return_dict = {}
 		for row in write_data:
+			for columns in row.keys():
+				try:
+					return_dict[columns].append(row[columns])
+				except:
+					return_dict[columns] = [row[columns]]
+
+		return return_dict
+
+	def change_table_info_to_dict(self):
+		return_dict = {}
+		for row in self.table_info:
 			for columns in row.keys():
 				try:
 					return_dict[columns].append(row[columns])

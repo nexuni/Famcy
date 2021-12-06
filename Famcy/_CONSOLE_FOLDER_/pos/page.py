@@ -16,9 +16,9 @@ class PosPage(Famcy.FamcyPage):
         self.pos_card = self.prompt_pos()
         # self.insert_card = self.prompt_insert()
         
-        self.layout.addPromptWidget(self.fee_card, 40)
-        self.layout.addPromptWidget(self.pos_card, 40)
-        # self.layout.addPromptWidget(self.insert_card, 40)
+        self.layout.addStaticWidget(self.fee_card, 40)
+        self.layout.addStaticWidget(self.pos_card, 40)
+        # self.layout.addStaticWidget(self.insert_card, 40)
 
         self.card_1 = self.card1()
         self.card_2 = self.card2()
@@ -191,7 +191,7 @@ class PosPage(Famcy.FamcyPage):
         license = str(input_form.layout.content[1][0].value["content"])
         time = str(input_form.layout.content[2][0].value["content"])
 
-        self.pos_card.layout.content[0][0].layout.content[0][0].update({"placeholder": license})
+        self.pos_card.layout.content[0][0].layout.content[0][0].update({"defaultValue": license})
         self.pos_card.layout.content[0][0].layout.content[1][0].update({"defaultValue": "20"+time[:2]+"-"+time[2:4]+"-"+time[4:6]})
         self.pos_card.layout.content[0][0].layout.content[2][0].update({"defaultValue": time[6:8]+":"+time[8:10]})
 
@@ -202,7 +202,7 @@ class PosPage(Famcy.FamcyPage):
         input_form = submission_obj.origin.find_parent(submission_obj.origin, "input_form")
 
         license = str(info_list[4][0])
-        self.pos_card.layout.content[0][0].layout.content[0][0].update({"placeholder": license})
+        self.pos_card.layout.content[0][0].layout.content[0][0].update({"defaultValue": license})
         self.pos_card.layout.content[0][0].layout.content[1][0].update({"defaultValue": None})
         self.pos_card.layout.content[0][0].layout.content[2][0].update({"defaultValue": None})
 

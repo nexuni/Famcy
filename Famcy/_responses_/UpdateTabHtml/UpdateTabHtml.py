@@ -11,7 +11,10 @@ class UpdateTabHtml(Famcy.FamcyResponse):
 
 	def response(self, sijax_response):
 		if self.target:
-			sijax_response.html('#content_section', self.target.render_inner())
+			# update body html
+			_ = self.target.render_inner()
+			
+			sijax_response.html('#content_section', self.target.body.render_inner())
 			self.target.layout.setSijaxLayout(sijax_response)
 			sijax_response.script(self.extra_script)
 			sijax_response.script(self.finish_loading_script)

@@ -15,8 +15,8 @@ class CarManagementPage(Famcy.FamcyPage):
         self.del_card = self.prompt_delete()
         self.insert_card = self.prompt_insert()
 
-        self.layout.addPromptWidget(self.del_card, 40)
-        self.layout.addPromptWidget(self.insert_card, 40)
+        self.layout.addStaticWidget(self.del_card, 40)
+        self.layout.addStaticWidget(self.insert_card, 40)
 
 
         self.card_1 = self.card1()
@@ -313,7 +313,7 @@ class CarManagementPage(Famcy.FamcyPage):
                 })
 
             license_num = Famcy.pureInput()
-            license_num.update({"title":"車牌號碼", "input_type":"text", "placeholder": temp["platenum"]})
+            license_num.update({"title":"車牌號碼", "input_type":"text", "defaultValue": temp["platenum"]})
 
             update_btn = Famcy.submitBtn()
             update_btn.update({"title":"修改車牌", "modified_time": temp["modified_time"]})

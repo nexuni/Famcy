@@ -18,10 +18,10 @@ class LoginStyle(Famcy.FamcyStyle):
 		if desc:
 			self.desc = desc
 
-	def render(self, extra_script, content, background_flag=False, route="", time=5000, form_init_js=None):
+	def render(self, extra_script, content, background_flag=False, route="", time=5000, form_init_js=None, end_script="", **kwargs):
 
 		html_header = self.setDashboardHTMLHeader()
-		end_js = self.setDashboardJavaScript()
+		end_js = end_script+self.setDashboardJavaScript()
 		color_theme = self.color_theme.render()
 		load_spinner = self.loader.render()
 
