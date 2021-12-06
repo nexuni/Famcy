@@ -41,5 +41,4 @@ class displayImage(Famcy.FamcyBlock):
             i_temp["src"] = img_name
             self.body.children[1].addElement(i_temp)
 
-        return self.body.render_inner()
-
+        return self.body

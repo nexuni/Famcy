@@ -12,6 +12,7 @@ class FElement(metaclass=abc.ABCMeta):
 		self.html = ""
 		self.parentElement = None
 		self.children = []
+		self.script = []
 
 	def __setitem__(self, key, value):
 		if key == "className":
@@ -27,9 +28,26 @@ class FElement(metaclass=abc.ABCMeta):
 		if item in self.attributes.keys():
 			del self.attributes[item]
 
+	def addStaticScript(self, script):
+		if script not in self.script:
+			self.script.append(script)
+
+	def removeStaticScript(self, script=None):
+		if script:
+			i = self.script.index(script)
+			del self.script[i]
+
 	def addElement(self, child):
 		if child not in self.children:
+			child.parentElement = self
 			self.children.append(child)
+
+	def removeElement(self, child=None, index=None):
+		if child:
+			i = self.children.index(child)
+			del self.children[i]
+		elif index:
+			del self.children[index]
 
 	def setAttrTag(self):
 		"""
@@ -52,8 +70,25 @@ class FElement(metaclass=abc.ABCMeta):
 
 		return return_attr
 
-	@abc.abstractmethod
 	def render_inner(self):
+		temp = self.render_element()
+		print("self.parentElement, self, self.script: ", self.parentElement, self, self.script)
+		if self.parentElement:
+			if not set(self.parentElement.script).intersection(set(self.script)):
+				self.parentElement.script.extend(self.script)
+		return temp
+
+	def render_script(self):
+		# update script
+		_ = self.render_inner()
+		
+		return_script = ""
+		for _s in self.script:
+			return_script += _s.render_inner()
+		return return_script
+
+	@abc.abstractmethod
+	def render_element(self):
 		"""
 		This is the customizable inner render
 		function for famcy page. 

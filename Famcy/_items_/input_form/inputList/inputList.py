@@ -64,4 +64,4 @@ class inputList(Famcy.FamcyInputBlock):
         self.body.children[1].innerHTML = self.value["desc"]
         self.body.children[2].children[0]["after_action"] = self.value["action_after_post"]
 
-        return self.body.render_inner()
+        return self.body

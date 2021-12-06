@@ -44,7 +44,7 @@ class pureInput(Famcy.FamcyInputBlock):
         self.body.addElement(l_temp)
         self.body.addElement(p_temp)
         self.body.addElement(input_temp)
-        self.body.addElement(script)
+        self.body.addStaticScript(script)
 
     def render_inner(self):
         if self.value["input_type"] == "number" and self.value["num_range"]:
@@ -69,9 +69,10 @@ class pureInput(Famcy.FamcyInputBlock):
 
         if "save" in self.value["action_after_post"]:
             self.body.children[2]["onkeyup"] = 'saveValue(\'' + self.id + '\', this.value);'
-            self.body.children[3].innerHTML = 'document.getElementById("' + self.id + '_input").value = getSavedValue("' + self.id + '");'
+            self.body.script[0].innerHTML = 'document.getElementById("' + self.id + '_input").value = getSavedValue("' + self.id + '");'
         else:
             del self.body.children[2]["onkeyup"]
-            self.body.children[3].innerHTML = ''
+            self.body.script[0].innerHTML = ''
 
-        return self.body.render_inner()
+
+        return self.body

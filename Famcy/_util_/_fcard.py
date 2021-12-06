@@ -14,7 +14,6 @@ class FCard(FamcyWidget):
 
 		self.title = ""
 		self.layout = FamcyLayout(self, layout_mode)
-		self.body = None
 		self.init_card()
 		self._check_rep()
 
@@ -54,7 +53,8 @@ class FCard(FamcyWidget):
 		render the layout and
 		apply style. 
 		"""
-		header_script, content = self.layout.render()
+		header_script, _content = self.layout.render(body_element=self.body.children[-1])
+		self.body.children[-1] = _content
 		if header_script not in self.header_script:
 			self.header_script += header_script
 
@@ -64,9 +64,7 @@ class FCard(FamcyWidget):
 		elif self.title == "" and len(self.body.children) == 2:
 			del self.body.children[0]
 
-		self.body.children[-1].innerHTML = content
-
-		return self.body.render_inner()
+		return self.body
 
 	def preload(self):
 		"""

@@ -31,6 +31,7 @@ class downloadFile(Famcy.FamcyUploadBlock):
         input_temp["id"] = self.id + "_input"
         input_temp["download"] = ""
         input_temp["href"] = ""
+        input_temp["target"] ="_blank"
 
         self.body.addElement(input_temp)
 
@@ -41,4 +42,4 @@ class downloadFile(Famcy.FamcyUploadBlock):
             self.body.children[0]["download"] = self.value["file_name"]
         self.body.children[0].innerHTML = self.value["title"]
 
-        return self.body.render_inner()
+        return self.body

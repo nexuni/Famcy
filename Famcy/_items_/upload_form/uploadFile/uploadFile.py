@@ -41,4 +41,4 @@ class uploadFile(Famcy.FamcyUploadBlock):
         else:
             del self.body.children[0]["multiple"]
 
-        return self.body.render_inner()
+        return self.body

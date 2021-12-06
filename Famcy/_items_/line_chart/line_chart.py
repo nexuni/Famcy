@@ -50,7 +50,6 @@ class line_chart(Famcy.FamcyBlock):
             }
 
     def init_block(self):
-        self.header_script += '<script src="/static/js/line_chart.js"></script>'
 
         self.body = Famcy.div()
         self.body["id"] = self.id
@@ -60,6 +59,10 @@ class line_chart(Famcy.FamcyBlock):
 
         self.body.addElement(div_temp)
         self.body.addElement(script)
+
+        static_script = Famcy.script()
+        static_script["src"] = "/static/js/line_chart.js"
+        self.body.addStaticScript(static_script)
 
     def render_inner(self):
         data = []
@@ -100,4 +103,4 @@ class line_chart(Famcy.FamcyBlock):
 
         self.body.children[1].innerHTML = 'generateLineChart("%s", %s, %s)' % (self.id, json_line_dict_values, json_line_dict_title)
         
-        return self.body.render_inner()
+        return self.body

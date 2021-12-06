@@ -77,4 +77,4 @@ class inputBtn(Famcy.FamcyInputBlock):
             del self.body.children[2]["onkeyup"]
             self.body.children[4].innerHTML = ''
 
-        return self.body.render_inner()
+        return self.body

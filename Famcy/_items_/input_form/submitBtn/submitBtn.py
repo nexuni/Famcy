@@ -29,4 +29,4 @@ class submitBtn(Famcy.FamcyInputBlock):
 
     def render_inner(self):
         self.body["value"] = self.value["title"]
-        return self.body.render_inner()
+        return self.body

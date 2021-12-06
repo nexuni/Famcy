@@ -38,4 +38,4 @@ class displayPicWord(Famcy.FamcyBlock):
         self.body.children[1].innerHTML = self.value["title"]
         self.body.children[2].innerHTML = markdown.markdown(self.value["content"])
 
-        return self.body.render_inner()
+        return self.body

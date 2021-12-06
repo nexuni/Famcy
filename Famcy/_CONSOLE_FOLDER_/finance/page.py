@@ -13,7 +13,7 @@ class FinancePage(Famcy.FamcyPage):
 
         self.p_date_card = self.prompt_card_date()
 
-        self.layout.addPromptWidget(self.p_date_card)
+        self.layout.addStaticWidget(self.p_date_card)
 
         self.card_1 = self.card1()
         self.card_2 = self.card2()
@@ -35,9 +35,9 @@ class FinancePage(Famcy.FamcyPage):
         input_time2 = Famcy.pureInput()
 
         input_date.update({"title": "輸入起始日期", "input_type": "date"})
-        input_time.update({"title": "輸入起始時間", "input_type": "time"})
+        input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": "00:00"})
         input_date2.update({"title": "輸入結束日期", "input_type": "date"})
-        input_time2.update({"title": "輸入結束時間", "input_type": "time"})
+        input_time2.update({"title": "輸入結束時間", "input_type": "time", "defaultValue": "23:59"})
 
         search_type = Famcy.inputList()
         search_type.update({
@@ -58,6 +58,9 @@ class FinancePage(Famcy.FamcyPage):
         search_btn.update({"title": "查詢"})
         search_btn.connect(self.generate_chart, target=card1)
 
+        self.pie_graph = Famcy.pie_chart()
+        self.bar_graph = Famcy.bar_chart()
+
         input_form.layout.addWidget(input_date, 0, 0)
         input_form.layout.addWidget(input_time, 0, 1)
         input_form.layout.addWidget(input_date2, 0, 2)
@@ -69,6 +72,9 @@ class FinancePage(Famcy.FamcyPage):
         input_form.layout.addWidget(search_btn, 1, 3)
 
         card1.layout.addWidget(input_form, 0, 0)
+
+        card1.layout.addStaticWidget(self.pie_graph)
+        card1.layout.addStaticWidget(self.bar_graph)
 
         return card1
 
@@ -83,26 +89,26 @@ class FinancePage(Famcy.FamcyPage):
                 "title": "檔案上傳",
                 "file_num": "single",
                 "accept_type": ["xls", "xlsx"],
-                "file_path": 'C:/Users/user/FamcyDownload/',
+                "file_path": 'E:/nexuni/Famcy/Famcy/FamcyDownload/',
             })
 
         submit_btn = Famcy.submitBtn()
         submit_btn.update({"title": "送出檔案"})
         submit_btn.connect(self.submit_file , target=self.p_date_card)
 
+        # _submit_btn = Famcy.submitBtn()
+        # _submit_btn.update({"title": "送出檔案"})
+        # _submit_btn.connect(self.test , target=self.p_date_card)
+
         upload_form.layout.addWidget(upload_file, 0, 0)
         upload_form.layout.addWidget(submit_btn, 1, 0)
-
-
-        input_form = Famcy.input_form()
+        # upload_form.layout.addWidget(_submit_btn, 2, 0)
 
         download_btn = Famcy.downloadFile()
-        download_btn.update({"title": "下載檔案","file_path": 'http://127.0.0.1:5000/robots.txt',"file_name": 'download.txt'})
-
-        input_form.layout.addWidget(download_btn, 0, 0)
+        download_btn.update({"title": "下載檔案","file_path": 'http://127.0.0.1:5000/static/image/login.png',"file_name": 'login.png'})
 
         card2.layout.addWidget(upload_form, 0, 0)
-        card2.layout.addWidget(input_form, 1, 0)
+        card2.layout.addWidget(download_btn, 1, 0)
 
         return card2
     # ====================================================
@@ -124,7 +130,7 @@ class FinancePage(Famcy.FamcyPage):
 
         submit_btn = Famcy.submitBtn()
         submit_btn.update({"title":"確認"})
-        submit_btn.connect(self.send_file_path_to_server)
+        submit_btn.connect(self.send_file_path_to_server, target=p_card)
 
         cancel_btn = Famcy.submitBtn()
         cancel_btn.update({"title":"返回"})
@@ -145,6 +151,9 @@ class FinancePage(Famcy.FamcyPage):
 
     # submission function
     # ====================================================
+    def test(self, submission_obj, info_list):
+        return [Famcy.UpdateAlert(alert_message="msg", target=self.card_2), Famcy.UpdatePrompt()]
+
     def prompt_remove_input(self, submission_obj, info_list):
         return Famcy.UpdateRemoveElement(prompt_flag=True)
 
@@ -153,16 +162,20 @@ class FinancePage(Famcy.FamcyPage):
         msg = "檔案上傳失敗，請重新再試"
         if info_list[0][0]["indicator"]:
             self.p_date_card["file_name"] = info_list[0][0]["message"]
+            msg = "成功上傳檔案"
             return Famcy.UpdatePrompt()
         return Famcy.UpdateAlert(alert_message=msg, target=self.card_2)
 
     def send_file_path_to_server(self, submission_obj, info_list):
         msg = "檔案上傳失敗，請重新再試"
+        print("====================a")
         if len(info_list[0]) > 0 and len(info_list[1]) > 0:
+            print("====================b")
             start_time = "".join(info_list[0][0].split("-"))[2:] + "000000000"
             end_time = "".join(info_list[1][0].split("-"))[2:] + "235959000"
 
             if self.get_receipt_match(start_time, end_time, self.p_date_card["file_name"]):
+                print("====================c")
                 msg = "成功上傳檔案"
                 return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdateAlert(alert_message=msg, target=self.card_2)]
         return Famcy.UpdateAlert(alert_message=msg)
@@ -211,24 +224,22 @@ class FinancePage(Famcy.FamcyPage):
             values = res_msg["values"]
             self.card_1.layout.content[0][0].layout.removeWidget(2, 0)
             if chart_type == "pie":
-                pie_graph = Famcy.pie_chart()
-                pie_graph.update({
+                self.pie_graph.update({
                         "values": values,
                         "labels": res_msg["labels"],
                         "size": [1000, 500], # width, height
                     })
-                self.card_1.layout.content[0][0].layout.addWidget(pie_graph, 2, 0, 1, 4)
+                self.card_1.layout.content[0][0].layout.addWidget(self.pie_graph, 2, 0, 1, 4)
 
             else:
                 for val in values:
                     val["color"] = "rgb(164, 99, 230)"
-                bar_graph = Famcy.bar_chart()
-                bar_graph.update({
+                self.bar_graph.update({
                         "values": values,
                         "labels": ["bar1"],
                         "size": [1000, 500], # width, height
                     })
-                self.card_1.layout.content[0][0].layout.addWidget(bar_graph, 2, 0, 1, 4)
+                self.card_1.layout.content[0][0].layout.addWidget(self.bar_graph, 2, 0, 1, 4)
 
         return res_ind
 

@@ -41,12 +41,12 @@ class OverviewPage(Famcy.FamcyPage):
         self.led_card = self.prompt_led()
         self.p_edit = self.prompt_update_info()
 
-        self.layout.addPromptWidget(self.confirm_card, 30)
-        self.layout.addPromptWidget(self.apm_card, 50)
-        self.layout.addPromptWidget(self.station_card, 50)
-        self.layout.addPromptWidget(self.ipcam_card, 50)
-        self.layout.addPromptWidget(self.led_card, 50)
-        self.layout.addPromptWidget(self.p_edit, 60)
+        self.layout.addStaticWidget(self.confirm_card, 30)
+        self.layout.addStaticWidget(self.apm_card, 50)
+        self.layout.addStaticWidget(self.station_card, 50)
+        self.layout.addStaticWidget(self.ipcam_card, 50)
+        self.layout.addStaticWidget(self.led_card, 50)
+        self.layout.addStaticWidget(self.p_edit, 60)
 
         # for parking_lots_remaining
         self.card_1 = self.card1()
@@ -573,6 +573,8 @@ class OverviewPage(Famcy.FamcyPage):
 
     # table submit function
     def submit_car_img(self, submission_obj, info_list):
+        if len(info_list[0]) > 0:
+            pass
         self.card_4.layout.content[0][0].update({
                 "img_name": ["/asset/image/" + info_list[0][0]]
             })

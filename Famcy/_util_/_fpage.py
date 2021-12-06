@@ -47,6 +47,8 @@ class FPage(FamcyWidget):
 		self.background_thread_flag = background_thread
 		self.background_freq = background_freq
 
+		self.init_page()
+
 		if self.background_thread_flag:
 			self.sijax_response = None
 			
@@ -56,6 +58,9 @@ class FPage(FamcyWidget):
 			self.bthread.start()
 
 		self._check_rep()
+
+	def init_page(self):
+		self.body = Famcy.ELEMENT()
 
 	def _check_rep(self):
 		"""
@@ -99,6 +104,7 @@ class FPage(FamcyWidget):
 		# First setup the submission handler
 
 		form_init_js = ''
+		end_script = ''
 		upload_list = self.find_class(self, "upload_form")
 		for _item in upload_list:
 			form_init_js += g.sijax.register_upload_callback(_item.id, FSubmissionSijaxHandler.upload_form_handler)
@@ -112,15 +118,17 @@ class FPage(FamcyWidget):
 			content_data = "<h1>You are not authorized to view this page!</h1>"
 		else:
 			# Render all content
-			content_data = super(FPage, self).render()
+			self.body = super(FPage, self).render()
+			content_data = self.body.render_inner()
+			end_script = self.body.render_script()
+			for temp, _ in self.layout.staticContent:
+				end_script += temp.body.render_script()
 
 		# Apply style at the end
-		return self.style.render(self.header_script, content_data, background_flag=self.background_thread_flag, route=self.route, time=int(1/self.background_freq)*1000, form_init_js=form_init_js)
+		return self.style.render(self.header_script, content_data, background_flag=self.background_thread_flag, route=self.route, time=int(1/self.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
 
 	def background_generator_loop(self):
 		def generate():
-			print("background_loop")
-			print("FamcyBackgroundQueue: ", Famcy.FamcyBackgroundQueue.nodes)
 			try:
 				baction = Famcy.FamcyBackgroundQueue.pop()
 				yield json.dumps({"indicator": True, "message": baction.tojson()})
@@ -153,12 +161,12 @@ class FPage(FamcyWidget):
 		This is the function to 
 		render the layout. 
 		"""
-		header_script, content_data = self.layout.render()
+		header_script, body_element = self.layout.render()
 
 		if header_script not in self.header_script:
 			self.header_script += header_script
 		
-		return content_data
+		return body_element
 
 	def preload(self):
 		"""

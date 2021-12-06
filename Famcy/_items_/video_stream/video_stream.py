@@ -95,4 +95,4 @@ class video_stream(Famcy.FamcyBlock):
         self.body.children[1].innerHTML = self.value["desc"]
         self.body.children[2].addElement(div_temp)
 
-        return self.body.render_inner()
+        return self.body

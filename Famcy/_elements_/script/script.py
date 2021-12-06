@@ -5,7 +5,7 @@ class script(Famcy.FamcyElement):
     def __init__(self):
         super(script, self).__init__()
 
-    def render_inner(self):
+    def render_element(self):
         html = ""
 
         if self.innerHTML and self.innerHTML != "":

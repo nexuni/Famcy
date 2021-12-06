@@ -11,7 +11,10 @@ class UpdateBlockHtml(Famcy.FamcyResponse):
 
 	def response(self, sijax_response):
 		if self.target:
-			body_html = self.target.render_inner()
+			# update body html
+			_ = self.target.render_inner()
+			_ = self.target.body.render_inner()
+
 			sijax_response.html('#'+self.target.id, self.target.body.html)
 
 			if hasattr(self.target, "layout"):
