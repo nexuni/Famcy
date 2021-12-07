@@ -1,2 +1,2 @@
-# Famcy Quick Start
-This goes through an example to show how to quickly develop a page via Famcy framework.
+# Famcy Styles
+This goes through how to develop your customized famcy styles and the natively provided famcy style templates. 
