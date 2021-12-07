@@ -7,7 +7,7 @@ For now, we only support ubuntu development with python3.7.
 2. Make sure ```python3.7``` exist in your CLI environment. 
 
 ## Installation
-The installation requires the install of additional package [!FamcyTools](https://github.com/nexuni/FamcyTools). 
+The installation requires the install of additional package [FamcyTools](https://github.com/nexuni/FamcyTools). 
 1. Install FamcyTools
 ```
 pip3 install FamcyTools
@@ -71,8 +71,8 @@ Deployed to wsgi
 ## Features
 We provided default services with some default pages in Famcy. 
 
-* [!Famcy Quick Start](https://github.com/nexuni/Famcy/docs/fstart.md)
-* [!FamcyPage](https://github.com/nexuni/Famcy/docs/fpage.md)
-* [!FamcyItems](https://github.com/nexuni/Famcy/docs/fitems.md)
-* [!FamcyStyles](https://github.com/nexuni/Famcy/docs/fstyles.md)
-* [!FamcyElements](https://github.com/nexuni/Famcy/docs/felements.md)
+* [Famcy Quick Start](https://github.com/nexuni/Famcy/docs/fstart.md)
+* [FamcyPage](https://github.com/nexuni/Famcy/docs/fpage.md)
+* [FamcyItems](https://github.com/nexuni/Famcy/docs/fitems.md)
+* [FamcyStyles](https://github.com/nexuni/Famcy/docs/fstyles.md)
+* [FamcyElements](https://github.com/nexuni/Famcy/docs/felements.md)
