@@ -59,24 +59,24 @@ sjxUpload.resetForm = function (formId) {
 };
 
 sjxUpload.registerForm = function (params) {
-	var formId = params.formId,
-		frameId = sjxUpload.getFrameId(formId),
-		callbackName = params.callback,
-		iframe = document.createElement('iframe');
+	// var formId = params.formId,
+	// 	frameId = sjxUpload.getFrameId(formId),
+	// 	callbackName = params.callback,
+	// 	iframe = document.createElement('iframe');
 
-	iframe.setAttribute('id', frameId);
-	iframe.setAttribute('name', frameId);
-	iframe.setAttribute('style', 'display: none');
+	// iframe.setAttribute('id', frameId);
+	// iframe.setAttribute('name', frameId);
+	// iframe.setAttribute('style', 'display: none');
 
-	jQuery('#' + formId).append(iframe);
+	// jQuery('#' + formId).append(iframe);
 
-	if (window.frames[frameId].name !== frameId) {
-		//IE bugfixes
-		window.frames[frameId].name = frameId;
-		jQuery('#' + frameId).css('display', 'none');
-	}
+	// if (window.frames[frameId].name !== frameId) {
+	// 	//IE bugfixes
+	// 	window.frames[frameId].name = frameId;
+	// 	jQuery('#' + frameId).css('display', 'none');
+	// }
 
-	sjxUpload.prepareForm(formId, callbackName);
+	// sjxUpload.prepareForm(formId, callbackName);
 };
 
 sjxUpload.processResponse = function (formId, commandsArray) {

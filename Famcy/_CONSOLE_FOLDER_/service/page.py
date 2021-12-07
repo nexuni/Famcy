@@ -196,7 +196,7 @@ class SeasonPage(Famcy.FamcyPage):
 				"title": "檔案上傳",
 				"file_num": "single",
 				"accept_type": ["xls", "xlsx"],
-				"file_path": 'C:/Users/user/FamcyDownload/',
+				"file_path": 'E:/nexuni/Famcy/Famcy/FamcyDownload/',
 			})
 
 		submit_btn = Famcy.submitBtn()
@@ -476,7 +476,7 @@ class SeasonPage(Famcy.FamcyPage):
 		print("======upload_table========")
 		msg = "檔案上傳失敗，請重新再試"
 		if info_list[0][0]["indicator"]:
-			file_path = self.card_2.layout.content[0][0].layout.content[0][0].value["file_path"]+info_list[0][0]["message"]
+			file_path = self.p_upload_table_card.layout.content[0][0].layout.content[0][0].value["file_path"]+info_list[0][0]["message"]
 			table_info = self.read_excel_file(file_path)
 			if self.post_insert(table_info["phonenum"], table_info["platenum"], table_info["start_time"], table_info["end_time"], table_info["database_name"], table_info["season_type"], table_info["months_fee"], table_info["comments"]):
 				self.get_season_data()
