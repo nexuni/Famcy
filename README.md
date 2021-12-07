@@ -71,8 +71,8 @@ Deployed to wsgi
 ## Features
 We provided default services with some default pages in Famcy. 
 
-* [Famcy Quick Start](https://github.com/nexuni/Famcy/blob/main/docs//fstart.md)
-* [FamcyPage](https://github.com/nexuni/Famcy/blob/main/docs//fpage.md)
-* [FamcyItems](https://github.com/nexuni/Famcy/blob/main/docs//fitems.md)
-* [FamcyStyles](https://github.com/nexuni/Famcy/blob/main/docs//fstyles.md)
-* [FamcyElements](https://github.com/nexuni/Famcy/blob/main/docs//felements.md)
+* [Famcy Quick Start](https://github.com/nexuni/Famcy/blob/main/docs/fstart.md)
+* [FamcyPage](https://github.com/nexuni/Famcy/blob/main/docs/fpage.md)
+* [FamcyItems](https://github.com/nexuni/Famcy/blob/main/docs/fitems.md)
+* [FamcyStyles](https://github.com/nexuni/Famcy/blob/main/docs/fstyles.md)
+* [FamcyElements](https://github.com/nexuni/Famcy/blob/main/docs/felements.md)
