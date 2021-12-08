@@ -43,10 +43,10 @@ class FElement(metaclass=abc.ABCMeta):
 			self.children.append(child)
 
 	def removeElement(self, child=None, index=None):
-		if child:
+		if child and child in self.children:
 			i = self.children.index(child)
 			del self.children[i]
-		elif index:
+		elif index and len(self.children) > index:
 			del self.children[index]
 
 	def setAttrTag(self):
@@ -72,7 +72,6 @@ class FElement(metaclass=abc.ABCMeta):
 
 	def render_inner(self):
 		temp = self.render_element()
-		print("self.parentElement, self, self.script: ", self.parentElement, self, self.script)
 		if self.parentElement:
 			if not set(self.parentElement.script).intersection(set(self.script)):
 				self.parentElement.script.extend(self.script)

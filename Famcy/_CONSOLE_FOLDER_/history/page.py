@@ -9,7 +9,7 @@ class CarManagementPage(Famcy.FamcyPage):
         super(CarManagementPage, self).__init__("/car_management", Famcy.ClassicSideStyle(), background_thread=False)
 
         self.car_queue_info = []
-        self.carpark_id = "park1"
+        self.carpark_id = "CARLO"
         self.entry_station = "E1"
 
         self.del_card = self.prompt_delete()
@@ -63,10 +63,6 @@ class CarManagementPage(Famcy.FamcyPage):
         new_btn.update({"title": "新增"})
         new_btn.connect(self.prompt_submit_input, target=self.insert_card)
 
-        cancel_btn = Famcy.submitBtn()
-        cancel_btn.update({"title": "刪除"})
-        cancel_btn.connect(self.prompt_submit_input, target=self.del_card)
-
         input_form.layout.addWidget(input_date, 0, 0)
         input_form.layout.addWidget(input_time, 0, 1)
         input_form.layout.addWidget(input_date2, 0, 2)
@@ -75,8 +71,7 @@ class CarManagementPage(Famcy.FamcyPage):
         input_form.layout.addWidget(verify_mode, 1, 1)
 
         input_form.layout.addWidget(new_btn, 0, 4)
-        input_form.layout.addWidget(cancel_btn, 1, 4)
-        input_form.layout.addWidget(search_btn, 1, 3)
+        input_form.layout.addWidget(search_btn, 1, 4)
 
         card1.layout.addWidget(input_form, 0, 0)
 
@@ -130,20 +125,20 @@ class CarManagementPage(Famcy.FamcyPage):
 
         input_form = Famcy.input_form()
 
-        license_num = Famcy.pureInput()
-        license_num.update({"title":"車牌號碼", "input_type":"text"})
+        text_msg = Famcy.displayParagraph()
+        text_msg.update({"title": "確認是否刪除車牌?", "content": ""})
+
+        confirm_btn = Famcy.submitBtn()
+        confirm_btn.update({"title":"確認"})
+        confirm_btn.connect(self.update_delete)
 
         cancel_btn = Famcy.submitBtn()
-        cancel_btn.update({"title":"返回"})
+        cancel_btn.update({"title":"取消"})
         cancel_btn.connect(self.prompt_remove_input)
 
-        submit_btn = Famcy.submitBtn()
-        submit_btn.update({"title":"確認"})
-        submit_btn.connect(self.update_delete, target=p_card)
-
-        input_form.layout.addWidget(license_num, 0, 0, 1, 2)
-        input_form.layout.addWidget(cancel_btn, 1, 0)
-        input_form.layout.addWidget(submit_btn, 1, 1)
+        input_form.layout.addWidget(text_msg, 0, 0, 1, 2)
+        input_form.layout.addWidget(confirm_btn, 1, 0)
+        input_form.layout.addWidget(cancel_btn, 1, 1)
 
         p_card.layout.addWidget(input_form, 0, 0)
 
@@ -158,10 +153,10 @@ class CarManagementPage(Famcy.FamcyPage):
         return Famcy.UpdateRemoveElement(prompt_flag=True)
 
     def prompt_submit_input(self, submission_obj, info_list):
+        submission_obj.target.last_card = submission_obj.origin
         return Famcy.UpdatePrompt()
 
     def update_selected_car(self, submission_obj, info_list):
-        print("========= info_list: ", info_list)
         flag = True
         for _ in info_list:
             if not len(_) > 0:
@@ -195,16 +190,13 @@ class CarManagementPage(Famcy.FamcyPage):
 
     def update_delete(self, submission_obj, info_list):
         msg = "系統異常，請重新再試"
-        if len(info_list[0]) > 0:
-            license_num = str(info_list[0][0])          # "XXXXXX"
-            modified_time = self.generate_modified_time()
+        modified_time = submission_obj.origin.find_parent(submission_obj.origin, "FPromptCard").last_card.value["modified_time"]
+        if self.post_update("XXXXXX", modified_time):
+            self.get_car_queue()
+            self.generate_car_block(self.card_2)
+            msg = "成功刪除資料"
 
-            if self.post_update(license_num, modified_time):
-                self.get_car_queue()
-                self.generate_car_block(self.card_2)
-                msg = "成功刪除資料"
-
-        return [Famcy.UpdateAlert(alert_message=msg), Famcy.UpdateBlockHtml(target=self.card_2)]
+        return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdateBlockHtml(target=self.card_2), Famcy.UpdateAlert(alert_message=msg, target=self.card_2)]
 
     def submit_platenum(self, submission_obj, info_list):
         msg = "系統異常，請重新再試"
@@ -223,6 +215,19 @@ class CarManagementPage(Famcy.FamcyPage):
         if len(info_list[0]) > 0:
             license_num = str(info_list[0][0])
             modified_time = submission_obj.origin.value["modified_time"]
+
+            if self.post_update(license_num, modified_time):
+                self.get_car_queue()
+                self.generate_car_block(self.card_2)
+                msg = "成功修改資料"
+
+        return [Famcy.UpdateBlockHtml(), Famcy.UpdateAlert(alert_message=msg)]
+
+    def modify_time(self, submission_obj, info_list):
+        msg = "系統異常，請重新再試"
+        if len(info_list[0]) > 0:
+            license_num = submission_obj.origin.value["platenum"]
+            modified_time = info_list[1][0][2:4] + info_list[1][0][5:7] + info_list[1][0][8:10] + info_list[2][0][:2] + info_list[2][0][3:] + "00000"
 
             if self.post_update(license_num, modified_time):
                 self.get_car_queue()
@@ -251,8 +256,6 @@ class CarManagementPage(Famcy.FamcyPage):
         if platenum and not platenum == "":
             send_dict["platenum"] = platenum
 
-        print("=====================send_dict: ", send_dict)
-
         res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
         self.car_queue_info = json.loads(res_msg)["message"] if json.loads(res_msg)["indicator"] else []
 
@@ -279,8 +282,6 @@ class CarManagementPage(Famcy.FamcyPage):
             "carpark_id": self.carpark_id
         }
 
-        print("send_dict:                      ", send_dict)
-
         if comments:
             send_dict["comments"] = comments
 
@@ -297,9 +298,8 @@ class CarManagementPage(Famcy.FamcyPage):
 
         if init:
             self.get_car_queue()
-
         # generate blocks
-        card.layout.content = []
+        card.layout.clearWidget()
         col_num = 4
         for i, temp in enumerate(self.car_queue_info, start=1):
             input_form = Famcy.input_form()
@@ -315,6 +315,11 @@ class CarManagementPage(Famcy.FamcyPage):
             license_num = Famcy.pureInput()
             license_num.update({"title":"車牌號碼", "input_type":"text", "defaultValue": temp["platenum"]})
 
+            input_date = Famcy.pureInput()
+            input_time = Famcy.pureInput()
+            input_date.update({"title": "輸入起始日期", "input_type": "date", "defaultValue": "20"+temp["modified_time"][:2]+"-"+temp["modified_time"][2:4]+"-"+temp["modified_time"][4:6]})
+            input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": temp["modified_time"][6:8]+":"+temp["modified_time"][8:10]})
+
             update_btn = Famcy.submitBtn()
             update_btn.update({"title":"修改車牌", "modified_time": temp["modified_time"]})
             update_btn.connect(self.modify_platenum, target=card)
@@ -323,10 +328,22 @@ class CarManagementPage(Famcy.FamcyPage):
             submit_btn.update({"title":"車牌正確", "modified_time": temp["modified_time"]})
             submit_btn.connect(self.submit_platenum, target=card)
 
+            update_time_btn = Famcy.submitBtn()
+            update_time_btn.update({"title":"修改進場時間", "platenum": temp["platenum"]})
+            update_time_btn.connect(self.modify_time, target=card)
+
+            delete_btn = Famcy.submitBtn()
+            delete_btn.update({"title":"刪除車牌", "modified_time": temp["modified_time"]})
+            delete_btn.connect(self.prompt_submit_input, target=self.del_card)
+
             input_form.layout.addWidget(car_pic, 0, 0, 1, 2)
             input_form.layout.addWidget(license_num, 1, 0, 1, 2)
-            input_form.layout.addWidget(update_btn, 2, 0)
-            input_form.layout.addWidget(submit_btn, 2, 1)
+            input_form.layout.addWidget(input_date, 2, 0, 1, 2)
+            input_form.layout.addWidget(input_time, 3, 0, 1, 2)
+            input_form.layout.addWidget(update_btn, 4, 0)
+            input_form.layout.addWidget(submit_btn, 4, 1)
+            input_form.layout.addWidget(update_time_btn, 5, 0)
+            input_form.layout.addWidget(delete_btn, 5, 1)
 
             card.layout.addWidget(input_form, ((i-1)//col_num)*2, (i-1)%col_num)
 
