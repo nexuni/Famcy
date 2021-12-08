@@ -104,8 +104,11 @@ class FinancePage(Famcy.FamcyPage):
         upload_form.layout.addWidget(submit_btn, 1, 0)
         # upload_form.layout.addWidget(_submit_btn, 2, 0)
 
+
+
         download_btn = Famcy.downloadFile()
         download_btn.update({"title": "下載檔案","file_path": 'http://127.0.0.1:5000/static/image/login.png',"file_name": 'login.png'})
+
 
         card2.layout.addWidget(upload_form, 0, 0)
         card2.layout.addWidget(download_btn, 1, 0)

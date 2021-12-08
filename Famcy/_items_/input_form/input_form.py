@@ -13,13 +13,11 @@ class input_form(Famcy.FamcyCard):
 		self.init_block()
 
 	def init_block(self):
-		self.body = Famcy.ELEMENT()
-		form = Famcy.form()
-		form["id"] = self.id
-		form["method"] = self.configs["method"]
-		form["action"] = self.action
-		form["onsubmit"] = "return false;"
-		self.body.addElement(form)
+		self.body = Famcy.form()
+		self.body["id"] = self.id
+		self.body["method"] = self.configs["method"]
+		self.body["action"] = self.action
+		self.body["onsubmit"] = "return false;"
 
 		script = Famcy.script()
 		script["src"] = "/static/js/input_form_submit.js"
@@ -27,7 +25,7 @@ class input_form(Famcy.FamcyCard):
 
 	def render_inner(self):
 			
-		header_script, self.body.children[0] = self.layout.render(body_element=self.body.children[0])
+		header_script, self.body = self.layout.render()
 		if header_script not in self.header_script:
 			self.header_script += header_script
 

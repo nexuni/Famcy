@@ -88,16 +88,16 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		5. return render inner stuffs
 		"""
 		self.preload()
-		render_data = self.render_inner()
+		self.body = self.render_inner()
 		if self.js_after_func_name != "" and self.js_after_func_name:
 			script = Famcy.script()
 			script.innerHTML = self.js_after_func_name + '("' + self.id + '", ' + json.dumps(self.js_after_func_dict) + ')'
-			render_data.addElement(script)
+			self.body.addElement(script)
 		
 		# Set daemon to true to ensure thread dies when main thread dies
 		post_thread = FamcyThread(target=self.postload, daemon=True)
 		post_thread.start()
-		return render_data
+		return self.body
 
 	def connect(self, submission_func, target=None):
 		"""

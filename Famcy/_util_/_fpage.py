@@ -161,12 +161,12 @@ class FPage(FamcyWidget):
 		This is the function to 
 		render the layout. 
 		"""
-		header_script, body_element = self.layout.render()
+		header_script, self.body = self.layout.render()
 
 		if header_script not in self.header_script:
 			self.header_script += header_script
 		
-		return body_element
+		return self.body
 
 	def preload(self):
 		"""

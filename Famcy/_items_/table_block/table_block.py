@@ -178,6 +178,6 @@ class table_block(Famcy.FamcyBlock):
             $(function() {
                 initTable%s()
             })
-        """ % (json.dumps(self.value), self.id, self.id, self.id, self.id, self.id)
+        """ % (json.dumps(self.value), self.id, self.name, self.id, self.id, self.id)
 
         return self.body
