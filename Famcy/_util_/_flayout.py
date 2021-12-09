@@ -159,19 +159,15 @@ class FamcyLayout:
 		i = 0
 		for _card, _ in self.staticContent:
 			if card == _card or i == index:
-				del self.content[i]
+				del self.staticContent[i]
 				break
 			i += 1
 
 	def clearStaticWidget(self):
-		i = 0
-		for _card, _row, _col, _, _ in self.staticContent:
-			del self.staticContent[i]
-			i += 1
+		self.staticContent = []
 
 	def addWidget(self, card, start_row, start_col, height=1, width=1):
 		card.parent = self.parent
-		# self.parent.body.addElement(card.body)
 		self.content.append([card, int(start_row), int(start_col), int(height), int(width)])
 		self.layoutType.layoutClass.setDefaultContent(self.content)
 
@@ -179,17 +175,12 @@ class FamcyLayout:
 		i = 0
 		for _card, _row, _col, _, _ in self.content:
 			if card == _card or (_row == start_row and _col == start_col):
-				# self.parent.body.removeElement(child=_card.body)
 				del self.content[i]
 				break
 			i += 1
 
 	def clearWidget(self):
-		i = 0
-		for _card, _row, _col, _, _ in self.content:
-			# self.parent.body.removeElement(child=_card.body)
-			del self.content[i]
-			i += 1
+		self.content = []
 
 	def addCusWidget(self, card, start_row, start_col, height=1, width=1):
 		self.cusContent.append([card, int(start_row), int(start_col), int(height), int(width)])

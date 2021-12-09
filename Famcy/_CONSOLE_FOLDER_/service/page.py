@@ -195,9 +195,9 @@ class SeasonPage(Famcy.FamcyPage):
         cancel_btn.update({"title": "刪除"})
         cancel_btn.connect(self.update_delete)
 
-        input_form.layout.addWidget(table_content, 0, 0)
+        input_form.layout.addWidget(table_content, 0, 0, 1, 2)
         input_form.layout.addWidget(new_btn, 1, 0)
-        input_form.layout.addWidget(cancel_btn, 2, 0)
+        input_form.layout.addWidget(cancel_btn, 1, 1)
 
         card2.layout.addWidget(input_form, 0, 0)
 

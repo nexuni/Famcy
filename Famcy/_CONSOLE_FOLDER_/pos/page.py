@@ -14,11 +14,13 @@ class PosPage(Famcy.FamcyPage):
 
         self.fee_card = self.prompt_fee()
         self.pos_card = self.prompt_pos()
-        # self.insert_card = self.prompt_insert()
+        self.receipt_card = self.prompt_receipt()
+        self.month_card = self.prompt_month()
         
         self.layout.addStaticWidget(self.fee_card, 40)
         self.layout.addStaticWidget(self.pos_card, 40)
-        # self.layout.addStaticWidget(self.insert_card, 40)
+        self.layout.addStaticWidget(self.receipt_card, 40)
+        self.layout.addStaticWidget(self.month_card, 40)
 
         self.card_1 = self.card1()
         self.card_2 = self.card2()
@@ -54,12 +56,11 @@ class PosPage(Famcy.FamcyPage):
 
         print_btn = Famcy.submitBtn()
         print_btn.update({"title": "印發票"})
-        # TODO: connect btn
-        # print_btn.connect(self.prompt_submit_input, target=self.insert_card)
+        print_btn.connect(self.prompt_submit_input, target=self.receipt_card)
 
         submit_btn = Famcy.submitBtn()
-        submit_btn.update({"title": "送出車牌"})
-        submit_btn.connect(self.submit_car_block, target=self.pos_card)
+        submit_btn.update({"title": "登記月票"})
+        submit_btn.connect(self.prompt_submit_input, target=self.month_card)
 
         input_form.layout.addWidget(input_date, 0, 0)
         input_form.layout.addWidget(input_time, 0, 1)
@@ -170,6 +171,94 @@ class PosPage(Famcy.FamcyPage):
 
         return p_card
 
+    def prompt_receipt(self):
+        p_card = Famcy.FamcyPromptCard()
+
+        input_form = Famcy.input_form()
+
+        input_id = Famcy.pureInput()
+        input_id.update({"title":"發票號碼:", "input_type":"number"})
+
+        submit_btn = Famcy.submitBtn()
+        submit_btn.update({"title":"確認"})
+        # submit_btn.connect(self.update_receipt, target=p_card)
+
+        cancel_btn = Famcy.submitBtn()
+        cancel_btn.update({"title":"返回"})
+        cancel_btn.connect(self.prompt_remove_input)
+
+        input_form.layout.addWidget(input_id, 0, 0, 1, 2)
+        input_form.layout.addWidget(cancel_btn, 1, 0)
+        input_form.layout.addWidget(submit_btn, 1, 1)
+
+        p_card.layout.addWidget(input_form, 0, 0)
+
+        return p_card
+
+    def prompt_month(self):
+        p_card = Famcy.FamcyPromptCard()
+
+        input_form = Famcy.input_form()
+
+        phonenum = Famcy.pureInput()
+        phonenum.update({"title":"電話號碼:", "input_type":"number"})
+
+        license_num = Famcy.pureInput()
+        license_num.update({"title":"車牌號碼:", "input_type":"text"})
+
+        input_date = Famcy.pureInput()
+        input_time = Famcy.pureInput()
+        input_date2 = Famcy.pureInput()
+        input_time2 = Famcy.pureInput()
+
+        input_date.update({"title": "輸入起始日期", "input_type": "date"})
+        input_time.update({"title": "輸入起始時間", "input_type": "time"})
+        input_date2.update({"title": "輸入結束日期", "input_type": "date"})
+        input_time2.update({"title": "輸入結束時間", "input_type": "time"})
+
+        database_name = Famcy.inputList()
+        database_name.update({
+                "title": "資料庫名:",
+                "value": ["season", "season_ticket"],
+            })
+
+        season_type = Famcy.inputList()
+        season_type.update({
+                "title": "月票種類:",
+                "value": ["season", "dailyseason"],
+            })
+
+        month_fee = Famcy.pureInput()
+        month_fee.update({"title":"月費:", "input_type":"number"})
+
+        comments = Famcy.pureInput()
+        comments.update({"title":"備註:", "input_type":"text"})
+
+        submit_btn = Famcy.submitBtn()
+        submit_btn.update({"title":"確認"})
+        submit_btn.connect(self.update_insert, target=p_card)
+
+        cancel_btn = Famcy.submitBtn()
+        cancel_btn.update({"title":"返回"})
+        cancel_btn.connect(self.prompt_remove_input)
+
+        input_form.layout.addWidget(phonenum, 0, 0)
+        input_form.layout.addWidget(license_num, 0, 1)
+        input_form.layout.addWidget(input_date, 1, 0)
+        input_form.layout.addWidget(input_time, 1, 1)
+        input_form.layout.addWidget(input_date2, 2, 0)
+        input_form.layout.addWidget(input_time2, 2, 1)
+        input_form.layout.addWidget(database_name, 3, 0)
+        input_form.layout.addWidget(season_type, 3, 1)
+        input_form.layout.addWidget(month_fee, 4, 0)
+        input_form.layout.addWidget(comments, 4, 1)
+        input_form.layout.addWidget(cancel_btn, 5, 0)
+        input_form.layout.addWidget(submit_btn, 5, 1)
+
+        p_card.layout.addWidget(input_form, 0, 0)
+
+        return p_card
+
     # ====================================================
     # ====================================================
 
@@ -197,16 +286,16 @@ class PosPage(Famcy.FamcyPage):
 
         return Famcy.UpdatePrompt()
 
-    def submit_car_block(self, submission_obj, info_list):
-        print("info_list: ", info_list)
-        input_form = submission_obj.origin.find_parent(submission_obj.origin, "input_form")
+    # def submit_car_block(self, submission_obj, info_list):
+    #     print("info_list: ", info_list)
+    #     input_form = submission_obj.origin.find_parent(submission_obj.origin, "input_form")
 
-        license = str(info_list[4][0])
-        self.pos_card.layout.content[0][0].layout.content[0][0].update({"defaultValue": license})
-        self.pos_card.layout.content[0][0].layout.content[1][0].update({"defaultValue": None})
-        self.pos_card.layout.content[0][0].layout.content[2][0].update({"defaultValue": None})
+    #     license = str(info_list[4][0])
+    #     self.pos_card.layout.content[0][0].layout.content[0][0].update({"defaultValue": license})
+    #     self.pos_card.layout.content[0][0].layout.content[1][0].update({"defaultValue": None})
+    #     self.pos_card.layout.content[0][0].layout.content[2][0].update({"defaultValue": None})
 
-        return Famcy.UpdatePrompt()
+    #     return Famcy.UpdatePrompt()
 
     def update_selected_car(self, submission_obj, info_list):
         print("========= info_list: ", info_list)
@@ -252,12 +341,52 @@ class PosPage(Famcy.FamcyPage):
             else:
                 return Famcy.UpdateAlert(alert_message="系統異常，請重新再試")
 
+    def update_insert(self, submission_obj, info_list):
+        msg = "資料填寫有誤"
+        flag = True
+        for _ in info_list:
+            if not len(_) > 0:
+                flag = False
+                break
+        if flag:
+            phonenum = str(info_list[0][0])
+            license_num = str(info_list[1][0])
+            start_num = info_list[2][0][2:4] + info_list[2][0][5:7] + info_list[2][0][8:10] + info_list[3][0][:2] + info_list[3][0][3:] + "00000"
+            end_num = info_list[4][0][2:4] + info_list[4][0][5:7] + info_list[4][0][8:10] + info_list[5][0][:2] + info_list[5][0][3:] + "00000"
+            database_name = str(info_list[6][0])
+            season_type = str(info_list[7][0])
+            month_fee = str(info_list[8][0])
+            comments = str(info_list[9][0])
+
+            if self.post_insert(phonenum, license_num, start_num, end_num, database_name, season_type, month_fee, comments):
+                msg = "成功加入資料"
+
+        return Famcy.UpdateAlert(alert_message=msg)
+
     # ====================================================
     # ====================================================
 
 
     # http request function
     # ====================================================
+    def post_insert(self, phonenum, license_num, start_num, end_num, database_name, season_type, month_fee, comments):
+        send_dict = {
+            "service": "website",
+            "operation": "post_season_data",
+            "carpark_id": self.carpark_id,
+            "phonenum": phonenum,
+            "platenum": license_num,
+            "start_time": start_num,
+            "end_time": end_num,
+            "database_name": database_name,
+            "season_type": season_type,
+            "months_fee": month_fee,
+            "comments": comments
+        }
+
+        res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
+        return json.loads(res_msg)["indicator"]
+
     def post_calculate_fee(self, platenum, entry_time):
         send_dict = {
             "service": "pms",
@@ -298,9 +427,9 @@ class PosPage(Famcy.FamcyPage):
         if platenum and not platenum == "":
             send_dict["platenum"] = platenum
 
+        print("send_dict: ", send_dict)
         res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
         self.car_queue_info = json.loads(res_msg)["message"] if json.loads(res_msg)["indicator"] else []
-
         print("res_msg: ", res_msg)
 
     # ====================================================
@@ -315,7 +444,7 @@ class PosPage(Famcy.FamcyPage):
             self.get_car_queue()
 
         # generate blocks
-        card.layout.content = []
+        card.layout.clearWidget()
         col_num = 4
         for i, temp in enumerate(self.car_queue_info, start=1):
             input_form = Famcy.input_form()

@@ -9,7 +9,7 @@ class CarManagementPage(Famcy.FamcyPage):
         super(CarManagementPage, self).__init__("/car_management", Famcy.ClassicSideStyle(), background_thread=False)
 
         self.car_queue_info = []
-        self.carpark_id = "CARLO"
+        self.carpark_id = "park1"
         self.entry_station = "E1"
 
         self.del_card = self.prompt_delete()
@@ -258,6 +258,7 @@ class CarManagementPage(Famcy.FamcyPage):
 
         res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
         self.car_queue_info = json.loads(res_msg)["message"] if json.loads(res_msg)["indicator"] else []
+        print(self.car_queue_info)
 
     def post_insert(self, license_num, entry_time, modified_time):
         send_dict = {
@@ -285,7 +286,9 @@ class CarManagementPage(Famcy.FamcyPage):
         if comments:
             send_dict["comments"] = comments
 
+        print(send_dict, modified_time)
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
+        print(res_msg)
         return json.loads(res_msg)["indicator"]
 
     # ====================================================

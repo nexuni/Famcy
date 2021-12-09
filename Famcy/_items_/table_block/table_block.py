@@ -90,6 +90,7 @@ class table_block(Famcy.FamcyBlock):
         """
         self.body = Famcy.div()
         self.body["className"] = "table_holder"
+        self.body["id"] = self.id
 
         toolbar_temp = Famcy.div()
         toolbar_temp["id"] = "toolbar_" + self.id
