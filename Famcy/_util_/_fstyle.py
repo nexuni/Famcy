@@ -403,6 +403,27 @@ class FColorTheme(FStyle):
 	def render(self):
 		return self.setColorTheme()
 
+class FFontTheme(FStyle):
+	def __init__(self):
+		super(FFontTheme, self).__init__()
+		self.font_family = ""
+		self.import_font = ""
+
+	def setFontFamily(self, font_family=None, import_font=None):
+		if font_family:
+			self.font_family = font_family
+		if import_font:
+			self.import_font = import_font
+
+	def setFontTheme(self):
+		innerScript = ""
+		innerScript += self.import_font
+		innerScript += "<style>*{font-family: " + self.font_family + " !important;}</style>"
+		return innerScript
+
+	def render(self):
+		return self.setFontTheme()
+
 class FStyleLoader(FStyle):
 	def __init__(self):
 		super(FStyleLoader, self).__init__()

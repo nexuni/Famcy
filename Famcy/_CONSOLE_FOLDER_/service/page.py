@@ -14,12 +14,12 @@ class SeasonPage(Famcy.FamcyPage):
         self.table_info = []
         self.carpark_id = "park1"
 
-        # self.p_del_card = self.p_card_delete()
+        self.p_del_card = self.p_card_delete()
         self.p_update_card = self.p_card_update()
         self.p_insert_card = self.p_card_insert()
         self.p_upload_table_card = self.p_card_upload_table()
 
-        # self.layout.addStaticWidget(self.p_del_card)
+        self.layout.addStaticWidget(self.p_del_card)
         self.layout.addStaticWidget(self.p_update_card)
         self.layout.addStaticWidget(self.p_insert_card, 60)
         self.layout.addStaticWidget(self.p_upload_table_card)
@@ -193,7 +193,7 @@ class SeasonPage(Famcy.FamcyPage):
 
         cancel_btn = Famcy.submitBtn()
         cancel_btn.update({"title": "刪除"})
-        cancel_btn.connect(self.update_delete)
+        cancel_btn.connect(self.prompt_submit_input, target=self.p_del_card)
 
         input_form.layout.addWidget(table_content, 0, 0, 1, 2)
         input_form.layout.addWidget(new_btn, 1, 0)
@@ -351,29 +351,29 @@ class SeasonPage(Famcy.FamcyPage):
 
         return p_card
 
-    # def p_card_delete(self):
-    #     p_card = Famcy.FamcyPromptCard()
+    def p_card_delete(self):
+        pcard = Famcy.FamcyPromptCard()
 
-    #     input_form = Famcy.input_form()
+        input_form = Famcy.input_form()
 
-    #     input_id = Famcy.pureInput()
-    #     input_id.update({"title":"ID:", "input_type":"number"})
+        text_msg = Famcy.displayParagraph()
+        text_msg.update({"title": "確認是否執行?", "content": ""})
 
-    #     submit_btn = Famcy.submitBtn()
-    #     submit_btn.update({"title":"確認"})
-    #     submit_btn.connect(self.update_delete, target=p_card)
+        confirm_btn = Famcy.submitBtn()
+        confirm_btn.update({"title":"確認"})
+        confirm_btn.connect(self.update_delete)
 
-    #     cancel_btn = Famcy.submitBtn()
-    #     cancel_btn.update({"title":"返回"})
-    #     cancel_btn.connect(self.prompt_remove_input)
+        cancel_btn = Famcy.submitBtn()
+        cancel_btn.update({"title":"取消"})
+        cancel_btn.connect(self.prompt_remove_input)
 
-    #     input_form.layout.addWidget(input_id, 0, 0, 1, 2)
-    #     input_form.layout.addWidget(cancel_btn, 1, 0)
-    #     input_form.layout.addWidget(submit_btn, 1, 1)
+        input_form.layout.addWidget(text_msg, 0, 0, 1, 2)
+        input_form.layout.addWidget(confirm_btn, 1, 0)
+        input_form.layout.addWidget(cancel_btn, 1, 1)
 
-    #     p_card.layout.addWidget(input_form, 0, 0)
+        pcard.layout.addWidget(input_form, 0, 0)
 
-    #     return p_card
+        return pcard
     # ====================================================
     # ====================================================
 
@@ -384,6 +384,8 @@ class SeasonPage(Famcy.FamcyPage):
         return Famcy.UpdateRemoveElement(prompt_flag=True)
 
     def prompt_submit_input(self, submission_obj, info_list):
+        submission_obj.target.last_card = submission_obj.origin.find_parent(submission_obj.origin, "FCard")
+        submission_obj.target.last_card["info_list"] = info_list
         return Famcy.UpdatePrompt()
 
     def update_table_prompt(self, submission_obj, info_list):
@@ -422,16 +424,19 @@ class SeasonPage(Famcy.FamcyPage):
         return Famcy.UpdateAlert(alert_message="系統異常，請重新再試")
 
     def update_delete(self, submission_obj, info_list):
+        _info_list = submission_obj.origin.find_parent(submission_obj.origin, "FPromptCard").last_card["info_list"]
+        print("_info_list: ", _info_list)
         msg = "資料填寫有誤"
-        if len(info_list[0]) > 0:
-            _id = str(info_list[0][0])
+        if len(_info_list) > 0 and len(_info_list[0]) > 0:
+            _id = str(_info_list[0][0])
             license_num = "XXXXXX"
 
             if self.post_modify(_id, license_num):
                 self.get_season_data()
                 msg = "成功刪除資料"
 
-        return [Famcy.UpdateBlockHtml(target=self.card_2), Famcy.UpdateAlert(alert_message=msg, target=self.card_2)]
+            return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdateBlockHtml(target=self.card_2), Famcy.UpdateAlert(alert_message=msg, target=self.card_2)]
+        return Famcy.UpdateAlert(alert_message=msg, target=self.p_del_card)
 
     def update_modify(self, submission_obj, info_list):
         msg = "資料填寫有誤"

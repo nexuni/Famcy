@@ -52,6 +52,7 @@ FamcyLayoutMode = FLayoutMode
 FamcyStyle = FStyle
 FamcyStyleLoader = FStyleLoader
 FamcyColorTheme = FColorTheme
+FamcyFontTheme = FFontTheme
 FamcyStyleSideBar = FStyleSideBar
 FamcyStyleSideBtns = FStyleSideBtns
 FamcyStyleNavBar = FStyleNavBar

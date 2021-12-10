@@ -11,6 +11,7 @@ class CarManagementPage(Famcy.FamcyPage):
         self.car_queue_info = []
         self.carpark_id = "park1"
         self.entry_station = "E1"
+        self.save_searching_data = {}
 
         self.del_card = self.prompt_delete()
         self.insert_card = self.prompt_insert()
@@ -227,9 +228,10 @@ class CarManagementPage(Famcy.FamcyPage):
         msg = "系統異常，請重新再試"
         if len(info_list[0]) > 0:
             license_num = submission_obj.origin.value["platenum"]
-            modified_time = info_list[1][0][2:4] + info_list[1][0][5:7] + info_list[1][0][8:10] + info_list[2][0][:2] + info_list[2][0][3:] + "00000"
+            modified_time = submission_obj.origin.value["modified_time"]
+            entry_time = info_list[1][0][2:4] + info_list[1][0][5:7] + info_list[1][0][8:10] + info_list[2][0][:2] + info_list[2][0][3:] + "00000"
 
-            if self.post_update(license_num, modified_time):
+            if self.post_update(license_num, modified_time, entry_time=entry_time):
                 self.get_car_queue()
                 self.generate_car_block(self.card_2)
                 msg = "成功修改資料"
@@ -242,23 +244,37 @@ class CarManagementPage(Famcy.FamcyPage):
     # http request function
     # ====================================================
     def get_car_queue(self, verify_mode=None, start_time=None, end_time=None, platenum=None):
+        if verify_mode:
+            self.save_searching_data["verify_mode"] = verify_mode
+        elif "verify_mode" not in self.save_searching_data.keys():
+            self.save_searching_data["verify_mode"] = 'True'
+
         send_dict = {
             "service": "pms",
-            "operation": "get_car_queue"
+            "operation": "get_car_queue",
+            "verify_mode": self.save_searching_data["verify_mode"]
         }
 
-        if verify_mode and not verify_mode == "" and not verify_mode == "---":
-            send_dict["verify_mode"] = verify_mode
         if start_time and len(start_time[2:]) == 15:
             send_dict["start_time"] = start_time[2:]
+            self.save_searching_data["start_time"] = start_time[2:]
+        elif "start_time" in self.save_searching_data.keys():
+            send_dict["start_time"] = self.save_searching_data["start_time"]
+
         if end_time and len(end_time[2:]) == 15:
             send_dict["end_time"] = end_time[2:]
+            self.save_searching_data["end_time"] = end_time[2:]
+        elif "end_time" in self.save_searching_data.keys():
+            send_dict["end_time"] = self.save_searching_data["end_time"]
+
         if platenum and not platenum == "":
             send_dict["platenum"] = platenum
+            self.save_searching_data["platenum"] = platenum[2:]
+        elif "platenum" in self.save_searching_data.keys():
+            send_dict["platenum"] = self.save_searching_data["platenum"]
 
         res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
         self.car_queue_info = json.loads(res_msg)["message"] if json.loads(res_msg)["indicator"] else []
-        print(self.car_queue_info)
 
     def post_insert(self, license_num, entry_time, modified_time):
         send_dict = {
@@ -273,7 +289,7 @@ class CarManagementPage(Famcy.FamcyPage):
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
         return json.loads(res_msg)["indicator"]
 
-    def post_update(self, license_num, modified_time, comments=None):
+    def post_update(self, license_num, modified_time, comments=None, entry_time=None):
         send_dict = {
             "service": "pms",
             "operation": "update_movement",
@@ -285,6 +301,8 @@ class CarManagementPage(Famcy.FamcyPage):
 
         if comments:
             send_dict["comments"] = comments
+        if entry_time:
+            send_dict["entry_time"] = entry_time
 
         print(send_dict, modified_time)
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
@@ -320,8 +338,8 @@ class CarManagementPage(Famcy.FamcyPage):
 
             input_date = Famcy.pureInput()
             input_time = Famcy.pureInput()
-            input_date.update({"title": "輸入起始日期", "input_type": "date", "defaultValue": "20"+temp["modified_time"][:2]+"-"+temp["modified_time"][2:4]+"-"+temp["modified_time"][4:6]})
-            input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": temp["modified_time"][6:8]+":"+temp["modified_time"][8:10]})
+            input_date.update({"title": "輸入起始日期", "input_type": "date", "defaultValue": "20"+temp["entry_time"][:2]+"-"+temp["entry_time"][2:4]+"-"+temp["entry_time"][4:6]})
+            input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": temp["entry_time"][6:8]+":"+temp["entry_time"][8:10]})
 
             update_btn = Famcy.submitBtn()
             update_btn.update({"title":"修改車牌", "modified_time": temp["modified_time"]})
@@ -332,7 +350,7 @@ class CarManagementPage(Famcy.FamcyPage):
             submit_btn.connect(self.submit_platenum, target=card)
 
             update_time_btn = Famcy.submitBtn()
-            update_time_btn.update({"title":"修改進場時間", "platenum": temp["platenum"]})
+            update_time_btn.update({"title":"修改進場時間", "platenum": temp["platenum"], "modified_time": temp["modified_time"]})
             update_time_btn.connect(self.modify_time, target=card)
 
             delete_btn = Famcy.submitBtn()
