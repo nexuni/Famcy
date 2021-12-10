@@ -16,7 +16,10 @@ class BackgroundTaskCoin(Famcy.FamcyPage):
 
 class OverviewPage(Famcy.FamcyPage):
     def __init__(self):
-        super(OverviewPage, self).__init__("/overview", Famcy.ClassicSideStyle(), background_thread=True, background_freq=0.2)
+        style = Famcy.ClassicSideStyle()
+        style.color_theme.setColor(main_color="#123456")
+        style.font_theme.setFontFamily(font_family="monospace")
+        super(OverviewPage, self).__init__("/overview", style, background_thread=True, background_freq=0.2)
 
         # for declaration
         # ===============
