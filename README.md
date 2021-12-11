@@ -1,7 +1,9 @@
 # FAMCY
+![famcy_logo](famcylogo.png)
+
 Famcy is an Automated Management Console for You (FAMCY). It is designed for Nexuni Management Console development. The goal of this framework is to provide a lightweighted, python-based frontend development platform for Nexuni Co. applications. It is based in Flask framework and contains various useful plugins for backend management and user dashboard actions.
 
-![famcy_logo](famcylogo.png)
+
 
 ## Prerequisites
 For now, we only support ubuntu development with python3.7. 
