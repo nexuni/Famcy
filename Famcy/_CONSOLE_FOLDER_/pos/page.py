@@ -13,12 +13,12 @@ class PosPage(Famcy.FamcyPage):
         self.entry_station = "E1"
 
         self.fee_card = self.prompt_fee()
-        self.pos_card = self.prompt_pos()
+        # self.pos_card = self.prompt_pos()
         self.receipt_card = self.prompt_receipt()
         self.month_card = self.prompt_month()
         
         self.layout.addStaticWidget(self.fee_card, 40)
-        self.layout.addStaticWidget(self.pos_card, 40)
+        # self.layout.addStaticWidget(self.pos_card, 40)
         self.layout.addStaticWidget(self.receipt_card, 40)
         self.layout.addStaticWidget(self.month_card, 40)
 
@@ -56,7 +56,7 @@ class PosPage(Famcy.FamcyPage):
 
         print_btn = Famcy.submitBtn()
         print_btn.update({"title": "印發票"})
-        print_btn.connect(self.prompt_submit_input, target=self.receipt_card)
+        print_btn.connect(self.prompt_receipt_submit_input, target=self.receipt_card)
 
         submit_btn = Famcy.submitBtn()
         submit_btn.update({"title": "登記月票"})
@@ -87,38 +87,6 @@ class PosPage(Famcy.FamcyPage):
 
     # prompt card
     # ====================================================
-    def prompt_pos(self):
-        p_card = Famcy.FamcyPromptCard()
-
-        input_form = Famcy.input_form()
-
-        license_num = Famcy.pureInput()
-        license_num.update({"title":"車牌號碼", "input_type":"text"})
-
-        date_num = Famcy.pureInput()
-        date_num.update({"title":"日期", "input_type":"date"})
-
-        time_num = Famcy.pureInput()
-        time_num.update({"title":"時間", "input_type":"time"})
-
-        cancel_btn = Famcy.submitBtn()
-        cancel_btn.update({"title":"返回"})
-        cancel_btn.connect(self.prompt_remove_input)
-
-        submit_btn = Famcy.submitBtn()
-        submit_btn.update({"title":"確認"})
-        submit_btn.connect(self.update_pos, target=self.fee_card)
-
-        input_form.layout.addWidget(license_num, 0, 0, 1, 2)
-        input_form.layout.addWidget(date_num, 1, 0, 1, 2)
-        input_form.layout.addWidget(time_num, 2, 0, 1, 2)
-        input_form.layout.addWidget(cancel_btn, 3, 0)
-        input_form.layout.addWidget(submit_btn, 3, 1)
-
-        p_card.layout.addWidget(input_form, 0, 0)
-
-        return p_card
-
     def prompt_fee(self):
         p_card = Famcy.FamcyPromptCard()
 
@@ -138,9 +106,24 @@ class PosPage(Famcy.FamcyPage):
 
         price_tag = Famcy.displayTag()
         price_tag.update({
-                "title": "付款金額: ",
+                "title": "應付金額: ",
                 "content": "NT$ -"
             })
+
+        input_price_tag = Famcy.pureInput()
+        input_price_tag.update({
+                "title": "實收金額: "
+            })
+
+        change_tag = Famcy.displayTag()
+        change_tag.update({
+                "title": "找零: ",
+                "content": "NT$ -"
+            })
+
+        submit_price_btn = Famcy.submitBtn()
+        submit_price_btn.update({"title":"確認"})
+        submit_price_btn.connect(self.count_change, target=change_tag)
 
         fee = Famcy.inputList()
         fee.update({
@@ -153,19 +136,21 @@ class PosPage(Famcy.FamcyPage):
 
         cancel_btn = Famcy.submitBtn()
         cancel_btn.update({"title":"返回"})
-        cancel_btn.connect(self.return_action)
 
         submit_btn = Famcy.submitBtn()
         submit_btn.update({"title":"確認"})
         submit_btn.connect(self.update_fee, target=p_card)
 
-        input_form.layout.addWidget(platenum_tag, 0, 0, 1, 2)
-        input_form.layout.addWidget(time_tag, 1, 0, 1, 2)
-        input_form.layout.addWidget(price_tag, 2, 0, 1, 2)
-        input_form.layout.addWidget(fee, 3, 0, 1, 2)
-        input_form.layout.addWidget(comments, 4, 0, 1, 2)
-        input_form.layout.addWidget(cancel_btn, 5, 0)
-        input_form.layout.addWidget(submit_btn, 5, 1)
+        input_form.layout.addWidget(platenum_tag, 0, 0, 1, 4)
+        input_form.layout.addWidget(time_tag, 1, 0, 1, 4)
+        input_form.layout.addWidget(price_tag, 2, 0, 1, 4)
+        input_form.layout.addWidget(input_price_tag, 3, 0, 1, 3)
+        input_form.layout.addWidget(submit_price_btn, 3, 3)
+        input_form.layout.addWidget(change_tag, 4, 0, 1, 4)
+        input_form.layout.addWidget(fee, 5, 0, 1, 4)
+        input_form.layout.addWidget(comments, 6, 0, 1, 4)
+        input_form.layout.addWidget(cancel_btn, 7, 0, 1, 2)
+        input_form.layout.addWidget(submit_btn, 7, 2, 1, 2)
 
         p_card.layout.addWidget(input_form, 0, 0)
 
@@ -179,6 +164,12 @@ class PosPage(Famcy.FamcyPage):
         input_id = Famcy.pureInput()
         input_id.update({"title":"發票號碼:", "input_type":"number"})
 
+        input_platenum = Famcy.pureInput()
+        input_platenum.update({"title":"車牌號碼:"})
+
+        receipt_type = Famcy.inputList()
+        receipt_type.update({"title":"發票種類:", "value": ["receipt_type1", "receipt_type2"]})
+
         submit_btn = Famcy.submitBtn()
         submit_btn.update({"title":"確認"})
         # submit_btn.connect(self.update_receipt, target=p_card)
@@ -188,8 +179,10 @@ class PosPage(Famcy.FamcyPage):
         cancel_btn.connect(self.prompt_remove_input)
 
         input_form.layout.addWidget(input_id, 0, 0, 1, 2)
-        input_form.layout.addWidget(cancel_btn, 1, 0)
-        input_form.layout.addWidget(submit_btn, 1, 1)
+        input_form.layout.addWidget(input_platenum, 1, 0, 1, 2)
+        input_form.layout.addWidget(receipt_type, 2, 0, 1, 2)
+        input_form.layout.addWidget(cancel_btn, 3, 0)
+        input_form.layout.addWidget(submit_btn, 3, 1)
 
         p_card.layout.addWidget(input_form, 0, 0)
 
@@ -274,17 +267,17 @@ class PosPage(Famcy.FamcyPage):
     def return_action(self, submission_obj, info_list):
         return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdatePrompt()]
 
-    def prompt_car_block(self, submission_obj, info_list):
-        input_form = submission_obj.origin.find_parent(submission_obj.origin, "input_form")
+    # def prompt_car_block(self, submission_obj, info_list):
+    #     input_form = submission_obj.origin.find_parent(submission_obj.origin, "input_form")
 
-        license = str(input_form.layout.content[1][0].value["content"])
-        time = str(input_form.layout.content[2][0].value["content"])
+    #     license = str(input_form.layout.content[1][0].value["content"])
+    #     time = str(input_form.layout.content[2][0].value["content"])
 
-        self.pos_card.layout.content[0][0].layout.content[0][0].update({"defaultValue": license})
-        self.pos_card.layout.content[0][0].layout.content[1][0].update({"defaultValue": "20"+time[:2]+"-"+time[2:4]+"-"+time[4:6]})
-        self.pos_card.layout.content[0][0].layout.content[2][0].update({"defaultValue": time[6:8]+":"+time[8:10]})
+    #     self.pos_card.layout.content[0][0].layout.content[0][0].update({"defaultValue": license})
+    #     self.pos_card.layout.content[0][0].layout.content[1][0].update({"defaultValue": "20"+time[:2]+"-"+time[2:4]+"-"+time[4:6]})
+    #     self.pos_card.layout.content[0][0].layout.content[2][0].update({"defaultValue": time[6:8]+":"+time[8:10]})
 
-        return Famcy.UpdatePrompt()
+    #     return Famcy.UpdatePrompt()
 
     # def submit_car_block(self, submission_obj, info_list):
     #     print("info_list: ", info_list)
@@ -297,8 +290,22 @@ class PosPage(Famcy.FamcyPage):
 
     #     return Famcy.UpdatePrompt()
 
+    def prompt_receipt_submit_input(self, submission_obj, info_list):
+        self.receipt_card.layout.content[0][0].layout.content[3][0].connect(self.prompt_remove_input)
+        return Famcy.UpdatePrompt()
+
+    def submit_car_info(self, submission_obj, info_list):
+        if len(info_list[0]) > 0 and len(info_list[1]) > 0 and len(info_list[2]) > 0:
+            license_num = str(info_list[0][0])
+            entry_time = info_list[1][0][2:4] + info_list[1][0][5:7] + info_list[1][0][8:10] + info_list[2][0][:2] + info_list[2][0][3:] + "00000"
+
+            if self.post_calculate_fee(license_num, entry_time):
+                self.fee_card.layout.content[0][0].layout.content[8][0].connect(self.prompt_remove_input)
+                return Famcy.UpdatePrompt()
+
+        return Famcy.UpdateAlert(alert_message="系統異常，請重新再試", target=self.card_2)
+
     def update_selected_car(self, submission_obj, info_list):
-        print("========= info_list: ", info_list)
         flag = True
         for _ in info_list:
             if not len(_) > 0:
@@ -315,31 +322,27 @@ class PosPage(Famcy.FamcyPage):
 
         return Famcy.UpdateAlert(alert_message="系統異常，請重新再試")
 
-    def update_pos(self, submission_obj, info_list):
-        last_p_card = submission_obj.origin.find_parent(submission_obj.origin, "FPromptCard")
-        self.fee_card.layout.content[0][0].layout.content[2][0].connect(self.return_action,target=last_p_card)
+    # def update_pos(self, submission_obj, info_list):
+    #     last_p_card = submission_obj.origin.find_parent(submission_obj.origin, "FPromptCard")
+    #     self.fee_card.layout.content[0][0].layout.content[8][0].connect(self.return_action,target=last_p_card)
 
-        if len(info_list[0]) > 0 and len(info_list[1]) > 0 and len(info_list[2]) > 0:
-            license_num = str(info_list[0][0])
-            entry_time = info_list[1][0][2:4] + info_list[1][0][5:7] + info_list[1][0][8:10] + info_list[2][0][:2] + info_list[2][0][3:] + "00000"
+    #     if len(info_list[0]) > 0 and len(info_list[1]) > 0 and len(info_list[2]) > 0:
+    #         license_num = str(info_list[0][0])
+    #         entry_time = info_list[1][0][2:4] + info_list[1][0][5:7] + info_list[1][0][8:10] + info_list[2][0][:2] + info_list[2][0][3:] + "00000"
 
-            if self.post_calculate_fee(license_num, entry_time):
-                self.get_car_queue()
-                self.generate_car_block(self.card_2)
-                return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdatePrompt()]
+    #         if self.post_calculate_fee(license_num, entry_time):
+    #             self.get_car_queue()
+    #             self.generate_car_block(self.card_2)
+    #             return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdatePrompt()]
 
-            else:
-                return Famcy.UpdateAlert(alert_message="系統異常，請重新再試", target=self.pos_card)
+    #         else:
+    #             return Famcy.UpdateAlert(alert_message="系統異常，請重新再試", target=self.pos_card)
 
     def update_fee(self, submission_obj, info_list):
-        if True:
-            if self.post_generate_receipt():
-                # self.get_car_queue()
-                # self.generate_car_block(self.card_2)
-                return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdateAlert(alert_message="發票列印成功", target=self.card_1)]
-
-            else:
-                return Famcy.UpdateAlert(alert_message="系統異常，請重新再試")
+        if self.post_generate_receipt():
+            self.receipt_card.layout.content[0][0].layout.content[3][0].connect(self.return_action, target=self.fee_card)
+            return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdatePrompt(target=self.receipt_card)]
+        return Famcy.UpdateAlert(alert_message="系統異常，請重新再試")
 
     def update_insert(self, submission_obj, info_list):
         msg = "資料填寫有誤"
@@ -360,8 +363,50 @@ class PosPage(Famcy.FamcyPage):
 
             if self.post_insert(phonenum, license_num, start_num, end_num, database_name, season_type, month_fee, comments):
                 msg = "成功加入資料"
+                self.fee_card.layout.content[0][0].layout.content[8][0].connect(self.return_action, target=self.month_card)
+                self.fee_card.layout.content[0][0].layout.content[0][0].update({"content": license_num})
+                self.fee_card.layout.content[0][0].layout.content[1][0].update({"content": start_num})
+                self.fee_card.layout.content[0][0].layout.content[2][0].update({"content": "NT$ "+month_fee})
+
+                return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdatePrompt(target=self.fee_card)]
 
         return Famcy.UpdateAlert(alert_message=msg)
+
+    def count_change(self, submission_obj, info_list):
+        if len(info_list[0]) > 0:
+            total_price = int(self.fee_card.layout.content[0][0].layout.content[2][0].value["content"][4:])
+            input_price = int(info_list[0][0])
+            self.fee_card.layout.content[0][0].layout.content[5][0].update({"content": "NT$ "+str(total_price-input_price)})
+            return Famcy.UpdateBlockHtml()
+        return Famcy.UpdateAlert(alert_message="系統異常，請重新再試", target=self.fee_card)
+
+
+    def modify_platenum(self, submission_obj, info_list):
+        msg = "系統異常，請重新再試"
+        if len(info_list[0]) > 0:
+            license_num = str(info_list[0][0])
+            modified_time = submission_obj.origin.value["modified_time"]
+
+            if self.post_update(license_num, modified_time):
+                self.get_car_queue()
+                self.generate_car_block(self.card_2)
+                msg = "成功修改資料"
+
+        return [Famcy.UpdateBlockHtml(), Famcy.UpdateAlert(alert_message=msg)]
+
+    def modify_time(self, submission_obj, info_list):
+        msg = "系統異常，請重新再試"
+        if len(info_list[0]) > 0:
+            license_num = submission_obj.origin.value["platenum"]
+            modified_time = submission_obj.origin.value["modified_time"]
+            entry_time = info_list[1][0][2:4] + info_list[1][0][5:7] + info_list[1][0][8:10] + info_list[2][0][:2] + info_list[2][0][3:] + "00000"
+
+            if self.post_update(license_num, modified_time, entry_time=entry_time):
+                self.get_car_queue()
+                self.generate_car_block(self.card_2)
+                msg = "成功修改資料"
+
+        return [Famcy.UpdateBlockHtml(), Famcy.UpdateAlert(alert_message=msg)]
 
     # ====================================================
     # ====================================================
@@ -369,6 +414,24 @@ class PosPage(Famcy.FamcyPage):
 
     # http request function
     # ====================================================
+    def post_update(self, license_num, modified_time, comments=None, entry_time=None):
+        send_dict = {
+            "service": "pms",
+            "operation": "update_movement",
+            "entry_station": self.entry_station,
+            "modified_time": modified_time,
+            "platenum": license_num,
+            "carpark_id": self.carpark_id
+        }
+
+        if comments:
+            send_dict["comments"] = comments
+        if entry_time:
+            send_dict["entry_time"] = entry_time
+
+        res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
+        return json.loads(res_msg)["indicator"]
+
     def post_insert(self, phonenum, license_num, start_num, end_num, database_name, season_type, month_fee, comments):
         send_dict = {
             "service": "website",
@@ -399,6 +462,7 @@ class PosPage(Famcy.FamcyPage):
         self.fee_card.layout.content[0][0].layout.content[0][0].update({"content": platenum})
         self.fee_card.layout.content[0][0].layout.content[1][0].update({"content": entry_time})
         self.fee_card.layout.content[0][0].layout.content[2][0].update({"content": "NT$ "+json.loads(res_msg)["message"][0]})
+        print("json.loads(res_msg): ", json.loads(res_msg))
         return json.loads(res_msg)["indicator"]
 
     def post_generate_receipt(self):
@@ -408,7 +472,7 @@ class PosPage(Famcy.FamcyPage):
             "platenum": self.fee_card.layout.content[0][0].layout.content[0][0].value["content"],
             "entry_time": self.fee_card.layout.content[0][0].layout.content[1][0].value["content"],
             "receipt_time": self.generate_modified_time(),
-            "receipt_fee": self.fee_card.layout.content[0][0].layout.content[2][0].value["content"][5:]
+            "receipt_fee": self.fee_card.layout.content[0][0].layout.content[2][0].value["content"][4:]
         }
 
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
@@ -427,10 +491,8 @@ class PosPage(Famcy.FamcyPage):
         if platenum and not platenum == "":
             send_dict["platenum"] = platenum
 
-        print("send_dict: ", send_dict)
         res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
         self.car_queue_info = json.loads(res_msg)["message"] if json.loads(res_msg)["indicator"] else []
-        print("res_msg: ", res_msg)
 
     # ====================================================
     # ====================================================
@@ -457,20 +519,33 @@ class PosPage(Famcy.FamcyPage):
                     "img_name": ["/asset/image" + temp["car_image"]]
                 })
 
-            license_num = Famcy.displayTag()
-            license_num.update({"title":"車牌號碼", "content": temp["platenum"]})
+            license_num = Famcy.pureInput()
+            license_num.update({"title":"車牌號碼", "input_type":"text", "defaultValue": temp["platenum"]})
 
-            time_num = Famcy.displayTag()
-            time_num.update({"title":"進場時間", "content": temp["modified_time"]})
+            input_date = Famcy.pureInput()
+            input_time = Famcy.pureInput()
+            input_date.update({"title": "輸入起始日期", "input_type": "date", "defaultValue": "20"+temp["entry_time"][:2]+"-"+temp["entry_time"][2:4]+"-"+temp["entry_time"][4:6]})
+            input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": temp["entry_time"][6:8]+":"+temp["entry_time"][8:10]})
+
+            update_btn = Famcy.submitBtn()
+            update_btn.update({"title":"修改車牌", "modified_time": temp["modified_time"]})
+            update_btn.connect(self.modify_platenum, target=card)
+
+            update_time_btn = Famcy.submitBtn()
+            update_time_btn.update({"title":"修改進場時間", "platenum": temp["platenum"], "modified_time": temp["modified_time"]})
+            update_time_btn.connect(self.modify_time, target=card)
 
             submit_btn = Famcy.submitBtn()
             submit_btn.update({"title":"送出車牌"})
-            submit_btn.connect(self.prompt_car_block, target=self.pos_card)
+            submit_btn.connect(self.submit_car_info, target=self.fee_card)
 
-            input_form.layout.addWidget(car_pic, 0, 0)
-            input_form.layout.addWidget(license_num, 1, 0)
-            input_form.layout.addWidget(time_num, 2, 0)
-            input_form.layout.addWidget(submit_btn, 3, 0)
+            input_form.layout.addWidget(car_pic, 0, 0, 1, 2)
+            input_form.layout.addWidget(license_num, 1, 0, 1, 2)
+            input_form.layout.addWidget(input_date, 2, 0, 1, 2)
+            input_form.layout.addWidget(input_time, 3, 0, 1, 2)
+            input_form.layout.addWidget(update_btn, 4, 0)
+            input_form.layout.addWidget(update_time_btn, 4, 1)
+            input_form.layout.addWidget(submit_btn, 5, 0, 1, 2)
 
             card.layout.addWidget(input_form, ((i-1)//col_num)*2, (i-1)%col_num)
 

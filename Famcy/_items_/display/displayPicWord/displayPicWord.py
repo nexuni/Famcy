@@ -25,16 +25,19 @@ class displayPicWord(Famcy.FamcyBlock):
         self.body["id"] = self.id
         self.body["className"] = "displayPicWord"
 
+        img_holder = Famcy.div()
         img_temp = Famcy.img()
         h3_temp = Famcy.h3()
         h4_temp = Famcy.h4()
 
-        self.body.addElement(img_temp)
+        img_holder.addElement(img_temp)
+
+        self.body.addElement(img_holder)
         self.body.addElement(h3_temp)
         self.body.addElement(h4_temp)
 
     def render_inner(self):
-        self.body.children[0]["src"] = self.value["img_src"]
+        self.body.children[0].children[0]["src"] = self.value["img_src"]
         self.body.children[1].innerHTML = self.value["title"]
         self.body.children[2].innerHTML = markdown.markdown(self.value["content"])
 

@@ -1,0 +1,6 @@
+title: "Famcy - Web Development"
+short_desc: "NEXUNI CO. 2021. <br>Famcy is an open source web development framework that depends on flask. It is designed to simplify the process of developing management console applications."
+categories: ["Web / mobile app development", "All"]
+img_url: "/asset/image/projects/famcylogo.png"
+project_page: false
+redirect_url: "https://github.com/nexuni/Famcy"
