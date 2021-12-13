@@ -1,0 +1,6 @@
+title: "AI Scene Segmentation"
+short_desc: "TEAM PROJECT. 2018. <br> We examined the effects of adding different skip connections on models for scene segmentation evaluated on MIT ADE20K dataset."
+categories: ["Artificial Intelligence", "All"]
+img_url: "/asset/image/projects/6819.png"
+project_page: false
+redirect_url: "/asset/docs/6819.pdf"

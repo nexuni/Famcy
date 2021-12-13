@@ -488,21 +488,16 @@ class SeasonPage(Famcy.FamcyPage):
         try:
             file_name = datetime.datetime.now().strftime("%Y%m%d%H%M%S")+".xlsx"
 
-            AWS_ACCESS_KEY_ID=""
-            AWS_SECRET_ACCESS_KEY=""
-            s3_client = boto3.client(
-                "s3",
-                aws_access_key_id=AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=AWS_SECRET_ACCESS_KEY
-            )
+            s3_client = boto3.client("s3")
 
             books_df = pd.DataFrame(
                 data=self.change_table_info_to_dict(),
                 columns=self.change_table_info_to_dict().keys(),
             )
 
-            with io.StringIO() as csv_buffer:
-                books_df.to_csv(csv_buffer, index=False)
+            with io.BytesIO() as csv_buffer:
+                with pd.ExcelWriter(csv_buffer, engine='xlsxwriter') as writer:
+                    books_df.to_excel(writer)
 
                 response = s3_client.put_object(
                     Bucket="minc-hitech.com", Key="pms_download/"+file_name, Body=csv_buffer.getvalue()
@@ -515,15 +510,16 @@ class SeasonPage(Famcy.FamcyPage):
         except Exception as e:
             msg=str(e)
 
-        return [Famcy.UpdateBlockHtml(), Famcy.UpdateAlert(alert_message=msg, extra_script=extra_script)]
+        return [Famcy.UpdateBlockHtml(target=self.card_1.layout.content[0][0].layout.content[10][0]), Famcy.UpdateAlert(alert_message=msg, extra_script=extra_script)]
 
     def upload_table(self, submission_obj, info_list):
         print("======upload_table========")
         msg = "檔案上傳失敗，請重新再試"
         if info_list[0][0]["indicator"]:
             file_path = self.p_upload_table_card.layout.content[0][0].layout.content[0][0].value["file_path"]+info_list[0][0]["message"]
+            print("file_path: ", file_path)
             table_info = self.read_excel_file(file_path)
-            if self.post_insert(table_info["phonenum"], table_info["platenum"], table_info["start_time"], table_info["end_time"], table_info["database_name"], table_info["season_type"], table_info["months_fee"], table_info["comments"]):
+            if self.post_insert(table_info["phonenum"], table_info["platenum"], table_info["validstart"], table_info["validend"], table_info["database_name"], table_info["season_type"], table_info["monthly_fee"], table_info["comments"]):
                 self.get_season_data()
                 msg = "成功加入資料"
             
@@ -616,7 +612,7 @@ class SeasonPage(Famcy.FamcyPage):
     # http request function
     # ====================================================
     def read_excel_file(self, file_path):
-        df = pd.read_excel(file_path, sheet_name=None)
+        df = pd.read_excel(file_path)
         write_data = df.to_dict('records')
         return_dict = {}
         for row in write_data:

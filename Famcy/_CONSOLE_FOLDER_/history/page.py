@@ -201,13 +201,14 @@ class CarManagementPage(Famcy.FamcyPage):
 
     def submit_platenum(self, submission_obj, info_list):
         msg = "系統異常，請重新再試"
-        license_num = submission_obj.origin.find_parent(submission_obj.origin, "input_form").layout.content[1][0].value["placeholder"]
-        modified_time = submission_obj.origin.value["modified_time"]
+        if len(info_list[0]) > 0:
+            license_num = str(info_list[0][0])
+            modified_time = submission_obj.origin.value["modified_time"]
 
-        if self.post_update(license_num, modified_time, comments="checked"):
-            self.get_car_queue()
-            self.generate_car_block(self.card_2)
-            msg = "成功確認資料"
+            if self.post_update(license_num, modified_time, comments="checked"):
+                self.get_car_queue()
+                self.generate_car_block(self.card_2)
+                msg = "成功確認資料"
 
         return [Famcy.UpdateBlockHtml(), Famcy.UpdateAlert(alert_message=msg)]
 

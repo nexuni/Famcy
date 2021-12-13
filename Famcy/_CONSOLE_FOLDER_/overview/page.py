@@ -16,10 +16,7 @@ class BackgroundTaskCoin(Famcy.FamcyPage):
 
 class OverviewPage(Famcy.FamcyPage):
     def __init__(self):
-        style = Famcy.ClassicSideStyle()
-        style.color_theme.setColor(main_color="#123456")
-        style.font_theme.setFontFamily(font_family="monospace")
-        super(OverviewPage, self).__init__("/overview", style, background_thread=True, background_freq=0.2)
+        super(OverviewPage, self).__init__("/overview", Famcy.ClassicSideStyle(), background_thread=True, background_freq=0.2)
 
         # for declaration
         # ===============
@@ -360,7 +357,7 @@ class OverviewPage(Famcy.FamcyPage):
 
         escape_submit_btn = Famcy.submitBtn()
         escape_submit_btn.update({"title":"返回畫面"})
-        escape_submit_btn.connect(self.prompt_remove_input,target=self)
+        escape_submit_btn.connect(self.prompt_remove_input)
 
         input_form.layout.addWidget(escape_submit_btn, 3, 0, 1, 3)
 
@@ -378,7 +375,7 @@ class OverviewPage(Famcy.FamcyPage):
         return_change = Famcy.pureInput()
         return_change.update({"title":"找錢","input_type":"number","num_range":[0,10000]})
 
-        text_msg = Famcy.inputParagraph()
+        text_msg = Famcy.pureInput()
         text_msg.update({"title":"訊息"})
 
         submit_change_btn = Famcy.submitBtn()
@@ -396,7 +393,7 @@ class OverviewPage(Famcy.FamcyPage):
 
         escape_submit_btn = Famcy.submitBtn()
         escape_submit_btn.update({"title":"返回畫面"})
-        escape_submit_btn.connect(self.prompt_remove_input,target=self)
+        escape_submit_btn.connect(self.prompt_remove_input)
 
         input_form.layout.addWidget(return_change, 0, 0, 1, 4)
         input_form.layout.addWidget(text_msg, 1, 0, 1, 4)
@@ -418,7 +415,7 @@ class OverviewPage(Famcy.FamcyPage):
 
         escape_submit_btn = Famcy.submitBtn()
         escape_submit_btn.update({"title":"返回畫面"})
-        escape_submit_btn.connect(self.prompt_remove_input,target=self)
+        escape_submit_btn.connect(self.prompt_remove_input)
 
         restart_btn = Famcy.submitBtn()
         restart_btn.update({"title":"重新啟動", "confirm_id": "reboot"})
@@ -467,7 +464,7 @@ class OverviewPage(Famcy.FamcyPage):
 
         escape_submit_btn = Famcy.submitBtn()
         escape_submit_btn.update({"title":"返回畫面"})
-        escape_submit_btn.connect(self.prompt_remove_input,target=self)
+        escape_submit_btn.connect(self.prompt_remove_input)
 
         input_form.layout.addWidget(escape_submit_btn, 0, 0)
         input_form.layout.addWidget(restart_btn, 0, 1)
@@ -498,7 +495,7 @@ class OverviewPage(Famcy.FamcyPage):
 
         escape_submit_btn = Famcy.submitBtn()
         escape_submit_btn.update({"title":"返回畫面"})
-        escape_submit_btn.connect(self.prompt_remove_input,target=self)
+        escape_submit_btn.connect(self.prompt_remove_input)
 
         input_form.layout.addWidget(text_msg, 0, 0, 1, 3)
         input_form.layout.addWidget(escape_submit_btn, 1, 0)
@@ -566,13 +563,14 @@ class OverviewPage(Famcy.FamcyPage):
 
     # open prompt
     def prompt_submit_input(self, submission_obj, info_list):
+        if submission_obj.target == self.apm_card:
+            _ = self.post_apm("get_message", submission_obj.origin.value["ip"], [])
         submission_obj.target["ip"] = submission_obj.origin.value["ip"] if "ip" in submission_obj.origin.value.keys() else None
-        print("=========submission_obj.target: ", submission_obj.target, submission_obj.target.attributes, submission_obj.target["ip"], "ip" in submission_obj.origin.value.keys())
         return Famcy.UpdatePrompt()
 
     # closed prompt
     def prompt_remove_input(self, submission_obj, info_list):
-        return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdateTabHtml()]
+        return Famcy.UpdateRemoveElement(prompt_flag=True)
 
     # table submit function
     def submit_car_img(self, submission_obj, info_list):
@@ -604,7 +602,7 @@ class OverviewPage(Famcy.FamcyPage):
                 self.card_1.layout.content[0][0].layout.content[0][0].update({
                     "content":'總車格數: %s<br>總佔位數: %s<br>總空位數: %s'%(str(self.total_lots),str(self.total_occupied_lots),str(int(self.total_lots)-int(self.total_occupied_lots)))
                 })
-                return Famcy.UpdateAlert(alert_message="已成功修改佔用車格: "+str(occupied_lot))
+                return [Famcy.UpdateAlert(alert_message="已成功修改佔用車格: "+str(occupied_lot)), Famcy.UpdateBlockHtml(target=self.card_1)]
 
         return Famcy.UpdateAlert(alert_message="資料修改失敗")
 
@@ -614,7 +612,7 @@ class OverviewPage(Famcy.FamcyPage):
             self.card_1.layout.content[0][0].layout.content[2][0].update({
                 "content":"已列印: %s<br>剩餘發票數: %s<br>剩餘號碼: %s"%(self.printed_receipt,str(1400-int(self.printed_receipt)),'0')
             })
-            return Famcy.UpdateAlert(alert_message="已成功修改已列印發票數: "+str(receipt_lot))
+            return [Famcy.UpdateAlert(alert_message="已成功修改已列印發票數: "+str(receipt_lot)), Famcy.UpdateBlockHtml(target=self.card_1)]
 
         return Famcy.UpdateAlert(alert_message="資料修改失敗")
 
@@ -655,7 +653,7 @@ class OverviewPage(Famcy.FamcyPage):
             if flag:
                 self.card_1.layout.content[0][0].layout.content[1][0].update({
                     "content":"50元: %s<br>10元: %s<br>5元: %s"%(str(self.h50),str(self.h10),str(self.h5))})
-                return Famcy.UpdateAlert(alert_message="已成功修改零錢("+str(_coin)+"元): "+str(edit_coin))
+                return [Famcy.UpdateAlert(alert_message="已成功修改零錢("+str(_coin)+"元): "+str(edit_coin)), Famcy.UpdateBlockHtml(target=self.card_1)]
 
         return Famcy.UpdateAlert(alert_message="資料修改失敗")
 
@@ -808,13 +806,13 @@ class OverviewPage(Famcy.FamcyPage):
                 return False
         elif btn_name == "refund":
             if len(list_info[0]) > 0 and list_info[0][0] != "":
-                send_dict["h50"], send_dict["h10"], send_dict["h5"] = self.refund_money(list_info[0][0])
+                send_dict["amount"] = list_info[0][0]
             else:
                 return False
 
-        # POST
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
-        print("=============res_msg: ", res_msg, type((res_msg)))
+        if json.loads(res_msg)["indicator"] and btn_name == "get_message":
+            self.apm_card.layout.content[0][0].layout.content[1][0].value["defaultValue"] = json.loads(res_msg)["message"][0]
         return json.loads(res_msg)["indicator"]
         # return True
 
@@ -825,9 +823,8 @@ class OverviewPage(Famcy.FamcyPage):
             "button": btn_name,
             "ip": ip_info
         }
-        # POST
+
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
-        print("=============res_msg: ", res_msg, type((res_msg)))
         return json.loads(res_msg)["indicator"]
         # return True
 
@@ -838,9 +835,8 @@ class OverviewPage(Famcy.FamcyPage):
             "button": btn_name,
             "ip": ip_info
         }
-        # POST
+
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
-        print("=============res_msg: ", res_msg, type((res_msg)))
         return json.loads(res_msg)["indicator"]
         # return True
 
@@ -901,12 +897,12 @@ class OverviewPage(Famcy.FamcyPage):
 
         return "執行失敗，請重新再試"
 
-    def refund_money(self, money):
-        h50 = int(money) // 50
-        h10 = (int(money) % 50) // 10
-        h5 = (int(money) % 10) // 5
+    # def refund_money(self, money):
+    #     h50 = int(money) // 50
+    #     h10 = (int(money) % 50) // 10
+    #     h5 = (int(money) % 10) // 5
 
-        return h50, h10, h5
+    #     return h50, h10, h5
     # ====================================================
     # ====================================================
 
