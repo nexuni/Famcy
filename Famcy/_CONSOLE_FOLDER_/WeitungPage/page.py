@@ -113,7 +113,16 @@ class WeitungPage(Famcy.FamcyPage):
         for j in range((len(key_list) + 2)// 3):
             for i in range(3):
                 # Guard index out of range
-                if j*3+i >= len(key_list): continue
+                if j*3+i >= len(key_list):
+                    profile_pic = Famcy.displayPicWord()
+                    profile_pic.update({
+                            "title": "",
+                            "content": ""
+                        })
+                    project_card_grid.layout.addWidget(profile_pic, j, i)
+                    project_card_grid.layout.addCusWidget(profile_pic, index, 0)
+                    index+=1
+                    continue
                 k = key_list[j*3+i]
                 profile_pic = Famcy.displayPicWord()
                 profile_pic.update({
