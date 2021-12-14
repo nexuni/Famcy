@@ -249,7 +249,7 @@ class FamcyLayout:
 				for card in v:
 					js = """
 					if (window.matchMedia('%s').matches) {
-						const id_name = %s;
+						const id_name = '%s';
 						$(id_name).css('grid-row-start', '%s');
 						$(id_name).css('grid-column-start', '%s');
 						$(id_name).css('grid-column-end', '%s');

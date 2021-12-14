@@ -17,7 +17,7 @@ class displayPicWord(Famcy.FamcyBlock):
         return {
                 "title": "displayPicWord",
                 "content": "",
-                "img_src": ""
+                "img_src": "static/image/transparent.png"
         }
 
     def init_block(self):
