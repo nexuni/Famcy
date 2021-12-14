@@ -247,10 +247,16 @@ class FamcyLayout:
 					sijax_response.css("#"+card[0].id, "grid-row-end", str(card[1] + card[3] + 1))
 			else:
 				for card in v:
-					sijax_response.css("#"+card[0].id, "grid-row-start", str(card[1] + 1))
-					sijax_response.css("#"+card[0].id, "grid-column-start", str(card[2] + 1))
-					sijax_response.css("#"+card[0].id, "grid-column-end", str(card[2] + card[4] + 1))
-					sijax_response.css("#"+card[0].id, "grid-row-end", str(card[1] + card[3] + 1))
+					js = """
+					if (window.matchMedia('%s').matches) {
+						const id_name = %s;
+						$(id_name).css('grid-row-start', '%s');
+						$(id_name).css('grid-column-start', '%s');
+						$(id_name).css('grid-column-end', '%s');
+						$(id_name).css('grid-row-end', '%s');
+					}
+					""" % (k, "#"+card[0].id, str(card[1] + 1), str(card[2] + 1), str(card[2] + card[4] + 1), str(card[1] + card[3] + 1))
+					sijax_response.script(js)
 
 		for _prompt, _width in self.staticContent:
 			sijax_response.css("#"+_prompt.id, "width", str(_width))

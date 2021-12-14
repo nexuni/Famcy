@@ -44,7 +44,8 @@ class displayImage(Famcy.FamcyBlock):
             if self.value["border_radius"]:
                 i_temp.style["border-radius"] = self.value["border_radius"][i]
             else:
-                del i_temp.style["border-radius"]
+                if "border-radius" in i_temp.style.keys():
+                    del i_temp.style["border-radius"]
             self.body.children[1].addElement(i_temp)
             i+=1
 

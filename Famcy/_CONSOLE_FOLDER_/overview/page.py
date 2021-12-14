@@ -451,7 +451,7 @@ class OverviewPage(Famcy.FamcyPage):
             "rtsp_address": ["rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov"],
             "video_timeout": [15],
             "holder_width": ["100%"],
-            "holder_height": ["20vh"],
+            "holder_height": ["40vh"],
             "img_path": ["/ipcam"]
         })
 

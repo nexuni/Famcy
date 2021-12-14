@@ -55,11 +55,11 @@ class PosPage(Famcy.FamcyPage):
         search_btn.connect(self.update_selected_car, target=card1)
 
         print_btn = Famcy.submitBtn()
-        print_btn.update({"title": "印發票"})
+        print_btn.update({"title": "補印發票"})
         print_btn.connect(self.prompt_receipt_submit_input, target=self.receipt_card)
 
         submit_btn = Famcy.submitBtn()
-        submit_btn.update({"title": "登記月票"})
+        submit_btn.update({"title": "登記月票並繳費"})
         submit_btn.connect(self.prompt_submit_input, target=self.month_card)
 
         input_form.layout.addWidget(input_date, 0, 0)
@@ -161,10 +161,10 @@ class PosPage(Famcy.FamcyPage):
 
         input_form = Famcy.input_form()
 
-        input_id = Famcy.pureInput()
-        input_id.update({"title":"發票號碼:", "input_type":"number"})
+        input_id = Famcy.displayTag()
+        input_id.update({"title":"發票號碼:"})
 
-        input_platenum = Famcy.pureInput()
+        input_platenum = Famcy.displayTag()
         input_platenum.update({"title":"車牌號碼:"})
 
         receipt_type = Famcy.inputList()
@@ -376,7 +376,8 @@ class PosPage(Famcy.FamcyPage):
         if len(info_list[0]) > 0:
             total_price = int(self.fee_card.layout.content[0][0].layout.content[2][0].value["content"][4:])
             input_price = int(info_list[0][0])
-            self.fee_card.layout.content[0][0].layout.content[5][0].update({"content": "NT$ "+str(total_price-input_price)})
+
+            self.fee_card.layout.content[0][0].layout.content[5][0].update({"content": "NT$ "+str(input_price-total_price)})
             return Famcy.UpdateBlockHtml()
         return Famcy.UpdateAlert(alert_message="系統異常，請重新再試", target=self.fee_card)
 
@@ -461,7 +462,7 @@ class PosPage(Famcy.FamcyPage):
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
         self.fee_card.layout.content[0][0].layout.content[0][0].update({"content": platenum})
         self.fee_card.layout.content[0][0].layout.content[1][0].update({"content": entry_time})
-        self.fee_card.layout.content[0][0].layout.content[2][0].update({"content": "NT$ "+json.loads(res_msg)["message"][0]})
+        self.fee_card.layout.content[0][0].layout.content[2][0].update({"content": "NT$ "+json.loads(json.loads(res_msg)["message"][0])["parkingfee"]})
         print("json.loads(res_msg): ", json.loads(res_msg))
         return json.loads(res_msg)["indicator"]
 
@@ -476,6 +477,8 @@ class PosPage(Famcy.FamcyPage):
         }
 
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
+        self.receipt_card.layout.content[0][0].layout.content[0][0].update({"content": json.loads(json.loads(res_msg)["message"][0])["receipt_number"]})
+        self.receipt_card.layout.content[0][0].layout.content[1][0].update({"content": self.fee_card.layout.content[0][0].layout.content[0][0].value["content"]})
         return json.loads(res_msg)["indicator"]
 
     def get_car_queue(self, start_time=None, end_time=None, platenum=None):
@@ -536,7 +539,7 @@ class PosPage(Famcy.FamcyPage):
             update_time_btn.connect(self.modify_time, target=card)
 
             submit_btn = Famcy.submitBtn()
-            submit_btn.update({"title":"送出車牌"})
+            submit_btn.update({"title":"前往繳費"})
             submit_btn.connect(self.submit_car_info, target=self.fee_card)
 
             input_form.layout.addWidget(car_pic, 0, 0, 1, 2)

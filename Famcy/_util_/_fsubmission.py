@@ -86,16 +86,12 @@ class FResponse(metaclass=abc.ABCMeta):
 			_pure_html += _html[:start]
 			if start > 0:
 				end = _html.find("</script>")
-				print(_html[start+8:end])
-				sijax_response.script("console.log('test');"+_html[start+8:end])
+				sijax_response.script(_html[start+8:end])
 				return _pure_html, _html[end+9:]
-			print("end")
 			return _pure_html, False
 
-		print("start while")
 		while html:
 			pure_html, html = _find_script(pure_html, html)
-		print("end while")
 
 		return pure_html
 
@@ -115,7 +111,7 @@ class FSubmissionSijaxHandler(object):
 	and offer a response. 
 	"""
 	@staticmethod
-	# @exception_handler
+	@exception_handler
 	def famcy_submission_handler(obj_response, fsubmission_id, info_dict, **kwargs):
 		"""
 		This is the main submission handler that handles all
@@ -146,6 +142,7 @@ class FSubmissionSijaxHandler(object):
 			response_obj.response(obj_response)
 
 	@staticmethod
+	@exception_handler
 	def _dump_data(obj_response, files, form_values, fsubmission_obj, **kwargs):
 		def dump_files():
 			if 'file' not in files:
@@ -162,6 +159,7 @@ class FSubmissionSijaxHandler(object):
 			filename = ""
 			for _upload_file in upload_file:
 				if file_data and allowed_file(file_data.filename, _upload_file.value["accept_type"]):
+					print("file_data.save")
 					filename = datetime.datetime.now().strftime("%Y%m%d%H%M%S")+"_"+secure_filename(file_data.filename)
 					file_data.save(os.path.join(_upload_file.value["file_path"], filename))
 
@@ -182,6 +180,7 @@ class FSubmissionSijaxHandler(object):
 			response_obj.response(obj_response)
 
 	@staticmethod
+	@exception_handler
 	def upload_form_handler(obj_response, files, form_values):
 		fsubmission_obj = get_fsubmission_obj(form_values["fsubmission_obj"][0])
 		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, fsubmission_obj)
