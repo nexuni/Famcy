@@ -6,6 +6,7 @@ import datetime
 import requests
 import boto3
 import pandas as pd
+import xlsxwriter
 
 class SeasonPage(Famcy.FamcyPage):
     def __init__(self):
@@ -60,11 +61,11 @@ class SeasonPage(Famcy.FamcyPage):
 
 
         search_btn = Famcy.submitBtn()
-        search_btn.update({"title": "查詢"})
+        search_btn.update({"title": "查詢月票"})
         search_btn.connect(self.update_search, target=card1)
 
         insert_btn = Famcy.submitBtn()
-        insert_btn.update({"title": "新增"})
+        insert_btn.update({"title": "新增月票"})
         insert_btn.connect(self.prompt_submit_input, target=self.p_insert_card)
 
 
@@ -73,7 +74,7 @@ class SeasonPage(Famcy.FamcyPage):
         upload_btn.connect(self.prompt_submit_input, target=self.p_upload_table_card)
 
         download_btn = Famcy.submitBtn()
-        download_btn.update({"title": "下載表格"})
+        download_btn.update({"title": "下載月票表格"})
         download_btn.connect(self.download_table, target=card1)
 
         download_link = Famcy.downloadFile()
@@ -188,11 +189,11 @@ class SeasonPage(Famcy.FamcyPage):
           })
 
         new_btn = Famcy.submitBtn()
-        new_btn.update({"title": "更新"})
+        new_btn.update({"title": "更新月票資訊"})
         new_btn.connect(self.update_table_prompt, target=self.p_update_card)
 
         cancel_btn = Famcy.submitBtn()
-        cancel_btn.update({"title": "刪除"})
+        cancel_btn.update({"title": "刪除月票"})
         cancel_btn.connect(self.prompt_submit_input, target=self.p_del_card)
 
         input_form.layout.addWidget(table_content, 0, 0, 1, 2)
@@ -497,13 +498,13 @@ class SeasonPage(Famcy.FamcyPage):
 
             with io.BytesIO() as csv_buffer:
                 with pd.ExcelWriter(csv_buffer, engine='xlsxwriter') as writer:
-                    books_df.to_excel(writer)
+                    books_df.to_excel(writer,index=False)
 
                 response = s3_client.put_object(
-                    Bucket="minc-hitech.com", Key="pms_download/"+file_name, Body=csv_buffer.getvalue()
+                    Bucket="gadgethi-css", Key="pms_download/"+file_name, Body=csv_buffer.getvalue()
                 )
 
-            self.card_1.layout.content[0][0].layout.content[10][0].update({"file_path": 'http://minc-hitech.com.s3.amazonaws.com/pms_download/'+file_name})
+            self.card_1.layout.content[0][0].layout.content[10][0].update({"file_path": 'https://gadgethi-css.s3.amazonaws.com/pms_download/'+file_name})
             extra_script = "document.getElementById('" + self.card_1.layout.content[0][0].layout.content[10][0].id + "_input').click();"
 
             msg = "成功加入資料"
@@ -519,11 +520,13 @@ class SeasonPage(Famcy.FamcyPage):
             file_path = self.p_upload_table_card.layout.content[0][0].layout.content[0][0].value["file_path"]+info_list[0][0]["message"]
             print("file_path: ", file_path)
             table_info = self.read_excel_file(file_path)
-            if self.post_insert(table_info["phonenum"], table_info["platenum"], table_info["validstart"], table_info["validend"], table_info["database_name"], table_info["season_type"], table_info["monthly_fee"], table_info["comments"]):
+            if self.post_insert(table_info["phonenum"], table_info["platenum"], table_info["validstart"], table_info["validend"], "season", table_info["season_type"], table_info["monthly_fee"], table_info["comments"]):
                 self.get_season_data()
                 msg = "成功加入資料"
+                print("end")
+                extra_script = "$('#table_%s').bootstrapTable('load', %s)" % (self.card_2.layout.content[0][0].layout.content[0][0].id, self.table_info)
             
-        return [Famcy.UpdateAlert(alert_message=msg), Famcy.UpdateBlockHtml(target=self.card_2)]
+        return [Famcy.UpdateRemoveElement(prompt_flag=True, extra_script=extra_script), Famcy.UpdateAlert(alert_message=msg, target=self.card_2)]
     # ====================================================
     # ====================================================
 
@@ -551,6 +554,7 @@ class SeasonPage(Famcy.FamcyPage):
         self.card_2.layout.content[0][0].layout.content[0][0].update({
                 "data": self.table_info
             })
+        print("self.table_info: ", self.table_info)
 
     def post_modify(self, _id, license_num, start_time=None, end_time=None, comments=None):
         send_dict = {
@@ -612,8 +616,10 @@ class SeasonPage(Famcy.FamcyPage):
     # http request function
     # ====================================================
     def read_excel_file(self, file_path):
+        print("read_excel")
         df = pd.read_excel(file_path)
         write_data = df.to_dict('records')
+        print("write_data")
         return_dict = {}
         for row in write_data:
             for columns in row.keys():

@@ -51,7 +51,7 @@ class CarManagementPage(Famcy.FamcyPage):
         verify_mode = Famcy.inputList()
         verify_mode.update({
                 "title": "輸入車牌狀態",
-                "value": ["True", "False"],
+                "value": ["尚未驗證", "已驗證"],
                 "action_after_post": "clean"
             })
 
@@ -168,7 +168,10 @@ class CarManagementPage(Famcy.FamcyPage):
             end_time = info_list[2][0][:4] + info_list[2][0][5:7] + info_list[2][0][8:10] + info_list[3][0][:2] + info_list[3][0][3:] + "00000"
             license_num = str(info_list[4][0])
             verify_mode = str(info_list[5][0])
-
+            if verify_mode == "尚未驗證":
+                verify_mode = 'True'
+            else:
+                verify_mode = 'False'
             self.get_car_queue(verify_mode=verify_mode, start_time=start_time, end_time=end_time, platenum=license_num)
             self.generate_car_block(self.card_2)
             return Famcy.UpdateBlockHtml(target=self.card_2)
