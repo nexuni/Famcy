@@ -78,7 +78,7 @@ class SeasonPage(Famcy.FamcyPage):
         download_btn.connect(self.download_table, target=card1)
 
         download_link = Famcy.downloadFile()
-        download_link.update({"title": "","file_path": 'http://127.0.0.1:5000/robots.xlsx',"file_name": 'season.xlsx'})
+        download_link.update({"title": "","file_path": 'http://127.0.0.1:5000/robots.xlsx',"file_name": 'download'})
         download_link.body.children[0]["style"] = "visibility: hidden;"
 
         input_form.layout.addWidget(input_date, 0, 0, 2, 1)
