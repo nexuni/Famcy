@@ -380,7 +380,9 @@ class OverviewPage(Famcy.FamcyPage):
 
         submit_change_btn = Famcy.submitBtn()
         submit_change_btn.update({"title":"送出找錢", "confirm_id": "refund"})
-        submit_change_btn.connect(self.update_apm_refund, target=pcard)
+        # submit_change_btn.connect(self.update_apm_refund, target=pcard)
+        submit_change_btn.connect(self.confirm_action, target=self.confirm_card)
+        self.prompt_info[pcard["pname"]][submit_change_btn.value["confirm_id"]] = {"confirm_msg": "確認是否送出找錢?"}
 
         submit_msg_btn = Famcy.submitBtn()
         submit_msg_btn.update({"title":"送出訊息", "confirm_id": "display_message"})
@@ -543,6 +545,7 @@ class OverviewPage(Famcy.FamcyPage):
         submission_obj.target["ip"] = last_p_card["ip"]
         submission_obj.target["pname"] = last_p_card["pname"]
         submission_obj.target["btn_name"] = submission_obj.origin.value["confirm_id"]
+        submission_obj.target["info_list"] = info_list
         submission_obj.target.last_card = last_p_card
 
         self.confirm_card.layout.content[0][0].layout.content[2][0].connect(self.return_action,target=submission_obj.target.last_card)
@@ -555,7 +558,7 @@ class OverviewPage(Famcy.FamcyPage):
     def succeed_action(self, submission_obj, info_list):
         last_p_card = submission_obj.origin.find_parent(submission_obj.origin, "FPromptCard")
         if last_p_card["ip"]:
-            msg = self.submit_device_action(last_p_card["pname"], last_p_card["btn_name"], last_p_card["ip"], info_list)
+            msg = self.submit_device_action(last_p_card["pname"], last_p_card["btn_name"], last_p_card["ip"], last_p_card["info_list"])
         return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdateAlert(alert_message=msg)]
 
     def return_action(self, submission_obj, info_list):
@@ -657,10 +660,10 @@ class OverviewPage(Famcy.FamcyPage):
 
         return Famcy.UpdateAlert(alert_message="資料修改失敗")
 
-    def update_apm_refund(self, submission_obj, info_list):
-        if len(info_list[0]) > 0:
-            msg = self.submit_device_action(submission_obj.origin.find_parent(submission_obj.origin, "FPromptCard")["pname"], submission_obj.origin.value["confirm_id"], submission_obj.origin["ip"], info_list)
-        return Famcy.UpdateAlert(alert_message=msg)
+    # def update_apm_refund(self, submission_obj, info_list):
+    #     if len(info_list[0]) > 0:
+    #         msg = self.submit_device_action(submission_obj.origin.find_parent(submission_obj.origin, "FPromptCard")["pname"], submission_obj.origin.value["confirm_id"], submission_obj.origin["ip"], info_list)
+    #     return Famcy.UpdateAlert(alert_message=msg)
 
     def update_apm_msg(self, submission_obj, info_list):
         if len(info_list[1]) > 0:
@@ -814,7 +817,6 @@ class OverviewPage(Famcy.FamcyPage):
         if json.loads(res_msg)["indicator"] and btn_name == "get_message":
             self.apm_card.layout.content[0][0].layout.content[1][0].value["defaultValue"] = json.loads(res_msg)["message"][0]
         return json.loads(res_msg)["indicator"]
-        # return True
 
     def post_station(self, btn_name, ip_info):
         send_dict = {
@@ -826,7 +828,6 @@ class OverviewPage(Famcy.FamcyPage):
 
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
         return json.loads(res_msg)["indicator"]
-        # return True
 
     def post_ipcam(self, btn_name, ip_info):
         send_dict = {
@@ -838,7 +839,6 @@ class OverviewPage(Famcy.FamcyPage):
 
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
         return json.loads(res_msg)["indicator"]
-        # return True
 
     def post_led(self, btn_name, ip_info, list_info):
         send_dict = {

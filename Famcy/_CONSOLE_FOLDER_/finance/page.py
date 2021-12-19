@@ -1,8 +1,12 @@
 import Famcy
 import os
+import io
 import json
 import requests
 import datetime
+import boto3
+import pandas as pd
+import xlsxwriter
 
 class FinancePage(Famcy.FamcyPage):
     def __init__(self):
@@ -12,14 +16,30 @@ class FinancePage(Famcy.FamcyPage):
         self.entry_station = "E1"
 
         self.p_date_card = self.prompt_card_date()
-
         self.layout.addStaticWidget(self.p_date_card)
+
+        self.pie_graph = Famcy.pie_chart()
+        self.bar_graph = Famcy.bar_chart()
+        self.pie_graph_card2 = Famcy.pie_chart()
+        self.bar_graph_card3 = Famcy.bar_chart()
+        self.layout.addStaticWidget(self.pie_graph)
+        self.layout.addStaticWidget(self.bar_graph)
+        self.layout.addStaticWidget(self.pie_graph_card2)
+        self.layout.addStaticWidget(self.bar_graph_card3)
+
+        self.card_1_graph_data = []
+        # self.card_2_graph_data = []
+        # self.card_3_graph_data = []
 
         self.card_1 = self.card1()
         self.card_2 = self.card2()
+        self.card_3 = self.card3()
+        self.card_4 = self.card4()
 
         self.layout.addWidget(self.card_1, 0, 0)
         self.layout.addWidget(self.card_2, 1, 0)
+        self.layout.addWidget(self.card_3, 2, 0)
+        self.layout.addWidget(self.card_4, 3, 0)
 
     # card
     # ====================================================
@@ -58,27 +78,101 @@ class FinancePage(Famcy.FamcyPage):
         search_btn.update({"title": "查詢"})
         search_btn.connect(self.generate_chart, target=card1)
 
-        self.pie_graph = Famcy.pie_chart()
-        self.bar_graph = Famcy.bar_chart()
+        download_btn = Famcy.submitBtn()
+        download_btn.update({"title": "下載圖表"})
+        download_btn.connect(self.download_graph, target=card1)
+
+        download_link = Famcy.downloadFile()
+        download_link.update({"title": "","file_path": 'http://127.0.0.1:5000/robots.xlsx',"file_name": 'download'})
+        download_link.body.children[0]["style"] = "visibility: hidden;"
 
         input_form.layout.addWidget(input_date, 0, 0)
         input_form.layout.addWidget(input_time, 0, 1)
         input_form.layout.addWidget(input_date2, 0, 2)
         input_form.layout.addWidget(input_time2, 0, 3)
-        input_form.layout.addWidget(search_type, 1, 0)
-        input_form.layout.addWidget(chart_type, 1, 1)
-        input_form.layout.addWidget(time_range, 1, 2)
-        
+        input_form.layout.addWidget(search_type, 1, 0, 2, 1)
+        input_form.layout.addWidget(chart_type, 1, 1, 2, 1)
+        input_form.layout.addWidget(time_range, 1, 2, 2, 1)        
         input_form.layout.addWidget(search_btn, 1, 3)
+        input_form.layout.addWidget(download_btn, 2, 3)
+
+        input_form.layout.addWidget(download_link, 3, 0)
 
         card1.layout.addWidget(input_form, 0, 0)
 
-        card1.layout.addStaticWidget(self.pie_graph)
-        card1.layout.addStaticWidget(self.bar_graph)
+        graph = Famcy.FamcyCard()
+        card1.layout.addWidget(graph, 1, 0)
 
         return card1
 
     def card2(self):
+        card2 = Famcy.FamcyCard()
+        card2.title = "Revenue Source"
+
+        input_form = Famcy.input_form()
+
+        input_date = Famcy.pureInput()
+        input_time = Famcy.pureInput()
+        input_date2 = Famcy.pureInput()
+        input_time2 = Famcy.pureInput()
+
+        input_date.update({"title": "輸入起始日期", "input_type": "date"})
+        input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": "00:00"})
+        input_date2.update({"title": "輸入結束日期", "input_type": "date"})
+        input_time2.update({"title": "輸入結束時間", "input_type": "time", "defaultValue": "23:59"})
+
+        search_btn = Famcy.submitBtn()
+        search_btn.update({"title": "查詢"})
+        search_btn.connect(self.generate_revenue_source_chart, target=card2)
+
+        input_form.layout.addWidget(input_date, 0, 0)
+        input_form.layout.addWidget(input_time, 0, 1)
+        input_form.layout.addWidget(input_date2, 0, 2)
+        input_form.layout.addWidget(input_time2, 0, 3)
+        input_form.layout.addWidget(search_btn, 0, 4)
+
+        card2.layout.addWidget(input_form, 0, 0)
+
+        graph = Famcy.FamcyCard()
+        card2.layout.addWidget(graph, 1, 0)
+
+        return card2
+
+    def card3(self):
+        card3 = Famcy.FamcyCard()
+        card3.title = "Available Lot Anaylze"
+
+        input_form = Famcy.input_form()
+
+        input_date = Famcy.pureInput()
+        input_time = Famcy.pureInput()
+        input_date2 = Famcy.pureInput()
+        input_time2 = Famcy.pureInput()
+
+        input_date.update({"title": "輸入起始日期", "input_type": "date"})
+        input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": "00:00"})
+        input_date2.update({"title": "輸入結束日期", "input_type": "date"})
+        input_time2.update({"title": "輸入結束時間", "input_type": "time", "defaultValue": "23:59"})
+
+        search_btn = Famcy.submitBtn()
+        search_btn.update({"title": "查詢"})
+        search_btn.connect(self.generate_available_lot_anaylze_chart, target=card3)
+
+        input_form.layout.addWidget(input_date, 0, 0)
+        input_form.layout.addWidget(input_time, 0, 1)
+        input_form.layout.addWidget(input_date2, 0, 2)
+        input_form.layout.addWidget(input_time2, 0, 3)
+        
+        input_form.layout.addWidget(search_btn, 0, 4)
+
+        card3.layout.addWidget(input_form, 0, 0)
+
+        graph = Famcy.FamcyCard()
+        card3.layout.addWidget(graph, 1, 0)
+
+        return card3
+
+    def card4(self):
         card2 = Famcy.FamcyCard()
         card2.title = "Receipt"
 
@@ -154,9 +248,6 @@ class FinancePage(Famcy.FamcyPage):
 
     # submission function
     # ====================================================
-    def test(self, submission_obj, info_list):
-        return [Famcy.UpdateAlert(alert_message="msg", target=self.card_2), Famcy.UpdatePrompt()]
-
     def prompt_remove_input(self, submission_obj, info_list):
         return Famcy.UpdateRemoveElement(prompt_flag=True)
 
@@ -197,17 +288,126 @@ class FinancePage(Famcy.FamcyPage):
             chart_type = str(info_list[5][0])
             time_range = str(info_list[6][0])
 
-            if self.get_chart_info(start_time, end_time, chart_type=chart_type):
+            if self.get_chart_info(start_time, end_time, chart_type=chart_type, search_type=search_type, time_range=time_range):
                 msg = "成功修改資料"
 
-        return [Famcy.UpdateAlert(alert_message=msg), Famcy.UpdateBlockHtml(target=self.card_1)]
+        return [Famcy.UpdateAlert(alert_message=msg), Famcy.UpdateBlockHtml(target=self.card_1.layout.content[1][0])]
+
+    def generate_revenue_source_chart(self, submission_obj, info_list):
+        msg = "資料填寫有誤"
+        flag = True
+        for _ in info_list:
+            if not len(_) > 0:
+                flag = False
+                break
+        if flag:
+            start_time = info_list[0][0][2:4] + info_list[0][0][5:7] + info_list[0][0][8:10] + info_list[1][0][:2] + info_list[1][0][3:] + "00000"
+            end_time = info_list[2][0][2:4] + info_list[2][0][5:7] + info_list[2][0][8:10] + info_list[3][0][:2] + info_list[3][0][3:] + "00000"
+            
+            if self.get_revenue_source(start_time, end_time):
+                msg = "成功修改資料"
+
+        return [Famcy.UpdateAlert(alert_message=msg), Famcy.UpdateBlockHtml(target=self.card_2.layout.content[1][0])]
+
+    def generate_available_lot_anaylze_chart(self, submission_obj, info_list):
+        msg = "資料填寫有誤"
+        flag = True
+        for _ in info_list:
+            if not len(_) > 0:
+                flag = False
+                break
+        if flag:
+            start_time = info_list[0][0][2:4] + info_list[0][0][5:7] + info_list[0][0][8:10] + info_list[1][0][:2] + info_list[1][0][3:] + "00000"
+            end_time = info_list[2][0][2:4] + info_list[2][0][5:7] + info_list[2][0][8:10] + info_list[3][0][:2] + info_list[3][0][3:] + "00000"
+            
+            if self.get_available_lot_anaylze(start_time, end_time):
+                msg = "成功修改資料"
+
+        return [Famcy.UpdateAlert(alert_message=msg), Famcy.UpdateBlockHtml(target=self.card_3.layout.content[1][0])]
+
+    def download_graph(self, submission_obj, info_list):
+        msg = "資料填寫有誤"
+        extra_script = ""
+        try:
+            file_name = datetime.datetime.now().strftime("%Y%m%d%H%M%S")+".xlsx"
+
+            s3_client = boto3.client("s3")
+
+            books_df = pd.DataFrame(
+                data=self.change_table_info_to_dict(),
+                columns=self.change_table_info_to_dict().keys(),
+            )
+
+            with io.BytesIO() as csv_buffer:
+                with pd.ExcelWriter(csv_buffer, engine='xlsxwriter') as writer:
+                    books_df.to_excel(writer,index=False)
+
+                response = s3_client.put_object(
+                    Bucket="gadgethi-css", Key="pms_download/"+file_name, Body=csv_buffer.getvalue()
+                )
+
+            self.card_1.layout.content[0][0].layout.content[9][0].update({"file_path": 'https://gadgethi-css.s3.amazonaws.com/pms_download/'+file_name})
+            extra_script = "document.getElementById('" + self.card_1.layout.content[0][0].layout.content[9][0].id + "_input').click();"
+
+            msg = "成功加入資料"
+        except Exception as e:
+            msg=str(e)
+        return [Famcy.UpdateBlockHtml(target=self.card_1.layout.content[0][0].layout.content[9][0]), Famcy.UpdateAlert(alert_message=msg, extra_script=extra_script)]
     # ====================================================
     # ====================================================
 
 
     # http request function
     # ====================================================
-    def get_chart_info(self, start_time, end_time, chart_type=None):
+    def get_revenue_source(self, start_time, end_time):
+        send_dict = {
+            "service": "pms",
+            "operation": "get_revenue_source",
+            "start_time": start_time, 
+            "end_time": end_time
+        }
+        res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
+        res_ind = json.loads(res_msg)["indicator"]
+        res_msg = json.loads(res_msg)["message"]
+
+        if res_ind:
+            values = res_msg["values"]
+            self.card_2.layout.content[1][0].layout.removeWidget(0, 0)
+            self.pie_graph_card2.update({
+                    "values": values,
+                    "labels": res_msg["labels"],
+                    "size": [1000, 500], # width, height
+                })
+            self.card_2.layout.content[1][0].layout.addWidget(self.pie_graph_card2, 0, 0)
+
+        return res_ind
+
+    def get_available_lot_anaylze(self, start_time, end_time):
+        send_dict = {
+            "service": "pms",
+            "operation": "get_available_lot_anaylze",
+            "start_time": start_time, 
+            "end_time": end_time
+        }
+        res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
+        res_ind = json.loads(res_msg)["indicator"]
+        res_msg = json.loads(res_msg)["message"]
+
+        if res_ind:
+            values = res_msg["values"]
+            self.card_3.layout.content[1][0].layout.removeWidget(0, 0)
+            for val in values:
+                val["color"] = "rgb(164, 99, 230)"
+            self.bar_graph_card3.update({
+                    "values": values,
+                    "labels": ["bar1"],
+                    "size": [1000, 500], # width, height
+                })
+            self.card_3.layout.content[1][0].layout.addWidget(self.bar_graph_card3, 0, 0)
+
+        return res_ind
+
+    def get_chart_info(self, start_time, end_time, chart_type=None, search_type=None, time_range=None):
         send_dict = {
             "service": "pms",
             "operation": "get_revenue",
@@ -219,20 +419,27 @@ class FinancePage(Famcy.FamcyPage):
         else:
             send_dict["chart_type"] = "bar"
 
+        if search_type:
+            send_dict["revenue_type"] = search_type
+        if time_range:
+            send_dict["time_days"] = time_range
+
         res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
         res_ind = json.loads(res_msg)["indicator"]
+        res_raw = json.loads(res_msg)["raw_data"]
         res_msg = json.loads(res_msg)["message"]
 
         if res_ind:
+            self.card_1_graph_data = res_raw
             values = res_msg["values"]
-            self.card_1.layout.content[0][0].layout.removeWidget(2, 0)
+            self.card_1.layout.content[1][0].layout.removeWidget(0, 0)
             if chart_type == "pie":
                 self.pie_graph.update({
                         "values": values,
                         "labels": res_msg["labels"],
                         "size": [1000, 500], # width, height
                     })
-                self.card_1.layout.content[0][0].layout.addWidget(self.pie_graph, 2, 0, 1, 4)
+                self.card_1.layout.content[1][0].layout.addWidget(self.pie_graph, 0, 0)
 
             else:
                 for val in values:
@@ -242,7 +449,9 @@ class FinancePage(Famcy.FamcyPage):
                         "labels": ["bar1"],
                         "size": [1000, 500], # width, height
                     })
-                self.card_1.layout.content[0][0].layout.addWidget(self.bar_graph, 2, 0, 1, 4)
+                self.card_1.layout.content[1][0].layout.addWidget(self.bar_graph, 0, 0)
+        else:
+            self.card_1_graph_data = []
 
         return res_ind
 
@@ -263,6 +472,16 @@ class FinancePage(Famcy.FamcyPage):
 
     # utils
     # ====================================================
+    def change_table_info_to_dict(self):
+        return_dict = {}
+        for row in self.card_1_graph_data:
+            for columns in row.keys():
+                try:
+                    return_dict[columns].append(row[columns])
+                except:
+                    return_dict[columns] = [row[columns]]
+
+        return return_dict
     # ====================================================
     # ====================================================
 
