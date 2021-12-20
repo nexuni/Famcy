@@ -271,11 +271,8 @@ class CarManagementPage(Famcy.FamcyPage):
         elif "end_time" in self.save_searching_data.keys():
             send_dict["end_time"] = self.save_searching_data["end_time"]
 
-        if platenum and not platenum == "":
+        if platenum:
             send_dict["platenum"] = platenum
-            self.save_searching_data["platenum"] = platenum[2:]
-        elif "platenum" in self.save_searching_data.keys():
-            send_dict["platenum"] = self.save_searching_data["platenum"]
 
         res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
         self.car_queue_info = json.loads(res_msg)["message"] if json.loads(res_msg)["indicator"] else []
@@ -308,9 +305,7 @@ class CarManagementPage(Famcy.FamcyPage):
         if entry_time:
             send_dict["entry_time"] = entry_time
 
-        print(send_dict, modified_time)
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
-        print(res_msg)
         return json.loads(res_msg)["indicator"]
 
     # ====================================================

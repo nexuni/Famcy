@@ -45,7 +45,7 @@ class FinancePage(Famcy.FamcyPage):
     # ====================================================
     def card1(self):
         card1 = Famcy.FamcyCard()
-        card1.title = "Revenue"
+        card1.title = "收入資料"
 
         input_form = Famcy.input_form()
 
@@ -79,7 +79,7 @@ class FinancePage(Famcy.FamcyPage):
         search_btn.connect(self.generate_chart, target=card1)
 
         download_btn = Famcy.submitBtn()
-        download_btn.update({"title": "下載圖表"})
+        download_btn.update({"title": "下載原始收入資料"})
         download_btn.connect(self.download_graph, target=card1)
 
         download_link = Famcy.downloadFile()
@@ -107,7 +107,7 @@ class FinancePage(Famcy.FamcyPage):
 
     def card2(self):
         card2 = Famcy.FamcyCard()
-        card2.title = "Revenue Source"
+        card2.title = "收入來源分析"
 
         input_form = Famcy.input_form()
 
@@ -140,7 +140,7 @@ class FinancePage(Famcy.FamcyPage):
 
     def card3(self):
         card3 = Famcy.FamcyCard()
-        card3.title = "Available Lot Anaylze"
+        card3.title = "車格佔用分析"
 
         input_form = Famcy.input_form()
 
@@ -174,7 +174,7 @@ class FinancePage(Famcy.FamcyPage):
 
     def card4(self):
         card2 = Famcy.FamcyCard()
-        card2.title = "Receipt"
+        card2.title = "發票比對"
 
         upload_form = Famcy.upload_form()
 
@@ -401,7 +401,10 @@ class FinancePage(Famcy.FamcyPage):
             self.bar_graph_card3.update({
                     "values": values,
                     "labels": ["bar1"],
-                    "size": [1000, 500], # width, height
+                    "size": [1000, 600], # width, height
+                    "title": "車格佔用分析",
+                    "xy_axis_title": ["","佔用車格"]
+
                 })
             self.card_3.layout.content[1][0].layout.addWidget(self.bar_graph_card3, 0, 0)
 
@@ -448,6 +451,8 @@ class FinancePage(Famcy.FamcyPage):
                         "values": values,
                         "labels": ["bar1"],
                         "size": [1000, 500], # width, height
+                        "title": "收入比較表",
+                        "xy_axis_title": ["","收入"]
                     })
                 self.card_1.layout.content[1][0].layout.addWidget(self.bar_graph, 0, 0)
         else:
