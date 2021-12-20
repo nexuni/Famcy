@@ -78,9 +78,6 @@ class IdTable(object):
 		if item in self.obj_id_dict.keys():
 			del self.obj_id_dict[item]
 
-SubmissionObjectTable = IdTable()
-
-
 def create_app(famcy_id, production=False):
 	"""
 	Main creation function of the famcy application. 
@@ -90,6 +87,8 @@ def create_app(famcy_id, production=False):
 	# file systems, http
 	FManager = FamcyManager(famcy_id, famcy_dir, production=production)
 	globals()["FManager"] = FManager
+
+	globals()["SubmissionObjectTable"] = IdTable()
 
 	# Header definitions
 	FManager["CUSTOM_STATIC_PATH"] = FManager.console + "_static_"
