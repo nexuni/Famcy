@@ -59,7 +59,27 @@ FamcyStyleNavBar = FStyleNavBar
 FamcyStyleNavBtns = FStyleNavBtns
 FamcyBackgroundTask = FBackgroundTask
 
-SubmissionObjectTable = {}
+class IdTable(object):
+	def __init__(self):
+		super(IdTable, self).__init__()
+		self.obj_id_dict = {}
+
+	def __setitem__(self, key, value):
+		print("__setitem__")
+		self.obj_id_dict[key] = value
+
+	def __getitem__(self, key):
+		print("__getitem__", key in self.obj_id_dict.keys())
+		print("self.obj_id_dict.keys(): ", self.obj_id_dict.keys())
+		return self.obj_id_dict[key]
+
+	def __delitem__(self, item):
+		print("__delitem__")
+		if item in self.obj_id_dict.keys():
+			del self.obj_id_dict[item]
+
+SubmissionObjectTable = IdTable()
+
 
 def create_app(famcy_id, production=False):
 	"""

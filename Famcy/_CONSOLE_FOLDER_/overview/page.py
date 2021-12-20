@@ -161,7 +161,7 @@ class OverviewPage(Famcy.FamcyPage):
         col_num = 3
         for i, temp in enumerate(self.device_btn_list, start=0):
             submit_btn = Famcy.submitBtn()
-            submit_btn.update({"title":temp["name"], "ip":temp["ip"]})
+            submit_btn.update({"title":temp["chinese_name"], "ip":temp["ip"]})
 
             target = card2
             if temp["type"] == "APM":
@@ -348,7 +348,7 @@ class OverviewPage(Famcy.FamcyPage):
         # receipt_input.update({"title":"修改已列印發票數","input_type":"number","num_range":[0,10000],"placeholder":self.printed_receipt})
 
         receipt_input_submit_btn = Famcy.submitBtn()
-        receipt_input_submit_btn.update({"title":"送出修改已列印發票數"})
+        receipt_input_submit_btn.update({"title":"更換發票(歸零)"})
         receipt_input_submit_btn.connect(self.update_receipt,target=pcard)
 
         # input_form.layout.addWidget(receipt_input, 2, 0, 1, 2)
@@ -615,7 +615,7 @@ class OverviewPage(Famcy.FamcyPage):
             self.card_1.layout.content[0][0].layout.content[2][0].update({
                 "content":"已列印: %s<br>剩餘發票數: %s<br>剩餘號碼: %s"%(self.printed_receipt,str(1400-int(self.printed_receipt)),'0')
             })
-            return [Famcy.UpdateAlert(alert_message="已成功修改已列印發票數: "+str(receipt_lot)), Famcy.UpdateBlockHtml(target=self.card_1)]
+            return [Famcy.UpdateAlert(alert_message="已成功修改已列印發票數: "+str(self.printed_receipt)), Famcy.UpdateBlockHtml(target=self.card_1)]
 
         return Famcy.UpdateAlert(alert_message="資料修改失敗")
 
@@ -726,7 +726,7 @@ class OverviewPage(Famcy.FamcyPage):
         }
         res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
         res_msg = json.loads(res_msg)["message"]
-        self.table_info = res_msg
+        self.table_info = self.make_time_readable(res_msg,["modified_time"])
 
         self.card_3.layout.content[0][0].layout.content[0][0].update({
             "data": self.table_info
@@ -739,7 +739,8 @@ class OverviewPage(Famcy.FamcyPage):
         }
         res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
         res_msg = json.loads(res_msg)["message"]
-        return self.device_convertion(res_msg)
+        return res_msg
+        # return self.device_convertion(res_msg)
 
     def get_error_msg(self):
         send_dict = {
@@ -862,24 +863,35 @@ class OverviewPage(Famcy.FamcyPage):
 
     # utils
     # ====================================================
-    def device_convertion(self, data):
-        pre_deal_dict = {}
-        return_list = []
-        for item in data.keys():
-            if '.' in data[item]:
-                pre_deal_dict[item] = data[item]
+    # def device_convertion(self, data):
+    #     pre_deal_dict = {}
+    #     return_list = []
+    #     for item in data.keys():
+    #         if '.' in data[item]:
+    #             pre_deal_dict[item] = data[item]
 
-        for deal_item in pre_deal_dict.keys():
-            if 'apm' in deal_item:
-                return_list.append({"type":"APM","ip":pre_deal_dict[deal_item],"name":deal_item})
-            elif 'ipcam' in deal_item and '_mon' not in deal_item:
-                return_list.append({"type":"IPCAM","ip":pre_deal_dict[deal_item],"name":deal_item})
-            elif 'e1' == deal_item:
-                return_list.append({"type":"STATION","ip":pre_deal_dict[deal_item],"name":deal_item})
-            elif 'x1' == deal_item:
-                return_list.append({"type":"STATION","ip":pre_deal_dict[deal_item],"name":deal_item})
+    #     for deal_item in pre_deal_dict.keys():
+    #         if 'apm' in deal_item:
+    #             return_list.append({"type":"APM","ip":pre_deal_dict[deal_item],"name":deal_item})
+    #         elif 'ipcam' in deal_item and '_mon' not in deal_item:
+    #             return_list.append({"type":"IPCAM","ip":pre_deal_dict[deal_item],"name":deal_item})
+    #         elif 'e1' == deal_item:
+    #             return_list.append({"type":"STATION","ip":pre_deal_dict[deal_item],"name":deal_item})
+    #         elif 'x1' == deal_item:
+    #             return_list.append({"type":"STATION","ip":pre_deal_dict[deal_item],"name":deal_item})
 
-        return return_list
+    #     return return_list
+    def make_time_readable(self,data,columns_name):
+        """
+        Use to make time friendly to read
+        """
+        for row in data:
+            for column in columns_name:
+                if len(row[column]) == 15:
+                    row[column] = str(row[column][:2]+"年 "+row[column][2:4]+"月"+row[column][4:6]+"日 "+row[column][6:8]+":"+row[column][8:10]+":"+row[column][10:12])
+                if len(row[column]) == 12:
+                    row[column] = str(row[column][:2]+"年 "+row[column][2:4]+"月"+row[column][4:6]+"日 "+row[column][6:8]+":"+row[column][8:10]+":"+row[column][10:12])
+        return data
 
     def submit_device_action(self, pname, btn_name, ip_info, list_info):
         if pname == "apm":
