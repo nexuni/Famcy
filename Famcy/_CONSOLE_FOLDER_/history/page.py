@@ -80,6 +80,47 @@ class CarManagementPage(Famcy.FamcyPage):
 
     def card2(self):
         card2 = Famcy.FamcyCard()
+        self.car_block_list = []
+        col_num = 4
+        for i in range(20):
+            input_form = Famcy.input_form()
+            input_form.body.style["border"] = "1px solid black"
+            input_form.body.style["max-width"] = str(100/col_num) + "vw"
+
+            car_pic = Famcy.displayImage()
+            car_pic.update({"title": ""})
+
+            license_num = Famcy.pureInput()
+            license_num.update({"title":"車牌號碼", "input_type":"text"})
+
+            input_date = Famcy.pureInput()
+            input_time = Famcy.pureInput()
+            input_date.update({"title": "輸入起始日期", "input_type": "date"})
+            input_time.update({"title": "輸入起始時間", "input_type": "time"})
+
+            update_btn = Famcy.submitBtn()
+            update_btn.update({"title":"修改車牌"})
+
+            submit_btn = Famcy.submitBtn()
+            submit_btn.update({"title":"車牌正確"})
+
+            update_time_btn = Famcy.submitBtn()
+            update_time_btn.update({"title":"修改進場時間"})
+
+            delete_btn = Famcy.submitBtn()
+            delete_btn.update({"title":"刪除車牌"})
+
+            input_form.layout.addWidget(car_pic, 0, 0, 1, 2)
+            input_form.layout.addWidget(license_num, 1, 0, 1, 2)
+            input_form.layout.addWidget(input_date, 2, 0, 1, 2)
+            input_form.layout.addWidget(input_time, 3, 0, 1, 2)
+            input_form.layout.addWidget(update_btn, 4, 0)
+            input_form.layout.addWidget(submit_btn, 4, 1)
+            input_form.layout.addWidget(update_time_btn, 5, 0)
+            input_form.layout.addWidget(delete_btn, 5, 1)
+
+            self.car_block_list.append(input_form)
+
         card2.preload = lambda: self.generate_car_block(card2, init=True)
         
         return card2
@@ -322,50 +363,26 @@ class CarManagementPage(Famcy.FamcyPage):
         card.layout.clearWidget()
         col_num = 4
         for i, temp in enumerate(self.car_queue_info, start=1):
-            input_form = Famcy.input_form()
-            input_form.body.style["border"] = "1px solid black"
-            input_form.body.style["max-width"] = str(100/col_num) + "vw"
+            if i < len(self.car_block_list):
+                input_form = self.car_block_list[i]
 
-            car_pic = Famcy.displayImage()
-            car_pic.update({
-                    "title": "",
-                    "img_name": ["/asset/image" + temp["car_image"]]
-                })
+                input_form.layout.content[0][0].update({"img_name": ["/asset/image" + temp["car_image"]]})
+                input_form.layout.content[1][0].update({"defaultValue": temp["platenum"]})
+                input_form.layout.content[2][0].update({"defaultValue": "20"+temp["entry_time"][:2]+"-"+temp["entry_time"][2:4]+"-"+temp["entry_time"][4:6]})
+                input_form.layout.content[3][0].update({"defaultValue": temp["entry_time"][6:8]+":"+temp["entry_time"][8:10]})
+                
+                input_form.layout.content[4][0].update({"modified_time": temp["modified_time"]})
+                input_form.layout.content[4][0].connect(self.modify_platenum, target=card)
+                input_form.layout.content[5][0].update({"modified_time": temp["modified_time"]})
+                input_form.layout.content[5][0].connect(self.submit_platenum, target=card)
+                input_form.layout.content[6][0].update({"platenum": temp["platenum"], "modified_time": temp["modified_time"]})
+                input_form.layout.content[6][0].connect(self.modify_time, target=card)
+                input_form.layout.content[7][0].update({"modified_time": temp["modified_time"]})
+                input_form.layout.content[7][0].connect(self.prompt_submit_input, target=self.del_card)
 
-            license_num = Famcy.pureInput()
-            license_num.update({"title":"車牌號碼", "input_type":"text", "defaultValue": temp["platenum"]})
-
-            input_date = Famcy.pureInput()
-            input_time = Famcy.pureInput()
-            input_date.update({"title": "輸入起始日期", "input_type": "date", "defaultValue": "20"+temp["entry_time"][:2]+"-"+temp["entry_time"][2:4]+"-"+temp["entry_time"][4:6]})
-            input_time.update({"title": "輸入起始時間", "input_type": "time", "defaultValue": temp["entry_time"][6:8]+":"+temp["entry_time"][8:10]})
-
-            update_btn = Famcy.submitBtn()
-            update_btn.update({"title":"修改車牌", "modified_time": temp["modified_time"]})
-            update_btn.connect(self.modify_platenum, target=card)
-
-            submit_btn = Famcy.submitBtn()
-            submit_btn.update({"title":"車牌正確", "modified_time": temp["modified_time"]})
-            submit_btn.connect(self.submit_platenum, target=card)
-
-            update_time_btn = Famcy.submitBtn()
-            update_time_btn.update({"title":"修改進場時間", "platenum": temp["platenum"], "modified_time": temp["modified_time"]})
-            update_time_btn.connect(self.modify_time, target=card)
-
-            delete_btn = Famcy.submitBtn()
-            delete_btn.update({"title":"刪除車牌", "modified_time": temp["modified_time"]})
-            delete_btn.connect(self.prompt_submit_input, target=self.del_card)
-
-            input_form.layout.addWidget(car_pic, 0, 0, 1, 2)
-            input_form.layout.addWidget(license_num, 1, 0, 1, 2)
-            input_form.layout.addWidget(input_date, 2, 0, 1, 2)
-            input_form.layout.addWidget(input_time, 3, 0, 1, 2)
-            input_form.layout.addWidget(update_btn, 4, 0)
-            input_form.layout.addWidget(submit_btn, 4, 1)
-            input_form.layout.addWidget(update_time_btn, 5, 0)
-            input_form.layout.addWidget(delete_btn, 5, 1)
-
-            card.layout.addWidget(input_form, ((i-1)//col_num)*2, (i-1)%col_num)
+                card.layout.addWidget(input_form, ((i-1)//col_num)*2, (i-1)%col_num)
+            else:
+                break
 
 
     def generate_modified_time(self):
