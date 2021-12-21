@@ -12,9 +12,6 @@ from werkzeug.utils import secure_filename
 def get_fsubmission_obj(obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
 	return Famcy.SubmissionObjectTable[obj_id]
-	# return session.get(obj_id)
-	# print(ctypes.cast(obj_id, ctypes.py_object).value)
-	# return ctypes.cast(obj_id, ctypes.py_object).value
 
 def exception_handler(func):
 	"""
@@ -114,7 +111,7 @@ class FSubmissionSijaxHandler(object):
 	and offer a response. 
 	"""
 	@staticmethod
-	@exception_handler
+	# @exception_handler
 	def famcy_submission_handler(obj_response, fsubmission_id, info_dict, **kwargs):
 		"""
 		This is the main submission handler that handles all

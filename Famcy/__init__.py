@@ -69,7 +69,7 @@ class IdTable(object):
 
 	def __getitem__(self, key):
 		print("__getitem__", key in self.obj_id_dict.keys())
-		print("self.obj_id_dict.keys(): ", self.obj_id_dict.keys())
+		# print("self.obj_id_dict.keys(): ", self.obj_id_dict.keys())
 		return self.obj_id_dict[key]
 
 	def __delitem__(self, item):
@@ -133,10 +133,6 @@ def create_app(famcy_id, production=False):
 	FManager.init_http_client(**FManager["ConsoleConfig"])
 	# Security Enhance
 	FManager.register_csrf(app)
-
-	# Submission Object Table Session
-	# app.config['SESSION_TYPE'] = "filesystem"
-	# Session(app)
 
 	# User Static Data
 	@MainBlueprint.route('/asset/<path:filename>')

@@ -40,7 +40,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		# Submission related
 		self.submission_obj = FSubmission(self)
 		self.submission_obj_key = self.id
-		# self.submission_obj_key = id(self.submission_obj)
 		self.post_submission_js = ""
 
 		if not Famcy.SubmissionObjectTable.has_key(self.submission_obj_key):
@@ -77,6 +76,18 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 				if type(_item).__name__ == className:
 					return_list.append(_item)
 				return_list.extend(self.find_class(_item, className))
+		return return_list
+
+	def find_all_widget(self, item):
+		return_list = []
+		if hasattr(item, "layout"):
+			for _item, _, _, _, _ in item.layout.content:
+				return_list.append(_item)
+				return_list.extend(self.find_all_widget(_item))
+
+			for _item, _ in item.layout.staticContent:
+				return_list.append(_item)
+				return_list.extend(self.find_all_widget(_item))
 		return return_list
 		
 	def render(self):

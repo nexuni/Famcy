@@ -40,6 +40,7 @@ class FPage(FamcyWidget):
 			background_thread=False, background_freq=0.5):
 
 		super(FPage, self).__init__()
+		print("route: ", route)
 		self.route = route
 		self.style = style
 		self.layout = FamcyLayout(self, layout_mode)
