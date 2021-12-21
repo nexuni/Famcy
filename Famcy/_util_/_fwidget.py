@@ -40,9 +40,11 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		# Submission related
 		self.submission_obj = FSubmission(self)
 		self.submission_obj_key = self.id
+		# self.submission_obj_key = id(self.submission_obj)
 		self.post_submission_js = ""
 
-		Famcy.SubmissionObjectTable[self.submission_obj_key] = self.submission_obj
+		if not Famcy.SubmissionObjectTable.has_key(self.submission_obj_key):
+			Famcy.SubmissionObjectTable[self.submission_obj_key] = self.submission_obj
 
 	def __setitem__(self, key, value):
 		self.attributes[key] = value
@@ -88,6 +90,10 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		5. return render inner stuffs
 		"""
 		self.preload()
+
+		# if session.get(self.submission_obj_key) == None:
+		# 	session[self.submission_obj_key] = self
+
 		self.body = self.render_inner()
 		if self.js_after_func_name != "" and self.js_after_func_name:
 			script = Famcy.script()

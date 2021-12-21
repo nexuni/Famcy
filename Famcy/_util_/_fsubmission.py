@@ -12,6 +12,9 @@ from werkzeug.utils import secure_filename
 def get_fsubmission_obj(obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
 	return Famcy.SubmissionObjectTable[obj_id]
+	# return session.get(obj_id)
+	# print(ctypes.cast(obj_id, ctypes.py_object).value)
+	# return ctypes.cast(obj_id, ctypes.py_object).value
 
 def exception_handler(func):
 	"""
@@ -228,7 +231,10 @@ class FBackgroundTask(FSubmission):
 		super(FBackgroundTask, self).__init__(origin)
 		self.background_info_dict = {}
 		self.obj_key = "background"+str(id(self))
-		Famcy.SubmissionObjectTable[self.obj_key] = self
+		if not Famcy.SubmissionObjectTable.has_key(self.obj_key):
+			Famcy.SubmissionObjectTable[self.obj_key] = self
+		# if session.get(self.obj_key) == None:
+		# 	session[self.obj_key] = self
 
 	def associate(self, function, info_dict={}, target=None, update_attr={}):
 		self.func = function

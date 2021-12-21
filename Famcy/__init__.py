@@ -77,6 +77,9 @@ class IdTable(object):
 		if item in self.obj_id_dict.keys():
 			del self.obj_id_dict[item]
 
+	def has_key(self, key):
+		return key in self.obj_id_dict
+
 def create_app(famcy_id, production=False):
 	"""
 	Main creation function of the famcy application. 
@@ -130,6 +133,10 @@ def create_app(famcy_id, production=False):
 	FManager.init_http_client(**FManager["ConsoleConfig"])
 	# Security Enhance
 	FManager.register_csrf(app)
+
+	# Submission Object Table Session
+	# app.config['SESSION_TYPE'] = "filesystem"
+	# Session(app)
 
 	# User Static Data
 	@MainBlueprint.route('/asset/<path:filename>')
