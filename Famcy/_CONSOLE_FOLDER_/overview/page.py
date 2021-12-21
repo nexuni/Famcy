@@ -613,7 +613,7 @@ class OverviewPage(Famcy.FamcyPage):
         if self.post_receipt():
             self.printed_receipt = "1400"
             self.card_1.layout.content[0][0].layout.content[2][0].update({
-                "content":"已列印: %s<br>剩餘發票數: %s<br>剩餘號碼: %s"%(self.printed_receipt,str(1400-int(self.printed_receipt)),'0')
+                "content":"已列印: %s<br>剩餘發票數: %s<br>剩餘號碼: %s"%(str(1400-int(self.printed_receipt)),self.printed_receipt,'0')
             })
             return [Famcy.UpdateAlert(alert_message="已成功修改已列印發票數: "+str(self.printed_receipt)), Famcy.UpdateBlockHtml(target=self.card_1)]
 
@@ -698,7 +698,7 @@ class OverviewPage(Famcy.FamcyPage):
             })
 
         self.card_1.layout.content[0][0].layout.content[2][0].update({
-                "content":"已列印: %s<br>剩餘發票數: %s<br>剩餘號碼: %s"%(self.printed_receipt,str(1400-int(self.printed_receipt)),'0')
+                "content":"已列印: %s<br>剩餘發票數: %s<br>剩餘號碼: %s"%(str(1400-int(self.printed_receipt)),self.printed_receipt,'0')
             })
 
         send_dict = {
