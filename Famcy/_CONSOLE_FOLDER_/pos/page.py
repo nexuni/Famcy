@@ -7,6 +7,7 @@ import datetime
 class PosPage(Famcy.FamcyPage):
     def __init__(self):
         super(PosPage, self).__init__("/pos", Famcy.ClassicSideStyle(), background_thread=False)
+        print("pos init")
 
         self.car_queue_info = []
         self.carpark_id = "park1"
