@@ -65,7 +65,6 @@ class IdTable(object):
 		self.obj_id_dict = {}
 
 	def __setitem__(self, key, value):
-		print("__setitem__")
 		self.obj_id_dict[key] = value
 
 	def __getitem__(self, key):

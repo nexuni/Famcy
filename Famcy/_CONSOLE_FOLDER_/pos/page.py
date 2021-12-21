@@ -364,7 +364,7 @@ class PosPage(Famcy.FamcyPage):
             if ind:
                 if loc:
                     extra_script = "document.getElementById('" + self.receipt_card.layout.content[0][0].layout.content[7][0].id + "_input').click();"
-                    return [Famcy.UpdateBlockHtml(target=self.receipt_card)]
+                    return [Famcy.UpdateBlockHtml(target=self.receipt_card), Famcy.UpdateAlert(alert_message="發票成功列印", target=self.card_1)]
                 return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdateAlert(alert_message="發票成功列印", target=self.card_1)]
         return Famcy.UpdateAlert(alert_message="系統異常，請重新再試")
 
