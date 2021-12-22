@@ -137,9 +137,15 @@ class FSubmissionSijaxHandler(object):
 			for res_obj in response_obj:
 				res_obj.target = res_obj.target if res_obj.target else fsubmission_obj.target
 				res_obj.response(obj_response)
-		else:
+		elif response_obj:
 			response_obj.target = response_obj.target if response_obj.target else fsubmission_obj.target
 			response_obj.response(obj_response)
+		else:
+			inner_text, extra_script = alert_response({"alert_type":"alert-warning", "alert_message":"系統異常", "alert_position":"prepend"}, fsubmission_obj.origin.id)
+			# args[0] is the sijax response object
+			obj_response.html_prepend('#'+fsubmission_obj.target.id, inner_text)
+			obj_response.script(extra_script)
+			obj_response.script("$('#loading_holder').css('display','none');")
 
 	@staticmethod
 	@exception_handler
@@ -175,14 +181,24 @@ class FSubmissionSijaxHandler(object):
 			for res_obj in response_obj:
 				res_obj.target = res_obj.target if res_obj.target else fsubmission_obj.target
 				res_obj.response(obj_response)
-		else:
+		elif response_obj:
 			response_obj.target = response_obj.target if response_obj.target else fsubmission_obj.target
 			response_obj.response(obj_response)
+		else:
+			inner_text, extra_script = alert_response({"alert_type":"alert-warning", "alert_message":"系統異常", "alert_position":"prepend"}, fsubmission_obj.origin.id)
+			# args[0] is the sijax response object
+			obj_response.html_prepend('#'+fsubmission_obj.target.id, inner_text)
+			obj_response.script(extra_script)
+			obj_response.script("$('#loading_holder').css('display','none');")
 
 	@staticmethod
 	@exception_handler
 	def upload_form_handler(obj_response, files, form_values):
-		fsubmission_obj = get_fsubmission_obj(form_values["fsubmission_obj"][0])
+		print(form_values["fsubmission_obj"])
+		if isinstance(form_values["fsubmission_obj"], str):
+			fsubmission_obj = get_fsubmission_obj(form_values["fsubmission_obj"])
+		else:
+			fsubmission_obj = get_fsubmission_obj(form_values["fsubmission_obj"][0])
 		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, fsubmission_obj)
 
 
