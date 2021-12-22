@@ -13,13 +13,7 @@ def get_fsubmission_obj(obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
 	return Famcy.SubmissionObjectTable[obj_id]
 
-def exception_handler(func):
-	"""
-	This is the decorator to 
-	assign the exception response
-	when there is an exception.
-	"""
-	def alert_response(info_dict, form_id):
+def alert_response(info_dict, form_id):
 		"""
 		Template for generating alert response
 		"""
@@ -37,6 +31,13 @@ def exception_handler(func):
 		''' % (form_id, form_id, form_id)
 
 		return inner_text, extra_script
+
+def exception_handler(func):
+	"""
+	This is the decorator to 
+	assign the exception response
+	when there is an exception.
+	"""
 
 	def inner_function(*args, **kwargs):
 		try:
