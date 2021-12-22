@@ -81,7 +81,7 @@ class PosPage(Famcy.FamcyPage):
         card2 = Famcy.FamcyCard()
         self.car_block_list = []
         col_num = 4
-        for i in range(20):
+        for i in range(100):
             input_form = Famcy.input_form()
             input_form.body.style["border"] = "1px solid black"
             input_form.body.style["max-width"] = str(100/col_num) + "vw"
@@ -404,7 +404,7 @@ class PosPage(Famcy.FamcyPage):
             if ind:
                 if loc:
                     extra_script = "document.getElementById('" + self.receipt_card.layout.content[0][0].layout.content[7][0].id + "_input').click();"
-                    return [Famcy.UpdateBlockHtml(target=self.receipt_card), Famcy.UpdateAlert(alert_message="發票成功列印", target=self.card_1)]
+                    return [Famcy.UpdateBlockHtml(target=self.receipt_card, extra_script=extra_script), Famcy.UpdateAlert(alert_message="發票成功列印", target=self.card_1)]
                 return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdateAlert(alert_message="發票成功列印", target=self.card_1)]
         return Famcy.UpdateAlert(alert_message="系統異常，請重新再試")
 
@@ -558,7 +558,9 @@ class PosPage(Famcy.FamcyPage):
         print("res_msg: ", res_msg)
         if "location" in json.loads(res_msg).keys() and json.loads(res_msg)["location"] and len(json.loads(res_msg)["location"]) > 0:
             location_flag = True
-            self.receipt_card.layout.content[0][0].layout.content[7][0].update({"file_path": json.loads(res_msg)["location"]})
+            location = json.loads(res_msg)["location"].split("_static_")[1]
+            self.receipt_card.layout.content[0][0].layout.content[7][0].update({"file_path": "/asset"+location})
+            # self.receipt_card.layout.content[0][0].layout.content[7][0].update({"file_path": "http://127.0.0.1:5000/static/image/test.jpg"})
         return json.loads(res_msg)["indicator"], location_flag
 
     def get_car_queue(self, start_time=None, end_time=None, platenum=None):

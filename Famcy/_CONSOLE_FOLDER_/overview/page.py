@@ -117,18 +117,20 @@ class OverviewPage(Famcy.FamcyPage):
         parking_lots_remaining = Famcy.displayParagraph()
         parking_lots_remaining.update({
             "title": "車格設定",
-            "content":'總車格數: %s<br>總佔位數: %s<br>總空位數: %s'%(str(self.total_lots),str(self.total_occupied_lots),str(int(self.total_lots)-int(self.total_occupied_lots)))
+            # "content":'總車格數: %s<br>總佔位數: %s<br>總空位數: %s'%(str(self.total_lots),str(self.total_occupied_lots),str(int(self.total_lots)-int(self.total_occupied_lots)))
             })
 
         change_remaining = Famcy.displayParagraph()
         change_remaining.update({
             "title": "零錢設定",
-            "content":"50元: %s<br>10元: %s<br>5元: %s"%(self.h50,self.h10,self.h5)})
+            # "content":"50元: %s<br>10元: %s<br>5元: %s"%(self.h50,self.h10,self.h5)
+            })
 
         receipt_remaining = Famcy.displayParagraph()
         receipt_remaining.update({
             "title": "發票設定",
-            "content":"已列印: %s<br>剩餘發票數: %s<br>剩餘號碼: %s"%(self.printed_receipt,str(1400-int(self.printed_receipt)),'0')})
+            # "content":"已列印: %s<br>剩餘發票數: %s<br>剩餘號碼: %s"%(self.printed_receipt,str(1400-int(self.printed_receipt)),'0')
+            })
 
         submit_btn = Famcy.submitBtn()
         submit_btn.body.style["word-break"] = "break-all !important"

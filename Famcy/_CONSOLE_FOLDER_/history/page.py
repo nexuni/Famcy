@@ -82,7 +82,7 @@ class CarManagementPage(Famcy.FamcyPage):
         card2 = Famcy.FamcyCard()
         self.car_block_list = []
         col_num = 4
-        for i in range(20):
+        for i in range(100):
             input_form = Famcy.input_form()
             input_form.body.style["border"] = "1px solid black"
             input_form.body.style["max-width"] = str(100/col_num) + "vw"
