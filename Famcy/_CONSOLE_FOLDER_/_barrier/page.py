@@ -5,8 +5,8 @@ class VideoStream1(Famcy.FamcyPage):
 	def __init__(self):
 		super(VideoStream1, self).__init__("/video_1", Famcy.VideoStreamStyle("/video_1"))
 
-v1 = VideoStream1()
-v1.register()
+# v1 = VideoStream1()
+# v1.register()
 
 class BarrierPage(Famcy.FamcyPage):
 	def __init__(self):
@@ -174,6 +174,6 @@ class BarrierPage(Famcy.FamcyPage):
 
 		return Famcy.UpdateBlockHtml()
 
-page = BarrierPage()
-page.register()
+# page = BarrierPage()
+# page.register()
 

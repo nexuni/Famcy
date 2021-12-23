@@ -10,7 +10,7 @@ import xlsxwriter
 
 class SeasonPage(Famcy.FamcyPage):
     def __init__(self):
-        super(SeasonPage, self).__init__("/season", Famcy.ClassicSideStyle(), background_thread=False)
+        super(SeasonPage, self).__init__()
 
         self.table_info = []
         self.carpark_id = "park1"
@@ -219,7 +219,7 @@ class SeasonPage(Famcy.FamcyPage):
                 "title": "檔案上傳",
                 "file_num": "single",
                 "accept_type": ["xls", "xlsx"],
-                "file_path": 'E:/nexuni/Famcy/Famcy/FamcyDownload/',
+                "file_path": '/home/minc/Downloads/',
             })
 
         submit_btn = Famcy.submitBtn()
@@ -475,7 +475,6 @@ class SeasonPage(Famcy.FamcyPage):
             season_type = str(info_list[7][0])
             month_fee = str(info_list[8][0])
             comments = str(info_list[9][0])
-
             if self.post_insert(phonenum, license_num, start_num, end_num, database_name, season_type, month_fee, comments):
                 self.get_season_data()
                 msg = "成功加入資料"
@@ -644,5 +643,5 @@ class SeasonPage(Famcy.FamcyPage):
     # ====================================================
    
 
-page = SeasonPage()
-page.register()
+# page = SeasonPage()
+SeasonPage.register("/season", Famcy.ClassicSideStyle(), background_thread=False)

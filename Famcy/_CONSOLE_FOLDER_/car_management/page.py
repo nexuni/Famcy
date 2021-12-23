@@ -6,7 +6,7 @@ import datetime
 
 class CarManagementPage(Famcy.FamcyPage):
     def __init__(self):
-        super(CarManagementPage, self).__init__("/car_management", Famcy.ClassicSideStyle(), background_thread=False)
+        super(CarManagementPage, self).__init__()
 
         self.car_queue_info = []
         self.carpark_id = "park1"
@@ -100,15 +100,19 @@ class CarManagementPage(Famcy.FamcyPage):
 
             update_btn = Famcy.submitBtn()
             update_btn.update({"title":"修改車牌"})
+            update_btn.connect(self.modify_platenum, target=card2)
 
             submit_btn = Famcy.submitBtn()
             submit_btn.update({"title":"車牌正確"})
+            submit_btn.connect(self.submit_platenum, target=card2)
 
             update_time_btn = Famcy.submitBtn()
             update_time_btn.update({"title":"修改進場時間"})
+            update_time_btn.connect(self.modify_time, target=card2)
 
             delete_btn = Famcy.submitBtn()
             delete_btn.update({"title":"刪除車牌"})
+            delete_btn.connect(self.prompt_submit_input, target=self.del_card)
 
             input_form.layout.addWidget(car_pic, 0, 0, 1, 2)
             input_form.layout.addWidget(license_num, 1, 0, 1, 2)
@@ -372,13 +376,9 @@ class CarManagementPage(Famcy.FamcyPage):
                 input_form.layout.content[3][0].update({"defaultValue": temp["entry_time"][6:8]+":"+temp["entry_time"][8:10]})
                 
                 input_form.layout.content[4][0].update({"modified_time": temp["modified_time"]})
-                input_form.layout.content[4][0].connect(self.modify_platenum, target=card)
                 input_form.layout.content[5][0].update({"modified_time": temp["modified_time"]})
-                input_form.layout.content[5][0].connect(self.submit_platenum, target=card)
                 input_form.layout.content[6][0].update({"platenum": temp["platenum"], "modified_time": temp["modified_time"]})
-                input_form.layout.content[6][0].connect(self.modify_time, target=card)
                 input_form.layout.content[7][0].update({"modified_time": temp["modified_time"]})
-                input_form.layout.content[7][0].connect(self.prompt_submit_input, target=self.del_card)
 
                 card.layout.addWidget(input_form, ((i-1)//col_num)*2, (i-1)%col_num)
             else:
@@ -416,5 +416,5 @@ class CarManagementPage(Famcy.FamcyPage):
 
    
 
-page = CarManagementPage()
-page.register()
+# page = CarManagementPage()
+CarManagementPage.register("/car_management", Famcy.ClassicSideStyle(), background_thread=False)

@@ -189,5 +189,5 @@ class TestPage(Famcy.FamcyPage):
 	def submit_time(self, submission_obj, info_list):
 		return Famcy.UpdateAlert(alert_message=str(info_list))		
 
-page = TestPage()
-page.register()
+# page = TestPage()
+# page.register()
