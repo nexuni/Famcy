@@ -54,29 +54,29 @@ PAGE_CONTENT = [
     }
 ]
 """
-import Famcy
+# import Famcy
 
-PAGE_HEADER = {
-    "title": ["折線圖模板", "柱狀圖模板", "更新折線圖模板"],
-    "size": ["onefourth_inner_section", "threefourth_inner_section", "inner_section"],
-    "type": ["line_chart", "bar_chart", "line_chart"],
-}
+# PAGE_HEADER = {
+#     "title": ["折線圖模板", "柱狀圖模板", "更新折線圖模板"],
+#     "size": ["onefourth_inner_section", "threefourth_inner_section", "inner_section"],
+#     "type": ["line_chart", "bar_chart", "line_chart"],
+# }
 
-line_chart_content_1 = Famcy.line_chart.generate_template_content()
-line_chart_content_1.update({
-		"title": "折線圖1"
-	})
+# line_chart_content_1 = Famcy.line_chart.generate_template_content()
+# line_chart_content_1.update({
+# 		"title": "折線圖1"
+# 	})
 
-line_chart_content_2 = Famcy.line_chart.generate_template_content()
-line_chart_content_2.update({
-		"title": "折線圖2"
-	})
+# line_chart_content_2 = Famcy.line_chart.generate_template_content()
+# line_chart_content_2.update({
+# 		"title": "折線圖2"
+# 	})
 
-bar_chart_content = Famcy.bar_chart.generate_template_content()
-bar_chart_content.update({
-		"title": "柱狀圖"
-	})
+# bar_chart_content = Famcy.bar_chart.generate_template_content()
+# bar_chart_content.update({
+# 		"title": "柱狀圖"
+# 	})
 
-PAGE_CONTENT = [line_chart_content_1, bar_chart_content, line_chart_content_2]
+# PAGE_CONTENT = [line_chart_content_1, bar_chart_content, line_chart_content_2]
 
-PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT)
+# PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT)

@@ -1,7 +1,5 @@
 import Famcy
 
-style = Famcy.LoginStyle()
-
 class CustomLoginManager(Famcy.FamcyLogin):
 	def __init__(self, always_remember=True):
 		super(CustomLoginManager, self).__init__(always_remember=always_remember)
@@ -48,7 +46,7 @@ class CustomLoginManager(Famcy.FamcyLogin):
 
 class LoginPage(Famcy.FamcyPage):
 	def __init__(self):
-		super(LoginPage, self).__init__("/iam/login", style)
+		super(LoginPage, self).__init__("/iam/login", Famcy.LoginStyle())
 		self.main_form = self.login_form()
 		self.layout.addWidget(self.main_form, 0, 0)
 
@@ -118,20 +116,20 @@ class LoginPage(Famcy.FamcyPage):
 			response.info_dict = {"alert_type":"alert-warning", "alert_message":"登入驗證失敗", "alert_position":"prepend"}
 		return response
 
-CustomLoginManager().register()
-login = LoginPage()
-login.register()
+# CustomLoginManager().register()
+# login = LoginPage()
+# login.register()
 
 # -------- Logout Part Below -------------
 #
 class LogoutPage(Famcy.FamcyPage):
 	def __init__(self):
-		super(LogoutPage, self).__init__("/logout", style)
+		super(LogoutPage, self).__init__("/logout", Famcy.LoginStyle())
 	def render(self):
 		logout_user()
 		return redirect(url_for('main.'+login.id))
 
-LogoutPage().register()
+# LogoutPage().register()
 
 
 

@@ -200,8 +200,8 @@ for k in ALL_KEY_LIST:
         p = ProjectPage(k)
         p.register()
 
-page = WeitungPage()
-page.register()
+# page = WeitungPage()
+# page.register()
 
 
 

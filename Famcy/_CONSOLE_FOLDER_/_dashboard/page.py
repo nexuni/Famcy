@@ -54,71 +54,71 @@ PAGE_CONTENT = [
     }
 ]
 """
-import Famcy
-import json
+# import Famcy
+# import json
 
 
-send_dict = {
-	"service": "member",
-	"operation": "get_member_status",
-	"user_phone": "0905860683"
-}
-res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
-res_ind = json.loads(res_str)["indicator"]
-res_msg = json.loads(res_str)["message"]
+# send_dict = {
+# 	"service": "member",
+# 	"operation": "get_member_status",
+# 	"user_phone": "0905860683"
+# }
+# res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
+# res_ind = json.loads(res_str)["indicator"]
+# res_msg = json.loads(res_str)["message"]
 
-print(res_str)
+# print(res_str)
 
-member_status = ""
-member_date_range = ""
+# member_status = ""
+# member_date_range = ""
 
-if res_ind:
-	member_status = res_msg["member_status"]
-	member_date_range = res_msg["member_date_range"][0] + " - " + res_msg["member_date_range"][0]
-
-
-
-
-send_dict = {
-	"service": "member",
-	"operation": "get_point_info",
-	"user_phone": "0905860683"
-}
-res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
-res_ind = json.loads(res_str)["indicator"]
-res_msg = json.loads(res_str)["message"]
-
-print(res_str)
-
-member_point = "0"
-accumulated_point = "0"
-accumulated_money = "0"
-
-if res_ind:
-	member_point = res_msg["reward_points"]
-	accumulated_point = res_msg["accumulated_point"]
-	accumulated_money = res_msg["accumulated_money"]
+# if res_ind:
+# 	member_status = res_msg["member_status"]
+# 	member_date_range = res_msg["member_date_range"][0] + " - " + res_msg["member_date_range"][0]
 
 
 
 
+# send_dict = {
+# 	"service": "member",
+# 	"operation": "get_point_info",
+# 	"user_phone": "0905860683"
+# }
+# res_str = Famcy.FManager.http_client.client_get("member_http_url", send_dict, gauth=True)
+# res_ind = json.loads(res_str)["indicator"]
+# res_msg = json.loads(res_str)["message"]
 
-PAGE_HEADER = {
-	"title": ["豆日子會員專區"],
-    "size": ["inner_section"],
-    "type": ["doday_member_card"]
-}
+# print(res_str)
 
-card_section = Famcy.doday_member_card.generate_template_content()
-card_section.update({
-		"main_status": member_status,
-        "sub_title": member_date_range,
-        "member_point": member_point,
-        "accumulated_point": accumulated_point,
-        "accumulated_money": accumulated_money,
-	})
+# member_point = "0"
+# accumulated_point = "0"
+# accumulated_money = "0"
 
-PAGE_CONTENT = [card_section]
-PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT)
+# if res_ind:
+# 	member_point = res_msg["reward_points"]
+# 	accumulated_point = res_msg["accumulated_point"]
+# 	accumulated_money = res_msg["accumulated_money"]
+
+
+
+
+
+# PAGE_HEADER = {
+# 	"title": ["豆日子會員專區"],
+#     "size": ["inner_section"],
+#     "type": ["doday_member_card"]
+# }
+
+# card_section = Famcy.doday_member_card.generate_template_content()
+# card_section.update({
+# 		"main_status": member_status,
+#         "sub_title": member_date_range,
+#         "member_point": member_point,
+#         "accumulated_point": accumulated_point,
+#         "accumulated_money": accumulated_money,
+# 	})
+
+# PAGE_CONTENT = [card_section]
+# PAGE_CONTENT_OBJECT = Famcy.generate_content_obj(PAGE_HEADER, PAGE_CONTENT)
 
 

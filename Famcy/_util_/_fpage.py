@@ -34,23 +34,30 @@ class FPage(FamcyWidget):
 		* register(): register the page to the Famcy env
 		* preload(): action before the rendering
 		* postload(): actions after the rendering
-	""" 
-	def __init__(self, route, style, permission_level=0, 
-			layout_mode=FLayoutMode.recommend, 
-			background_thread=False, background_freq=0.5):
+	"""
+	route = "/"
+	style = None
+	permission = None
+	background_thread_flag = False
+	background_freq = 0.5
+	current_page = None
+
+	# def __init__(self, route, style, permission_level=0, 
+	# 		layout_mode=FLayoutMode.recommend, 
+	# 		background_thread=False, background_freq=0.5):
+	def __init__(self, layout_mode=FLayoutMode.recommend):
 
 		super(FPage, self).__init__()
-		print("route: ", route)
-		self.route = route
-		self.style = style
+		# self.route = route
+		# self.style = style
 		self.layout = FamcyLayout(self, layout_mode)
-		self.permission = FPermissions(permission_level)
-		self.background_thread_flag = background_thread
-		self.background_freq = background_freq
+		# self.permission = FPermissions(permission_level)
+		# self.background_thread_flag = background_thread
+		# self.background_freq = background_freq
 
 		self.init_page()
 
-		if self.background_thread_flag:
+		if FPage.background_thread_flag:
 			self.sijax_response = None
 			
 			# Check loop correctness
@@ -72,7 +79,39 @@ class FPage(FamcyWidget):
 		"""
 		pass
 
-	def register(self):
+	@classmethod
+	def setClassAttr(cls, key, value):
+		if key in cls.__dict__.keys():
+			cls.__dict__[key] = value
+
+	@classmethod
+	def register(cls, route, style, permission_level=0, background_thread=False, background_freq=0.5, init_cls=None):
+		cls.route = route
+		cls.style = style
+		cls.permission = FPermissions(permission_level)
+		cls.background_thread_flag = background_thread
+		cls.background_freq = background_freq
+
+		route_func = lambda: cls.render(init_cls=init_cls)
+		route_func.__name__ = "famcy_route_func_name"+route[1:]
+
+		if cls.permission.required_login():
+			# Register the page render to the main blueprint
+			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(login_required(route_func))
+		else:
+			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(route_func)
+
+		if cls.background_thread_flag:
+			bg_func = lambda: cls.background_generator_loop()
+			bg_func.__name__ = "bgloop_famcy_route_func_name"+route[1:]
+
+			if cls.permission.required_login():
+				# Register the page render to the main blueprint
+				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(login_required(bg_func))
+			else:
+				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(bg_func)
+
+	def _register(self):
 		"""
 		This is the function to register 
 		the page to the flask route system. 
@@ -96,8 +135,42 @@ class FPage(FamcyWidget):
 			else:
 				Famcy.FManager["MainBlueprint"].route(self.route+"/bgloop")(bg_func)
 		
+	@classmethod
+	def render(cls, init_cls=None, *args, **kwargs):
 
-	def render(self, *args, **kwargs):
+		if g.sijax.is_sijax_request:
+			g.sijax.register_object(FSubmissionSijaxHandler)
+
+			return g.sijax.process_request()
+
+		# init page
+		if request.method == 'GET':
+			if init_cls:
+				cls.current_page = init_cls
+			else:
+				cls.current_page = cls()
+
+		form_init_js = ''
+		end_script = ''
+		upload_list = cls.current_page.find_class(cls.current_page, "upload_form")
+		for _item in upload_list:
+			form_init_js += g.sijax.register_upload_callback(_item.id, FSubmissionSijaxHandler.upload_form_handler)
+
+		if not cls.current_page.permission.verify(Famcy.FManager["CurrentUser"]):
+			content_data = "<h1>You are not authorized to view this page!</h1>"
+		else:
+			# Render all content
+			cls.current_page.body = super(FPage, cls.current_page).render()
+			content_data = cls.current_page.body.render_inner()
+			end_script = cls.current_page.body.render_script()
+			for temp, _ in cls.current_page.layout.staticContent:
+				end_script += temp.body.render_script()
+
+		# Apply style at the end
+		return cls.current_page.style.render(cls.current_page.header_script, content_data, background_flag=cls.current_page.background_thread_flag, route=cls.current_page.route, time=int(1/cls.current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
+
+
+	def _render(self, *args, **kwargs):
 		"""
 		This is the main render function, i.e.
 		the flask route function top level. 
@@ -128,7 +201,8 @@ class FPage(FamcyWidget):
 		# Apply style at the end
 		return self.style.render(self.header_script, content_data, background_flag=self.background_thread_flag, route=self.route, time=int(1/self.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
 
-	def background_generator_loop(self):
+	@staticmethod
+	def background_generator_loop():
 		def generate():
 			try:
 				baction = Famcy.FamcyBackgroundQueue.pop()

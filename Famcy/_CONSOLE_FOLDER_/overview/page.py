@@ -5,18 +5,18 @@ import requests
 
 class VideoStream(Famcy.FamcyPage):
     def __init__(self):
-        super(VideoStream, self).__init__("/ipcam", Famcy.VideoStreamStyle("/ipcam"))
+        super(VideoStream, self).__init__()
 
-v1 = VideoStream()
-v1.register()
+# v1 = VideoStream()
+VideoStream.register("/ipcam", Famcy.VideoStreamStyle("/ipcam"), init_cls=VideoStream())
 
 class BackgroundTaskCoin(Famcy.FamcyPage):
     def __init__(self):
-        super(BackgroundTaskCoin, self).__init__("/BackgroundTaskCoin", Famcy.APIStyle())
+        super(BackgroundTaskCoin, self).__init__()
 
 class OverviewPage(Famcy.FamcyPage):
     def __init__(self):
-        super(OverviewPage, self).__init__("/overview", Famcy.ClassicSideStyle(), background_thread=True, background_freq=0.2)
+        super(OverviewPage, self).__init__()
 
         # for declaration
         # ===============
@@ -146,9 +146,9 @@ class OverviewPage(Famcy.FamcyPage):
 
         self.thread_update_info = Famcy.FamcyBackgroundTask(self)
         BTCoin = BackgroundTaskCoin()
+        BackgroundTaskCoin.register("/BackgroundTaskCoin", Famcy.APIStyle(), init_cls=BTCoin)
         BTCoin.style.setAction(lambda: self.add_task_coin(self.update_info_action, {}, input_form))
         BTCoin.style.setReturnValue(indicator=True, message="add to task")
-        BTCoin.register()
 
 
         return card1
@@ -922,5 +922,5 @@ class OverviewPage(Famcy.FamcyPage):
 
    
 
-page = OverviewPage()
-page.register()
+# page = OverviewPage()
+OverviewPage.register("/overview", Famcy.ClassicSideStyle(), background_thread=True, background_freq=0.2)

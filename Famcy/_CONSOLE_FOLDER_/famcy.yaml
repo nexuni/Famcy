@@ -20,7 +20,7 @@ main_url: "http://127.0.0.1:5000"
 member_http_url: "https://store.nexuni-api.com/doday/v1"
 credentials_url: "_CONSOLE_FOLDER_/credentials.yaml"
 
-with_login: True
+with_login: False
 login_url: "iam/login"
 
 # theme color

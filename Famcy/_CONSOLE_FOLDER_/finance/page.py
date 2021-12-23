@@ -10,7 +10,8 @@ import xlsxwriter
 
 class FinancePage(Famcy.FamcyPage):
     def __init__(self):
-        super(FinancePage, self).__init__("/finance", Famcy.ClassicSideStyle(), background_thread=False)
+        # super(FinancePage, self).__init__("/finance", Famcy.ClassicSideStyle(), background_thread=False)
+        super(FinancePage, self).__init__()
 
         self.carpark_id = "park1"
         self.entry_station = "E1"
@@ -328,30 +329,45 @@ class FinancePage(Famcy.FamcyPage):
     def download_graph(self, submission_obj, info_list):
         msg = "資料填寫有誤"
         extra_script = ""
-        try:
-            file_name = datetime.datetime.now().strftime("%Y%m%d%H%M%S")+".xlsx"
+        flag = True
+        for _ in info_list:
+            if not len(_) > 0:
+                flag = False
+                break
+        if flag:
+            start_time = info_list[0][0][2:4] + info_list[0][0][5:7] + info_list[0][0][8:10] + info_list[1][0][:2] + info_list[1][0][3:] + "00000"
+            end_time = info_list[2][0][2:4] + info_list[2][0][5:7] + info_list[2][0][8:10] + info_list[3][0][:2] + info_list[3][0][3:] + "00000"
+            search_type = str(info_list[4][0])
+            chart_type = str(info_list[5][0])
+            time_range = str(info_list[6][0])
 
-            s3_client = boto3.client("s3")
+            if self.get_chart_info(start_time, end_time, chart_type=chart_type, search_type=search_type, time_range=time_range):
+                try:
+                    file_name = datetime.datetime.now().strftime("%Y%m%d%H%M%S")+".xlsx"
 
-            books_df = pd.DataFrame(
-                data=self.change_table_info_to_dict(),
-                columns=self.change_table_info_to_dict().keys(),
-            )
+                    s3_client = boto3.client("s3")
 
-            with io.BytesIO() as csv_buffer:
-                with pd.ExcelWriter(csv_buffer, engine='xlsxwriter') as writer:
-                    books_df.to_excel(writer,index=False)
+                    books_df = pd.DataFrame(
+                        data=self.change_table_info_to_dict(),
+                        columns=self.change_table_info_to_dict().keys(),
+                    )
 
-                response = s3_client.put_object(
-                    Bucket="gadgethi-css", Key="pms_download/"+file_name, Body=csv_buffer.getvalue()
-                )
+                    with io.BytesIO() as csv_buffer:
+                        with pd.ExcelWriter(csv_buffer, engine='xlsxwriter') as writer:
+                            books_df.to_excel(writer,index=False)
 
-            self.card_1.layout.content[0][0].layout.content[9][0].update({"file_path": 'https://gadgethi-css.s3.amazonaws.com/pms_download/'+file_name})
-            extra_script = "document.getElementById('" + self.card_1.layout.content[0][0].layout.content[9][0].id + "_input').click();"
+                        response = s3_client.put_object(
+                            Bucket="gadgethi-css", Key="pms_download/"+file_name, Body=csv_buffer.getvalue()
+                        )
 
-            msg = "成功加入資料"
-        except Exception as e:
-            msg=str(e)
+                    self.card_1.layout.content[0][0].layout.content[9][0].update({"file_path": 'https://gadgethi-css.s3.amazonaws.com/pms_download/'+file_name})
+                    extra_script = "document.getElementById('" + self.card_1.layout.content[0][0].layout.content[9][0].id + "_input').click();"
+
+                    msg = "成功加入資料"
+                except Exception as e:
+                    msg=str(e)
+            else:
+                msg="請選擇正確時間區間"
         return [Famcy.UpdateBlockHtml(target=self.card_1.layout.content[0][0].layout.content[9][0]), Famcy.UpdateAlert(alert_message=msg, extra_script=extra_script)]
     # ====================================================
     # ====================================================
@@ -492,5 +508,5 @@ class FinancePage(Famcy.FamcyPage):
 
    
 
-page = FinancePage()
-page.register()
+# page = FinancePage()
+FinancePage.register("/finance", Famcy.ClassicSideStyle(), background_thread=False)

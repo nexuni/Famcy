@@ -77,5 +77,5 @@ class PortfolioPage(Famcy.FamcyPage):
         card1.layout.addWidget(input_block4, 1, 3)
         return card1
 
-page = PortfolioPage()
-page.register()
+# page = PortfolioPage()
+# page.register()
