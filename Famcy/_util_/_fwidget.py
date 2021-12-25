@@ -89,6 +89,23 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 				return_list.append(_item)
 				return_list.extend(self.find_all_widget(_item))
 		return return_list
+
+	def find_obj_by_id(self, item, obj_id):
+		if hasattr(item, "layout"):
+			for _item, _, _, _, _ in item.layout.content:
+				if _item.submission_obj_key == obj_id:
+					return _item.submission_obj
+				_children = self.find_obj_by_id(_item, obj_id)
+				if _children:
+					return _children
+
+			for _item, _ in item.layout.staticContent:
+				if _item.submission_obj_key == obj_id:
+					return _item.submission_obj
+				_children = self.find_obj_by_id(_item, obj_id)
+				if _children:
+					return _children
+		return None
 		
 	def render(self):
 		"""

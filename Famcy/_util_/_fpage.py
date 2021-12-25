@@ -139,7 +139,9 @@ class FPage(FamcyWidget):
 	def render(cls, init_cls=None, *args, **kwargs):
 
 		if g.sijax.is_sijax_request:
-			g.sijax.register_object(FSubmissionSijaxHandler)
+			sijaxHandler = FSubmissionSijaxHandler
+			sijaxHandler.parent = cls.current_page
+			g.sijax.register_object(sijaxHandler)
 
 			return g.sijax.process_request()
 
