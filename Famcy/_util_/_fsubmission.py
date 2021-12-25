@@ -9,9 +9,13 @@ import datetime
 from werkzeug.utils import secure_filename
 
 # GLOBAL HELPER
-def get_fsubmission_obj(obj_id):
+def get_fsubmission_obj(parent, obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
-	return Famcy.SubmissionObjectTable[obj_id]
+	if parent:
+		return parent.find_obj_by_id(parent, obj_id)
+	else:
+		print("cannot find object")
+	# return Famcy.SubmissionObjectTable[obj_id]
 
 def alert_response(info_dict, form_id):
 		"""
@@ -43,13 +47,14 @@ def exception_handler(func):
 		try:
 			func(*args, **kwargs)
 		except:
-			# Arg1 is intend to be the submission id of the submission object
-			fsubmission_obj = get_fsubmission_obj(args[1])
-			inner_text, extra_script = alert_response({"alert_type":"alert-warning", "alert_message":"系統異常", "alert_position":"prepend"}, fsubmission_obj.origin.id)
-			# args[0] is the sijax response object
-			args[0].html_prepend('#'+fsubmission_obj.target.id, inner_text)
-			args[0].script(extra_script)
-			args[0].script("$('#loading_holder').css('display','none');")
+			# # Arg1 is intend to be the submission id of the submission object
+			# fsubmission_obj = get_fsubmission_obj(None, args[1])
+			# inner_text, extra_script = alert_response({"alert_type":"alert-warning", "alert_message":"系統異常", "alert_position":"prepend"}, fsubmission_obj.origin.id)
+			# # args[0] is the sijax response object
+			# args[0].html_prepend('#'+fsubmission_obj.target.id, inner_text)
+			# args[0].script(extra_script)
+			# args[0].script("$('#loading_holder').css('display','none');")
+			pass
 
 	return inner_function
 
@@ -111,6 +116,8 @@ class FSubmissionSijaxHandler(object):
 	handling the specific submission id
 	and offer a response. 
 	"""
+	parent = None
+
 	@staticmethod
 	# @exception_handler
 	def famcy_submission_handler(obj_response, fsubmission_id, info_dict, **kwargs):
@@ -120,7 +127,7 @@ class FSubmissionSijaxHandler(object):
 		"""
 		print("==========================famcy_submission_handler")
 		# Get the submission object
-		fsubmission_obj = get_fsubmission_obj(fsubmission_id)
+		fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.parent, fsubmission_id)
 		if "jsAlert" in info_dict.keys():
 			temp_func = fsubmission_obj.jsAlertHandler
 			response_obj = temp_func(fsubmission_obj, info_list)
@@ -197,9 +204,9 @@ class FSubmissionSijaxHandler(object):
 	def upload_form_handler(obj_response, files, form_values):
 		print(form_values["fsubmission_obj"])
 		if isinstance(form_values["fsubmission_obj"], str):
-			fsubmission_obj = get_fsubmission_obj(form_values["fsubmission_obj"])
+			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.parent, form_values["fsubmission_obj"])
 		else:
-			fsubmission_obj = get_fsubmission_obj(form_values["fsubmission_obj"][0])
+			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.parent, form_values["fsubmission_obj"][0])
 		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, fsubmission_obj)
 
 
