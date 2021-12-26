@@ -3,6 +3,11 @@ from flask import Flask, request, render_template, redirect, url_for, flash, jso
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
 # from flask_uwsgi_websocket import WebSocket
+import redis
+from flask_kvsession import KVSessionExtension
+from simplekv.memory.redisstore import RedisStore
+
+
 
 import os
 import importlib
@@ -11,6 +16,7 @@ import json
 import time
 import random
 import pickle
+import base64
 
 from Famcy._util_._fmanager import *
 from Famcy._util_._fauth import *
@@ -85,12 +91,7 @@ from flask.json import JSONEncoder
 
 class CustomJSONEncoder(JSONEncoder):
 	def default(self, obj):
-		if isinstance(obj, FSubmission):
-			# Implement code to convert Passport object to a dict
-			return pickle.dumps(obj)
-		else:
-			print(obj)
-			JSONEncoder.default(self, obj)
+		return base64.b64encode(pickle.dumps(obj))
 
 def create_app(famcy_id, production=False):
 	"""
@@ -147,6 +148,10 @@ def create_app(famcy_id, production=False):
 	FManager.init_http_client(**FManager["ConsoleConfig"])
 	# Security Enhance
 	FManager.register_csrf(app)
+
+	store = RedisStore(redis.StrictRedis())
+	globals()["store"] = store
+	KVSessionExtension(store, app)
 
 	# User Static Data
 	@MainBlueprint.route('/asset/<path:filename>')

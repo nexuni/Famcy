@@ -113,11 +113,10 @@ class FPage(FamcyWidget):
 		
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
-
 		if g.sijax.is_sijax_request:
 			sijaxHandler = FSubmissionSijaxHandler
+			sijaxHandler.current_page = session.get('current_page')
 			g.sijax.register_object(sijaxHandler)
-
 			return g.sijax.process_request()
 
 		# init page
@@ -126,8 +125,9 @@ class FPage(FamcyWidget):
 				current_page = init_cls
 			else:
 				current_page = cls()
+			session["current_page"] = current_page
 
-		print("id(current_page): ", id(current_page), current_page)
+		print("id(current_page): ", id(current_page), current_page, session.get('current_page'))
 		form_init_js = ''
 		end_script = ''
 		upload_list = current_page.find_class(current_page, "upload_form")

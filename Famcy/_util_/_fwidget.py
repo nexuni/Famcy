@@ -42,8 +42,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.submission_obj_key = self.id
 		self.post_submission_js = ""
 
-		# if not Famcy.SubmissionObjectTable.has_key(self.submission_obj_key):
-		# 	Famcy.SubmissionObjectTable[self.submission_obj_key] = self.submission_obj
+		self.link = Famcy.FManager["ConsoleConfig"]["main_url"]+"/"+self.id
 
 	def __setitem__(self, key, value):
 		self.attributes[key] = value
@@ -150,15 +149,24 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		submission object type. 
 		"""
 		self.clickable = True
+		self.submission_obj.func_link = id(submission_func)
 		self.submission_obj.func = submission_func
 		self.submission_obj.origin = self
 		self.submission_obj.target = target if target else self
 
 	def disconnect(self):
 		self.clickable = False
+		self.submission_obj.func_link = None
 		self.submission_obj.func = None
 		self.submission_obj.origin = self
 		self.submission_obj.target = self
+
+	def tojson(self):
+		_widget_dict = {}
+		
+
+
+		return json.dumps(_widget_dict)
 
 	@abc.abstractmethod
 	def render_inner(self):
