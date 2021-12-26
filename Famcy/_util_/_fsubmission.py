@@ -129,6 +129,8 @@ class FSubmissionSijaxHandler(object):
 			current_page = pickle.load(current_page_file)
 			print("current_page: ", current_page)
 
+		print("==========================famcy_submission_handler file open")
+
 		# Get the submission object
 		fsubmission_obj = get_fsubmission_obj(current_page, fsubmission_id)
 		if "jsAlert" in info_dict.keys():
