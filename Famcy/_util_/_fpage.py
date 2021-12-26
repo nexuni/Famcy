@@ -3,11 +3,12 @@ from Famcy._util_._flayout import *
 from Famcy._util_._fsubmission import *
 from Famcy._util_._fpermissions import *
 from Famcy._util_._fthread import *
-from flask import g, Response, request
+from flask import g, Response, request, session
 from flask_login import login_required
 import Famcy
 import time
 import abc
+import pickle
 
 class FPage(FamcyWidget):
 	"""
@@ -40,11 +41,10 @@ class FPage(FamcyWidget):
 	permission = None
 	background_thread_flag = False
 	background_freq = 0.5
-	current_page = None
 
 	# def __init__(self, route, style, permission_level=0, 
-	# 		layout_mode=FLayoutMode.recommend, 
-	# 		background_thread=False, background_freq=0.5):
+	#       layout_mode=FLayoutMode.recommend, 
+	#       background_thread=False, background_freq=0.5):
 	def __init__(self, layout_mode=FLayoutMode.recommend):
 
 		super(FPage, self).__init__()
@@ -110,37 +110,12 @@ class FPage(FamcyWidget):
 				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(login_required(bg_func))
 			else:
 				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(bg_func)
-
-	def _register(self):
-		"""
-		This is the function to register 
-		the page to the flask route system. 
-		"""
-		route_func = lambda: self.render()
-		route_func.__name__ = self.id
-
-		if self.permission.required_login():
-			# Register the page render to the main blueprint
-			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, self.route)(login_required(route_func))
-		else:
-			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, self.route)(route_func)
-
-		if self.background_thread_flag:
-			bg_func = lambda: self.background_generator_loop()
-			bg_func.__name__ = "bgloop_" + self.id
-
-			if self.permission.required_login():
-				# Register the page render to the main blueprint
-				Famcy.FManager["MainBlueprint"].route(self.route+"/bgloop")(login_required(bg_func))
-			else:
-				Famcy.FManager["MainBlueprint"].route(self.route+"/bgloop")(bg_func)
 		
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
 
 		if g.sijax.is_sijax_request:
 			sijaxHandler = FSubmissionSijaxHandler
-			sijaxHandler.parent = cls.current_page
 			g.sijax.register_object(sijaxHandler)
 
 			return g.sijax.process_request()
@@ -148,60 +123,32 @@ class FPage(FamcyWidget):
 		# init page
 		if request.method == 'GET':
 			if init_cls:
-				cls.current_page = init_cls
+				current_page = init_cls
 			else:
-				cls.current_page = cls()
+				current_page = cls()
 
+		print("id(current_page): ", id(current_page), current_page)
 		form_init_js = ''
 		end_script = ''
-		upload_list = cls.current_page.find_class(cls.current_page, "upload_form")
+		upload_list = current_page.find_class(current_page, "upload_form")
 		for _item in upload_list:
 			form_init_js += g.sijax.register_upload_callback(_item.id, FSubmissionSijaxHandler.upload_form_handler)
 
-		if not cls.current_page.permission.verify(Famcy.FManager["CurrentUser"]):
+		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
 			content_data = "<h1>You are not authorized to view this page!</h1>"
 		else:
 			# Render all content
-			cls.current_page.body = super(FPage, cls.current_page).render()
-			content_data = cls.current_page.body.render_inner()
-			end_script = cls.current_page.body.render_script()
-			for temp, _ in cls.current_page.layout.staticContent:
+			current_page.body = super(FPage, current_page).render()
+			content_data = current_page.body.render_inner()
+			end_script = current_page.body.render_script()
+			for temp, _ in current_page.layout.staticContent:
 				end_script += temp.body.render_script()
 
-		# Apply style at the end
-		return cls.current_page.style.render(cls.current_page.header_script, content_data, background_flag=cls.current_page.background_thread_flag, route=cls.current_page.route, time=int(1/cls.current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
-
-
-	def _render(self, *args, **kwargs):
-		"""
-		This is the main render function, i.e.
-		the flask route function top level. 
-		"""
-		# First setup the submission handler
-
-		form_init_js = ''
-		end_script = ''
-		upload_list = self.find_class(self, "upload_form")
-		for _item in upload_list:
-			form_init_js += g.sijax.register_upload_callback(_item.id, FSubmissionSijaxHandler.upload_form_handler)
-
-		if g.sijax.is_sijax_request:
-			g.sijax.register_object(FSubmissionSijaxHandler)
-
-			return g.sijax.process_request()
-
-		if not self.permission.verify(Famcy.FManager["CurrentUser"]):
-			content_data = "<h1>You are not authorized to view this page!</h1>"
-		else:
-			# Render all content
-			self.body = super(FPage, self).render()
-			content_data = self.body.render_inner()
-			end_script = self.body.render_script()
-			for temp, _ in self.layout.staticContent:
-				end_script += temp.body.render_script()
+		with open('config.dictionary', 'wb') as current_page_file:
+			pickle.dump(current_page, current_page_file)
 
 		# Apply style at the end
-		return self.style.render(self.header_script, content_data, background_flag=self.background_thread_flag, route=self.route, time=int(1/self.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
+		return current_page.style.render(current_page.header_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
 
 	@staticmethod
 	def background_generator_loop():

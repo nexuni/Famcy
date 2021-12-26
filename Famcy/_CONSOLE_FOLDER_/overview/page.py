@@ -523,7 +523,7 @@ class OverviewPage(Famcy.FamcyPage):
 
         confirm_btn = Famcy.submitBtn()
         confirm_btn.update({"title":"確認"})
-        pcard.preload = lambda: confirm_btn.connect(self.succeed_action, target=self.card_2)
+        confirm_btn.connect(self.succeed_action)
 
         cancel_btn = Famcy.submitBtn()
         cancel_btn.update({"title":"取消"})
@@ -561,7 +561,7 @@ class OverviewPage(Famcy.FamcyPage):
         last_p_card = submission_obj.origin.find_parent(submission_obj.origin, "FPromptCard")
         if last_p_card["ip"]:
             msg = self.submit_device_action(last_p_card["pname"], last_p_card["btn_name"], last_p_card["ip"], last_p_card["info_list"])
-        return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdateAlert(alert_message=msg)]
+        return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdateAlert(alert_message=msg, target=self.card_2)]
 
     def return_action(self, submission_obj, info_list):
         return [Famcy.UpdateRemoveElement(prompt_flag=True), Famcy.UpdatePrompt()]
