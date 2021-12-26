@@ -12,6 +12,7 @@ from werkzeug.utils import secure_filename
 # GLOBAL HELPER
 def get_fsubmission_obj(parent, obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
+	print("get_fsubmission_obj parent: ", parent)
 	if parent:
 		return parent.find_obj_by_id(parent, obj_id)
 	print("cannot find obj")
@@ -115,6 +116,7 @@ class FSubmissionSijaxHandler(object):
 	handling the specific submission id
 	and offer a response. 
 	"""
+	current_page = None
 
 	@staticmethod
 	# @exception_handler
@@ -125,14 +127,14 @@ class FSubmissionSijaxHandler(object):
 		"""
 		print("==========================famcy_submission_handler")
 
-		with open('config.dictionary', 'rb') as current_page_file:
-			current_page = pickle.load(current_page_file)
-			print("current_page: ", current_page)
+		# with open('config.dictionary', 'rb') as current_page_file:
+		# 	current_page = pickle.load(current_page_file)
+		# 	print("current_page: ", current_page)
 
-		print("==========================famcy_submission_handler file open")
+		# print("==========================famcy_submission_handler file open")
 
 		# Get the submission object
-		fsubmission_obj = get_fsubmission_obj(current_page, fsubmission_id)
+		fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, fsubmission_id)
 		if "jsAlert" in info_dict.keys():
 			temp_func = fsubmission_obj.jsAlertHandler
 			response_obj = temp_func(fsubmission_obj, info_list)
@@ -160,8 +162,8 @@ class FSubmissionSijaxHandler(object):
 			obj_response.script(extra_script)
 			obj_response.script("$('#loading_holder').css('display','none');")
 
-		with open('config.dictionary', 'wb') as current_page_file:
-			pickle.dump(current_page, current_page_file)
+		# with open('config.dictionary', 'wb') as current_page_file:
+		# 	pickle.dump(current_page, current_page_file)
 
 	@staticmethod
 	@exception_handler
@@ -217,9 +219,9 @@ class FSubmissionSijaxHandler(object):
 
 		print(form_values["fsubmission_obj"])
 		if isinstance(form_values["fsubmission_obj"], str):
-			fsubmission_obj = get_fsubmission_obj(current_page, form_values["fsubmission_obj"])
+			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, form_values["fsubmission_obj"])
 		else:
-			fsubmission_obj = get_fsubmission_obj(current_page, form_values["fsubmission_obj"][0])
+			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, form_values["fsubmission_obj"][0])
 		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, fsubmission_obj)
 
 		with open('config.dictionary', 'wb') as current_page_file:
@@ -239,6 +241,7 @@ class FSubmission:
 	"""
 	def __init__(self, origin):
 		self.func = None
+		self.func_link = None
 		self.origin = origin
 		self.target = origin
 
@@ -257,6 +260,11 @@ class FSubmission:
 		"""
 		print("jsAlertHandler=============")
 		return Famcy.UpdateAlert(alert_type=info_dict["alert_type"], alert_message=info_dict["alert_message"], alert_position=info_dict["alert_position"])
+
+	def tojson(self):
+		_json_dict = {}
+		_json_dict = {"target": self.target.link, "origin": self.origin.link, "func": self.func_link}
+		return json.dumps(_json_dict)
 
 
 class FBackgroundTask(FSubmission):

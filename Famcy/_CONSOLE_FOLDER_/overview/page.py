@@ -632,8 +632,8 @@ class OverviewPage(Famcy.FamcyPage):
             elif _coin == "50":
                 self.p_edit.layout.content[0][0].layout.content[3][0].update({"placeholder":self.h50})
 
-            if len(edit_coin) > 0:
-                return self.update_coin(submission_obj, info_list)
+            # if len(edit_coin) > 0:
+            #     return self.update_coin(submission_obj, info_list)
 
         return Famcy.UpdateBlockHtml()
 
@@ -806,7 +806,7 @@ class OverviewPage(Famcy.FamcyPage):
             "ip": ip_info
         }
         if btn_name == "display_message":
-            if len(list_info[1]) > 0 and list_info[1][0] != "":
+            if len(list_info[1]) > 0:
                 send_dict["message"] = list_info[1][0]
             else:
                 return False
@@ -819,7 +819,11 @@ class OverviewPage(Famcy.FamcyPage):
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
         if json.loads(res_msg)["indicator"] and btn_name == "get_message":
             self.apm_card.layout.content[0][0].layout.content[1][0].value["defaultValue"] = json.loads(res_msg)["message"][0]
-        return json.loads(res_msg)["indicator"]
+        if json.loads(res_msg)["indicator"] and btn_name == "refund":
+            special_id = json.loads(res_msg)["message"]
+        else:
+            special_id = None
+        return json.loads(res_msg)["indicator"], special_id
 
     def post_station(self, btn_name, ip_info):
         send_dict = {
@@ -897,8 +901,9 @@ class OverviewPage(Famcy.FamcyPage):
 
     def submit_device_action(self, pname, btn_name, ip_info, list_info):
         if pname == "apm":
-            if self.post_apm(btn_name, ip_info, list_info):
-                return "執行成功"
+            flag, special_id = self.post_apm(btn_name, ip_info, list_info)
+            if flag:
+                return "執行成功, 代號為: " + str(special_id)
         elif pname == "ipcam":
             if self.post_ipcam(btn_name, ip_info):
                 return "執行成功"
