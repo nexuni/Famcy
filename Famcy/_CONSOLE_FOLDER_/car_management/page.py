@@ -125,7 +125,7 @@ class CarManagementPage(Famcy.FamcyPage):
 
             self.car_block_list.append(input_form)
 
-        card2.preload = lambda: self.generate_car_block(card2, init=True)
+        self.generate_car_block(card2, init=True)
         
         return card2
     # ====================================================

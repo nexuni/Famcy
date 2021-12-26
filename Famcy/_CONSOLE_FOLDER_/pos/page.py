@@ -125,7 +125,7 @@ class PosPage(Famcy.FamcyPage):
 
             self.car_block_list.append(input_form)
 
-        card2.preload = lambda: self.generate_car_block(card2, init=True)
+        self.generate_car_block(card2, init=True)
         
         return card2
     # ====================================================
@@ -541,11 +541,12 @@ class PosPage(Famcy.FamcyPage):
         }
 
         res_msg = Famcy.FManager.http_client.client_post("main_http_url", send_dict)
-        self.receipt_card.layout.content[0][0].layout.content[0][0].update({"content": platenum})
-        self.fee_card.layout.content[0][0].layout.content[0][0].update({"content": platenum})
-        self.fee_card.layout.content[0][0].layout.content[1][0].update({"content": entry_time})
-        self.fee_card.layout.content[0][0].layout.content[2][0].update({"content": "NT$ "+json.loads(json.loads(res_msg)["message"][0])["parkingfee"]})
         print("json.loads(res_msg): ", json.loads(res_msg))
+        if json.loads(res_msg)["indicator"]:
+            self.receipt_card.layout.content[0][0].layout.content[0][0].update({"content": platenum})
+            self.fee_card.layout.content[0][0].layout.content[0][0].update({"content": platenum})
+            self.fee_card.layout.content[0][0].layout.content[1][0].update({"content": entry_time})
+            self.fee_card.layout.content[0][0].layout.content[2][0].update({"content": "NT$ "+json.loads(json.loads(res_msg)["message"][0])["parkingfee"]})
         return json.loads(res_msg)["indicator"]
 
     def post_generate_receipt(self, platenum, entry_time, receipt_fee, buyer_taxnum=None, receipt_type=None, receipt_source=None, vehicle_number=None):

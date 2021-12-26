@@ -5,3 +5,4 @@ Flask-uWSGI-WebSocket
 gadgethiServerUtils
 markdown
 dash
+pickle

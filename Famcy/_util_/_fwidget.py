@@ -42,8 +42,8 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.submission_obj_key = self.id
 		self.post_submission_js = ""
 
-		if not Famcy.SubmissionObjectTable.has_key(self.submission_obj_key):
-			Famcy.SubmissionObjectTable[self.submission_obj_key] = self.submission_obj
+		# if not Famcy.SubmissionObjectTable.has_key(self.submission_obj_key):
+		# 	Famcy.SubmissionObjectTable[self.submission_obj_key] = self.submission_obj
 
 	def __setitem__(self, key, value):
 		self.attributes[key] = value
@@ -93,7 +93,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 	def find_obj_by_id(self, item, obj_id):
 		if hasattr(item, "layout"):
 			for _item, _, _, _, _ in item.layout.content:
-				print("_item: ", item, _item.submission_obj_key, obj_id)
+				# print("_item.submission_obj_key == obj_id ", _item.submission_obj_key, obj_id)
 				if _item.submission_obj_key == obj_id:
 					return _item.submission_obj
 				_children = self.find_obj_by_id(_item, obj_id)
@@ -101,13 +101,25 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 					return _children
 
 			for _item, _ in item.layout.staticContent:
-				print("_item: ", item, _item.submission_obj_key, obj_id)
+				# print("_item.submission_obj_key == obj_id ", _item.submission_obj_key, obj_id)
 				if _item.submission_obj_key == obj_id:
 					return _item.submission_obj
 				_children = self.find_obj_by_id(_item, obj_id)
 				if _children:
 					return _children
 		return None
+
+	# def generate_obj_id_dict(self, item):
+	# 	return_dict = {}
+	# 	if hasattr(item, "layout"):
+	# 		for _item, _, _, _, _ in item.layout.content:
+	# 			return_dict[_item.submission_obj_key] = _item.submission_obj
+	# 			return_dict.update(self.generate_obj_id_dict(_item))
+
+	# 		for _item, _ in item.layout.staticContent:
+	# 			return_dict[_item.submission_obj_key] = _item.submission_obj
+	# 			return_dict.update(self.generate_obj_id_dict(_item))
+	# 	return return_dict
 		
 	def render(self):
 		"""
@@ -120,9 +132,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		5. return render inner stuffs
 		"""
 		self.preload()
-
-		# if session.get(self.submission_obj_key) == None:
-		# 	session[self.submission_obj_key] = self
 
 		self.body = self.render_inner()
 		if self.js_after_func_name != "" and self.js_after_func_name:
@@ -147,7 +156,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 
 	def disconnect(self):
 		self.clickable = False
-		self.submission_obj.func = lambda *a, **k: None
+		self.submission_obj.func = None
 		self.submission_obj.origin = self
 		self.submission_obj.target = self
 

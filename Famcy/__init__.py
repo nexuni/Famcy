@@ -10,6 +10,7 @@ import Famcy
 import json
 import time
 import random
+import pickle
 
 from Famcy._util_._fmanager import *
 from Famcy._util_._fauth import *
@@ -59,26 +60,37 @@ FamcyStyleNavBar = FStyleNavBar
 FamcyStyleNavBtns = FStyleNavBtns
 FamcyBackgroundTask = FBackgroundTask
 
-class IdTable(object):
-	def __init__(self):
-		super(IdTable, self).__init__()
-		self.obj_id_dict = {}
+# class IdTable(object):
+#   def __init__(self):
+#       super(IdTable, self).__init__()
+#       self.obj_id_dict = {}
 
-	def __setitem__(self, key, value):
-		self.obj_id_dict[key] = value
+#   def __setitem__(self, key, value):
+#       self.obj_id_dict[key] = value
 
-	def __getitem__(self, key):
-		print("__getitem__", key in self.obj_id_dict.keys())
-		# print("self.obj_id_dict.keys(): ", self.obj_id_dict.keys())
-		return self.obj_id_dict[key]
+#   def __getitem__(self, key):
+#       print("__getitem__", key in self.obj_id_dict.keys())
+#       # print("self.obj_id_dict.keys(): ", self.obj_id_dict.keys())
+#       return self.obj_id_dict[key]
 
-	def __delitem__(self, item):
-		print("__delitem__")
-		if item in self.obj_id_dict.keys():
-			del self.obj_id_dict[item]
+#   def __delitem__(self, item):
+#       print("__delitem__")
+#       if item in self.obj_id_dict.keys():
+#           del self.obj_id_dict[item]
 
-	def has_key(self, key):
-		return key in self.obj_id_dict
+#   def has_key(self, key):
+#       return key in self.obj_id_dict
+
+from flask.json import JSONEncoder
+
+class CustomJSONEncoder(JSONEncoder):
+	def default(self, obj):
+		if isinstance(obj, FSubmission):
+			# Implement code to convert Passport object to a dict
+			return pickle.dumps(obj)
+		else:
+			print(obj)
+			JSONEncoder.default(self, obj)
 
 def create_app(famcy_id, production=False):
 	"""
@@ -90,7 +102,7 @@ def create_app(famcy_id, production=False):
 	FManager = FamcyManager(famcy_id, famcy_dir, production=production)
 	globals()["FManager"] = FManager
 
-	globals()["SubmissionObjectTable"] = IdTable()
+	# globals()["SubmissionObjectTable"] = IdTable()
 
 	# Header definitions
 	FManager["CUSTOM_STATIC_PATH"] = FManager.console + "_static_"
@@ -119,6 +131,8 @@ def create_app(famcy_id, production=False):
 	# --- Main app start zone
 	# ------------------------
 	app = Flask(__name__)
+	# Now tell Flask to use the custom class
+	app.json_encoder = CustomJSONEncoder
 	# Some sort of security here -> TODO check on this
 	app.config['SECRET_KEY'] = FManager.get_credentials("flask_secret_key", "").encode("utf-8")
 
