@@ -7,6 +7,16 @@ side_bar_hierachy:
   - 總覽: overview
   - 車輛管理: car_management
   - 月票管理: season
+  - POS功能: pos
+  - 財務功能: finance
+
+title_style: "bxs-spreadsheet"
+side_bar_style:
+  總覽: "bxs-share-alt"
+  車輛管理: "bxs-car-mechanic"
+  月票管理: "bxs-calendar"
+  POS功能: "bx-desktop"
+  財務功能: "bx-trending-up"
 
 user_defined_content_header_var: PAGE_HEADER
 user_defined_content_var: PAGE_CONTENT
