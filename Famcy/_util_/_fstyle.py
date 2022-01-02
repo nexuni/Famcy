@@ -134,8 +134,8 @@ class FStyleSideBar(FStyle):
 		self.side_bar_title_href = Famcy.FManager["ConsoleConfig"]["main_page"]
 		self.side_bar_title = Famcy.FManager["ConsoleConfig"]["side_bar_title"]
 		self.side_bar_hierarchy = Famcy.FManager["ConsoleConfig"]["side_bar_hierachy"]
-		self.title_style = "bx-game"
-		self.side_bar_style = {}
+		self.title_style = Famcy.FManager["ConsoleConfig"]["title_style"] if "title_style" in Famcy.FManager["ConsoleConfig"].keys() else {}
+		self.side_bar_style = Famcy.FManager["ConsoleConfig"]["side_bar_style"] if "side_bar_style" in Famcy.FManager["ConsoleConfig"].keys() else {}
 
 	def setSideBarInfo(self, side_bar_title=None, side_bar_hierarchy=None, title_style=None, side_bar_style=None):
 		if side_bar_title:
@@ -220,8 +220,8 @@ class FStyleSideBtns(FStyle):
 		self.side_bar_title_href = Famcy.FManager["ConsoleConfig"]["main_page"]
 		self.side_bar_title = Famcy.FManager["ConsoleConfig"]["side_bar_title"]
 		self.side_bar_hierarchy = Famcy.FManager["ConsoleConfig"]["side_bar_hierachy"]
-		self.title_style = "bx-game"
-		self.side_bar_style = {}
+		self.title_style = Famcy.FManager["ConsoleConfig"]["title_style"] if "title_style" in Famcy.FManager["ConsoleConfig"].keys() else {}
+		self.side_bar_style = Famcy.FManager["ConsoleConfig"]["side_bar_style"] if "side_bar_style" in Famcy.FManager["ConsoleConfig"].keys() else {}
 
 	def setSideBtnsInfo(self, side_bar_title=None, side_bar_hierarchy=None, title_style=None, side_bar_style=None):
 		if side_bar_title:
