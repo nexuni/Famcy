@@ -2,6 +2,7 @@ import Famcy
 import io
 import os
 import json
+from gadgethiServerUtils.file_basics import *
 import datetime
 import requests
 import boto3
@@ -107,6 +108,11 @@ class SeasonPage(Famcy.FamcyPage):
         input_form = Famcy.input_form()
         input_form.body.style["word-break"] = "break-all !important"
 
+
+        # self.table_info = self.make_time_readable(self.table_info,["validstart","validend"])
+        # print("self.table_info===========",self.table_info)
+        
+
         table_content = Famcy.table_block()
         table_content.update({
                 "toolbar": False,
@@ -121,16 +127,8 @@ class SeasonPage(Famcy.FamcyPage):
                 },
                 "column": [[
                     {
-                        "title": 'ID',
-                        "field": 'id',
-                        "rowspan": 1,
-                        "align": 'center',
-                        "valign": 'middle',
-                        "sortable": True
-                    },
-                    {
                         "title": '月票類型',
-                        "field": 'season_type',
+                        "field": '_season_type',
                         "rowspan": 1,
                         "align": 'center',
                         "valign": 'middle',
@@ -154,7 +152,7 @@ class SeasonPage(Famcy.FamcyPage):
                     },
                     {
                         "title": '開始時間',
-                        "field": 'validstart',
+                        "field": '_validstart',
                         "rowspan": 1,
                         "align": 'center',
                         "valign": 'middle',
@@ -162,7 +160,7 @@ class SeasonPage(Famcy.FamcyPage):
                     },
                     {
                         "title": '結束時間',
-                        "field": 'validend',
+                        "field": '_validend',
                         "rowspan": 1,
                         "align": 'center',
                         "valign": 'middle',
@@ -187,6 +185,8 @@ class SeasonPage(Famcy.FamcyPage):
                 ]],
                 "data": self.table_info
           })
+
+        # self.table_info = self.make_time_readable_reverse(self.table_info,["validstart","validend"])
 
         new_btn = Famcy.submitBtn()
         new_btn.update({"title": "更新月票資訊"})
@@ -550,6 +550,10 @@ class SeasonPage(Famcy.FamcyPage):
 
         res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
         self.table_info = json.loads(res_msg)["message"] if json.loads(res_msg)["indicator"] else []
+        self.table_info = self.make_time_readable(self.table_info,["validstart","validend"],{"validstart":"_validstart","validend":"_validend"})
+        for row in self.table_info:
+            row['_season_type'] = self.Lg_transform("SEASON_CHOICE",row['season_type'])
+
         self.card_2.layout.content[0][0].layout.content[0][0].update({
                 "data": self.table_info
             })
@@ -639,9 +643,73 @@ class SeasonPage(Famcy.FamcyPage):
                     return_dict[columns] = [row[columns]]
 
         return return_dict
-    # ====================================================
-    # ====================================================
-   
+
+    def make_time_readable(self,data,columns_name,columns_mapping):
+        """
+        Use to make time friendly to read
+        """
+        for row in data:
+            for column in columns_name:
+                if len(row[column]) == 15:
+                    row[columns_mapping[column]] = str(row[column][:2]+"年 "+row[column][2:4]+"月"+row[column][4:6]+"日 "+row[column][6:8]+":"+row[column][8:10]+":"+row[column][10:12])
+                if len(row[column]) == 12:
+                    row[columns_mapping[column]] = str(row[column][:2]+"年 "+row[column][2:4]+"月"+row[column][4:6]+"日 "+row[column][6:8]+":"+row[column][8:10]+":"+row[column][10:12])
+
+        return data
+
+    def Lg_transform(self,group,name,language="CH",reverse=False):
+        """
+        This function transform the information to the specific language
+        Input   
+            - group: Need to be ALL CAPITAL WORDS
+            - name: the name you would like to translate
+            - language: The language you would like to use
+            - * reverse: if True 
+        Output
+            - string 
+        Ex. file
+            SEASON_CHOICE:
+                season: {"CH": "月票","EN": "Monthly pass"}
+                dailyseason: {"CH": "早上優惠票","EN": "Morning pass"}
+            SEASON_DATABASE:
+                season: {"CH": "月票資料庫","EN": "season database"}
+                daily:  {"CH": "月票資料庫"}
+        Usage:
+            1. Lg_transform("SEASON_CHOICE","season","CH") -> "月票"
+            2. Lg_transform("SEASON_CHOICE","dailyseason","EN") -> "Morning pass"
+            3. Lg_transform("SEASON_DATABASE","season","EN") -> "season database"
+            4. Lg_transform("SEASON_CHOICE","月票","CH",True) -> "season"
+        Error Usage:
+            In most of case, will return the origin name value to avoid fatal crash.
+            However, when reverse=True and the name points to different value will raise error.
+            1. Lg_transform("SEASON_DATABASE","月票資料庫","CH",True) -> raise error
+        """
+        language_yaml = read_config_yaml(os.path.expanduser("~/.local/share/famcy/pms/console/Lg_transform.yaml"))
+
+        if reverse:
+            if group not in language_yaml.keys():
+                raise ValueError("group spelling fail")
+            else:
+                return_name_list = []
+                for i in language_yaml[group].keys():
+                    try:
+                        if language_yaml[group][i][language] == name:
+                            return_name_list.append(i)
+                    except:
+                        pass
+                if len(return_name_list) == 0:
+                    raise ValueError("Could not find the specific name for reference")
+                elif len(return_name_list) >= 2:
+                    raise ValueError("Duplicate Return")
+                else:
+                    return_name = return_name_list[0]
+        else:
+            try:
+                return_name = language_yaml[group][name][language]
+            except:
+                return_name = name
+
+        return return_name
 
 # page = SeasonPage()
-SeasonPage.register("/season", Famcy.ClassicSideStyle(), background_thread=False)
+SeasonPage.register("/season", Famcy.ClassicStyle(), background_thread=False)

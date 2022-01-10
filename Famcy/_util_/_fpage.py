@@ -93,17 +93,18 @@ class FPage(FamcyWidget):
 		cls.background_freq = background_freq
 
 		route_func = lambda: cls.render(init_cls=init_cls)
-		route_func.__name__ = "famcy_route_func_name"+route[1:]
+		route_func.__name__ = "famcy_route_func_name"+route.replace("/", "_")
 
 		if cls.permission.required_login():
 			# Register the page render to the main blueprint
+			print("cls.route: ", cls.route)
 			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(login_required(route_func))
 		else:
 			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(route_func)
 
 		if cls.background_thread_flag:
 			bg_func = lambda: cls.background_generator_loop()
-			bg_func.__name__ = "bgloop_famcy_route_func_name"+route[1:]
+			bg_func.__name__ = "bgloop_famcy_route_func_name"+route.replace("/", "_")
 
 			if cls.permission.required_login():
 				# Register the page render to the main blueprint
@@ -143,9 +144,6 @@ class FPage(FamcyWidget):
 			end_script = current_page.body.render_script()
 			for temp, _ in current_page.layout.staticContent:
 				end_script += temp.body.render_script()
-
-		with open('config.dictionary', 'wb') as current_page_file:
-			pickle.dump(current_page, current_page_file)
 
 		# Apply style at the end
 		return current_page.style.render(current_page.header_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
