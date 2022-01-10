@@ -655,4 +655,4 @@ class PosPage(Famcy.FamcyPage):
    
 
 # page = PosPage()
-PosPage.register("/pos", Famcy.ClassicSideStyle(), background_thread=False)
+PosPage.register("/pos", Famcy.ClassicStyle(), permission_level=1, background_thread=False)

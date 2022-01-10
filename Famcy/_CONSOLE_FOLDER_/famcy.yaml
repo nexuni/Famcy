@@ -1,7 +1,8 @@
-console_title: "doday會員管理系統"
-console_description: "這是doday會員的後台管理系統"
+console_title: "Famcy範例管理網站"
+console_description: "這是Famcy範例管理網站"
 main_page: overview
 
+# Declare Main page part
 side_bar_title: "dashboard"
 side_bar_hierachy:
   - 總覽: overview
@@ -23,15 +24,14 @@ user_defined_content_var: PAGE_CONTENT
 user_defined_content_object_var: PAGE_CONTENT_OBJECT
 user_default_page_define_file: page
 
-default_name: "admin"
-default_profile_pic_url: "https://gadgethi-css.s3.amazonaws.com/FamcyPic/gadget_square.png"
+default_name: "Nexuni"
+default_profile_pic_url: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.youtube.com%2Fchannel%2FUClOgrSn4afPVICckeKLc21g&psig=AOvVaw2NbtZ9PmMyfu9t9KZmXCvZ&ust=1635439303581000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCIiBgKiE6_MCFQAAAAAdAAAAABAD"
 
-main_url: "http://127.0.0.1:5000"
-member_http_url: "https://store.nexuni-api.com/doday/v1"
-credentials_url: "_CONSOLE_FOLDER_/credentials.yaml"
+main_url: "https://pms.nexuni.com"
+credentials_url: "E:/nexuni/Famcy/Famcy/_CONSOLE_FOLDER_/credentials.yaml"
 
-with_login: False
-login_url: "iam/login"
+with_login: True
+login_url: "MainBlueprint.famcy_route_func_name_iam_login"
 
 # theme color
 MAIN_COLOR: "#edaf00"
@@ -40,4 +40,7 @@ SUB_COLOR: "#f0e260"
 # loader type
 LOADER: "Double_Ring"
 
+# client
 main_http_url: "http://10.0.200.184:5061"
+login_http_url: "https://hnstjsf93a.execute-api.ap-southeast-1.amazonaws.com/default/carpark_login"
+default_http_url: "http://10.0.0.184:5061"

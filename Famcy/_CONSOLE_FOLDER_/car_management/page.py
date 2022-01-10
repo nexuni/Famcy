@@ -417,4 +417,4 @@ class CarManagementPage(Famcy.FamcyPage):
    
 
 # page = CarManagementPage()
-CarManagementPage.register("/car_management", Famcy.ClassicSideStyle(), background_thread=False)
+CarManagementPage.register("/car_management", Famcy.ClassicStyle(), background_thread=False)
