@@ -31,7 +31,7 @@ main_url: "https://pms.nexuni.com"
 credentials_url: "E:/nexuni/Famcy/Famcy/_CONSOLE_FOLDER_/credentials.yaml"
 
 with_login: True
-login_url: "MainBlueprint.famcy_route_func_name_iam_login"
+login_url: "iam/login"
 
 # theme color
 MAIN_COLOR: "#edaf00"

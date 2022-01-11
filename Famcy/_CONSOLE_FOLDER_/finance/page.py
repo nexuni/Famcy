@@ -672,4 +672,4 @@ class FinancePage(Famcy.FamcyPage):
    
 
 # page = FinancePage()
-FinancePage.register("/finance", Famcy.ClassicStyle(), background_thread=False)
+FinancePage.register("/finance", Famcy.ClassicStyle(), permission_level=1, background_thread=False)
