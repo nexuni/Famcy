@@ -1,5 +1,6 @@
 import Famcy
 import json
+import hashlib
 
 class CustomLoginManager(Famcy.FamcyLogin):
 	login_db = []
@@ -31,7 +32,9 @@ class CustomLoginManager(Famcy.FamcyLogin):
 		if isinstance(CustomLoginManager.login_db, list):
 			for member in CustomLoginManager.login_db:
 				print("member: ", member)
-				if user.name == member["username"] and user.password == member["password"]:
+				sha_password = hashlib.sha256(password.encode()).hexdigest()
+				print("sha_password: ", sha_password)
+				if user.name == member["username"] and sha_password == member["password"]:
 					return {"indicator": True, "message": member}
 		return {"indicator": False, "message": None}
 
@@ -68,9 +71,10 @@ class CustomLoginManager(Famcy.FamcyLogin):
 		return user
 
 	def load_user_info(self, user, user_info_dict):
-		user.level = user_info_dict["membership_level"]
+		user.level = user_info_dict["permission"]
 		user.name = user_info_dict["username"] if user_info_dict["username"] != "" else Famcy.FManager.get("default_name", "")
-		user.profile_pic_url = user_info_dict["profile_pic_url"] if user_info_dict["profile_pic_url"] != "" else Famcy.FManager.get("default_profile_pic_url", "")
+		user.profile_pic_url = ""
+		# user.profile_pic_url = user_info_dict["profile_pic_url"] if user_info_dict["profile_pic_url"] != "" else Famcy.FManager.get("default_profile_pic_url", "")
 
 CustomLoginManager().register()
 

@@ -127,12 +127,6 @@ class FSubmissionSijaxHandler(object):
 		"""
 		print("==========================famcy_submission_handler")
 
-		# with open('config.dictionary', 'rb') as current_page_file:
-		# 	current_page = pickle.load(current_page_file)
-		# 	print("current_page: ", current_page)
-
-		# print("==========================famcy_submission_handler file open")
-
 		# Get the submission object
 		fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, fsubmission_id)
 		if "jsAlert" in info_dict.keys():
@@ -162,11 +156,8 @@ class FSubmissionSijaxHandler(object):
 			obj_response.script(extra_script)
 			obj_response.script("$('#loading_holder').css('display','none');")
 
-		# with open('config.dictionary', 'wb') as current_page_file:
-		# 	pickle.dump(current_page, current_page_file)
-
 	@staticmethod
-	@exception_handler
+	# @exception_handler
 	def _dump_data(obj_response, files, form_values, fsubmission_obj, **kwargs):
 		def dump_files():
 			if 'file' not in files:
@@ -210,22 +201,15 @@ class FSubmissionSijaxHandler(object):
 			obj_response.script("$('#loading_holder').css('display','none');")
 
 	@staticmethod
-	@exception_handler
+	# @exception_handler
 	def upload_form_handler(obj_response, files, form_values):
 
-		with open('config.dictionary', 'rb') as current_page_file:
-			current_page = pickle.load(current_page_file)
-			print("current_page: ", current_page)
-
-		print(form_values["fsubmission_obj"])
+		print("upload_form_handler")
 		if isinstance(form_values["fsubmission_obj"], str):
 			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, form_values["fsubmission_obj"])
 		else:
 			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, form_values["fsubmission_obj"][0])
 		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, fsubmission_obj)
-
-		with open('config.dictionary', 'wb') as current_page_file:
-			pickle.dump(current_page, current_page_file)
 
 
 class FSubmission:
