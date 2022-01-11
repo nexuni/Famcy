@@ -616,7 +616,7 @@ class SeasonPage(Famcy.FamcyPage):
     # ====================================================
 
 
-    # http request function
+    # utils function
     # ====================================================
     def read_excel_file(self, file_path):
         print("read_excel")

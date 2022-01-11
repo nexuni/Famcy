@@ -114,7 +114,9 @@ class FPage(FamcyWidget):
 		
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
+		print("render", g.sijax.is_sijax_request)
 		if g.sijax.is_sijax_request:
+			print("in")
 			sijaxHandler = FSubmissionSijaxHandler
 			sijaxHandler.current_page = session.get('current_page')
 			g.sijax.register_object(sijaxHandler)
@@ -134,6 +136,7 @@ class FPage(FamcyWidget):
 		upload_list = current_page.find_class(current_page, "upload_form")
 		for _item in upload_list:
 			form_init_js += g.sijax.register_upload_callback(_item.id, FSubmissionSijaxHandler.upload_form_handler)
+		print("form_init_js: ", form_init_js)
 
 		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
 			content_data = "<h1>You are not authorized to view this page!</h1>"

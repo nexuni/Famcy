@@ -338,11 +338,11 @@ class FinancePage(Famcy.FamcyPage):
         cancel_btn.update({"title":"返回"})
         cancel_btn.connect(self.prompt_remove_input)
 
-        input_form.layout.addWidget(upload_form, 0, 0)
+        # input_form.layout.addWidget(upload_form, 0, 0)
         input_form.layout.addWidget(cancel_btn, 1, 0)
 
-        # p_card.layout.addWidget(upload_form, 0, 0)
-        p_card.layout.addWidget(input_form, 0, 0)
+        p_card.layout.addWidget(upload_form, 0, 0)
+        p_card.layout.addWidget(input_form, 1, 0)
 
         return p_card
         
