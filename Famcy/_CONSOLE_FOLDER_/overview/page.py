@@ -928,4 +928,4 @@ class OverviewPage(Famcy.FamcyPage):
    
 
 # page = OverviewPage()
-OverviewPage.register("/overview", Famcy.ClassicStyle(), background_thread=True, background_freq=0.2)
+OverviewPage.register("/overview", Famcy.ClassicStyle(), permission_level=1, background_thread=True, background_freq=0.2)

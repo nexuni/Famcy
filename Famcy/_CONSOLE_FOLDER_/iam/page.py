@@ -1,6 +1,7 @@
 import Famcy
 import json
 import hashlib
+from flask import redirect, url_for, request
 
 class CustomLoginManager(Famcy.FamcyLogin):
 	login_db = []
@@ -20,8 +21,8 @@ class CustomLoginManager(Famcy.FamcyLogin):
 		res = Famcy.FManager.http_client.client_post("login_http_url", send_dict, gauth=True, custom_headers=headers)
 		print("res: ", res)
 		CustomLoginManager.login_db = json.loads(res)["message"]
-		# return json.loads(res)["indicator"]
-		return True
+		return json.loads(res)["indicator"]
+		# return True
 
 	def authenticate_user(self, user, password):
 		"""
@@ -31,7 +32,6 @@ class CustomLoginManager(Famcy.FamcyLogin):
 		"""
 		if isinstance(CustomLoginManager.login_db, list):
 			for member in CustomLoginManager.login_db:
-				print("member: ", member)
 				sha_password = hashlib.sha256(password.encode()).hexdigest()
 				print("sha_password: ", sha_password)
 				if user.name == member["username"] and sha_password == member["password"]:
@@ -143,7 +143,8 @@ class LoginPage(Famcy.FamcyPage):
 	def login_submit(self, submission_obj, info_list):
 		print("login_submit")
 		if Famcy.FamcyLoginManager.login(info_list):
-			response = Famcy.RedirectPage(redirect_url="/pos")
+			_url = request.args["next"] if "next" in request.args.keys() else "/"+Famcy.FManager["ConsoleConfig"]['main_page']
+			response = Famcy.RedirectPage(redirect_url=_url)
 		else:
 			response = Famcy.UpdateAlert(alert_type="alert-warning", alert_message="登入驗證失敗")
 		return response
@@ -155,9 +156,11 @@ LoginPage.register("/iam/login", Famcy.LoginStyle())
 class LogoutPage(Famcy.FamcyPage):
 	def __init__(self):
 		super(LogoutPage, self).__init__()
-	def render(self):
-		logout_user()
-		return redirect(url_for('main.'+login.id))
+
+	@classmethod
+	def render(cls, init_cls=None):
+		Famcy.FamcyLoginManager.logout_famcy_user()
+		return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
 
 LogoutPage.register("/logout", Famcy.LoginStyle())
 

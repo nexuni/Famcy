@@ -10,10 +10,10 @@ class FStyleMode(enum.IntEnum):
 	videoStream = 2
 
 class FStyle:
-	def __init__(self, styleName=FStyleMode.default, with_login=False):
+	def __init__(self, styleName=FStyleMode.default, with_login=None):
 		self.styleDict = {FStyleMode.default: Famcy.ClassicStyle, FStyleMode.login: Famcy.LoginStyle, FStyleMode.videoStream: Famcy.VideoStreamStyle}
 		self._FamcyStyle = self.styleDict[styleName]
-		self.withLogin = with_login
+		self.withLogin = with_login if with_login else Famcy.FManager["ConsoleConfig"]["with_login"]
 
 		# default url
 		self.main_url = Famcy.FManager["ConsoleConfig"]["main_url"]

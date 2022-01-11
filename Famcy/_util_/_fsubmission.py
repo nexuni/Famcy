@@ -131,7 +131,7 @@ class FSubmissionSijaxHandler(object):
 		fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, fsubmission_id)
 		if "jsAlert" in info_dict.keys():
 			temp_func = fsubmission_obj.jsAlertHandler
-			response_obj = temp_func(fsubmission_obj, info_list)
+			response_obj = temp_func(fsubmission_obj, info_dict)
 			# response_obj = fsubmission_obj.jsAlertHandler(fsubmission_obj, info_dict)
 		else:
 			info_list = put_submissions_to_list(fsubmission_obj, info_dict)

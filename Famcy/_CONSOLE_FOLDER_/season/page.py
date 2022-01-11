@@ -712,4 +712,4 @@ class SeasonPage(Famcy.FamcyPage):
         return return_name
 
 # page = SeasonPage()
-SeasonPage.register("/season", Famcy.ClassicStyle(), background_thread=False)
+SeasonPage.register("/season", Famcy.ClassicStyle(), permission_level=1, background_thread=False)

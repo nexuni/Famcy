@@ -191,7 +191,7 @@ def create_app(famcy_id, production=False):
 	# Init Login Manager and Related Stuffs
 	if FManager["ConsoleConfig"]["with_login"]:
 		# Init login manager
-		FManager["LoginManager"].login_view = FManager["ConsoleConfig"]['login_url']
+		FManager["LoginManager"].login_view = "MainBlueprint.famcy_route_func_name_"+FManager["ConsoleConfig"]['login_url'].replace("/", "_")
 		FManager["LoginManager"].init_app(app)
 		FManager["FamcyUser"].setup_user_loader()
 		assert Famcy.FamcyLoginManager, "User Must Register Famcy Login Manager"
