@@ -20,6 +20,7 @@ class OverviewPage(Famcy.FamcyPage):
 
         # for declaration
         # ===============
+        self.get_carpark_id() # init carpark_id 
         self.table_info = []
         self.total_lots = '0'
         self.total_occupied_lots = '0'
@@ -693,7 +694,7 @@ class OverviewPage(Famcy.FamcyPage):
         self.h10 = res_msg[0]['h10']
         self.h5 = res_msg[0]['h5']
         self.printed_receipt = res_msg[0]['receipt']
-        self.carpark_id_ = res_msg[0]["carpark_id"]
+        # self.carpark_id_ = res_msg[0]["carpark_id"]
 
         self.card_1.layout.content[0][0].layout.content[1][0].update({
                 "content":"50元: %s<br>10元: %s<br>5元: %s"%(self.h50,self.h10,self.h5)
@@ -711,7 +712,7 @@ class OverviewPage(Famcy.FamcyPage):
         res_msg = json.loads(res_msg)["message"]
         self.total_lots = res_msg[0]['totallot']
         self.total_occupied_lots = res_msg[0]['total_occupied']
-        self.carpark_id = res_msg[0]["carpark_id"]
+        # self.carpark_id = res_msg[0]["carpark_id"]
 
         self.card_1.layout.content[0][0].layout.content[0][0].update({
                 "content":'總車格數: %s<br>總佔位數: %s<br>總空位數: %s'%(str(self.total_lots),str(self.total_occupied_lots),str(int(self.total_lots)-int(self.total_occupied_lots)))
@@ -915,6 +916,31 @@ class OverviewPage(Famcy.FamcyPage):
                 return "執行成功"
 
         return "執行失敗，請重新再試"
+
+    def get_carpark_id(self):
+        send_dict = {
+            "service": "pms",
+            "operation": "get_carpark_id"
+        }
+        try:
+            res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
+            res_msg = json.loads(res_msg)
+            if res_msg['indicator']:
+                self.carpark_id_ = res_msg['message']
+                self.carpark_id = res_msg['message']
+                config = Famcy.FManager["ConsoleConfig"]
+                if "carpark_id" not in config.keys():
+                    config['carpark_id'] = res_msg['message']
+                    # write_yaml(os.path.expanduser("~")+"/.local/share/famcy/pms/console/famcy.yaml",config)
+            else:
+                config = Famcy.FManager["ConsoleConfig"]
+                self.carpark_id = config['carpark_id']
+                self.carpark_id_ = config['carpark_id']
+
+        except Exception as e:
+        
+            raise ValueError("could not find carpark_id")
+
 
     # def refund_money(self, money):
     #     h50 = int(money) // 50

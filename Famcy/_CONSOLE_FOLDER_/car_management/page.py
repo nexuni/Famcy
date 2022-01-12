@@ -9,7 +9,8 @@ class CarManagementPage(Famcy.FamcyPage):
         super(CarManagementPage, self).__init__()
 
         self.car_queue_info = []
-        self.carpark_id = "park1"
+        # self.carpark_id = "park1"
+        self.get_carpark_id() # init carpark_id 
         self.entry_station = "E1"
         self.save_searching_data = {}
 
@@ -411,6 +412,30 @@ class CarManagementPage(Famcy.FamcyPage):
         default_end_date += str(int(current_time.day)+1) if len(str(int(current_time.day)+1)) == 2 else "0" + str(int(current_time.day)+1)
 
         return default_date, "00:00", default_end_date, "00:00"
+
+    def get_carpark_id(self):
+        send_dict = {
+            "service": "pms",
+            "operation": "get_carpark_id"
+        }
+        try:
+            res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
+            res_msg = json.loads(res_msg)
+            if res_msg['indicator']:
+                self.carpark_id_ = res_msg['message']
+                self.carpark_id = res_msg['message']
+                config = Famcy.FManager["ConsoleConfig"]
+                if "carpark_id" not in config.keys():
+                    config['carpark_id'] = res_msg['message']
+                    # write_yaml(os.path.expanduser("~")+"/.local/share/famcy/pms/console/famcy.yaml",config)
+            else:
+                config = Famcy.FManager["ConsoleConfig"]
+                self.carpark_id = config['carpark_id']
+                self.carpark_id_ = config['carpark_id']
+
+        except Exception as e:
+        
+            raise ValueError("could not find carpark_id") 
     # ====================================================
     # ====================================================
 

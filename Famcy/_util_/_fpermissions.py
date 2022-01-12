@@ -30,5 +30,5 @@ class FPermissions:
 		current Famcy user met the req of 
 		the permission. 
 		"""
-		# return current_user.level >= self.lowest_permission
-		return True
+		return current_user.level >= self.lowest_permission
+		# return True

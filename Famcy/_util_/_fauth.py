@@ -20,7 +20,6 @@ class FLogin(metaclass=abc.ABCMeta):
 	def register(self):
 		Famcy.FamcyLoginManager = self
 		init_flag = self.init_login_db()
-		print("init_flag: ", init_flag)
 
 	@abc.abstractmethod
 	def init_login_db(self):

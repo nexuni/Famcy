@@ -3,7 +3,7 @@ from Famcy._util_._flayout import *
 from Famcy._util_._fsubmission import *
 from Famcy._util_._fpermissions import *
 from Famcy._util_._fthread import *
-from flask import g, Response, request, session
+from flask import g, Response, request, session, redirect, url_for
 from flask_login import login_required
 import Famcy
 import time
@@ -97,7 +97,6 @@ class FPage(FamcyWidget):
 
 		if cls.permission.required_login():
 			# Register the page render to the main blueprint
-			print("cls.route: ", cls.route)
 			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(login_required(route_func))
 		else:
 			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(route_func)
@@ -114,32 +113,31 @@ class FPage(FamcyWidget):
 		
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
-		print("render", g.sijax.is_sijax_request)
 		if g.sijax.is_sijax_request:
-			print("in")
 			sijaxHandler = FSubmissionSijaxHandler
 			sijaxHandler.current_page = session.get('current_page')
 			g.sijax.register_object(sijaxHandler)
 			return g.sijax.process_request()
 
+		print("session.get('current_page'): ", session.get('current_page').style)
 		# init page
 		if request.method == 'GET':
 			if init_cls:
 				current_page = init_cls
 			else:
 				current_page = cls()
-			session["current_page"] = current_page
+			if not isinstance(cls.style, Famcy.VideoStreamStyle):
+				session["current_page"] = current_page
 
-		print("id(current_page): ", id(current_page), current_page, session.get('current_page'))
 		form_init_js = ''
 		end_script = ''
 		upload_list = current_page.find_class(current_page, "upload_form")
 		for _item in upload_list:
 			form_init_js += g.sijax.register_upload_callback(_item.id, FSubmissionSijaxHandler.upload_form_handler)
-		print("form_init_js: ", form_init_js)
 
 		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
-			content_data = "<h1>You are not authorized to view this page!</h1>"
+			# content_data = "<h1>You are not authorized to view this page!</h1>"
+			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
 		else:
 			# Render all content
 			current_page.body = super(FPage, current_page).render()
@@ -148,8 +146,8 @@ class FPage(FamcyWidget):
 			for temp, _ in current_page.layout.staticContent:
 				end_script += temp.body.render_script()
 
-		# Apply style at the end
-		return current_page.style.render(current_page.header_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
+			# Apply style at the end
+			return current_page.style.render(current_page.header_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
 
 	@staticmethod
 	def background_generator_loop():

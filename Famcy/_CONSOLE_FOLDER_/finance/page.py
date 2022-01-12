@@ -8,12 +8,15 @@ import boto3
 import pandas as pd
 import xlsxwriter
 
+
 class FinancePage(Famcy.FamcyPage):
     def __init__(self):
         # super(FinancePage, self).__init__("/finance", Famcy.ClassicSideStyle(), background_thread=False)
         super(FinancePage, self).__init__()
 
-        self.carpark_id = "park1"
+        self.get_carpark_id() # init carpark_id 
+
+        #self.carpark_id = "park1"
         self.entry_station = "E1"
 
         self.p_date_card = self.prompt_card_date()
@@ -666,6 +669,28 @@ class FinancePage(Famcy.FamcyPage):
                     return_dict[columns] = [row[columns]]
 
         return return_dict
+    def get_carpark_id(self):
+        send_dict = {
+            "service": "pms",
+            "operation": "get_carpark_id"
+        }
+        try:
+            res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
+            res_msg = json.loads(res_msg)
+            if res_msg['indicator']:
+                self.carpark_id_ = res_msg['message']
+                self.carpark_id = res_msg['message']
+                config = Famcy.FManager["ConsoleConfig"]
+                if "carpark_id" not in config.keys():
+                    config['carpark_id'] = res_msg['message']
+            else:
+                config = Famcy.FManager["ConsoleConfig"]
+                self.carpark_id = config['carpark_id']
+                self.carpark_id_ = config['carpark_id']
+
+        except Exception as e:
+        
+            raise ValueError("could not find carpark_id") 
     # ====================================================
     # ====================================================
 
