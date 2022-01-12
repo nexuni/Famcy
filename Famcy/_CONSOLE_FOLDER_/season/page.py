@@ -2,7 +2,6 @@ import Famcy
 import io
 import os
 import json
-from gadgethiServerUtils.file_basics import *
 import datetime
 import requests
 import boto3
@@ -12,6 +11,8 @@ import xlsxwriter
 class SeasonPage(Famcy.FamcyPage):
     def __init__(self):
         super(SeasonPage, self).__init__()
+
+        self.get_carpark_id()# init carpark_id 
 
         self.table_info = []
         self.carpark_id = "park1"
@@ -710,6 +711,30 @@ class SeasonPage(Famcy.FamcyPage):
                 return_name = name
 
         return return_name
+
+    def get_carpark_id(self):
+        send_dict = {
+            "service": "pms",
+            "operation": "get_carpark_id"
+        }
+        try:
+            res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
+            res_msg = json.loads(res_msg)
+            if res_msg['indicator']:
+                self.carpark_id_ = res_msg['message']
+                self.carpark_id = res_msg['message']
+                config = Famcy.FManager["ConsoleConfig"]
+                if "carpark_id" not in config.keys():
+                    config['carpark_id'] = res_msg['message']
+                    # write_yaml(os.path.expanduser("~")+"/.local/share/famcy/pms/console/famcy.yaml",config)
+            else:
+                config = Famcy.FManager["ConsoleConfig"]
+                self.carpark_id = config['carpark_id']
+                self.carpark_id_ = config['carpark_id']
+
+        except Exception as e:
+        
+            raise ValueError("could not find carpark_id")   
 
 # page = SeasonPage()
 SeasonPage.register("/season", Famcy.ClassicStyle(), permission_level=1, background_thread=False)
