@@ -7,6 +7,7 @@ import Famcy
 import _ctypes
 import os
 import datetime
+from flask import session
 from werkzeug.utils import secure_filename
 
 # GLOBAL HELPER
@@ -126,7 +127,6 @@ class FSubmissionSijaxHandler(object):
 		the submission traffics. 
 		"""
 		print("==========================famcy_submission_handler")
-
 		# Get the submission object
 		fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, fsubmission_id)
 		if "jsAlert" in info_dict.keys():
@@ -155,6 +155,8 @@ class FSubmissionSijaxHandler(object):
 			obj_response.html_prepend('#'+fsubmission_obj.target.id, inner_text)
 			obj_response.script(extra_script)
 			obj_response.script("$('#loading_holder').css('display','none');")
+
+		session["current_page"] = FSubmissionSijaxHandler.current_page
 
 	@staticmethod
 	# @exception_handler
@@ -204,12 +206,14 @@ class FSubmissionSijaxHandler(object):
 	# @exception_handler
 	def upload_form_handler(obj_response, files, form_values):
 
-		print("upload_form_handler")
+		print("==========================upload_form_handler")
 		if isinstance(form_values["fsubmission_obj"], str):
 			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, form_values["fsubmission_obj"])
 		else:
 			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, form_values["fsubmission_obj"][0])
 		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, fsubmission_obj)
+
+		session["current_page"] = FSubmissionSijaxHandler.current_page
 
 
 class FSubmission:

@@ -116,10 +116,16 @@ class FPage(FamcyWidget):
 		if g.sijax.is_sijax_request:
 			sijaxHandler = FSubmissionSijaxHandler
 			sijaxHandler.current_page = session.get('current_page')
+			print("session.get('current_page').id: ", sijaxHandler.current_page.id)
+
+			# code for upload form
+			upload_list = session.get('current_page').find_class(session.get('current_page'), "upload_form")
+			for _item in upload_list:
+				_ = g.sijax.register_upload_callback(_item.id, sijaxHandler.upload_form_handler)
+
 			g.sijax.register_object(sijaxHandler)
 			return g.sijax.process_request()
 
-		print("session.get('current_page'): ", session.get('current_page').style)
 		# init page
 		if request.method == 'GET':
 			if init_cls:
@@ -129,12 +135,8 @@ class FPage(FamcyWidget):
 			if not isinstance(cls.style, Famcy.VideoStreamStyle):
 				session["current_page"] = current_page
 
-		form_init_js = ''
+		form_init_js = ''	# no use
 		end_script = ''
-		upload_list = current_page.find_class(current_page, "upload_form")
-		for _item in upload_list:
-			form_init_js += g.sijax.register_upload_callback(_item.id, FSubmissionSijaxHandler.upload_form_handler)
-
 		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
 			# content_data = "<h1>You are not authorized to view this page!</h1>"
 			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))

@@ -92,7 +92,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 	def find_obj_by_id(self, item, obj_id):
 		if hasattr(item, "layout"):
 			for _item, _, _, _, _ in item.layout.content:
-				# print("_item.submission_obj_key == obj_id ", _item.submission_obj_key, obj_id)
 				if _item.submission_obj_key == obj_id:
 					return _item.submission_obj
 				_children = self.find_obj_by_id(_item, obj_id)
@@ -100,7 +99,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 					return _children
 
 			for _item, _ in item.layout.staticContent:
-				# print("_item.submission_obj_key == obj_id ", _item.submission_obj_key, obj_id)
 				if _item.submission_obj_key == obj_id:
 					return _item.submission_obj
 				_children = self.find_obj_by_id(_item, obj_id)

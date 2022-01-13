@@ -9,16 +9,18 @@ class CustomLoginManager(Famcy.FamcyLogin):
 		super(CustomLoginManager, self).__init__(always_remember=always_remember)
 
 	def init_login_db(self):
+		# self.get_carpark_id() #get location position
 		send_dict = {
 			"operation": "pull_login_data",
 			"area": "DDA"
+			# "area": self.carpark_id
 		}
 
-		headers = {
-			"walkthrough": "Julia"
-		}
+		# headers = {
+		# 	"walkthrough": "Julia"
+		# }
 
-		res = Famcy.FManager.http_client.client_post("login_http_url", send_dict, gauth=True, custom_headers=headers)
+		res = Famcy.FManager.http_client.client_post("login_http_url", send_dict, gauth=True)
 		print("res: ", res)
 		CustomLoginManager.login_db = json.loads(res)["message"]
 		return json.loads(res)["indicator"]
@@ -75,6 +77,29 @@ class CustomLoginManager(Famcy.FamcyLogin):
 		user.name = user_info_dict["username"] if user_info_dict["username"] != "" else Famcy.FManager.get("default_name", "")
 		user.profile_pic_url = ""
 		# user.profile_pic_url = user_info_dict["profile_pic_url"] if user_info_dict["profile_pic_url"] != "" else Famcy.FManager.get("default_profile_pic_url", "")
+
+    # def get_carpark_id(self):
+    #     send_dict = {
+    #         "service": "pms",
+    #         "operation": "get_carpark_id"
+    #     }
+    #     try:
+    #         res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
+    #         res_msg = json.loads(res_msg)
+    #         if res_msg['indicator']:
+    #             self.carpark_id = res_msg['message']
+    #             config = Famcy.FManager["ConsoleConfig"]
+
+    #             if "carpark_id" not in config.keys():
+    #                 config['carpark_id'] = res_msg['message']
+    #                 # write_yaml(os.path.expanduser("~")+"/.local/share/famcy/pms/console/famcy.yaml",config)
+    #         else:
+    #             config = Famcy.FManager["ConsoleConfig"]
+    #             self.carpark_id = config['carpark_id']
+
+    #     except Exception as e:
+        
+    #         raise ValueError("could not find carpark_id")
 
 CustomLoginManager().register()
 
