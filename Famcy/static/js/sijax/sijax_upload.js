@@ -7,6 +7,7 @@ sjxUpload.getFrameId = function (formId) {
 };
 
 sjxUpload.prepareForm = function (formId, callbackName) {
+	console.log("prepareForm")
 	var frameId = sjxUpload.getFrameId(formId),
 		$object = jQuery('#' + formId),
 		requestArgs = JSON.stringify([formId]),
@@ -59,7 +60,7 @@ sjxUpload.resetForm = function (formId) {
 };
 
 sjxUpload.registerForm = function (params) {
-
+	console.log("registerForm")
 };
 
 sjxUpload.processResponse = function (formId, commandsArray) {

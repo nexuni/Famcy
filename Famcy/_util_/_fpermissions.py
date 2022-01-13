@@ -30,5 +30,8 @@ class FPermissions:
 		current Famcy user met the req of 
 		the permission. 
 		"""
-		return current_user.level >= self.lowest_permission
-		# return True
+		if not isinstance(current_user, Famcy.FamcyUser):
+			# user logout
+			return 0 >= self.lowest_permission
+		else:
+			return current_user.level >= self.lowest_permission

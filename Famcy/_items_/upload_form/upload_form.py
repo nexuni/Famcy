@@ -59,7 +59,7 @@ class upload_form(Famcy.FamcyCard):
                     self.csrf_input_tag["type"] = "hidden"
                     self.csrf_input_tag["name"] = "csrf_token"
 
-                    self.crsf_script.innerHTML = "document.getElementById('args_upload_"+self.id+"').value = JSON.stringify("+json.dumps([self.id])+");document.getElementById('crsf_upload_"+self.id+"').value = document.head.querySelector('[name~=csrf-token][content]').content"
+                    self.crsf_script.innerHTML = "document.getElementById('args_upload_"+self.id+"').value = JSON.stringify("+json.dumps([self.id])+");document.getElementById('crsf_upload_"+self.id+"').value = document.head.querySelector('[name~=csrf-token][content]').content;"
                     
                     self.body.addElement(self.iframe_tag)
                     self.body.addElement(self.submit_input_tag)
