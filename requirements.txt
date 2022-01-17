@@ -5,3 +5,5 @@ Flask-uWSGI-WebSocket
 gadgethiServerUtils
 markdown
 dash
+redis==4.1.0
+flask_kvsession==0.6.2
