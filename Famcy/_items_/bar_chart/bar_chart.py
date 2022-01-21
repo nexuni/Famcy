@@ -2,6 +2,9 @@ import json
 import Famcy
 from flask import current_app
 
+import pandas as pd
+import plotly.graph_objects as go
+
 class bar_chart(Famcy.FamcyBlock):
     """
     Represents the block to display
@@ -50,6 +53,27 @@ class bar_chart(Famcy.FamcyBlock):
         static_script = Famcy.script()
         static_script["src"] = "/static/js/bar_chart.js"
         self.body.addStaticScript(static_script)
+
+    def generate_png_file(self, img_name="bar_img"):
+        x_name = self.value["xy_axis_title"][0]
+        y_name = self.value["xy_axis_title"][1]
+
+        data = {}
+        data[x_name] = []
+        data[y_name] = []
+        data["name"] = []
+        for dict, label in zip(self.value["values"], self.value["labels"]):
+            data[x_name].extend(dict["x"])
+            data[y_name].extend(dict["y"])
+            data["name"].extend([label for i in range(len(dict["x"]))])
+                    
+        df = pd.DataFrame(data)
+
+        fig = go.Figure()
+        for contestant, group in df.groupby("name"):
+            fig.add_trace(go.Bar(x=group[x_name], y=group[y_name], name=contestant))
+
+        fig.write_image(img_name+".png")
 
     def render_inner(self):
         """

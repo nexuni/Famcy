@@ -2,9 +2,7 @@ import json
 import Famcy
 from flask import current_app
 
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
+import plotly.graph_objects as go
 
 class pie_chart(Famcy.FamcyBlock):
     """
@@ -56,6 +54,16 @@ class pie_chart(Famcy.FamcyBlock):
         static_script = Famcy.script()
         static_script["src"] = "/static/js/pie_chart.js"
         self.body.addStaticScript(static_script)
+
+    def generate_png_file(self, img_name="bar_img"):
+        labels = []
+        values = []
+        for dict, label in zip(self.value["values"], self.value["labels"]):
+            labels.append(label)
+            values.append(dict["number"])
+
+        fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+        fig.write_image(img_name+".png")
 
     def render_inner(self):
         pie_values = []

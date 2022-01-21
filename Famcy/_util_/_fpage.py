@@ -139,6 +139,7 @@ class FPage(FamcyWidget):
 		end_script = ''
 		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
 			# content_data = "<h1>You are not authorized to view this page!</h1>"
+			session["login_permission"] = "You are not authorized to view this page!"
 			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
 		else:
 			# Render all content

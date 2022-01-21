@@ -73,6 +73,61 @@ class FamcyManager:
 	def read(self, path):
 		return read_config_yaml(path)
 
+	def lg_transform(self, group, name, language, reverse=False):
+		"""
+		This function transform the information to the specific language
+		Input	
+			- group: Need to be ALL CAPITAL WORDS
+			- name: the name you would like to translate
+			- language: The language you would like to use
+			- * reverse: if True 
+		Output
+			- string 
+		Ex. file
+			SEASON_CHOICE:
+				season: {"CH": "月票","EN": "Monthly pass"}
+				dailyseason: {"CH": "早上優惠票","EN": "Morning pass"}
+			SEASON_DATABASE:
+				season: {"CH": "月票資料庫","EN": "season database"}
+				daily:  {"CH": "月票資料庫"}
+		Usage:
+			1. Lg_transform("SEASON_CHOICE","season","CH") -> "月票"
+			2. Lg_transform("SEASON_CHOICE","dailyseason","EN") -> "Morning pass"
+			3. Lg_transform("SEASON_DATABASE","season","EN") -> "season database"
+			4. Lg_transform("SEASON_CHOICE","月票","CH",True) -> "season"
+		Error Usage:
+			In most of case, will return the origin name value to avoid fatal crash.
+			However, when reverse=True and the name points to different value will raise error.
+			1. Lg_transform("SEASON_DATABASE","月票資料庫","CH",True) -> raise error
+		"""
+		language_yaml = self.read(self["ConsoleConfig"]["lg_yaml"])
+
+		if reverse:
+			if group not in language_yaml.keys():
+				raise ValueError("group spelling fail")
+			else:
+				return_name_list = []
+				for i in language_yaml[group].keys():
+					try:
+						if language_yaml[group][i][language] == name:
+							return_name_list.append(i)
+					except:
+						pass
+				if len(return_name_list) == 0:
+					raise ValueError("Could not find the specific name for reference")
+				elif len(return_name_list) >= 2:
+					raise ValueError("Duplicate Return")
+				else:
+					return_name = return_name_list[0]
+		else:
+			# print("not here")		
+			try:
+				return_name = language_yaml[group][name][language]
+			except:
+				return_name = name
+
+		return return_name
+
 	def init_http_client(self, **configs):
 		self.http_client = GadgetHiClient(custom_credentials_loc=self["ConsoleConfig"]["credentials_url"], 
 				**configs)

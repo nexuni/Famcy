@@ -388,6 +388,7 @@ class FinancePage(Famcy.FamcyPage):
 
             if self.get_chart_info(start_time, end_time, chart_type=chart_type, search_type=search_type, time_range=time_range):
                 msg = "成功修改資料"
+                self.bar_graph.generate_png_file()
 
         return [Famcy.UpdateAlert(alert_message=msg), Famcy.UpdateBlockHtml(target=self.card_1.layout.content[1][0])]
 
@@ -676,4 +677,4 @@ class FinancePage(Famcy.FamcyPage):
    
 
 # page = FinancePage()
-FinancePage.register("/finance", Famcy.ClassicStyle(), permission_level=1, background_thread=False)
+FinancePage.register("/finance", Famcy.ClassicStyle(), permission_level=0, background_thread=False)

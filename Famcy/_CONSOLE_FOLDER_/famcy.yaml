@@ -29,6 +29,7 @@ default_profile_pic_url: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.
 
 main_url: "https://pms.nexuni.com"
 credentials_url: "E:/nexuni/Famcy/Famcy/_CONSOLE_FOLDER_/credentials.yaml"
+lg_yaml: "~/.local/share/famcy/pms/console/Lg_transform.yaml"
 
 with_login: True
 login_url: "iam/login"

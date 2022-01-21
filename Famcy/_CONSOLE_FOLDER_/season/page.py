@@ -553,7 +553,7 @@ class SeasonPage(Famcy.FamcyPage):
         self.table_info = json.loads(res_msg)["message"] if json.loads(res_msg)["indicator"] else []
         self.table_info = self.make_time_readable(self.table_info,["validstart","validend"],{"validstart":"_validstart","validend":"_validend"})
         for row in self.table_info:
-            row['_season_type'] = self.Lg_transform("SEASON_CHOICE",row['season_type'])
+            row['_season_type'] = Famcy.FManager.lg_transform("SEASON_CHOICE",row['season_type'],"CH")
 
         self.card_2.layout.content[0][0].layout.content[0][0].update({
                 "data": self.table_info
@@ -658,59 +658,59 @@ class SeasonPage(Famcy.FamcyPage):
 
         return data
 
-    def Lg_transform(self,group,name,language="CH",reverse=False):
-        """
-        This function transform the information to the specific language
-        Input   
-            - group: Need to be ALL CAPITAL WORDS
-            - name: the name you would like to translate
-            - language: The language you would like to use
-            - * reverse: if True 
-        Output
-            - string 
-        Ex. file
-            SEASON_CHOICE:
-                season: {"CH": "月票","EN": "Monthly pass"}
-                dailyseason: {"CH": "早上優惠票","EN": "Morning pass"}
-            SEASON_DATABASE:
-                season: {"CH": "月票資料庫","EN": "season database"}
-                daily:  {"CH": "月票資料庫"}
-        Usage:
-            1. Lg_transform("SEASON_CHOICE","season","CH") -> "月票"
-            2. Lg_transform("SEASON_CHOICE","dailyseason","EN") -> "Morning pass"
-            3. Lg_transform("SEASON_DATABASE","season","EN") -> "season database"
-            4. Lg_transform("SEASON_CHOICE","月票","CH",True) -> "season"
-        Error Usage:
-            In most of case, will return the origin name value to avoid fatal crash.
-            However, when reverse=True and the name points to different value will raise error.
-            1. Lg_transform("SEASON_DATABASE","月票資料庫","CH",True) -> raise error
-        """
-        language_yaml = read_config_yaml(os.path.expanduser("~/.local/share/famcy/pms/console/Lg_transform.yaml"))
+    # def Lg_transform(self,group,name,language="CH",reverse=False):
+    #     """
+    #     This function transform the information to the specific language
+    #     Input   
+    #         - group: Need to be ALL CAPITAL WORDS
+    #         - name: the name you would like to translate
+    #         - language: The language you would like to use
+    #         - * reverse: if True 
+    #     Output
+    #         - string 
+    #     Ex. file
+    #         SEASON_CHOICE:
+    #             season: {"CH": "月票","EN": "Monthly pass"}
+    #             dailyseason: {"CH": "早上優惠票","EN": "Morning pass"}
+    #         SEASON_DATABASE:
+    #             season: {"CH": "月票資料庫","EN": "season database"}
+    #             daily:  {"CH": "月票資料庫"}
+    #     Usage:
+    #         1. Lg_transform("SEASON_CHOICE","season","CH") -> "月票"
+    #         2. Lg_transform("SEASON_CHOICE","dailyseason","EN") -> "Morning pass"
+    #         3. Lg_transform("SEASON_DATABASE","season","EN") -> "season database"
+    #         4. Lg_transform("SEASON_CHOICE","月票","CH",True) -> "season"
+    #     Error Usage:
+    #         In most of case, will return the origin name value to avoid fatal crash.
+    #         However, when reverse=True and the name points to different value will raise error.
+    #         1. Lg_transform("SEASON_DATABASE","月票資料庫","CH",True) -> raise error
+    #     """
+    #     language_yaml = read_config_yaml(os.path.expanduser("~/.local/share/famcy/pms/console/Lg_transform.yaml"))
 
-        if reverse:
-            if group not in language_yaml.keys():
-                raise ValueError("group spelling fail")
-            else:
-                return_name_list = []
-                for i in language_yaml[group].keys():
-                    try:
-                        if language_yaml[group][i][language] == name:
-                            return_name_list.append(i)
-                    except:
-                        pass
-                if len(return_name_list) == 0:
-                    raise ValueError("Could not find the specific name for reference")
-                elif len(return_name_list) >= 2:
-                    raise ValueError("Duplicate Return")
-                else:
-                    return_name = return_name_list[0]
-        else:
-            try:
-                return_name = language_yaml[group][name][language]
-            except:
-                return_name = name
+    #     if reverse:
+    #         if group not in language_yaml.keys():
+    #             raise ValueError("group spelling fail")
+    #         else:
+    #             return_name_list = []
+    #             for i in language_yaml[group].keys():
+    #                 try:
+    #                     if language_yaml[group][i][language] == name:
+    #                         return_name_list.append(i)
+    #                 except:
+    #                     pass
+    #             if len(return_name_list) == 0:
+    #                 raise ValueError("Could not find the specific name for reference")
+    #             elif len(return_name_list) >= 2:
+    #                 raise ValueError("Duplicate Return")
+    #             else:
+    #                 return_name = return_name_list[0]
+    #     else:
+    #         try:
+    #             return_name = language_yaml[group][name][language]
+    #         except:
+    #             return_name = name
 
-        return return_name
+    #     return return_name
 
     def get_carpark_id(self):
         send_dict = {
@@ -737,4 +737,4 @@ class SeasonPage(Famcy.FamcyPage):
             raise ValueError("could not find carpark_id")   
 
 # page = SeasonPage()
-SeasonPage.register("/season", Famcy.ClassicStyle(), permission_level=1, background_thread=False)
+SeasonPage.register("/season", Famcy.ClassicStyle(), permission_level=0, background_thread=False)
