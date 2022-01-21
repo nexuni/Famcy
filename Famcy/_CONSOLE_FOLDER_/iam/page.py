@@ -1,7 +1,7 @@
 import Famcy
 import json
 import hashlib
-from flask import redirect, url_for, request
+from flask import redirect, url_for, request, session
 
 class CustomLoginManager(Famcy.FamcyLogin):
 	login_db = []
@@ -113,6 +113,20 @@ class LoginPage(Famcy.FamcyPage):
 		login_input_form = Famcy.input_form()
 		login_input_form.loader = True
 
+		alert_content = Famcy.displayParagraph()
+		if session.get('login_permission'):
+			alert_content.update({
+				"content": "",
+				"title": session.get('login_permission')
+			})
+			session["login_permission"] = None
+
+		else:
+			alert_content.update({
+				"title": "",
+				"content": ""
+			})
+
 		phone_content = Famcy.pureInput()
 		phone_content.update({
 				"type": "pureInput",
@@ -157,11 +171,12 @@ class LoginPage(Famcy.FamcyPage):
 
 		submission_btn.connect(self.login_submit, target=login_input_form)
 
-		login_input_form.layout.addWidget(phone_content, 0, 0)
-		login_input_form.layout.addWidget(password_content, 1, 0)
-		login_input_form.layout.addWidget(save_info_content, 2, 0)
-		login_input_form.layout.addWidget(url_btn_content, 3, 0)
-		login_input_form.layout.addWidget(submission_btn, 4, 0)
+		login_input_form.layout.addWidget(alert_content, 0, 0)
+		login_input_form.layout.addWidget(phone_content, 1, 0)
+		login_input_form.layout.addWidget(password_content, 2, 0)
+		login_input_form.layout.addWidget(save_info_content, 3, 0)
+		login_input_form.layout.addWidget(url_btn_content, 4, 0)
+		login_input_form.layout.addWidget(submission_btn, 5, 0)
 
 		return login_input_form
 
