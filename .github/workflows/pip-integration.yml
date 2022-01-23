@@ -5,13 +5,12 @@ name: Python package
 
 on:
   push:
-    branches: [ main ]
+    branches: [ famcy-alpha ]
   pull_request:
-    branches: [ main ]
+    branches: [ famcy-alpha ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -19,26 +18,6 @@ jobs:
         include:
           - python: 3.7
             postgres: 13
-
-    env:
-      PSYCOPG2_TESTDB: postgres
-      PSYCOPG2_TESTDB_HOST: 127.0.0.1
-      PSYCOPG2_TESTDB_USER: postgres
-      PSYCOPG2_TESTDB_PASSWORD: password
-
-    services:
-      postgresql:
-        image: postgres:${{ matrix.postgres }}
-        env:
-          POSTGRES_PASSWORD: password
-        ports:
-          - 5432:5432
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
     - uses: actions/checkout@v2
