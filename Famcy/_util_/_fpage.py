@@ -145,12 +145,16 @@ class FPage(FamcyWidget):
 			# Render all content
 			current_page.body = super(FPage, current_page).render()
 			content_data = current_page.body.render_inner()
-			end_script = current_page.body.render_script()
+			head_script, end_script = current_page.body.render_script()
 			for temp, _ in current_page.layout.staticContent:
-				end_script += temp.body.render_script()
+				h_s, e_s = temp.body.render_script()
+				head_script += h_s
+				end_script += e_s
+
+			print(head_script)
 
 			# Apply style at the end
-			return current_page.style.render(current_page.header_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
+			return current_page.style.render(current_page.header_script+head_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
 
 	@staticmethod
 	def background_generator_loop():
