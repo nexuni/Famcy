@@ -1,15 +1,23 @@
 console_title: "Famcy範例管理網站"
 console_description: "這是Famcy範例管理網站"
-main_page: pgm
+main_page: overview
 
 # Declare Main page part
 side_bar_title: "dashboard"
 side_bar_hierachy:
-  - 總覽: pgm
+  - 總覽: overview
+  - 車輛管理: car_management
+  - 月票管理: season
+  - POS功能: pos
+  - 財務功能: finance
 
 title_style: "bxs-spreadsheet"
 side_bar_style:
   總覽: "bxs-share-alt"
+  車輛管理: "bxs-car-mechanic"
+  月票管理: "bxs-calendar"
+  POS功能: "bx-desktop"
+  財務功能: "bx-trending-up"
 
 user_defined_content_header_var: PAGE_HEADER
 user_defined_content_var: PAGE_CONTENT
@@ -23,7 +31,7 @@ main_url: "https://pms.nexuni.com"
 credentials_url: "E:/nexuni/Famcy/Famcy/_CONSOLE_FOLDER_/credentials.yaml"
 lg_yaml: "~/.local/share/famcy/pms/console/Lg_transform.yaml"
 
-with_login: False
+with_login: True
 login_url: "iam/login"
 carpark_id: "park1"
 
