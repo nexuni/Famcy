@@ -13,6 +13,7 @@ class FElement(metaclass=abc.ABCMeta):
 		self.parentElement = None
 		self.children = []
 		self.script = []
+		self.head_script = []
 
 	def __setitem__(self, key, value):
 		if key == "className":
@@ -28,14 +29,23 @@ class FElement(metaclass=abc.ABCMeta):
 		if item in self.attributes.keys():
 			del self.attributes[item]
 
-	def addStaticScript(self, script):
-		if script not in self.script:
-			self.script.append(script)
+	def addStaticScript(self, script, position="end"):
+		if position == "end":
+			if script not in self.script:
+				self.script.append(script)
+		elif position == "head":
+			if script not in self.head_script:
+				self.head_script.append(script)
 
-	def removeStaticScript(self, script=None):
-		if script:
-			i = self.script.index(script)
-			del self.script[i]
+	def removeStaticScript(self, script=None, position="end"):
+		if position == "end":
+			if script:
+				i = self.script.index(script)
+				del self.script[i]
+		elif position == "head":
+			if script:
+				i = self.head_script.index(script)
+				del self.head_script[i]
 
 	def addElement(self, child):
 		if child not in self.children:
@@ -75,16 +85,23 @@ class FElement(metaclass=abc.ABCMeta):
 		if self.parentElement:
 			if not set(self.parentElement.script).intersection(set(self.script)):
 				self.parentElement.script.extend(self.script)
+			if not set(self.parentElement.head_script).intersection(set(self.head_script)):
+				self.parentElement.head_script.extend(self.head_script)
 		return temp
 
 	def render_script(self):
 		# update script
 		_ = self.render_inner()
 		
-		return_script = ""
+		return_e_script = ""
 		for _s in self.script:
-			return_script += _s.render_inner()
-		return return_script
+			return_e_script += _s.render_inner()
+
+		return_h_script = ""
+		for _s in self.head_script:
+			return_h_script += _s.render_inner()
+
+		return return_h_script, return_e_script
 
 	@abc.abstractmethod
 	def render_element(self):
