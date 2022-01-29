@@ -2,13 +2,18 @@ import Famcy
 import os
 import json
 import requests
+import urllib
+import time
 
 class VideoStream(Famcy.FamcyPage):
     def __init__(self):
         super(VideoStream, self).__init__()
 
+v_style = Famcy.VideoStreamStyle("/ipcam", snap=True)
+v_style.update_snap_address("rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov")
+
 # v1 = VideoStream()
-VideoStream.register("/ipcam", Famcy.VideoStreamStyle("/ipcam"), init_cls=VideoStream())
+VideoStream.register("/ipcam", v_style, init_cls=VideoStream())
 
 class BackgroundTaskCoin(Famcy.FamcyPage):
     def __init__(self):
@@ -169,14 +174,18 @@ class OverviewPage(Famcy.FamcyPage):
             target = card2
             if temp["type"] == "APM":
                 target = self.apm_card
+                s_func = self.prompt_submit_input
             elif temp["type"] == "STATION":
                 target = self.station_card
+                s_func = self.prompt_submit_input
             elif temp["type"] == "IPCAM":
                 target = self.ipcam_card
+                s_func = self.update_video_frame
             elif temp["type"] == "LED":
                 target = self.led_card
+                s_func = self.prompt_submit_input
 
-            submit_btn.connect(self.prompt_submit_input, target=target)
+            submit_btn.connect(s_func, target=target)
 
             input_form.layout.addWidget(submit_btn, i//col_num, i%col_num)
 
@@ -586,7 +595,7 @@ class OverviewPage(Famcy.FamcyPage):
                 "img_name": ["/asset/image/" + info_list[0][0]]
             })
 
-        return Famcy.UpdateTabHtml()
+        return Famcy.UpdateBlockHtml(target=self.card_4.layout.content[0][0])
 
     # def update_total_lot(self, submission_obj, info_list):
     #     if len(info_list[0]) > 0:
@@ -677,6 +686,13 @@ class OverviewPage(Famcy.FamcyPage):
         if len(info_list[0]) > 0:
             msg = self.submit_device_action(submission_obj.origin.find_parent(submission_obj.origin, "FPromptCard")["pname"], submission_obj.origin.value["confirm_id"], submission_obj.origin["ip"], info_list)
         return Famcy.UpdateAlert(alert_message=msg)
+
+    def update_video_frame(self, submission_obj, info_list):
+        self.card_4.layout.content[0][0].update({
+            "img_name": ["/ipcam" + '?' + urllib.parse.urlencode({"address": "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov", "timeout": 15, "datetime": time.time()})]
+        })
+
+        return Famcy.UpdateBlockHtml(target=self.card_4.layout.content[0][0])
     # ====================================================
     # ====================================================
         
@@ -954,4 +970,4 @@ class OverviewPage(Famcy.FamcyPage):
    
 
 # page = OverviewPage()
-OverviewPage.register("/overview", Famcy.ClassicStyle(), permission_level=1, background_thread=True, background_freq=0.2)
+OverviewPage.register("/overview", Famcy.ClassicStyle(), permission_level=0, background_thread=True, background_freq=0.2)
