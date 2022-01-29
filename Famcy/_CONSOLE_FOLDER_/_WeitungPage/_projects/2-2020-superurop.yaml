@@ -1,6 +1,0 @@
-title: "Autonomous Excavation in Granular Materials with Reinforcement Learning"
-short_desc: "RESEARCH PROJECT. 2020. <br> It is about achieving a high-level control of the robot on granular materials by training a deep reinforcement learning network on a mix of real data gathered from the robot, and the simulated data gathered from the partial model of the system."
-categories: ["Robotics", "All", "Artificial Intelligence"]
-img_url: "/asset/image/projects/su.jpg"
-project_page: false
-redirect_url: "/asset/docs/6UAR.pdf"
