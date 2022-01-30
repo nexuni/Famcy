@@ -21,6 +21,7 @@ html{
     align-items: center;
     background-color: var(--sub-color);
     opacity: 0.6;
+    z-index: 10000 !important;
 }
 
 #prompt_holder {

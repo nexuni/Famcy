@@ -1,5 +1,6 @@
 function input_form_main_btn_submit(e, loader_flag, form_id, form_obj_key, btn_obj_key) {
 
+	console.log(loader_flag)
 	if (loader_flag) {
 		$('#loading_holder').css("display","flex");
 	}
