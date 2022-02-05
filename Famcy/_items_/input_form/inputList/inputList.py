@@ -36,7 +36,7 @@ class inputList(Famcy.FamcyInputBlock):
         div_temp.addElement(sel_temp)
 
         script = Famcy.script()
-        script.innerHTML = 'generate_list("' + self.id + '", "' + str(id(self.submission_obj)) + '")'
+        script.innerHTML = 'generate_list("' + self.id + '")'
 
         self.body.addElement(h3_temp)
         self.body.addElement(p_temp)
@@ -45,7 +45,8 @@ class inputList(Famcy.FamcyInputBlock):
 
     def render_inner(self):
         self.body.children[2].children[0].children = []
-        self.value["value"].insert(0, "---")
+        if "---" not in self.value["value"]:
+            self.value["value"].insert(0, "---")
         for list_value in self.value["value"]:
             opt_temp = Famcy.option()
             opt_temp["name"] = self.name
@@ -63,4 +64,4 @@ class inputList(Famcy.FamcyInputBlock):
         self.body.children[1].innerHTML = self.value["desc"]
         self.body.children[2].children[0]["after_action"] = self.value["action_after_post"]
 
-        return self.body.render_inner()
+        return self.body

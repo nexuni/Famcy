@@ -92,6 +92,7 @@ Sijax.request = function (functionName, callArgs, requestParams) {
 		"type": "POST",
 		"data": {},
 		"cache": false,
+		"async": true,
 		"dataType": "json",
 		"success": Sijax.processCommands,
 	};

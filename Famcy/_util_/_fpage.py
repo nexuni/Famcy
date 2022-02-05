@@ -3,11 +3,12 @@ from Famcy._util_._flayout import *
 from Famcy._util_._fsubmission import *
 from Famcy._util_._fpermissions import *
 from Famcy._util_._fthread import *
-from flask import g
+from flask import g, Response, request, session, redirect, url_for
 from flask_login import login_required
 import Famcy
 import time
 import abc
+import pickle
 
 class FPage(FamcyWidget):
 	"""
@@ -34,23 +35,30 @@ class FPage(FamcyWidget):
 		* register(): register the page to the Famcy env
 		* preload(): action before the rendering
 		* postload(): actions after the rendering
-	"""	
-	def __init__(self, route, style, permission_level=0, 
-			layout_mode=FLayoutMode.recommend, 
-			background_thread=False, background_freq=1):
+	"""
+	route = "/"
+	style = None
+	permission = None
+	background_thread_flag = False
+	background_freq = 0.5
+
+	# def __init__(self, route, style, permission_level=0, 
+	#       layout_mode=FLayoutMode.recommend, 
+	#       background_thread=False, background_freq=0.5):
+	def __init__(self, layout_mode=FLayoutMode.recommend):
 
 		super(FPage, self).__init__()
-		self.route = route
-		self.style = style
+		# self.route = route
+		# self.style = style
 		self.layout = FamcyLayout(self, layout_mode)
-		self.permission = FPermissions(permission_level)
-		self.background_thread_flag = background_thread
+		# self.permission = FPermissions(permission_level)
+		# self.background_thread_flag = background_thread
+		# self.background_freq = background_freq
 
-		if self.background_thread_flag:
-			self.background_freq = background_freq
-			# self.sijax_response = None
-			# Necessary header script for comet
-			self.header_script += '<script type="text/javascript" src="/static/js/sijax/sijax_comet.js"></script>'
+		self.init_page()
+
+		if FPage.background_thread_flag:
+			self.sijax_response = None
 			
 			# Check loop correctness
 			assert getattr(self, "background_thread_inner", None), "Must implement background_thread_inner"
@@ -58,6 +66,9 @@ class FPage(FamcyWidget):
 			self.bthread.start()
 
 		self._check_rep()
+
+	def init_page(self):
+		self.body = Famcy.ELEMENT()
 
 	def _check_rep(self):
 		"""
@@ -68,43 +79,94 @@ class FPage(FamcyWidget):
 		"""
 		pass
 
-	def register(self):
-		"""
-		This is the function to register 
-		the page to the flask route system. 
-		"""
-		route_func = lambda: self.render()
-		route_func.__name__ = self.id
+	@classmethod
+	def setClassAttr(cls, key, value):
+		if key in cls.__dict__.keys():
+			cls.__dict__[key] = value
 
-		if self.permission.required_login():
+	@classmethod
+	def register(cls, route, style, permission_level=0, background_thread=False, background_freq=0.5, init_cls=None):
+		cls.route = route
+		cls.style = style
+		cls.permission = FPermissions(permission_level)
+		cls.background_thread_flag = background_thread
+		cls.background_freq = background_freq
+
+		route_func = lambda: cls.render(init_cls=init_cls)
+		route_func.__name__ = "famcy_route_func_name"+route.replace("/", "_")
+
+		if cls.permission.required_login():
 			# Register the page render to the main blueprint
-			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, self.route)(login_required(route_func))
+			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(login_required(route_func))
 		else:
-			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, self.route)(route_func)
+			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(route_func)
 
-	def render(self, *args, **kwargs):
-		"""
-		This is the main render function, i.e.
-		the flask route function top level. 
-		"""
-		# First setup the submission handler
+		if cls.background_thread_flag:
+			bg_func = lambda: cls.background_generator_loop()
+			bg_func.__name__ = "bgloop_famcy_route_func_name"+route.replace("/", "_")
+
+			if cls.permission.required_login():
+				# Register the page render to the main blueprint
+				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(login_required(bg_func))
+			else:
+				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(bg_func)
+		
+	@classmethod
+	def render(cls, init_cls=None, *args, **kwargs):
 		if g.sijax.is_sijax_request:
-			g.sijax.register_object(FSubmissionSijaxHandler)
+			sijaxHandler = FSubmissionSijaxHandler
+			sijaxHandler.current_page = session.get('current_page')
+			print("session.get('current_page').id: ", sijaxHandler.current_page.id)
 
-			# No more comet, not compatible with uwsgi
-			# if self.background_thread_flag:
-			# 	g.sijax.register_comet_callback('background_work', self.background_main_comet_handler)
+			# code for upload form
+			upload_list = session.get('current_page').find_class(session.get('current_page'), "upload_form")
+			for _item in upload_list:
+				_ = g.sijax.register_upload_callback(_item.id, sijaxHandler.upload_form_handler)
 
+			g.sijax.register_object(sijaxHandler)
 			return g.sijax.process_request()
 
-		if not self.permission.verify(Famcy.FManager["CurrentUser"]):
-			content_data = "<h1>You are not authorized to view this page!</h1>"
+		# init page
+		if request.method == 'GET':
+			if init_cls:
+				current_page = init_cls
+			else:
+				current_page = cls()
+			if not isinstance(cls.style, Famcy.VideoStreamStyle):
+				session["current_page"] = current_page
+
+		form_init_js = ''	# no use
+		end_script = ''
+		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
+			# content_data = "<h1>You are not authorized to view this page!</h1>"
+			session["login_permission"] = "You are not authorized to view this page!"
+			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
 		else:
 			# Render all content
-			content_data = super(FPage, self).render()
+			current_page.body = super(FPage, current_page).render()
+			content_data = current_page.body.render_inner()
+			head_script, end_script = current_page.body.render_script()
+			for temp, _ in current_page.layout.staticContent:
+				h_s, e_s = temp.body.render_script()
+				head_script += h_s
+				end_script += e_s
 
-		# Apply style at the end
-		return self.style.render(self.header_script, content_data, page_id=self.id, background_flag=self.background_thread_flag)
+			print(head_script)
+
+			# Apply style at the end
+			return current_page.style.render(current_page.header_script+head_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
+
+	@staticmethod
+	def background_generator_loop():
+		def generate():
+			try:
+				baction = Famcy.FamcyBackgroundQueue.pop()
+				yield json.dumps({"indicator": True, "message": baction.tojson()})
+
+			except Exception as e:
+				yield json.dumps({"indicator": False, "message": str(e)})
+
+		return Response(generate(), mimetype='text/plain')
 
 	def background_thread_loop(self):
 		"""
@@ -122,23 +184,6 @@ class FPage(FamcyWidget):
 		"""
 		pass
 
-	def background_main_comet_handler(self, obj_response, **kwargs):
-		"""
-		This is the main handler
-		for sijax comet plugin
-		"""
-		# while True:
-		# 	time.sleep(int(1/self.comet_update_freq))
-		# 	self.sijax_response = obj_response
-		# 	try:
-		# 		baction = self.background_queue.pop()
-		# 		baction()
-		# 	except:
-		# 		continue
-
-		# 	yield self.sijax_response
-		pass
-
 	# Functions that can be overwritten
 	# ---------------------------------
 	def render_inner(self):
@@ -146,12 +191,12 @@ class FPage(FamcyWidget):
 		This is the function to 
 		render the layout. 
 		"""
-		header_script, content_data = self.layout.render()
+		header_script, self.body = self.layout.render()
 
 		if header_script not in self.header_script:
 			self.header_script += header_script
 		
-		return content_data
+		return self.body
 
 	def preload(self):
 		"""

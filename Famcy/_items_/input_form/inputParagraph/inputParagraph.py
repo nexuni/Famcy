@@ -49,7 +49,7 @@ class inputParagraph(Famcy.FamcyInputBlock):
         self.body.children[1].innerHTML = self.value["desc"]
 
         if 'height: ' + self.value["height"] not in self.body.children[2].style:
-            self.body.children[2].style += 'height: ' + self.value["height"]
+            self.body.children[2].style['height'] = self.value["height"]
         self.body.children[2]["placeholder"] = self.value["placeholder"]
 
         if self.value["mandatory"]:
@@ -64,4 +64,4 @@ class inputParagraph(Famcy.FamcyInputBlock):
             del self.body.children[2]["onkeyup"]
             self.body.children[3].innerHTML = ''
 
-        return self.body.render_inner()
+        return self.body

@@ -78,4 +78,4 @@ class multipleChoicesRadioInput(Famcy.FamcyInputBlock):
             if "required_list" in self.body.classList:
                 self.body.classList.remove("required_list")
 
-        return self.body.render_inner()
+        return self.body

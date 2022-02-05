@@ -44,9 +44,13 @@ class displayLight(Famcy.FamcyBlock):
         }
 
     def render_inner(self):
-        self.body.children[0].style += 'width: ' + self.value["light_size"] + ';'
+        self.body.children[0].style['width'] = self.value["light_size"]
+
+        for item in self.body.children[0].children:
+            item.classList = ["bulb"]
+
         self.body.children[0].children[0]["className"] = self.value["status"]["red"]
         self.body.children[0].children[1]["className"] = self.value["status"]["yellow"]
         self.body.children[0].children[2]["className"] = self.value["status"]["green"]
 
-        return self.body.render_inner()
+        return self.body

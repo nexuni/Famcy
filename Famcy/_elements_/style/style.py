@@ -5,11 +5,10 @@ class style(Famcy.FamcyElement):
     def __init__(self):
         super(style, self).__init__()
 
-    def render_inner(self):
-        html = "<style" + self.setAttrTag() + ">"
+    def render_element(self):
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
-
-        html += "</style>"
-        return html
+        self.html = html
+        return "<style" + self.setAttrTag() + ">" + html + "</style>"

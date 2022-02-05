@@ -9,10 +9,10 @@ function generatePieChart(ident, values, labels, size) {
 	  insidetextorientation: "radial"
 	}]
 
-	var layout = [{
+	var layout = {
 	  height: size[1],
 	  width: size[0]
-	}]
+	}
 
 	Plotly.newPlot(ident.toString(), data, layout)
 }

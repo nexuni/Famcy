@@ -50,4 +50,4 @@ class inputPassword(Famcy.FamcyInputBlock):
             if "required_password" in self.body.children[2].classList:
                 self.body.children[2].classList.remove("required_password")
 
-        return self.body.render_inner()
+        return self.body

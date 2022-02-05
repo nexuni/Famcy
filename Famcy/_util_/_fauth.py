@@ -12,16 +12,21 @@ class FLogin(metaclass=abc.ABCMeta):
 		self.always_remember = always_remember
 
 	def login_famcy_user(self, user):
-		login_user(user, remember=self.always_remember)
+		return login_user(user, remember=self.always_remember)
 
 	def logout_famcy_user(self):
 		logout_user()
 
 	def register(self):
 		Famcy.FamcyLoginManager = self
+		init_flag = self.init_login_db()
 
 	@abc.abstractmethod
-	def load_famcy_user(self, user_id):
+	def init_login_db(self):
+		pass
+
+	@abc.abstractmethod
+	def load_famcy_user(self, user):
 		"""
 		This is the function to load
 		famcy user object with user_id
@@ -44,8 +49,8 @@ class FUser(UserMixin):
 		This is the function to setup flask login user
 		login manager user loader function. 
 		"""
-		def load_user(user_id):
-			return Famcy.FamcyLoginManager.load_famcy_user(user_id)
+		def load_user(user):
+			return Famcy.FamcyLoginManager.load_famcy_user(user)
 
 		Famcy.FManager["LoginManager"].user_loader(load_user)
 

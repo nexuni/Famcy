@@ -21,6 +21,7 @@ html{
     align-items: center;
     background-color: var(--sub-color);
     opacity: 0.6;
+    z-index: 10000 !important;
 }
 
 #prompt_holder {
@@ -225,6 +226,57 @@ html{
 	overflow-x: hidden;
 }
 
+.portfolio_win{
+	width: 100% !important;
+	height: 100% !important;
+	max-width: 100% !important;
+	display: flex;
+	flex-flow: column;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.portfolio_content {
+	width: 100% !important;
+	min-width: 350px !important;
+	max-height: 90% !important;
+	max-width: 100% !important;
+	padding: 0 !important;
+	overflow: auto;
+}
+
+.portfolio_nav {
+	width: 100% !important;
+	overflow: hidden;
+	background-color: var(--light-grey-color);
+	border-bottom: 1px solid var(--white-color);
+}
+
+.portfolio_nav a {
+	float: left;
+	color: var(--dark-color);
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+	font-size: var(--small-text);
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.portfolio_nav a:hover {
+	background-color: var(--semi-grey-color);
+	color: var(--main-color);
+	text-decoration: none;
+}
+
+.portfolio_nav a.active {
+	color: var(--main-color);
+}
+
+.no_nav_section {
+	min-height: 100vh !important;
+	max-height: 100vh !important;
+}
 
 
 
@@ -292,6 +344,7 @@ html{
 	row-gap: 1.25vw;
 	column-gap: 1.25vw;
 	overflow-y: scroll;
+
 	max-height: calc(90% - var(--normal-text)*1.5);
 }
 
@@ -304,9 +357,12 @@ html{
 	padding: 1.25vw;
 	display: flex;
 	flex-flow: column;
+	height: fit-content;
+	overflow: visible;
+}
 
-	overflow-x: hidden;
-	overflow-y: visible;
+.portfolio_content .inner_section{
+	background-color: transparent;
 }
 
 .inner_section_content{
@@ -367,16 +423,22 @@ html{
 	background-color: var(--main-color);
 }
 
+tbody tr td{
+	padding: 5px !important;
+}
+
 
 /*input_form*/
 .main_submit_btn{
 	width: 100%;
 
-	margin: calc(var(--semi-large-text)*0.5) 0;
+	margin: 0;
+	padding: 5px 0;
+	/*margin: calc(var(--semi-large-text)*0.5) 0;*/
 
-	padding: calc(var(--semi-large-text)*0.5);
-	font-size: var(--semi-large-text);
-	line-height: var(--semi-large-text);
+	/*padding: calc(var(--semi-large-text)*0.5);*/
+	font-size: var(--normal-text);
+	line-height: var(--normal-text);
 
 	border-radius: 4px;
 	
@@ -475,7 +537,7 @@ html{
 	margin: 0;
 }
 
-.pureInput input[type=text], .pureInput input[type=number], .pureInput input[type=password]{
+.pureInput input[type=text], .pureInput input[type=number], .pureInput input[type=password], .pureInput input[type=date], .pureInput input[type=time]{
 	width: 100%;
 	margin: 5px 0 0 0;
 	padding: calc(var(--normal-text)*0.5);
@@ -537,7 +599,7 @@ html{
 	margin: 0;
 }
 
-.inputBtn input[type=text], .inputBtn input[type=number], .inputBtn input[type=password]{
+.inputBtn input[type=text], .inputBtn input[type=number], .inputBtn input[type=password], .inputBtn input[type=time], .inputBtn input[type=date]{
 	width: 100%;
 	margin: 5px 0 0 0;
 	padding: calc(var(--normal-text)*0.5);
@@ -567,6 +629,70 @@ html{
 	border: 0;
 	-webkit-appearance: none;
 
+}
+
+/*inputBlockSec*/
+.inputBlockSec{
+	/*padding: 20px 15%;*/
+	width: 100%;
+	overflow: hidden;
+	font-family: 'Karma', sans-serif, arial, serif !important;
+
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+
+	position: relative;
+}
+
+.inputBlockSec:after {
+	content: "";
+	display: block;
+	padding-bottom: 100%;
+}
+
+.inputBlockSec div {
+	max-width: 86%;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	left: 7%;
+	display: flex;
+	flex-flow: column;
+	justify-content: center;
+	align-items: flex-start;
+
+	overflow: hidden;
+}
+
+.inputBlockSec div h3{
+	max-width: 70%;
+	margin: 2.5vh 0 1.5vh 0;
+	font-size: var(--normal-text);
+	font-weight: 600;
+	color: var(--main-color);
+	word-wrap: break-word!important;
+	text-align: left;
+}
+
+.inputBlockSec div h4{
+	max-width: 70%;
+	font-size: calc(0.8 * var(--normal-text));
+	line-height: calc(1.2 * var(--normal-text));
+	color: var(--dark-color);
+	word-wrap: break-word!important;
+	text-align: left;
+}
+
+.inputBlockSec div button{
+	font-size: calc(0.8 * var(--normal-text));
+	line-height: calc(1.2 * var(--normal-text));
+	color: var(--white-color);
+	background-color: var(--main-color);
+	border-radius: 5px;
+	border: none;
+	word-wrap: break-word!important;
+	text-align: left;
 }
 
 /*inputBtn*/
@@ -790,7 +916,7 @@ html{
 /*displayTag*/
 .displayTag{
 	width: 100%;
-	margin: 10px 0;
+	/*margin: 10px 0;*/
 
 	display: flex;
 	flex-flow: row;
@@ -835,6 +961,62 @@ html{
 
 .displayParagraph h4{
 	font-size: var(--normal-text);
+	color: var(--dark-color);
+	word-wrap: break-word!important;
+}
+
+.displayParagraph h4 p {
+	margin: 0;
+}
+
+/*displayPicWord*/
+.displayPicWord{
+	width: 100%;
+	margin: 10px 0;
+	overflow: hidden;
+	display: flex;
+	flex-flow: column;
+	justify-content: flex-start;
+	align-items: center;
+	font-family: 'Karma', sans-serif, arial, serif !important;
+}
+
+.displayPicWord div {
+	width: 60%;
+	border-radius: 100%;
+	position: relative;
+}
+
+.displayPicWord div:after {
+	content: "";
+	height: 0;
+	display: block;
+	padding-bottom: 100%;
+}
+
+.displayPicWord img {
+	border-radius: 100%;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+
+.displayPicWord h3{
+	max-width: 70%;
+	margin: 2.5vh 0 1.5vh 0;
+	font-size: var(--normal-text);
+	font-weight: 600;
+	color: var(--main-color);
+	word-wrap: break-word!important;
+}
+
+.displayPicWord h4{
+	max-width: 70%;
+	font-size: calc(0.8 * var(--normal-text));
+	line-height: calc(1.2 * var(--normal-text));
 	color: var(--dark-color);
 	word-wrap: break-word!important;
 }
@@ -970,7 +1152,6 @@ html{
 	background-color: #00ff00;
 }
 
-
 /*uploadFile*/
 *,
 *:before,
@@ -978,6 +1159,25 @@ html{
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+.downloadFile a{
+	width: 100%;
+
+	margin: 0;
+	padding: 5px 0;
+	/*margin: calc(var(--semi-large-text)*0.5) 0;*/
+
+	/*padding: calc(var(--semi-large-text)*0.5);*/
+	font-size: var(--normal-text);
+	line-height: var(--normal-text);
+
+	border-radius: 4px;
+	
+	background-color: var(--main-color);
+	color: var(--white-color);
+	border: 0;
+	-webkit-appearance: none;
 }
 
 

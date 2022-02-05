@@ -5,8 +5,8 @@ class h1(Famcy.FamcyElement):
     def __init__(self):
         super(h1, self).__init__()
 
-    def render_inner(self):
-        html = "<h1" + self.setAttrTag() + ">"
+    def render_element(self):
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -15,6 +15,5 @@ class h1(Famcy.FamcyElement):
             for child in self.children:
                 html += child.render_inner()
                 child.parentElement = self
-
-        html += "</h1>"
-        return html
+        self.html = html
+        return "<h1" + self.setAttrTag() + ">" + html + "</h1>"

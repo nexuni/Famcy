@@ -14,6 +14,7 @@ class FCard(FamcyWidget):
 
 		self.title = ""
 		self.layout = FamcyLayout(self, layout_mode)
+		self.init_card()
 		self._check_rep()
 
 	def _check_rep(self):
@@ -23,6 +24,27 @@ class FCard(FamcyWidget):
 		"""
 		pass
 
+	def init_card(self):
+		self.body = Famcy.div()
+		self.body["id"] = self.id
+		self.body["className"] = "inner_section"
+
+		title = Famcy.div()
+		title["className"] = "title_holder"
+
+		h2_temp = Famcy.h2()
+		h2_temp["className"] = "section_title"
+
+		title.addElement(h2_temp)
+		self.body.addElement(title)
+
+		inner_section = Famcy.div()
+		inner_section["className"] = "inner_section_content"
+
+		self.body.addElement(inner_section)
+
+
+
 	# Functions that can be overwritten
 	# ---------------------------------
 	def render_inner(self):
@@ -31,20 +53,18 @@ class FCard(FamcyWidget):
 		render the layout and
 		apply style. 
 		"""
-		header_script, content = self.layout.render()
+		header_script, _content = self.layout.render(body_element=self.body.children[-1])
+		self.body.children[-1] = _content
 		if header_script not in self.header_script:
 			self.header_script += header_script
-		title = '<div class="title_holder"><h2 class="section_title">' + self.title + '</h2></div>' if self.title != "" else ""
 
-		return """
-		<div class="inner_section" id="{0}">
-			{1}
+		if self.title != "":
+			self.body.children[0].children[0].innerHTML = self.title
 
-			<div class="inner_section_content">
-				{2}
-			</div>
-		</div>
-		""".format(self.id, title, content)
+		elif self.title == "" and len(self.body.children) == 2:
+			del self.body.children[0]
+
+		return self.body
 
 	def preload(self):
 		"""
@@ -60,3 +80,9 @@ class FCard(FamcyWidget):
 		apply async post load function. 
 		"""
 		pass
+
+class FPromptCard(FCard):
+	def __init__(self):
+		super(FPromptCard, self).__init__()
+		self.last_card = None
+		self.next_card = None

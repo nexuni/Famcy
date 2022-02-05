@@ -90,6 +90,7 @@ class table_block(Famcy.FamcyBlock):
         """
         self.body = Famcy.div()
         self.body["className"] = "table_holder"
+        self.body["id"] = self.id
 
         toolbar_temp = Famcy.div()
         toolbar_temp["id"] = "toolbar_" + self.id
@@ -106,7 +107,6 @@ class table_block(Famcy.FamcyBlock):
     def render_inner(self):
         self.body.children[2].innerHTML = """
             var table_value = %s;
-            
             var table_init = {
                 "data": {
                     "total": table_value["data"].length,
@@ -114,7 +114,7 @@ class table_block(Famcy.FamcyBlock):
                     "rows": table_value["data"]
                 },
                 "columns": table_value["column"]
-            }
+            };
 
             if (table_value["toolbar"]) {
                 table_init["toolbar"] = "#toolbar_%s"
@@ -125,19 +125,19 @@ class table_block(Famcy.FamcyBlock):
                 table_init["showRefresh"] = true
                 table_init["showToggle"] = true
                 table_init["showFullscreen"] = true
-            }
+            };
 
             if (table_value["page_footer"]) {
                 table_init["pagination"] = true
                 table_init["pageSize"] = table_value["page_footer_detail"]["page_size"]
                 table_init["pageList"] = table_value["page_footer_detail"]["page_list"]
                 table_init["showFooter"] = true
-            }
+            };
 
             if (table_value["page_detail"]) {
                 table_init["detailView"] = true
                 table_init["detailFormatter"] = detailFormatter
-            }
+            };
 
             if (table_value["input_button"] !== "none") {
 
@@ -153,8 +153,7 @@ class table_block(Famcy.FamcyBlock):
                 table_init["idField"] = table_value["input_value_col_field"]
                 table_init["selectItemName"] = "%s"
                         
-            }
-
+            };
             function detailFormatter(index, row) {
                 if (table_value["page_detail_content"] == "key_value") {
 
@@ -168,16 +167,9 @@ class table_block(Famcy.FamcyBlock):
                 else {
                     return table_value["page_detail_content"].join('')
                 }
-            }
+            };
 
+            $('#table_%s').bootstrapTable('destroy').bootstrapTable(table_init);
+        """ % (json.dumps(self.value), self.id, self.name, self.id)
 
-            function initTable%s() {
-                $('#table_%s').bootstrapTable('destroy').bootstrapTable(table_init)
-            }
-
-            $(function() {
-                initTable%s()
-            })
-        """ % (json.dumps(self.value), self.id, self.id, self.id, self.id, self.id)
-
-        return self.body.render_inner()
+        return self.body

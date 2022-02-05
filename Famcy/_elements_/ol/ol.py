@@ -5,8 +5,8 @@ class ol(Famcy.FamcyElement):
     def __init__(self):
         super(ol, self).__init__()
 
-    def render_inner(self):
-        html = "<ol" + self.setAttrTag() + ">"
+    def render_element(self):
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -15,6 +15,5 @@ class ol(Famcy.FamcyElement):
             for child in self.children:
                 html += child.render_inner()
                 child.parentElement = self
-
-        html += "</ol>"
-        return html
+        self.html = html
+        return "<ol" + self.setAttrTag() + ">" + html + "</ol>"
