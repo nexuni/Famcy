@@ -29,7 +29,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Operating System :: OS Independent",
-        "Topic :: Software Development :: Libraries ",
+        "Topic :: Software Development :: Libraries",
     ],
     python_requires='>=3.6',
 )
