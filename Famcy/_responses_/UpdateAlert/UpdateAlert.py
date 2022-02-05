@@ -26,13 +26,14 @@ class UpdateAlert(Famcy.FamcyResponse):
 		return inner_text, extra_script
 
 	def response(self, sijax_response):
-		inner_text, extra_script = self.generate_alert()
+		if self.target:
+			inner_text, extra_script = self.generate_alert()
 
-		if self.alert_position == "append":
-			sijax_response.html_append('#'+self.target.id, inner_text)
-		else:
-			sijax_response.html_prepend('#'+self.target.id, inner_text)
+			if self.alert_position == "append":
+				sijax_response.html_append('#'+self.target.id, inner_text)
+			else:
+				sijax_response.html_prepend('#'+self.target.id, inner_text)
 
-		sijax_response.script(extra_script)
-		sijax_response.script(self.extra_script)
-		sijax_response.script(self.finish_loading_script)
+			sijax_response.script(extra_script)
+			sijax_response.script(self.extra_script)
+			sijax_response.script(self.finish_loading_script)

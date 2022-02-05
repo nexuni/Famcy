@@ -142,7 +142,7 @@ class FamcyLayout:
 
 		self.content = []
 		self.cusContent = []
-		self.promptContent = []
+		self.staticContent = []
 		self._check_rep()
 
 	def _check_rep(self):
@@ -151,16 +151,47 @@ class FamcyLayout:
 		"""
 		pass
 
-	def addPromptWidget(self, card, width=50):
-		self.promptContent.append([card, width])
+	def addStaticWidget(self, card, width=50):
+		card.parent = self.parent
+		self.staticContent.append([card, width])
+
+	def removeStaticWidget(self, card=None, index=None):
+		i = 0
+		for _card, _ in self.staticContent:
+			if card == _card or i == index:
+				del self.staticContent[i]
+				break
+			i += 1
+
+	def clearStaticWidget(self):
+		self.staticContent = []
 
 	def addWidget(self, card, start_row, start_col, height=1, width=1):
 		card.parent = self.parent
 		self.content.append([card, int(start_row), int(start_col), int(height), int(width)])
 		self.layoutType.layoutClass.setDefaultContent(self.content)
 
+	def removeWidget(self, card=None, start_row=None, start_col=None):
+		i = 0
+		for _card, _row, _col, _, _ in self.content:
+			if card == _card or (_row == start_row and _col == start_col):
+				del self.content[i]
+				break
+			i += 1
+
+	def clearWidget(self):
+		self.content = []
+
 	def addCusWidget(self, card, start_row, start_col, height=1, width=1):
 		self.cusContent.append([card, int(start_row), int(start_col), int(height), int(width)])
+
+	def removeCusWidget(self, card=None, start_row=None, start_col=None):
+		i = 0
+		for _card, _row, _col, _, _ in self.cusContent:
+			if card == _card or (_row == start_row and _col == start_col):
+				del self.cusContent[i]
+				break
+			i += 1
 
 	def clearCusContent(self):
 		self.cusContent = []
@@ -205,8 +236,38 @@ class FamcyLayout:
 			self.layoutType.layoutClass.setipadLayoutContent(contentipadH=self.cusContent)
 			self.clearCusContent()
 
+	def setSijaxLayout(self, sijax_response):
+		layoutDict = self.layoutType.getLayoutDict()
+		for i, (k, v) in enumerate(layoutDict.items()):
+			if k == "default":
+				for card in v:
+					sijax_response.css("#"+card[0].id, "grid-row-start", str(card[1] + 1))
+					sijax_response.css("#"+card[0].id, "grid-column-start", str(card[2] + 1))
+					sijax_response.css("#"+card[0].id, "grid-column-end", str(card[2] + card[4] + 1))
+					sijax_response.css("#"+card[0].id, "grid-row-end", str(card[1] + card[3] + 1))
+			else:
+				for card in v:
+					js = """
+					if (window.matchMedia('%s').matches) {
+						const id_name = '%s';
+						$(id_name).css('grid-row-start', '%s');
+						$(id_name).css('grid-column-start', '%s');
+						$(id_name).css('grid-column-end', '%s');
+						$(id_name).css('grid-row-end', '%s');
+					}
+					""" % (k, "#"+card[0].id, str(card[1] + 1), str(card[2] + 1), str(card[2] + card[4] + 1), str(card[1] + card[3] + 1))
+					sijax_response.script(js)
+
+		for _prompt, _width in self.staticContent:
+			sijax_response.css("#"+_prompt.id, "width", str(_width))
+
+		for _card, _, _, _, _ in self.content:
+			if hasattr(_card, 'layout'):
+				_card.layout.setSijaxLayout(sijax_response)
+
 	def setLayout(self):
 		layoutDict = self.layoutType.getLayoutDict()
+
 		cssLayout = ""
 
 		for i, (k, v) in enumerate(layoutDict.items()):
@@ -218,8 +279,7 @@ class FamcyLayout:
 				cssLayout += self.setDeviceLayout(v)
 			cssLayout += '</style>'
 
-		for _prompt, _width in self.promptContent:
-			cssLayout += _prompt.layout.setLayout()
+		for _prompt, _width in self.staticContent:
 			cssLayout += '<style type="text/css">'
 			cssLayout += """
 				#%s {
@@ -243,40 +303,23 @@ class FamcyLayout:
 
 		return cssLayout
 
-	def render(self):
+	def render(self, body_element=None):
 		layout_css = self.setLayout()
 		header_script = ""
-		render_html = ""
+		_body = body_element if body_element else self.parent.body
+		_body.children = []
+
 		for _card, _, _, _, _ in self.content:
-			render_html += _card.render()
+			_body.addElement(_card.render())
 			header_script += _card.header_script
 
-		return header_script + layout_css, render_html
+		for _card, _ in self.staticContent:
+			_ = _card.render()
+			if not set(_body.script).intersection(set(_.script)):
+				_body.script.extend(_.script)
+			header_script += _card.header_script
 
-# Tests
-# -----------
-# class _card:
-# 	def __init__(self):
-# 		self.id = "id_" + str(random.randint(0,1000))
-		
-
-# if __name__ == '__main__':
-# 	layout = FamcyLayout(FLayoutMode.default)
-# 	layout.addWidget(_card(), 0, 0, 2, 1)
-# 	layout.addWidget(_card(), 0, 1)
-# 	layout.addWidget(_card(), 1, 1)
-# 	layout.addWidget(_card(), 2, 0, 1, 2)
-# 	layout.updateDefaultContent()
-
-# 	layout.addWidget(_card(), 0, 0, 2, 1)
-# 	layout.addWidget(_card(), 0, 1)
-# 	layout.addWidget(_card(), 1, 1)
-# 	layout.addWidget(_card(), 2, 0, 1, 2)
-# 	layout.updatePhoneLayoutContent()
-
-
-# 	print(layout.render())
-# ========================================================
+		return header_script + layout_css, _body
 
 
 

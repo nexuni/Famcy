@@ -7,6 +7,7 @@ sjxUpload.getFrameId = function (formId) {
 };
 
 sjxUpload.prepareForm = function (formId, callbackName) {
+	console.log("prepareForm")
 	var frameId = sjxUpload.getFrameId(formId),
 		$object = jQuery('#' + formId),
 		requestArgs = JSON.stringify([formId]),
@@ -24,6 +25,13 @@ sjxUpload.prepareForm = function (formId, callbackName) {
 
 	if (! $object[attrOrProp](Sijax.PARAM_REQUEST)) {
 		//Initial registration
+		var token = document.head.querySelector("[name~=csrf-token][content]").content
+		element = document.createElement('input');
+		element.setAttribute('type', 'hidden');
+		element.setAttribute('name', Sijax.PARAM_CSRF);
+		element.setAttribute('value', token);
+		$object.append(element);
+
 		element = document.createElement('input');
 		element.setAttribute('type', 'hidden');
 		element.setAttribute('name', Sijax.PARAM_REQUEST);
@@ -52,24 +60,7 @@ sjxUpload.resetForm = function (formId) {
 };
 
 sjxUpload.registerForm = function (params) {
-	var formId = params.formId,
-		frameId = sjxUpload.getFrameId(formId),
-		callbackName = params.callback,
-		iframe = document.createElement('iframe');
-
-	iframe.setAttribute('id', frameId);
-	iframe.setAttribute('name', frameId);
-	iframe.setAttribute('style', 'display: none');
-
-	jQuery('#' + formId).append(iframe);
-
-	if (window.frames[frameId].name !== frameId) {
-		//IE bugfixes
-		window.frames[frameId].name = frameId;
-		jQuery('#' + frameId).css('display', 'none');
-	}
-
-	sjxUpload.prepareForm(formId, callbackName);
+	console.log("registerForm")
 };
 
 sjxUpload.processResponse = function (formId, commandsArray) {

@@ -1,4 +1,4 @@
-function generate_list(list_id, submission_obj_id) {
+function generate_list(list_id) {
   var x, i, j, l, ll, selElmnt, a, b, c, d, temp;
 
   x = document.getElementById(list_id+"_inputList");      // div.inputList

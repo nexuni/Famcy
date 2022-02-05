@@ -2,6 +2,9 @@ import json
 import Famcy
 from flask import current_app
 
+import pandas as pd
+import plotly.graph_objects as go
+
 class bar_chart(Famcy.FamcyBlock):
     """
     Represents the block to display
@@ -33,12 +36,11 @@ class bar_chart(Famcy.FamcyBlock):
             }],
             "labels": ["bar1", "bar2"],
             "title": "bar_chart",
-            "xy_axis_title": ["x_title", "y_title"]
+            "xy_axis_title": ["x_title", "y_title"],
+            "size": [500, 500]
         }
 
     def init_block(self):
-        self.header_script += '<script src="/static/js/bar_chart.js"></script>'
-
         self.body = Famcy.div()
         self.body["id"] = self.id
 
@@ -47,6 +49,31 @@ class bar_chart(Famcy.FamcyBlock):
 
         self.body.addElement(div_temp)
         self.body.addElement(script)
+
+        static_script = Famcy.script()
+        static_script["src"] = "/static/js/bar_chart.js"
+        self.body.addStaticScript(static_script)
+
+    def generate_png_file(self, img_name="bar_img"):
+        x_name = self.value["xy_axis_title"][0]
+        y_name = self.value["xy_axis_title"][1]
+
+        data = {}
+        data[x_name] = []
+        data[y_name] = []
+        data["name"] = []
+        for dict, label in zip(self.value["values"], self.value["labels"]):
+            data[x_name].extend(dict["x"])
+            data[y_name].extend(dict["y"])
+            data["name"].extend([label for i in range(len(dict["x"]))])
+                    
+        df = pd.DataFrame(data)
+
+        fig = go.Figure()
+        for contestant, group in df.groupby("name"):
+            fig.add_trace(go.Bar(x=group[x_name], y=group[y_name], name=contestant))
+
+        fig.write_image(img_name+".png")
 
     def render_inner(self):
         """
@@ -81,7 +108,8 @@ class bar_chart(Famcy.FamcyBlock):
         json_line_dict_values = json.dumps(data)
         json_line_dict_title = json.dumps(self.value["title"])
         json_line_dict_xy_title = json.dumps(self.value["xy_axis_title"])
+        json_size = json.dumps(self.value["size"])
 
-        self.body.children[1].innerHTML = 'generateBarChart("%s", %s, %s, %s)' % (self.id, json_line_dict_values, json_line_dict_title, json_line_dict_xy_title)
+        self.body.children[1].innerHTML = 'generateBarChart("%s", %s, %s, %s, %s)' % (self.id, json_line_dict_values, json_line_dict_title, json_line_dict_xy_title, json_size)
         
-        return self.body.render_inner()
+        return self.body

@@ -5,8 +5,8 @@ class textarea(Famcy.FamcyElement):
     def __init__(self):
         super(textarea, self).__init__()
 
-    def render_inner(self):
-        html = "<textarea" + self.setAttrTag() + ">"
+    def render_element(self):
+        html = ""
 
         if self.innerHTML and self.innerHTML != "":
             html += self.innerHTML
@@ -15,6 +15,5 @@ class textarea(Famcy.FamcyElement):
             for child in self.children:
                 html += child.render_inner()
                 child.parentElement = self
-
-        html += "</textarea>"
-        return html
+        self.html = html
+        return "<textarea" + self.setAttrTag() + ">" + html + "</textarea>"

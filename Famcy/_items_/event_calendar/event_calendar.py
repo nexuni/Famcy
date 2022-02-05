@@ -178,4 +178,4 @@ class event_calendar(Famcy.FamcyBlock):
 
         """ % (json.dumps(self.value), prompt_msg)
 
-        return self.body.render_inner()
+        return self.body

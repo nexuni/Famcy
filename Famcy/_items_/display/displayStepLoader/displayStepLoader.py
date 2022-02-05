@@ -46,4 +46,4 @@ class displayStepLoader(Famcy.FamcyBlock):
             li_temp.addElement(span_temp)
             self.body.children[1].addElement(li_temp)
 
-        return self.body.render_inner()
+        return self.body

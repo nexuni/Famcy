@@ -14,74 +14,58 @@ class upload_form(Famcy.FamcyCard):
         self.init_block()
 
     def init_block(self):
-        self.header_script += """
-        <link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
-        <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/js/plugins/piexif.min.js" type="text/javascript"></script>
-        <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/js/plugins/sortable.min.js" type="text/javascript"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/js/fileinput.min.js"></script>
-        """
-
         self.body = Famcy.form()
         self.body["id"] = self.id
         self.body["method"] = self.configs["method"]
         self.body["action"] = self.action
-        self.body["onsubmit"] = "return false;"
         self.body["enctype"] = "multipart/form-data"
+        self.body["target"] = "sjxUpload_iframe_"+self.id
+
+        self.iframe_tag = Famcy.iframe()
+        self.submit_input_tag = Famcy.input()
+        self.rq_input_tag = Famcy.input()
+        self.args_input_tag = Famcy.input()
+        self.csrf_input_tag = Famcy.input()
+        self.crsf_script = Famcy.script()
 
     def render_inner(self):
-        header_script, content_render = self.layout.render()
+
+        header_script, self.body = self.layout.render()
         if header_script not in self.header_script:
             self.header_script += header_script
 
-        self.body.innerHTML = content_render
-
-        inner_html = ""
-        upload_file_list = []
         for widget, _, _, _, _ in self.layout.content:
-
-            if getattr(widget, "upload", None):
-                upload_file_list.append(widget.id + "_input")
-
             if widget.clickable:
-                inner_html += """$('#%s').bind('click', (e) => {
 
-                    if (%s) {
-                        $('#loading_holder').css("display","flex");
-                    }
+                if self.iframe_tag not in self.body.children:
 
-                    var reader
-                    var response_dict = {}
-                    var upload_file_list = %s
-                    for (var i=0; i < upload_file_list.length; i++) {
-                        upload_file(response_dict, upload_file_list[i], %s)
-                    }
+                    self.iframe_tag["id"] = "sjxUpload_iframe_"+self.id
+                    self.iframe_tag["name"] = "sjxUpload_iframe_"+self.id
+                    self.iframe_tag["style"] = "display: none;"
 
-                });""" % (widget.id, json.dumps(widget.loader), json.dumps(upload_file_list), str(id(widget.submission_obj)))
+                    self.submit_input_tag["type"] = "hidden"
+                    self.submit_input_tag["name"] = "fsubmission_obj"
+                    self.submit_input_tag["value"] = str(widget.submission_obj_key)
 
-        inner_html += """
-            function upload_file(response_dict, widget_id, submit_id) {
-                var file = document.getElementById(widget_id)
-                var reader = new FileReader();
-                var file_name = document.getElementsByClassName("file-caption-info")
-                function readFile(index) {
-                    if( index >= file.files.length ) {
-                        return;
-                    }
-                    var f = file.files[index];
-                    reader.readAsDataURL(f);
-                    reader.onload = function(e) {
-                        response_dict["%s"] = [e.target.result.split(",")[1], file_name[index].innerText, i]
-                        var token = document.head.querySelector("[name~=csrf-token][content]").content
-                        Sijax.request('famcy_submission_handler', [submit_id, response_dict], { data: { csrf_token: token } });
-                        readFile(index+1)
-                    }
-                }
-                readFile(0);
-            }
-        """ % (self.id)
+                    self.rq_input_tag["type"] = "hidden"
+                    self.rq_input_tag["name"] = "sijax_rq"
+                    self.rq_input_tag["value"] = self.id+"_upload"
 
-        script = Famcy.script()
-        script.innerHTML = inner_html
+                    self.args_input_tag["id"] = "args_upload_"+self.id
+                    self.args_input_tag["type"] = "hidden"
+                    self.args_input_tag["name"] = "sijax_args"
 
-        return self.body.render_inner() + script.render_inner()
+                    self.csrf_input_tag["id"] = "crsf_upload_"+self.id
+                    self.csrf_input_tag["type"] = "hidden"
+                    self.csrf_input_tag["name"] = "csrf_token"
+
+                    self.crsf_script.innerHTML = "document.getElementById('args_upload_"+self.id+"').value = JSON.stringify("+json.dumps([self.id])+");document.getElementById('crsf_upload_"+self.id+"').value = document.head.querySelector('[name~=csrf-token][content]').content;"
+                    
+                    self.body.addElement(self.iframe_tag)
+                    self.body.addElement(self.submit_input_tag)
+                    self.body.addElement(self.rq_input_tag)
+                    self.body.addElement(self.args_input_tag)
+                    self.body.addElement(self.csrf_input_tag)
+                    self.body.addElement(self.crsf_script)
+
+        return self.body

@@ -10,10 +10,10 @@ class FStyleMode(enum.IntEnum):
 	videoStream = 2
 
 class FStyle:
-	def __init__(self, styleName=FStyleMode.default, with_login=False):
+	def __init__(self, styleName=FStyleMode.default, with_login=None):
 		self.styleDict = {FStyleMode.default: Famcy.ClassicStyle, FStyleMode.login: Famcy.LoginStyle, FStyleMode.videoStream: Famcy.VideoStreamStyle}
 		self._FamcyStyle = self.styleDict[styleName]
-		self.withLogin = with_login
+		self.withLogin = with_login if with_login else Famcy.FManager["ConsoleConfig"]["with_login"]
 
 		# default url
 		self.main_url = Famcy.FManager["ConsoleConfig"]["main_url"]
@@ -79,7 +79,10 @@ class FStyle:
 		<script src="%s/static/js/fblock_extra_func.js"></script>
 		<script src="%s/asset/js/fblock_cus_func.js"></script>
 
-		""" % tuple([self.main_url for _ in range(12)])
+		<!--background loop-->
+		<script src="%s/static/js/background_loop.js"></script>
+
+		""" % tuple([self.main_url for _ in range(13)])
 
 	def setDashboardJavaScript(self):
 		return"""
@@ -131,8 +134,8 @@ class FStyleSideBar(FStyle):
 		self.side_bar_title_href = Famcy.FManager["ConsoleConfig"]["main_page"]
 		self.side_bar_title = Famcy.FManager["ConsoleConfig"]["side_bar_title"]
 		self.side_bar_hierarchy = Famcy.FManager["ConsoleConfig"]["side_bar_hierachy"]
-		self.title_style = "bx-game"
-		self.side_bar_style = {}
+		self.title_style = Famcy.FManager["ConsoleConfig"]["title_style"] if "title_style" in Famcy.FManager["ConsoleConfig"].keys() else {}
+		self.side_bar_style = Famcy.FManager["ConsoleConfig"]["side_bar_style"] if "side_bar_style" in Famcy.FManager["ConsoleConfig"].keys() else {}
 
 	def setSideBarInfo(self, side_bar_title=None, side_bar_hierarchy=None, title_style=None, side_bar_style=None):
 		if side_bar_title:
@@ -211,6 +214,153 @@ class FStyleSideBar(FStyle):
 		return self.setDashboardSideBar()
 
 
+class FStyleSideBtns(FStyle):
+	def __init__(self):
+		super(FStyleSideBtns, self).__init__()
+		self.side_bar_title_href = Famcy.FManager["ConsoleConfig"]["main_page"]
+		self.side_bar_title = Famcy.FManager["ConsoleConfig"]["side_bar_title"]
+		self.side_bar_hierarchy = Famcy.FManager["ConsoleConfig"]["side_bar_hierachy"]
+		self.title_style = Famcy.FManager["ConsoleConfig"]["title_style"] if "title_style" in Famcy.FManager["ConsoleConfig"].keys() else {}
+		self.side_bar_style = Famcy.FManager["ConsoleConfig"]["side_bar_style"] if "side_bar_style" in Famcy.FManager["ConsoleConfig"].keys() else {}
+
+	def setSideBtnsInfo(self, side_bar_title=None, side_bar_hierarchy=None, title_style=None, side_bar_style=None):
+		if side_bar_title:
+			self.side_bar_title = side_bar_title
+		if side_bar_hierarchy:
+			self.side_bar_hierarchy = side_bar_hierarchy
+		if title_style:
+			self.title_style = title_style
+		if side_bar_style:
+			self.side_bar_style = side_bar_style
+
+	def setDashboardSideBtns(self):
+		"""
+		icon library (version 2.0.8) => https://boxicons.com/
+		list with key -> path
+		side_bar_hierarchy = [
+			{"main_title1": "maintitle1/a"},
+			{"main_title2": [
+				{"sub_title21": "maintitle2/a"}, 
+				{"sub_title22": "maintitle2/b"}
+			]}
+		]
+		title_style = "bx-grid-alt"
+		side_bar_style = {"main_title1": "bxl-docker", "main_title2": "bxl-python"}
+		"""
+		if self.withLogin:
+			login_class = ""
+		else:
+			login_class = "display_none"
+
+		defalut_icon = "bx-grid-alt"
+		list_of_icon = list(self.side_bar_style.keys())
+
+		return_html = ''
+		btn_html = ''
+		for top_level in self.side_bar_hierarchy:
+			icon = defalut_icon
+			main_title = list(top_level.keys())[0]
+
+			if main_title in list_of_icon:
+				icon = self.side_bar_style[main_title]
+
+			if not isinstance(top_level[main_title], list):
+				btn_html += '<div><a href="' + top_level[main_title] + '" class="nav_link toggle_class display_flex"><i class="bx ' + icon + ' nav_icon"></i><span class="nav_name">' + main_title + '</span></a></div>'
+
+			else:
+				sub_btn_html = ''
+				for sub_level in top_level[main_title]:
+					sub_title = list(sub_level.keys())[0]
+					sub_icon = defalut_icon
+					if sub_title in list_of_icon:
+						sub_icon = self.side_bar_style[sub_title]
+					sub_btn_html += '<a href="' + sub_level[sub_title] + '" class="nav_link toggle_class display_flex"><i class="bx ' + sub_icon + ' nav_icon"></i><span class="nav_name">' + sub_title + '</span></a>'
+				btn_html += '<div><div onclick="btnClickedFunc(this)" class="nav_link toggle_class display_flex"><i class="bx ' + icon + ' nav_icon"></i><span class="nav_name">' + main_title + '</span></div><div class="sub_title">' + sub_btn_html + '</div></div>'
+
+
+		return"""<div id="side-bar">
+		<div class="l-navbar" id="nav-bar">
+			<div class="nav">
+				<div>
+					<a class="header_toggle nav_logo toggle_class display_flex">
+						<i class='bx bx-menu nav_logo-icon' id="header-toggle"></i>
+					</a>
+					<a href="%s" class="nav_logo toggle_class display_flex">
+						<i class='bx %s nav_logo-icon'></i>
+						<span class="nav_logo-name nav_name">%s</span>
+					</a>
+					<div class="nav_list">%s</div>
+				</div>
+				<a href="logout" class="nav_link toggle_class display_flex %s">
+					<i class='bx bx-log-out nav_icon'></i>
+					<span class="nav_name">登出</span>
+				</a>
+			</div>
+		</div>
+		</div><script src='%s/static/js/side_bar.js' type="text/javascript"></script>""" % (self.side_bar_title_href, self.title_style, self.side_bar_title, btn_html, login_class, self.main_url)
+
+	def render(self):
+		return self.setDashboardSideBtns()
+
+
+class FStyleNavBtns(FStyle):
+	def __init__(self):
+		super(FStyleNavBtns, self).__init__()
+		self.body = None
+		self.side_bar_title_href = Famcy.FManager["ConsoleConfig"]["main_page"]
+		self.side_bar_title = Famcy.FManager["ConsoleConfig"]["side_bar_title"]
+		self.side_bar_hierarchy = Famcy.FManager["ConsoleConfig"]["side_bar_hierachy"]
+
+	def setNavBtnsInfo(self, side_bar_title=None, side_bar_hierarchy=None):
+		if side_bar_title:
+			self.side_bar_title = side_bar_title
+		if side_bar_hierarchy:
+			self.side_bar_hierarchy = side_bar_hierarchy
+
+	def setDashboardNavBtns(self):
+		"""
+		icon library (version 2.0.8) => https://boxicons.com/
+		list with key -> path
+		side_bar_hierarchy = [
+			{"main_title1": "maintitle1/a"},
+			{"main_title2": [
+				{"sub_title21": "maintitle2/a"}, 
+				{"sub_title22": "maintitle2/b"}
+			]}
+		]
+		title_style = "bx-grid-alt"
+		side_bar_style = {"main_title1": "bxl-docker", "main_title2": "bxl-python"}
+		"""
+		self.body = Famcy.div()
+		self.body["className"] = "portfolio_nav"
+
+		for top_level in self.side_bar_hierarchy:
+			main_title = list(top_level.keys())[0]
+
+			if not isinstance(top_level[main_title], list):
+				btn = Famcy.a()
+				btn["href"] = top_level[main_title]
+				btn.innerHTML = main_title
+				self.body.addElement(btn)
+				
+			else:
+				pass
+				# sub_btn_html = ''
+				# for sub_level in top_level[main_title]:
+				# 	sub_title = list(sub_level.keys())[0]
+				# 	sub_icon = defalut_icon
+				# 	if sub_title in list_of_icon:
+				# 		sub_icon = self.side_bar_style[sub_title]
+				# 	sub_btn_html += '<a href="' + sub_level[sub_title] + '" class="nav_link toggle_class display_flex"><i class="bx ' + sub_icon + ' nav_icon"></i><span class="nav_name">' + sub_title + '</span></a>'
+				# btn_html += '<div><div onclick="btnClickedFunc(this)" class="nav_link toggle_class display_flex"><i class="bx ' + icon + ' nav_icon"></i><span class="nav_name">' + main_title + '</span></div><div class="sub_title">' + sub_btn_html + '</div></div>'
+
+
+		return self.body.render_inner()
+
+	def render(self):
+		return self.setDashboardNavBtns()
+
+
 
 class FColorTheme(FStyle):
 	def __init__(self):
@@ -252,6 +402,27 @@ class FColorTheme(FStyle):
 
 	def render(self):
 		return self.setColorTheme()
+
+class FFontTheme(FStyle):
+	def __init__(self):
+		super(FFontTheme, self).__init__()
+		self.font_family = ""
+		self.import_font = ""
+
+	def setFontFamily(self, font_family=None, import_font=None):
+		if font_family:
+			self.font_family = font_family
+		if import_font:
+			self.import_font = import_font
+
+	def setFontTheme(self):
+		innerScript = ""
+		innerScript += self.import_font
+		innerScript += "<style>*{font-family: " + self.font_family + " !important;}</style>"
+		return innerScript
+
+	def render(self):
+		return self.setFontTheme()
 
 class FStyleLoader(FStyle):
 	def __init__(self):
