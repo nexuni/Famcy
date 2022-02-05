@@ -2,12 +2,9 @@
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory, g, Response, stream_with_context
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
-# from flask_uwsgi_websocket import WebSocket
 import redis
 from flask_kvsession import KVSessionExtension
 from simplekv.memory.redisstore import RedisStore
-
-
 
 import os
 import importlib
@@ -66,27 +63,6 @@ FamcyStyleNavBar = FStyleNavBar
 FamcyStyleNavBtns = FStyleNavBtns
 FamcyBackgroundTask = FBackgroundTask
 
-# class IdTable(object):
-#   def __init__(self):
-#       super(IdTable, self).__init__()
-#       self.obj_id_dict = {}
-
-#   def __setitem__(self, key, value):
-#       self.obj_id_dict[key] = value
-
-#   def __getitem__(self, key):
-#       print("__getitem__", key in self.obj_id_dict.keys())
-#       # print("self.obj_id_dict.keys(): ", self.obj_id_dict.keys())
-#       return self.obj_id_dict[key]
-
-#   def __delitem__(self, item):
-#       print("__delitem__")
-#       if item in self.obj_id_dict.keys():
-#           del self.obj_id_dict[item]
-
-#   def has_key(self, key):
-#       return key in self.obj_id_dict
-
 from flask.json import JSONEncoder
 
 class CustomJSONEncoder(JSONEncoder):
@@ -102,8 +78,6 @@ def create_app(famcy_id, production=False):
 	# file systems, http
 	FManager = FamcyManager(famcy_id, famcy_dir, production=production)
 	globals()["FManager"] = FManager
-
-	# globals()["SubmissionObjectTable"] = IdTable()
 
 	# Header definitions
 	FManager["CUSTOM_STATIC_PATH"] = FManager.console + "_static_"
@@ -139,8 +113,6 @@ def create_app(famcy_id, production=False):
 
 	# Init Sijax
 	FManager["Sijax"].Sijax().init_app(app)
-	# FamcyWebSocket = WebSocket(app)
-	# FamcyWebSocketLoopDelay = 2.5
 	FamcyBackgroundQueue = FamcyPriorityQueue()
 	globals()["FamcyBackgroundQueue"] = FamcyBackgroundQueue
 
