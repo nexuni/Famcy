@@ -52,7 +52,7 @@ class bar_chart(Famcy.FamcyBlock):
 
         static_script = Famcy.script()
         static_script["src"] = "/static/js/bar_chart.js"
-        self.body.addStaticScript(static_script)
+        self.body.addStaticScript(static_script, position="head")
 
     def generate_png_file(self, img_name="bar_img"):
         x_name = self.value["xy_axis_title"][0]

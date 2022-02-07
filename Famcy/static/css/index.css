@@ -357,7 +357,7 @@ html{
 	padding: 1.25vw;
 	display: flex;
 	flex-flow: column;
-	height: fit-content;
+	/*height: fit-content;*/
 	overflow: visible;
 }
 

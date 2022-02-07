@@ -18,7 +18,9 @@ class inputBlockSec(Famcy.FamcyInputBlock):
                 "title": "inputBlockSec",
                 "content": "",
                 "img_src": "",
-                "btn_name": ""
+                "btn_name": "",
+                "mandatory": False,
+                "action_after_post": "clean"
         }
 
     def init_block(self):

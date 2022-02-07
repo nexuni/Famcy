@@ -41,6 +41,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.submission_obj = FSubmission(self)
 		self.submission_obj_key = self.id
 		self.post_submission_js = ""
+		self.submit_value_name = self.name
 
 		self.link = Famcy.FManager["ConsoleConfig"]["main_url"]+"/"+self.id
 
@@ -105,18 +106,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 				if _children:
 					return _children
 		return None
-
-	# def generate_obj_id_dict(self, item):
-	# 	return_dict = {}
-	# 	if hasattr(item, "layout"):
-	# 		for _item, _, _, _, _ in item.layout.content:
-	# 			return_dict[_item.submission_obj_key] = _item.submission_obj
-	# 			return_dict.update(self.generate_obj_id_dict(_item))
-
-	# 		for _item, _ in item.layout.staticContent:
-	# 			return_dict[_item.submission_obj_key] = _item.submission_obj
-	# 			return_dict.update(self.generate_obj_id_dict(_item))
-	# 	return return_dict
 		
 	def render(self):
 		"""
@@ -141,6 +130,9 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		post_thread.start()
 		return self.body
 
+	def set_submit_value_name(self, key_name):
+		self.submit_value_name = key_name
+
 	def connect(self, submission_func, target=None):
 		"""
 		This is the function to setup the
@@ -158,13 +150,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.submission_obj.func = None
 		self.submission_obj.origin = self
 		self.submission_obj.target = self
-
-	def tojson(self):
-		_widget_dict = {}
-		
-
-
-		return json.dumps(_widget_dict)
 
 	@abc.abstractmethod
 	def render_inner(self):
