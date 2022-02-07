@@ -13,10 +13,8 @@ from werkzeug.utils import secure_filename
 # GLOBAL HELPER
 def get_fsubmission_obj(parent, obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
-	print("get_fsubmission_obj parent: ", parent)
 	if parent:
 		return parent.find_obj_by_id(parent, obj_id)
-	print("cannot find obj")
 
 def alert_response(info_dict, form_id):
 		"""
@@ -67,18 +65,35 @@ def put_submissions_to_list(fsubmission_obj, sub_dict):
 		* sub_dict: submission dictionary
 	"""
 	input_parent = fsubmission_obj.origin.find_parent(fsubmission_obj.origin, "input_form")
-	ordered_submission_list = []
+	f_submit_info = FSubmissionInfo()
+	f_submit_info.info_list = []
 
 	if input_parent:
 		for child, _, _, _, _ in input_parent.layout.content:
 			if child.name in sub_dict.keys():
-				ordered_submission_list.append(sub_dict[child.name])
+				f_submit_info.info_dict[child.submit_value_name] = sub_dict[child.name][0] if len(sub_dict[child.name]) == 1 else sub_dict[child.name]
+				f_submit_info.info_list.append(sub_dict[child.name])
 
-	return ordered_submission_list
+	return f_submit_info
 
 def allowed_file(filename, extension_list):
 	return '.' in filename and \
 		   filename.rsplit('.', 1)[1].lower() in extension_list
+
+class FSubmissionInfo(object):
+	def __init__(self):
+		self.info_list = []
+		self.info_dict = {}
+
+	def __getitem__(self, item):
+		if isinstance(item, int):
+			if item < len(self.info_list):
+				return self.info_list[item]
+		else:
+			if item in self.info_dict.keys():
+				return self.info_dict[item]
+		return None
+
 
 class FResponse(metaclass=abc.ABCMeta):
 	def __init__(self, target=None):
@@ -132,14 +147,12 @@ class FSubmissionSijaxHandler(object):
 		if "jsAlert" in info_dict.keys():
 			temp_func = fsubmission_obj.jsAlertHandler
 			response_obj = temp_func(fsubmission_obj, info_dict)
-			# response_obj = fsubmission_obj.jsAlertHandler(fsubmission_obj, info_dict)
 		else:
 			info_list = put_submissions_to_list(fsubmission_obj, info_dict)
 			# Run user defined handle submission
 			# Will assume all data ready at this point
 			temp_func = fsubmission_obj.func
 			response_obj = temp_func(fsubmission_obj, info_list)
-			# response_obj = fsubmission_obj.func(fsubmission_obj, info_list)
 
 		# Response according to the return response
 		if isinstance(response_obj, list):
@@ -249,11 +262,6 @@ class FSubmission:
 		print("jsAlertHandler=============")
 		return Famcy.UpdateAlert(alert_type=info_dict["alert_type"], alert_message=info_dict["alert_message"], alert_position=info_dict["alert_position"])
 
-	def tojson(self):
-		_json_dict = {}
-		_json_dict = {"target": self.target.link, "origin": self.origin.link, "func": self.func_link}
-		return json.dumps(_json_dict)
-
 
 class FBackgroundTask(FSubmission):
 	"""
@@ -265,7 +273,7 @@ class FBackgroundTask(FSubmission):
 		self.background_info_dict = {}
 		self.obj_key = "background"+str(id(self))
 		# if not Famcy.SubmissionObjectTable.has_key(self.obj_key):
-		# 	Famcy.SubmissionObjectTable[self.obj_key] = self
+		#   Famcy.SubmissionObjectTable[self.obj_key] = self
 
 	def associate(self, function, info_dict={}, target=None, update_attr={}):
 		self.func = function

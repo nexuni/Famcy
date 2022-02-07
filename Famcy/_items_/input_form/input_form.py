@@ -32,7 +32,10 @@ class input_form(Famcy.FamcyCard):
 		inner_script = ""
 		for widget, _, _, _, _ in self.layout.content:
 			if widget.clickable:
-				widget.body["onclick"] = "input_form_main_btn_submit(this, %s, '%s', '%s', '%s');" % (json.dumps(self.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
+				if type(widget).__name__ == "inputBtn":
+					widget.body.children[3]["onclick"] = "input_form_main_btn_submit(this, %s, '%s', '%s', '%s');" % (json.dumps(self.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
+				else:
+					widget.body["onclick"] = "input_form_main_btn_submit(this, %s, '%s', '%s', '%s');" % (json.dumps(self.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
 
 		return self.body
 		
