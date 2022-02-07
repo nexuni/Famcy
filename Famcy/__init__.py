@@ -128,6 +128,9 @@ def create_app(famcy_id, production=False):
 	# Webpage related configs
 	FManager["ConsoleConfig"] = FManager.read(FManager.console + "/famcy.yaml")
 
+	if "lg_yaml" in FManager["ConsoleConfig"].keys():
+		FManager.lg_yaml = FManager.read(FManager["ConsoleConfig"]["lg_yaml"])
+
 	# ------------------------
 	# --- Main app start zone
 	# ------------------------
