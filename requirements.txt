@@ -1,7 +1,6 @@
 flask
 flask_login
 flask_sijax
-Flask-uWSGI-WebSocket
 gadgethiServerUtils
 markdown
 redis==4.1.0
