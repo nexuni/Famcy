@@ -14,6 +14,7 @@ class FCard(FamcyWidget):
 
 		self.title = ""
 		self.layout = FamcyLayout(self, layout_mode)
+		self.fit_content = False
 		self.init_card()
 		self._check_rep()
 
@@ -53,6 +54,11 @@ class FCard(FamcyWidget):
 		render the layout and
 		apply style. 
 		"""
+		if self.fit_content:
+			self.body.style["height"] = "fit-content"
+		else:
+			self.body.style["height"] = "auto"
+
 		header_script, _content = self.layout.render(body_element=self.body.children[-1])
 		self.body.children[-1] = _content
 		if header_script not in self.header_script:
