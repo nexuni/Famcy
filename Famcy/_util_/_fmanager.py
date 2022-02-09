@@ -58,6 +58,10 @@ class FamcyManager:
 		self.global_var_dict["PACKAGE_NAME"] = self.PACKAGE_NAME
 		self.global_var_dict["USER_DEFAULT_FOLDER"] = self.USER_DEFAULT_FOLDER
 
+		# language
+		self.lg_yaml = None
+		self.language = "zh-tw"
+
 	def __getitem__(self, key):
 		return self.global_var_dict.get(key, None)
 
@@ -100,16 +104,16 @@ class FamcyManager:
 			However, when reverse=True and the name points to different value will raise error.
 			1. Lg_transform("SEASON_DATABASE","月票資料庫","CH",True) -> raise error
 		"""
-		language_yaml = self.read(self["ConsoleConfig"]["lg_yaml"])
+		# self.lg_yaml = self.read(self["ConsoleConfig"]["lg_yaml"])
 
 		if reverse:
-			if group not in language_yaml.keys():
+			if group not in self.lg_yaml.keys():
 				raise ValueError("group spelling fail")
 			else:
 				return_name_list = []
-				for i in language_yaml[group].keys():
+				for i in self.lg_yaml[group].keys():
 					try:
-						if language_yaml[group][i][language] == name:
+						if self.lg_yaml[group][i][language] == name:
 							return_name_list.append(i)
 					except:
 						pass
@@ -122,7 +126,7 @@ class FamcyManager:
 		else:
 			# print("not here")		
 			try:
-				return_name = language_yaml[group][name][language]
+				return_name = self.lg_yaml[group][name][language]
 			except:
 				return_name = name
 
