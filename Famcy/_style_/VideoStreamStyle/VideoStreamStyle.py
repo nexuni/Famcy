@@ -50,33 +50,6 @@ class VideoCameraSnap(object):
 		# 通過opencv獲取實時視頻流
 		self.cv_module = cv_module
 		self.video = rtsp_video
-		# self.cv_module = cv2
-		# self.video = self.cv_module.VideoCapture(rtsp_address)
-	
-	# def __del__(self):
-	# 	self.video.release()
-
-	# @classmethod
-	# def create_camera_response(cls, cv_module, rtsp_video, rtsp_address, timeout, delay):
-	# 	return cls.gen(cls(cv_module, rtsp_video, rtsp_address, timeout, delay), timeout, delay)
-
-	# @classmethod
-	# def gen(cls, camera, timeout, delay):
-	# 	camera.start_time = time.time()
-	# 	camera.stop_time = camera.start_time + int(timeout)
-
-	# 	frame, is_decoded = camera.get_frame()
-	# 	return (b'--frame\r\n'
-	# 		   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-	
-	# def get_frame(self):
-	# 	success, image = self.video.read()
-	# 	# 因為opencv讀取的圖片并非jpeg格式，因此要用motion JPEG模式需要先將圖片轉碼成jpg格式圖片
-	# 	ret, jpeg = self.cv_module.imencode('.jpg', image)
-
-	# 	is_decoded = (time.time() >= self.stop_time)
-
-	# 	return jpeg.tobytes(), (self.is_decoded or is_decoded)
 
 	def return_frame(self):
 		success, image = self.video.read()
@@ -109,6 +82,7 @@ class VideoStreamStyle(Famcy.FamcyStyle):
 		if self.snap:
 			res = self.video_camera.return_frame()
 			if not res:
+				print("0.3.2 test log: self.snap if not res")
 				self.update_snap_address(address)
 				res = self.video_camera.return_frame()
 			return Response(res, mimetype='multipart/x-mixed-replace; boundary=frame')
