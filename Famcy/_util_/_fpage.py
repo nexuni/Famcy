@@ -79,6 +79,12 @@ class FPage(FamcyWidget):
 		"""
 		pass
 
+	def set_cookie(self, key, value):
+		session[key] = value
+
+	def get_cookie(self, key):
+		return session.get(key)
+
 	@classmethod
 	def setClassAttr(cls, key, value):
 		if key in cls.__dict__.keys():
@@ -116,7 +122,6 @@ class FPage(FamcyWidget):
 		if g.sijax.is_sijax_request:
 			sijaxHandler = FSubmissionSijaxHandler
 			sijaxHandler.current_page = session.get('current_page')
-			print("session.get('current_page').id: ", sijaxHandler.current_page.id)
 
 			# code for upload form
 			upload_list = session.get('current_page').find_class(session.get('current_page'), "upload_form")
@@ -150,8 +155,6 @@ class FPage(FamcyWidget):
 				h_s, e_s = temp.body.render_script()
 				head_script += h_s
 				end_script += e_s
-
-			print(head_script)
 
 			# Apply style at the end
 			return current_page.style.render(current_page.header_script+head_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)

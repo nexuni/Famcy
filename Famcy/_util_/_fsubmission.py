@@ -141,7 +141,7 @@ class FSubmissionSijaxHandler(object):
 		This is the main submission handler that handles all
 		the submission traffics. 
 		"""
-		print("==========================famcy_submission_handler")
+		print("========================== famcy_submission_handler ==========================")
 		# Get the submission object
 		fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, fsubmission_id)
 		if "jsAlert" in info_dict.keys():
@@ -219,7 +219,7 @@ class FSubmissionSijaxHandler(object):
 	# @exception_handler
 	def upload_form_handler(obj_response, files, form_values):
 
-		print("==========================upload_form_handler")
+		print("========================== upload_form_handler ==========================")
 		if isinstance(form_values["fsubmission_obj"], str):
 			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, form_values["fsubmission_obj"])
 		else:
@@ -259,7 +259,7 @@ class FSubmission:
 		"""
 		info_dict = {"alert_type": "", "alert_message": "", "alert_position": ""}
 		"""
-		print("jsAlertHandler=============")
+		print("========================== jsAlertHandler ==========================")
 		return Famcy.UpdateAlert(alert_type=info_dict["alert_type"], alert_message=info_dict["alert_message"], alert_position=info_dict["alert_position"])
 
 

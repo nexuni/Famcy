@@ -124,7 +124,6 @@ class FamcyManager:
 				else:
 					return_name = return_name_list[0]
 		else:
-			# print("not here")		
 			try:
 				return_name = self.lg_yaml[group][name][language]
 			except:
