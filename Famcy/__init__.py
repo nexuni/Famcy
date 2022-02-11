@@ -3,7 +3,7 @@ from flask import Flask, request, render_template, redirect, url_for, flash, jso
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
 import redis
-from flask_kvsession import KVSessionExtension
+from flask_kvsession import KVSessionExtension, KVSessionInterface
 from simplekv.memory.redisstore import RedisStore
 
 import os
@@ -12,7 +12,7 @@ import Famcy
 import json
 import time
 import random
-import pickle
+import dill
 import base64
 
 from Famcy._util_._fmanager import *
@@ -63,12 +63,6 @@ FamcyStyleNavBar = FStyleNavBar
 FamcyStyleNavBtns = FStyleNavBtns
 FamcyBackgroundTask = FBackgroundTask
 
-from flask.json import JSONEncoder
-
-class CustomJSONEncoder(JSONEncoder):
-	def default(self, obj):
-		return base64.b64encode(pickle.dumps(obj))
-
 def create_app(famcy_id, production=False):
 	"""
 	Main creation function of the famcy application. 
@@ -109,8 +103,6 @@ def create_app(famcy_id, production=False):
 	# --- Main app start zone
 	# ------------------------
 	app = Flask(__name__)
-	# Now tell Flask to use the custom class
-	app.json_encoder = CustomJSONEncoder
 	# Some sort of security here -> TODO check on this
 	app.config['SECRET_KEY'] = FManager.get_credentials("flask_secret_key", "").encode("utf-8")
 
@@ -126,6 +118,7 @@ def create_app(famcy_id, production=False):
 
 	store = RedisStore(redis.StrictRedis())
 	globals()["store"] = store
+	KVSessionInterface.serialization_method = dill
 	KVSessionExtension(store, app)
 
 	# User Static Data

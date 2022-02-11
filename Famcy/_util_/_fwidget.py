@@ -139,14 +139,12 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		submission object type. 
 		"""
 		self.clickable = True
-		self.submission_obj.func_link = id(submission_func)
 		self.submission_obj.func = submission_func
 		self.submission_obj.origin = self
 		self.submission_obj.target = target if target else self
 
 	def disconnect(self):
 		self.clickable = False
-		self.submission_obj.func_link = None
 		self.submission_obj.func = None
 		self.submission_obj.origin = self
 		self.submission_obj.target = self
