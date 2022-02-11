@@ -2,6 +2,7 @@ import Famcy
 from flask import request, Response
 import time
 import cv2
+import base64
 
 class VideoCamera(object):
 	def __init__(self, rtsp_address, timeout=15, delay=0.5):
@@ -55,8 +56,10 @@ class VideoCameraSnap(object):
 		success, image = self.video.read()
 		if success:
 			ret, jpeg = self.cv_module.imencode('.jpg', image)
-			return (b'--frame\r\n'
-				   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+			data = base64.b64encode(jpeg)
+			return data
+			# return (b'--frame\r\n'
+			# 	   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
 		else:
 			return False
 
@@ -85,7 +88,8 @@ class VideoStreamStyle(Famcy.FamcyStyle):
 				print("0.3.2 test log: self.snap if not res")
 				self.update_snap_address(address)
 				res = self.video_camera.return_frame()
-			return Response(res, mimetype='multipart/x-mixed-replace; boundary=frame')
+			return res
+			# return Response(res, mimetype='multipart/x-mixed-replace; boundary=frame')
 		else:
 			return Response(self.video_camera.create_camera_response(address, timeout, self.delay), mimetype='multipart/x-mixed-replace; boundary=frame')
 
