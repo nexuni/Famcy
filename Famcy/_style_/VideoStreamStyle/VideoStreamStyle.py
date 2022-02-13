@@ -85,7 +85,6 @@ class VideoStreamStyle(Famcy.FamcyStyle):
 		if self.snap:
 			res = self.video_camera.return_frame()
 			if not res:
-				print("0.3.2 test log: self.snap if not res")
 				self.update_snap_address(address)
 				res = self.video_camera.return_frame()
 			return res
