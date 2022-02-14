@@ -4,7 +4,6 @@ function checkform(form_item, submit_id, failure_msg="資料輸入有誤") {
     // check mandatory
     var required_list = form_item.getElementsByClassName("required_list")
     Array.prototype.forEach.call(required_list, function(el) {
-        console.log("debug 0.3.4: required_list => '"+el.getElementsByClassName("select-items")[0].children[0].value+"'")
         if (el.getElementsByClassName("select-items")[0] && el.getElementsByClassName("select-items")[0].children[0].value === "---") {
             flag.push("false")
         }

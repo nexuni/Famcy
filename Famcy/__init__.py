@@ -13,6 +13,7 @@ import json
 import time
 import random
 import dill
+import pickle
 import base64
 
 from Famcy._util_._fmanager import *
@@ -118,7 +119,10 @@ def create_app(famcy_id, production=False):
 
 	store = RedisStore(redis.StrictRedis())
 	globals()["store"] = store
-	KVSessionInterface.serialization_method = dill
+	if "serialization_method" in FManager["ConsoleConfig"].keys() and FManager["ConsoleConfig"]["serialization_method"] == "dill":
+		KVSessionInterface.serialization_method = dill
+	else:
+		KVSessionInterface.serialization_method = pickle
 	KVSessionExtension(store, app)
 
 	# User Static Data
