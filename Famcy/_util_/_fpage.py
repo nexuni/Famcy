@@ -42,18 +42,13 @@ class FPage(FamcyWidget):
 	background_thread_flag = False
 	background_freq = 0.5
 
-	# def __init__(self, route, style, permission_level=0, 
-	#       layout_mode=FLayoutMode.recommend, 
-	#       background_thread=False, background_freq=0.5):
 	def __init__(self, layout_mode=FLayoutMode.recommend):
 
 		super(FPage, self).__init__()
-		# self.route = route
-		# self.style = style
 		self.layout = FamcyLayout(self, layout_mode)
-		# self.permission = FPermissions(permission_level)
-		# self.background_thread_flag = background_thread
-		# self.background_freq = background_freq
+
+		self.submission_obj = FSubmission(self)
+		self.submission_obj_key = self.id
 
 		self.init_page()
 
@@ -139,6 +134,7 @@ class FPage(FamcyWidget):
 				current_page = cls()
 			if not isinstance(cls.style, Famcy.VideoStreamStyle):
 				session["current_page"] = current_page
+				
 
 		form_init_js = ''	# no use
 		end_script = ''

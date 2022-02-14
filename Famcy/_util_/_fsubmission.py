@@ -242,7 +242,6 @@ class FSubmission:
 	"""
 	def __init__(self, origin):
 		self.func = None
-		self.func_link = None
 		self.origin = origin
 		self.target = origin
 
