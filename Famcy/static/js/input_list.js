@@ -24,6 +24,7 @@ function generate_list(list_id) {
   d.setAttribute("id", selElmnt.options[selElmnt.selectedIndex].getAttribute("name"));
   d.setAttribute("type", "hidden");
   d.setAttribute("name", selElmnt.options[selElmnt.selectedIndex].getAttribute("name"));
+  d.setAttribute("value", "---");
   b.appendChild(d);
 
     for (j = 1; j < ll; j++) {
