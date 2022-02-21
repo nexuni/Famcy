@@ -18,6 +18,7 @@ class inputList(Famcy.FamcyInputBlock):
             "desc": "",
             "mandatory": False,
             "value": [],
+            "defaultValue": None,
             "action_after_post": "clean",                    # (clean / save)
         }
 
@@ -53,6 +54,11 @@ class inputList(Famcy.FamcyInputBlock):
             opt_temp["value"] = list_value
             opt_temp.innerHTML = list_value
             self.body.children[2].children[0].addElement(opt_temp)
+
+        if self.value["defaultValue"]:
+            self.body["default_value"] = self.value["defaultValue"]
+        else:
+            self.body["default_value"] = "---"
 
         if self.value["mandatory"]:
             self.body["className"] = "required_list"
