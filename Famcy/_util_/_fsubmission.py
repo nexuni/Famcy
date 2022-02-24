@@ -271,8 +271,6 @@ class FBackgroundTask(FSubmission):
 		super(FBackgroundTask, self).__init__(origin)
 		self.background_info_dict = {}
 		self.obj_key = "background"+str(id(self))
-		# if not Famcy.SubmissionObjectTable.has_key(self.obj_key):
-		#   Famcy.SubmissionObjectTable[self.obj_key] = self
 
 	def associate(self, function, info_dict={}, target=None, update_attr={}):
 		self.func = function
@@ -283,6 +281,8 @@ class FBackgroundTask(FSubmission):
 	def tojson(self, str_format=False):
 		self.func(self, [])
 		_ = self.target.render_inner()
+		_ = self.target.body.render_inner()
+		
 		content = {"data": self.background_info_dict, "submission_id": str(self.obj_key), 
 			"page_id": self.origin.id, "target_id": self.target.id, "target_innerHTML": self.target.body.html, "target_attribute": self.target_attr}
 		return content if not str_format else json.dumps(content)
