@@ -28,7 +28,7 @@ lg_yaml: "~/.local/share/famcy/pms/console/Lg_transform.yaml"
 
 with_login: False
 login_url: "iam/login"
-serialization_method: "pickle"
+serialization_method: "dill"
 
 # theme color
 MAIN_COLOR: "#edaf00"
@@ -42,3 +42,9 @@ DEFAULT_LOADER: True
 main_http_url: "http://10.0.200.184:5061"
 login_http_url: "https://hnstjsf93a.execute-api.ap-southeast-1.amazonaws.com/default/carpark_login"
 default_http_url: "http://10.0.0.184:5061"
+
+# ROS2
+ros2_flag: True
+
+# opencv
+opencv_flag: False
