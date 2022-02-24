@@ -1,7 +1,10 @@
 import Famcy
 from flask import request, Response
 import time
-import cv2
+try:
+	import cv2
+except:
+	print("pip install opencv-python")
 import base64
 
 class VideoCamera(object):
@@ -47,19 +50,17 @@ class VideoCamera(object):
 
 
 class VideoCameraSnap(object):
-	def __init__(self, cv_module=None, rtsp_video=None):
+	def __init__(self,rtsp_address):
 		# 通過opencv獲取實時視頻流
-		self.cv_module = cv_module
-		self.video = rtsp_video
+		self.cv_module = cv2
+		self.video = self.cv_module.VideoCapture(rtsp_address) 
 
 	def return_frame(self):
 		success, image = self.video.read()
 		if success:
 			ret, jpeg = self.cv_module.imencode('.jpg', image)
-			data = base64.b64encode(jpeg)
-			return data
-			# return (b'--frame\r\n'
-			# 	   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+			return (b'--frame\r\n'
+				   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
 		else:
 			return False
 
@@ -73,22 +74,13 @@ class VideoStreamStyle(Famcy.FamcyStyle):
 		self.snap = snap
 		super(VideoStreamStyle, self).__init__()
 
-	def update_snap_address(self, rtsp_address):
-		self.cv_module = cv2
-		self.video = self.cv_module.VideoCapture(rtsp_address)
-		self.video_camera = VideoCameraSnap(self.cv_module, self.video)
-
 	def render(self, _script, _html, background_flag=False, **kwargs):
 		address = request.args.get('address')
 		timeout = request.args.get('timeout')
 
 		if self.snap:
+			self.video_camera = VideoCameraSnap(address)
 			res = self.video_camera.return_frame()
-			if not res:
-				self.update_snap_address(address)
-				res = self.video_camera.return_frame()
-			return res
-			# return Response(res, mimetype='multipart/x-mixed-replace; boundary=frame')
+			return Response(res, mimetype='multipart/x-mixed-replace; boundary=frame')
 		else:
 			return Response(self.video_camera.create_camera_response(address, timeout, self.delay), mimetype='multipart/x-mixed-replace; boundary=frame')
-

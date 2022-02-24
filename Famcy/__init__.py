@@ -117,6 +117,7 @@ def create_app(famcy_id, production=False):
 	# Security Enhance
 	FManager.register_csrf(app)
 
+	# redis server
 	store = RedisStore(redis.StrictRedis())
 	globals()["store"] = store
 	if "serialization_method" in FManager["ConsoleConfig"].keys() and FManager["ConsoleConfig"]["serialization_method"] == "dill":
@@ -124,6 +125,9 @@ def create_app(famcy_id, production=False):
 	else:
 		KVSessionInterface.serialization_method = pickle
 	KVSessionExtension(store, app)
+
+	# ros2
+	FManager.ros2_init()
 
 	# User Static Data
 	@MainBlueprint.route('/asset/<path:filename>')

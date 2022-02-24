@@ -62,6 +62,14 @@ class FamcyManager:
 		self.lg_yaml = None
 		self.language = "zh-tw"
 
+		# ros2
+		self.ros2 = {}
+		self.ros2_thread = None
+		self.sigint_handler = None
+		self.ros2_init_node = None
+		self.ros2_add_node = None
+		self.prev_sigint_handler = None
+
 	def __getitem__(self, key):
 		return self.global_var_dict.get(key, None)
 
@@ -77,14 +85,15 @@ class FamcyManager:
 	def read(self, path):
 		return read_config_yaml(path)
 
-	def lg_transform(self, group, name, language, reverse=False):
+	def lg_transform(self, group, name, language, reverse=False,group_return_list=False):
 		"""
 		This function transform the information to the specific language
 		Input	
 			- group: Need to be ALL CAPITAL WORDS
 			- name: the name you would like to translate
 			- language: The language you would like to use
-			- * reverse: if True 
+			- * reverse: if True
+			- * group: if True 
 		Output
 			- string 
 		Ex. file
@@ -105,7 +114,20 @@ class FamcyManager:
 			1. Lg_transform("SEASON_DATABASE","月票資料庫","CH",True) -> raise error
 		"""
 		# self.lg_yaml = self.read(self["ConsoleConfig"]["lg_yaml"])
-
+		if group_return_list:
+			if group not in self.lg_yaml.keys():
+				raise ValueError("group spelling fail")
+			else:
+				if reverse:
+					return_list = []
+					for i in self.lg_yaml[group].keys():
+						try:
+							return_list.append(self.lg_yaml[group][i][language])
+						except:
+							raise ValueError("group_return_list one of the value is empty")
+					return return_list
+				else:
+					return self.lg_yaml[group].keys()
 		if reverse:
 			if group not in self.lg_yaml.keys():
 				raise ValueError("group spelling fail")
@@ -315,3 +337,44 @@ class FamcyManager:
 
 		app.template_global('csrf_token')(csrf_token)
 		app.before_request(check_csrf_token)
+
+	def ros2_init(self):
+		if "ros2_flag" in self["ConsoleConfig"].keys() and self["ConsoleConfig"]["ros2_flag"]:
+			import rclpy
+			import signal
+			from rclpy.node import Node
+			from std_msgs.msg import String
+			import threading
+
+			def ros2_thread(node):
+			    print('entering ros2 thread')
+			    rclpy.spin(node)
+			    print('leaving ros2 thread')
+
+			def sigint_handler(signal, frame):
+			    """
+			    SIGINT handler
+
+			    We have to know when to tell rclpy to shut down, because
+			    it's in a child thread which would stall the main thread
+			    shutdown sequence. So we use this handler to call
+			    rclpy.shutdown() and then call the previously-installed
+			    SIGINT handler for Flask
+			    """
+			    rclpy.shutdown()
+			    if self.prev_sigint_handler is not None:
+			        self.prev_sigint_handler(signal)
+
+			def ros2_add_node(ros2_node):
+				threading.Thread(target=self.ros2_thread, args=[ros2_node]).start()
+				self.prev_sigint_handler = signal.signal(signal.SIGINT, self.sigint_handler)
+
+			def ros2_init_node():
+				rclpy.init(args=None)
+
+			self.ros2_thread = ros2_thread
+			self.sigint_handler = sigint_handler
+			self.ros2_init_node = ros2_init_node
+			self.ros2_add_node = ros2_add_node
+
+
