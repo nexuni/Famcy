@@ -43,7 +43,6 @@ class FPage(FamcyWidget):
 	background_freq = 0.5
 
 	def __init__(self, layout_mode=FLayoutMode.recommend):
-
 		super(FPage, self).__init__()
 		self.layout = FamcyLayout(self, layout_mode)
 
@@ -52,7 +51,7 @@ class FPage(FamcyWidget):
 
 		self.init_page()
 
-		if FPage.background_thread_flag:
+		if self.background_thread_flag:
 			self.sijax_response = None
 			
 			# Check loop correctness
@@ -173,6 +172,7 @@ class FPage(FamcyWidget):
 		loop for fpage
 		"""
 		while True:
+			print("background_thread_loop")
 			time.sleep(int(1/self.background_freq))
 			self.background_thread_inner()
 
