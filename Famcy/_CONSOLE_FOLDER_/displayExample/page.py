@@ -58,14 +58,13 @@ class DisplayPage(Famcy.FamcyPage):
     # background task function 
     # ====================================================
     def background_thread_inner(self):
-        self.thread_update_msg.associate(self.update_msg, info_dict={}, target=self.card_0)
+        self.thread_update_msg.associate(self.update_msg, info_dict={}, target=self.card_0.layout.content[0][0])
         Famcy.FamcyBackgroundQueue.add(self.thread_update_msg, Famcy.FamcyPriority.Standard)
 
     def update_msg(self, submission_obj, info_list):
         self.card_0.layout.content[0][0].update({
                 "content": Famcy.FManager.ros2["received_msg"]
             })
-        print("update: ", Famcy.FManager.ros2["received_msg"])
     # ====================================================
     # ====================================================
 

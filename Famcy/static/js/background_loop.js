@@ -7,7 +7,7 @@ function background_loop(url, route, time=5000) {
     		return response.json()
         })
         .then(res_dict => {
-        	
+        	console.log("res_dict: ", res_dict)
         	if (res_dict["indicator"]) {
         		if (document.getElementById(res_dict["message"].target_id)) {
         			let temp_item = document.getElementById(res_dict["message"].target_id)

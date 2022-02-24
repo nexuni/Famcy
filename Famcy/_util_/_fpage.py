@@ -172,7 +172,6 @@ class FPage(FamcyWidget):
 		loop for fpage
 		"""
 		while True:
-			print("background_thread_loop")
 			time.sleep(int(1/self.background_freq))
 			self.background_thread_inner()
 
