@@ -7,6 +7,12 @@ function generate_list(list_id) {
   selElmnt = x.getElementsByTagName("select")[0];         // div.select
   // console.log(selElmnt.selectedIndex)
 
+  for (var i = 0; i < selElmnt.options.length; i++) {
+    if (selElmnt.options[i].innerHTML === document.getElementById(list_id).getAttribute("default_value")) {
+      selElmnt.selectedIndex = i
+    }
+  }
+  
   ll = selElmnt.length;
 
   /*for each element, create a new DIV that will act as the selected item:*/
@@ -24,7 +30,7 @@ function generate_list(list_id) {
   d.setAttribute("id", selElmnt.options[selElmnt.selectedIndex].getAttribute("name"));
   d.setAttribute("type", "hidden");
   d.setAttribute("name", selElmnt.options[selElmnt.selectedIndex].getAttribute("name"));
-  d.setAttribute("value", selElmnt.options[selElmnt.selectedIndex].getAttribute("default_value"));
+  d.setAttribute("value", document.getElementById(list_id).getAttribute("default_value"));
   b.appendChild(d);
 
     for (j = 1; j < ll; j++) {
@@ -84,12 +90,12 @@ function generate_list(list_id) {
       temp = getSavedValue(selElmnt.options[selElmnt.selectedIndex].getAttribute("name"))
 
       if (temp == "") {
-        temp = "---"
+        temp = document.getElementById(list_id).getAttribute("default_value")
       }
       document.getElementById(selElmnt.options[selElmnt.selectedIndex].getAttribute("name")).setAttribute("value", temp)
       a.innerHTML = temp
     }
-  // }
+
   function closeAllSelect(elmnt) {
     /*a function that will close all select boxes in the document,
     except the current select box:*/
