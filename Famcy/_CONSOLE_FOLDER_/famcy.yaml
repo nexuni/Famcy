@@ -28,7 +28,7 @@ lg_yaml: "~/.local/share/famcy/pms/console/Lg_transform.yaml"
 
 with_login: False
 login_url: "iam/login"
-serialization_method: "dill"
+serialization_method: "pickle"
 
 # theme color
 MAIN_COLOR: "#edaf00"
@@ -44,7 +44,7 @@ login_http_url: "https://hnstjsf93a.execute-api.ap-southeast-1.amazonaws.com/def
 default_http_url: "http://10.0.0.184:5061"
 
 # ROS2
-ros2_flag: True
+ros2_flag: False
 
 # opencv
 opencv_flag: False
