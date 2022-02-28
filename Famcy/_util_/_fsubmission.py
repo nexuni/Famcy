@@ -279,7 +279,7 @@ class FBackgroundTask(FSubmission):
 		self.target_attr = update_attr
 
 	def tojson(self, str_format=False):
-		self.func(self, [])
+		self.func(self, self.background_info_dict)
 		_ = self.target.render_inner()
 		_ = self.target.body.render_inner()
 		

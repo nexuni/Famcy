@@ -61,6 +61,12 @@ class FPage(FamcyWidget):
 
 		self._check_rep()
 
+	def __getstate__(self):
+		# handle pickle error
+		rv = self.__dict__.copy()
+		rv['bthread'] = None
+		return rv
+
 	def init_page(self):
 		self.body = Famcy.ELEMENT()
 
