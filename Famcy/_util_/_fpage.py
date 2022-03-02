@@ -63,6 +63,7 @@ class FPage(FamcyWidget):
 
 	def __getstate__(self):
 		# handle pickle error
+		# Developers cannot access bthread
 		rv = self.__dict__.copy()
 		rv['bthread'] = None
 		return rv

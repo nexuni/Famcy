@@ -2,6 +2,13 @@ import Famcy
 import random
 import time
 
+class InitLight(Famcy.FamcyPage):
+    def __init__(self):
+        super(InitLight, self).__init__()
+
+initL = InitLight()
+InitLight.register("/InitLight", Famcy.APIStyle(), init_cls=initL)
+
 class NewPage(Famcy.FamcyPage):
     def __init__(self):
         super(NewPage, self).__init__()
@@ -32,25 +39,35 @@ class NewPage(Famcy.FamcyPage):
         self.light_three = Famcy.FamcyBackgroundTask(self)
         self.light_four = Famcy.FamcyBackgroundTask(self)
 
+        self.bg_task_val = 0
+        self.bg_task_list = [self.light_one, self.light_two, self.light_three, self.light_four]
+
         
     # background task function 
     # ====================================================
     def background_thread_inner(self):
         val = random.randint(0,2)
-        self.light_one.associate(self.flash_light, info_dict={"status": self.light_list[val], "obj": 0, "light": val}, target=self.card_1)
-        Famcy.FamcyBackgroundQueue.add(self.light_one, Famcy.FamcyPriority.Standard)
+        self.add_task_light(self.flash_light, {"status": self.light_list[val], "obj": self.bg_task_val, "light": val}, self.card_1, self.bg_task_list[self.bg_task_val], Famcy.FamcyPriority.Standard)
 
-        val = random.randint(0,2)
-        self.light_two.associate(self.flash_light, info_dict={"status": self.light_list[val], "obj": 1, "light": val}, target=self.card_1)
-        Famcy.FamcyBackgroundQueue.add(self.light_two, Famcy.FamcyPriority.Standard)
+        if self.bg_task_val < 3:
+            self.bg_task_val += 1
+        else:
+            self.bg_task_val = 0
 
-        val = random.randint(0,2)
-        self.light_three.associate(self.flash_light, info_dict={"status": self.light_list[val], "obj": 2, "light": val}, target=self.card_1)
-        Famcy.FamcyBackgroundQueue.add(self.light_three, Famcy.FamcyPriority.Standard)
+        # self.light_one.associate(self.flash_light, info_dict={"status": self.light_list[val], "obj": 0, "light": val}, target=self.card_1)
+        # Famcy.FamcyBackgroundQueue.add(self.light_one, Famcy.FamcyPriority.Standard)
 
-        val = random.randint(0,2)
-        self.light_four.associate(self.flash_light, info_dict={"status": self.light_list[val], "obj": 3, "light": val}, target=self.card_1)
-        Famcy.FamcyBackgroundQueue.add(self.light_four, Famcy.FamcyPriority.Standard)
+        # val = random.randint(0,2)
+        # self.light_two.associate(self.flash_light, info_dict={"status": self.light_list[val], "obj": 1, "light": val}, target=self.card_1)
+        # Famcy.FamcyBackgroundQueue.add(self.light_two, Famcy.FamcyPriority.Standard)
+
+        # val = random.randint(0,2)
+        # self.light_three.associate(self.flash_light, info_dict={"status": self.light_list[val], "obj": 2, "light": val}, target=self.card_1)
+        # Famcy.FamcyBackgroundQueue.add(self.light_three, Famcy.FamcyPriority.Standard)
+
+        # val = random.randint(0,2)
+        # self.light_four.associate(self.flash_light, info_dict={"status": self.light_list[val], "obj": 3, "light": val}, target=self.card_1)
+        # Famcy.FamcyBackgroundQueue.add(self.light_four, Famcy.FamcyPriority.Standard)
 
     def flash_light(self, submission_obj, info_dict):
         self.card_1.layout.content[info_dict["obj"]][0].update({
@@ -76,6 +93,16 @@ class NewPage(Famcy.FamcyPage):
                 g += 1
 
         self.card_1.title = "red: "+ str(r) +"; yellow: "+ str(y) +"; green: "+ str(g) +";"
+
+    def init_light(self, submission_obj, info_list):
+        self.flash_light(submission_obj, {"status": {"red": "bulb_red", "yellow": "bulb_yellow", "green": "bulb_green"}, "obj": 0, "light": 3})
+        self.flash_light(submission_obj, {"status": {"red": "bulb_red", "yellow": "bulb_yellow", "green": "bulb_green"}, "obj": 1, "light": 3})
+        self.flash_light(submission_obj, {"status": {"red": "bulb_red", "yellow": "bulb_yellow", "green": "bulb_green"}, "obj": 2, "light": 3})
+        self.flash_light(submission_obj, {"status": {"red": "bulb_red", "yellow": "bulb_yellow", "green": "bulb_green"}, "obj": 3, "light": 3})
+
+    def add_task_light(self, action, info_dict, target, task, priority):
+        task.associate(action, info_dict=info_dict, target=target)
+        Famcy.FamcyBackgroundQueue.add(task, priority)
     # ====================================================
     # ====================================================
 
@@ -84,30 +111,30 @@ class NewPage(Famcy.FamcyPage):
     # ====================================================
     def card1(self):
         _card1 = Famcy.FamcyCard()
-        _card1.title = "red: 2; yellow: 2; green: 2;"
+        _card1.title = "red: 4; yellow: 4; green: 4;"
 
         _displayLight1 = Famcy.displayLight()
         _displayLight1.update({
                 "title": "displayLight",
-                "status": {"red": "bulb_red", "yellow": "", "green": ""}, 
+                "status": {"red": "bulb_red", "yellow": "bulb_yellow", "green": "bulb_green"}, 
                 "light_size": "100%",
-                "light": 0
+                "light": 3
             })
 
         _displayLight2 = Famcy.displayLight()
         _displayLight2.update({
                 "title": "displayLight",
-                "status": {"red": "", "yellow": "bulb_yellow", "green": ""}, 
+                "status": {"red": "bulb_red", "yellow": "bulb_yellow", "green": "bulb_green"}, 
                 "light_size": "100%",
-                "light": 1
+                "light": 3
             })
 
         _displayLight3 = Famcy.displayLight()
         _displayLight3.update({
                 "title": "displayLight",
-                "status": {"red": "", "yellow": "", "green": "bulb_green"}, 
+                "status": {"red": "bulb_red", "yellow": "bulb_yellow", "green": "bulb_green"}, 
                 "light_size": "100%",
-                "light": 2
+                "light": 3
             })
 
         _displayLight4 = Famcy.displayLight()
@@ -122,6 +149,10 @@ class NewPage(Famcy.FamcyPage):
         _card1.layout.addWidget(_displayLight2, 0, 1)
         _card1.layout.addWidget(_displayLight3, 0, 2)
         _card1.layout.addWidget(_displayLight4, 0, 3)
+
+        self.thread_init_light = Famcy.FamcyBackgroundTask(self)
+        initL.style.setAction(lambda: self.add_task_light(self.init_light, {}, _card1, self.thread_init_light, Famcy.FamcyPriority.Critical))
+        initL.style.setReturnValue(indicator=True, message="add to task")
 
         return _card1
 
@@ -222,9 +253,6 @@ class NewPage(Famcy.FamcyPage):
 
     # submission function
     # ====================================================
-    # def submit_input(self, submission_obj, info):
-    #     msg = info["input_value"]
-    #     return Famcy.UpdateAlert(alert_message=msg)
     # ====================================================
     # ====================================================
         
