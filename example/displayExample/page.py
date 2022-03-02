@@ -1,35 +1,5 @@
 import Famcy
 
-import rclpy
-import signal
-from rclpy.node import Node
-from std_msgs.msg import String
-import threading
-
-# class TestPublisher(Node):
-#     def __init__(self):
-#         super().__init__('test_publisher')
-#         self.publisher = self.create_publisher(String, 'flask_pub_topic', 10)
-#         self.subscription = self.create_subscription(
-#             String,
-#             '/topic',
-#             self.chatter_callback,
-#             10)
-#         self.latest_message = None
-
-#     def chatter_callback(self, msg):
-#         # print(f'chatter cb received: {msg.data}')
-#         self.latest_message = msg.data
-#         Famcy.FManager.ros2["received_msg"] = msg.data
-
-#     def publish_message(self):
-#         msg = String()
-#         msg.data = 'hello, world!'
-#         self.publisher.publish(msg)
-
-# Famcy.FManager.ros2_init_node()
-# Famcy.FManager.ros2_add_node(TestPublisher())
-
 class DisplayPage(Famcy.FamcyPage):
     def __init__(self):
         super(DisplayPage, self).__init__()
@@ -51,20 +21,10 @@ class DisplayPage(Famcy.FamcyPage):
         self.layout.addWidget(self.card_2, 2, 2)
         self.layout.addWidget(self.card_3, 2, 3)
         self.layout.addWidget(self.card_5, 3, 2, 1, 2)
-
-        # self.thread_update_msg = Famcy.FamcyBackgroundTask(self)
         
         
     # background task function 
     # ====================================================
-    # def background_thread_inner(self):
-    #     self.thread_update_msg.associate(self.update_msg, info_dict={}, target=self.card_0.layout.content[0][0])
-    #     Famcy.FamcyBackgroundQueue.add(self.thread_update_msg, Famcy.FamcyPriority.Standard)
-
-    # def update_msg(self, submission_obj, info_list):
-    #     self.card_0.layout.content[0][0].update({
-    #             "content": Famcy.FManager.ros2["received_msg"]
-    #         })
     # ====================================================
     # ====================================================
 
