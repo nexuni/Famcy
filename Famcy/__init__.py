@@ -132,7 +132,6 @@ def create_app(famcy_id, production=False):
 	# User Static Data
 	@MainBlueprint.route('/asset/<path:filename>')
 	def user_custom_asset(filename):
-		# Usage in template {{ url_for('user_custom_asset', filename='doday_icon.png') }}
 		return send_from_directory(FManager.console + "/" + FManager.USER_STATIC_FOLDER, filename)
 
 	# Import Fblocks from default and custom folders. 

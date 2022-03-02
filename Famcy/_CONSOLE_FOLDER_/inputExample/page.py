@@ -303,7 +303,7 @@ class InputPage(Famcy.FamcyPage):
                 "title": "Title of inputList",
                 "desc": "This is an example",
                 "value": ["Option 1", "Option 2", "Option 3"],
-                "defaultValue": None,
+                "defaultValue": "Option 1",
                 "mandatory": True,
                 "action_after_post": "save"
             })
