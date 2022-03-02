@@ -1,0 +1,26 @@
+console_title: "Famcy"
+console_description: ""
+main_page: startFamcy
+
+# Declare Main page part
+side_bar_title: "FAMCY"
+side_bar_hierachy:
+  - START: startFamcy
+
+title_style: "bxs-spreadsheet"
+side_bar_style:
+  START_FAMCY: "bxs-share-alt"
+
+default_name: "Nexuni"
+default_profile_pic_url: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.youtube.com%2Fchannel%2FUClOgrSn4afPVICckeKLc21g&psig=AOvVaw2NbtZ9PmMyfu9t9KZmXCvZ&ust=1635439303581000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCIiBgKiE6_MCFQAAAAAdAAAAABAD"
+
+main_url: "http://127.0.0.1:5000"
+credentials_url: "<path to credentials file>/credentials.yaml"
+
+with_login: False
+login_url: "iam/login"
+serialization_method: "pickle"
+
+# loader type
+LOADER: "Double_Ring"
+DEFAULT_LOADER: True
