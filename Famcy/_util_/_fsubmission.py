@@ -94,6 +94,16 @@ class FSubmissionInfo(object):
 				return self.info_dict[item]
 		return None
 
+	def __iter__(self):
+		# list prioritized over dictionary
+		if len(self.info_list) != 0:
+			for info in self.info_list:
+				yield info
+				
+		elif len(list(self.info_dict.keys())) != 0:
+			for key in self.info_dict.keys():
+				yield self.info_dict[key]
+
 
 class FResponse(metaclass=abc.ABCMeta):
 	def __init__(self, target=None):
