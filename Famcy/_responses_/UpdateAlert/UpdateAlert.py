@@ -29,10 +29,15 @@ class UpdateAlert(Famcy.FamcyResponse):
 		if self.target:
 			inner_text, extra_script = self.generate_alert()
 
-			if self.alert_position == "append":
-				sijax_response.html_append('#'+self.target.id, inner_text)
+			if isinstance(self.target, Famcy.FamcyPage):
+				_id = "main_win"
 			else:
-				sijax_response.html_prepend('#'+self.target.id, inner_text)
+				_id = self.target.id
+
+			if self.alert_position == "append":
+				sijax_response.html_append('#'+_id, inner_text)
+			else:
+				sijax_response.html_prepend('#'+_id, inner_text)
 
 			sijax_response.script(extra_script)
 			sijax_response.script(self.extra_script)
