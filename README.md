@@ -1,12 +1,11 @@
 # FAMCY
 ![famcy_logo](famcylogo.png)
 
-Famcy is an Automated Management Console for You (FAMCY). It is designed for Nexuni Management Console development. The goal of this framework is to provide a lightweighted, python-based frontend development platform for Nexuni Co. applications. It is based in Flask framework and contains various useful plugins for backend management and user dashboard actions.
-
-
+Famcy is an All-round Management Console for You (FAMCY). It is designed for Nexuni Co. Management Console app development. The goal of this framework is to provide a lightweighted, python-based frontend development platform for web applications. It is built on top of the Flask framework and contains various useful plugins for backend management and user dashboard actions. As we work on a lot of robotics and automation related applications, FAMCY natively supports [ROS2](https://docs.ros.org/en/foxy/index.html) integration. 
 
 ## Prerequisites
-For now, we only support ubuntu development with python3.7. 
+For now, we only support ubuntu development with python3.7. If you have other environment settings, please use our [docker](https://github.com/nexuni/FamcyDocker)!
+
 1. Make sure your home directory start with ```/home/{USER}/....```
 2. Make sure ```python3.7``` exist in your CLI environment. 
 
