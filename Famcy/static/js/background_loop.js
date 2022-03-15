@@ -1,3 +1,14 @@
+var setInnerHTML = function(elm, html) {
+  elm.innerHTML = html;
+  Array.from(elm.querySelectorAll("script")).forEach( oldScript => {
+    const newScript = document.createElement("script");
+    Array.from(oldScript.attributes)
+      .forEach( attr => newScript.setAttribute(attr.name, attr.value) );
+    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+    oldScript.parentNode.replaceChild(newScript, oldScript);
+  });
+}
+
 function background_loop(url, route, time=5000) {
 
 	Sijax.setRequestUri(route)
@@ -16,8 +27,7 @@ function background_loop(url, route, time=5000) {
         			for (var i = 0; i < Object.keys(temp_attr).length; i++) {
         				temp_item.setAttribute(Object.keys(temp_attr)[i], temp_attr[Object.keys(temp_attr)[i]]);
         			}
-        			
-        			temp_item.innerHTML = res_dict["message"].target_innerHTML
+        			setInnerHTML(temp_item, res_dict["message"].target_innerHTML)
         		}
             }
 

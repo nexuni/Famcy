@@ -104,7 +104,6 @@ class FSubmissionInfo(object):
 			for key in self.info_dict.keys():
 				yield self.info_dict[key]
 
-
 class FResponse(metaclass=abc.ABCMeta):
 	def __init__(self, target=None):
 		self.target = target

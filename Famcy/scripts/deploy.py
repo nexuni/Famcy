@@ -27,6 +27,7 @@ logto = %s""" % (LOCAL_USER + "/" + args[0] + "/logs/" + args[0] + ".log")
 app = create_app('%s',True)
 
 if __name__ == "__main__":
+
     app.run(host="0.0.0.0", port=8888)"""% (args[0])
 
 	f = open(Famcy.famcy_dir + "/wsgi.py", "w")

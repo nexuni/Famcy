@@ -5,6 +5,7 @@ Famcy is an All-round Management Console for You (FAMCY). It is designed for Nex
 
 ## Prerequisites
 For now, we only support ubuntu development with python3.7. If you have other environment settings, please use our [docker](https://github.com/nexuni/FamcyDocker)!
+
 1. Make sure your home directory start with ```/home/{USER}/....```
 2. Make sure ```python3.7``` exist in your CLI environment. 
 
