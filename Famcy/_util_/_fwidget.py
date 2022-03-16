@@ -23,6 +23,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.name = "famcy_name"+str(id(self))
 		self.action = ""
 		self.loader = Famcy.FManager["ConsoleConfig"]["DEFAULT_LOADER"]
+		self.page_parent = None
 		self.parent = None
 		self.body = None
 		self.clickable = False
@@ -55,7 +56,10 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		if item in self.attributes.keys():
 			del self.attributes[item]
 
-	def find_parent(self, item, className):
+	def find_parent(self, item, className, include_self=False):
+		# print(item.parent, type(item.parent).__name__)
+		if include_self and type(item).__name__ == className:
+			return item
 		if not type(item.parent).__name__ == className:
 			if item.parent:
 				return self.find_parent(item.parent, className)

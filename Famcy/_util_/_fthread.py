@@ -10,6 +10,28 @@ class FPriority(enum.IntEnum):
     Error = 2
     Critical = 3
 
+class FamcyPageQueue:
+    def __init__(self):
+        super(FamcyPageQueue, self).__init__()
+        self.BackgroundQueueDict = {}
+
+    def init_queue(self, _id):
+        self.BackgroundQueueDict[_id] = FamcyPriorityQueue()
+
+    def remove_queue(self, _id):
+        if _id in self.BackgroundQueueDict.keys():
+            del self.BackgroundQueueDict[_id]
+
+    def add(self, value, priority):
+        _id = value.target.page_parent.id
+        if _id in self.BackgroundQueueDict.keys():
+            self.BackgroundQueueDict[_id].add(value, priority)
+
+    def pop(self, _id):
+        return self.BackgroundQueueDict[_id].pop()
+
+        
+
 class FamcyPriorityQueue:
     """
     This PQ is adopted from:
@@ -74,12 +96,11 @@ class FamcyPriorityQueue:
 
     # Remove the top element and return it
     def pop(self):
-
         if len(self.nodes) == 1:
             raise LookupError("Heap is empty")
 
         result = self.nodes[1][0]
-
+        
         # Move empty space down
         empty_space_index = 1
         while empty_space_index * 2 < len(self.nodes):
@@ -99,12 +120,12 @@ class FamcyPriorityQueue:
             else:
                 self.nodes[empty_space_index] = self.nodes[right_child_index]
                 empty_space_index = right_child_index
-
+        
         # Swap empty space with the last element and heapify
         last_node_index = len(self.nodes) - 1
         self.nodes[empty_space_index] = self.nodes[last_node_index]
         self._heapify(empty_space_index)
-
+        
         # Throw out the last element
         self.nodes.pop()
 

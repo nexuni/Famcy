@@ -135,8 +135,9 @@ class FamcyLayout:
 		* addWidget(card, start row, start col, height(num row), width(num col))
 		* render()
 	"""
-	def __init__(self, parent, layout_mode):
+	def __init__(self, parent, layout_mode, page_parent=None):
 		self.parent = parent
+		self.page_parent = page_parent
 		self.mode = layout_mode
 		self.layoutType = FamcyLayoutType(self.mode)
 
@@ -153,6 +154,7 @@ class FamcyLayout:
 
 	def addStaticWidget(self, card, width=50):
 		card.parent = self.parent
+		card.page_parent = self.page_parent
 		self.staticContent.append([card, width])
 
 	def removeStaticWidget(self, card=None, index=None):
@@ -168,6 +170,7 @@ class FamcyLayout:
 
 	def addWidget(self, card, start_row, start_col, height=1, width=1):
 		card.parent = self.parent
+		card.page_parent = self.page_parent
 		self.content.append([card, int(start_row), int(start_col), int(height), int(width)])
 		self.layoutType.layoutClass.setDefaultContent(self.content)
 

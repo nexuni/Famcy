@@ -109,7 +109,7 @@ def create_app(famcy_id, production=False):
 
 	# Init Sijax
 	FManager["Sijax"].Sijax().init_app(app)
-	FamcyBackgroundQueue = FamcyPriorityQueue()
+	FamcyBackgroundQueue = FamcyPageQueue()
 	globals()["FamcyBackgroundQueue"] = FamcyBackgroundQueue
 
 	# Init http client
