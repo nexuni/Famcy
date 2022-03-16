@@ -9,6 +9,8 @@ import Famcy
 import time
 import abc
 import pickle
+import os
+import sys
 
 class FPage(FamcyWidget):
 	"""
@@ -44,7 +46,7 @@ class FPage(FamcyWidget):
 
 	def __init__(self, layout_mode=FLayoutMode.recommend):
 		super(FPage, self).__init__()
-		self.layout = FamcyLayout(self, layout_mode)
+		self.layout = FamcyLayout(self, layout_mode, page_parent=self)
 
 		self.submission_obj = FSubmission(self)
 		self.submission_obj_key = self.id
@@ -53,7 +55,7 @@ class FPage(FamcyWidget):
 
 		if self.background_thread_flag:
 			self.sijax_response = None
-			
+			Famcy.FamcyBackgroundQueue.init_queue(self.id)
 			# Check loop correctness
 			assert getattr(self, "background_thread_inner", None), "Must implement background_thread_inner"
 			self.bthread = FamcyThread(target=self.background_thread_loop, daemon=True)
@@ -109,14 +111,14 @@ class FPage(FamcyWidget):
 			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(route_func)
 
 		if cls.background_thread_flag:
-			bg_func = lambda: cls.background_generator_loop()
+			bg_func = lambda _id: cls.background_generator_loop(_id)
 			bg_func.__name__ = "bgloop_famcy_route_func_name"+route.replace("/", "_")
 
 			if cls.permission.required_login():
 				# Register the page render to the main blueprint
-				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(login_required(bg_func))
+				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop<_id>")(login_required(bg_func))
 			else:
-				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(bg_func)
+				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop<_id>")(bg_func)
 		
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
@@ -137,6 +139,9 @@ class FPage(FamcyWidget):
 			if init_cls:
 				current_page = init_cls
 			else:
+				if "current_page" in session.keys():
+					Famcy.FamcyBackgroundQueue.remove_queue(session["current_page"].id)
+					del session["current_page"]
 				current_page = cls()
 			if not isinstance(cls.style, Famcy.VideoStreamStyle):
 				session["current_page"] = current_page
@@ -159,13 +164,13 @@ class FPage(FamcyWidget):
 				end_script += e_s
 
 			# Apply style at the end
-			return current_page.style.render(current_page.header_script+head_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
+			return current_page.style.render(current_page.header_script+head_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script, _id=current_page.id)
 
 	@staticmethod
-	def background_generator_loop():
+	def background_generator_loop(_id):
 		def generate():
 			try:
-				baction = Famcy.FamcyBackgroundQueue.pop()
+				baction = Famcy.FamcyBackgroundQueue.pop(_id)
 				yield json.dumps({"indicator": True, "message": baction.tojson()})
 
 			except Exception as e:
