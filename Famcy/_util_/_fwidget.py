@@ -56,8 +56,13 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		if item in self.attributes.keys():
 			del self.attributes[item]
 
+	def find_page_parent(self, item):
+		if item.parent:
+			return self.find_page_parent(item.parent)
+		else:
+			return item
+
 	def find_parent(self, item, className, include_self=False):
-		# print(item.parent, type(item.parent).__name__)
 		if include_self and type(item).__name__ == className:
 			return item
 		if not type(item.parent).__name__ == className:
