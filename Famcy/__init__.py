@@ -112,13 +112,19 @@ def create_app(famcy_id, production=False):
 	FamcyBackgroundQueue = FamcyPageQueue()
 	globals()["FamcyBackgroundQueue"] = FamcyBackgroundQueue
 
+	
+
 	# Init http client
 	FManager.init_http_client(**FManager["ConsoleConfig"])
 	# Security Enhance
 	FManager.register_csrf(app)
 
 	# redis server
-	store = RedisStore(redis.StrictRedis())
+	r = redis.Redis()
+	# q = Queue(connection=r)
+	# globals()["q"] = q
+
+	store = RedisStore(r)
 	globals()["store"] = store
 	if "serialization_method" in FManager["ConsoleConfig"].keys() and FManager["ConsoleConfig"]["serialization_method"] == "dill":
 		KVSessionInterface.serialization_method = dill

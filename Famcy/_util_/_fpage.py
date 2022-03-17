@@ -11,6 +11,7 @@ import abc
 import pickle
 import os
 import sys
+import queue
 
 class FPage(FamcyWidget):
 	"""
@@ -55,11 +56,11 @@ class FPage(FamcyWidget):
 
 		if self.background_thread_flag:
 			self.sijax_response = None
-			Famcy.FamcyBackgroundQueue.init_queue(self.id)
+			session["BackgroundQueueDict"] = FamcyPriorityQueue()
 			# Check loop correctness
 			assert getattr(self, "background_thread_inner", None), "Must implement background_thread_inner"
-			self.bthread = FamcyThread(target=self.background_thread_loop, daemon=True)
-			self.bthread.start()
+			# self.bthread = FamcyThread(target=self.background_thread_loop, daemon=True)
+			# self.bthread.start()
 
 		self._check_rep()
 
@@ -67,7 +68,7 @@ class FPage(FamcyWidget):
 		# handle pickle error
 		# Developers cannot access bthread
 		rv = self.__dict__.copy()
-		rv['bthread'] = None
+		# rv['bthread'] = None
 		return rv
 
 	def init_page(self):
@@ -140,7 +141,9 @@ class FPage(FamcyWidget):
 				current_page = init_cls
 			else:
 				if "current_page" in session.keys():
-					Famcy.FamcyBackgroundQueue.remove_queue(session["current_page"].id)
+					if "BackgroundQueueDict" in session.keys():
+						del session["BackgroundQueueDict"]
+					# Famcy.FamcyBackgroundQueue.remove_queue(session["current_page"].id)
 					del session["current_page"]
 				current_page = cls()
 			if not isinstance(cls.style, Famcy.VideoStreamStyle):
@@ -168,24 +171,23 @@ class FPage(FamcyWidget):
 
 	@staticmethod
 	def background_generator_loop(_id):
-		def generate():
-			try:
-				baction = Famcy.FamcyBackgroundQueue.pop(_id)
-				yield json.dumps({"indicator": True, "message": baction.tojson()})
+		_page = session.get('current_page')
+		_page.background_thread_inner()
+		session['current_page'] = _page
 
-			except Exception as e:
-				yield json.dumps({"indicator": False, "message": str(e)})
+		try:
+			baction = session.get('BackgroundQueueDict').pop()
+			indicator = True
+			message = baction.tojson()
+
+		except Exception as e:
+			indicator = False
+			message = str(e)
+
+		def generate():
+			yield json.dumps({"indicator": indicator, "message": message})
 
 		return Response(generate(), mimetype='text/plain')
-
-	def background_thread_loop(self):
-		"""
-		This is the background thread 
-		loop for fpage
-		"""
-		while True:
-			time.sleep(int(1/self.background_freq))
-			self.background_thread_inner()
 
 	def background_thread_inner(self):
 		"""

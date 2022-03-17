@@ -1,5 +1,6 @@
 import threading
 import enum
+from flask import session, g
 
 class FPriority(enum.IntEnum):
     """
@@ -16,21 +17,11 @@ class FamcyPageQueue:
         self.BackgroundQueueDict = {}
 
     def init_queue(self, _id):
-        self.BackgroundQueueDict[_id] = FamcyPriorityQueue()
-
-    def remove_queue(self, _id):
-        if _id in self.BackgroundQueueDict.keys():
-            del self.BackgroundQueueDict[_id]
+        session["BackgroundQueueDict"] = FamcyPriorityQueue()
 
     def add(self, value, priority):
-        _id = value.target.page_parent.id
-        if _id in self.BackgroundQueueDict.keys():
-            self.BackgroundQueueDict[_id].add(value, priority)
-
-    def pop(self, _id):
-        return self.BackgroundQueueDict[_id].pop()
-
-        
+        session["BackgroundQueueDict"].add(value, priority)
+        print("add", session["BackgroundQueueDict"])
 
 class FamcyPriorityQueue:
     """
