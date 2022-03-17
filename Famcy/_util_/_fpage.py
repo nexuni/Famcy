@@ -68,7 +68,6 @@ class FPage(FamcyWidget):
 		# handle pickle error
 		# Developers cannot access bthread
 		rv = self.__dict__.copy()
-		# rv['bthread'] = None
 		return rv
 
 	def init_page(self):
@@ -112,14 +111,14 @@ class FPage(FamcyWidget):
 			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(route_func)
 
 		if cls.background_thread_flag:
-			bg_func = lambda _id: cls.background_generator_loop(_id)
+			bg_func = lambda: cls.background_generator_loop()
 			bg_func.__name__ = "bgloop_famcy_route_func_name"+route.replace("/", "_")
 
 			if cls.permission.required_login():
 				# Register the page render to the main blueprint
-				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop<_id>")(login_required(bg_func))
+				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(login_required(bg_func))
 			else:
-				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop<_id>")(bg_func)
+				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(bg_func)
 		
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
@@ -167,10 +166,10 @@ class FPage(FamcyWidget):
 				end_script += e_s
 
 			# Apply style at the end
-			return current_page.style.render(current_page.header_script+head_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script, _id=current_page.id)
+			return current_page.style.render(current_page.header_script+head_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
 
 	@staticmethod
-	def background_generator_loop(_id):
+	def background_generator_loop():
 		_page = session.get('current_page')
 		_page.background_thread_inner()
 		session['current_page'] = _page
