@@ -102,7 +102,7 @@ class FPage(FamcyWidget):
 		cls.background_freq = background_freq
 
 		route_func = lambda: cls.render(init_cls=init_cls)
-		route_func.__name__ = "famcy_route_func_name"+route.replace("/", "_")
+		route_func.__name__ = "famcy_route_func_name"+route.replace("/", "_").replace(":", "_").replace("?", "_")
 
 		if cls.permission.required_login():
 			# Register the page render to the main blueprint
@@ -112,7 +112,7 @@ class FPage(FamcyWidget):
 
 		if cls.background_thread_flag:
 			bg_func = lambda: cls.background_generator_loop()
-			bg_func.__name__ = "bgloop_famcy_route_func_name"+route.replace("/", "_")
+			bg_func.__name__ = "bgloop_famcy_route_func_name"+route.replace("/", "_").replace(":", "_").replace("?", "_")
 
 			if cls.permission.required_login():
 				# Register the page render to the main blueprint
@@ -154,7 +154,8 @@ class FPage(FamcyWidget):
 		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
 			# content_data = "<h1>You are not authorized to view this page!</h1>"
 			session["login_permission"] = "You are not authorized to view this page!"
-			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
+			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_").replace(":", "_").replace("?", "_")))
+			# return redirect(url_for("MainBlueprint.famcy_route_func_name_iam_login"))
 		else:
 			# Render all content
 			current_page.body = super(FPage, current_page).render()
