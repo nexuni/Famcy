@@ -293,9 +293,21 @@ class FBackgroundTask(FSubmission):
 
 	def tojson(self, str_format=False):
 		self.func(self, self.background_info_dict)
-		_ = self.target.render_inner()
-		_ = self.target.body.render_inner()
+
+		if isinstance(self.target, list):
+			target_html = []
+			target_id = []
+			for t in self.target:
+				_ = t.render_inner()
+				_ = t.body.render_inner()
+				target_html.append(t.body.html)
+				target_id.append(t.id)
+		else:
+			_ = self.target.render_inner()
+			_ = self.target.body.render_inner()
+			target_html = self.target.body.html
+			target_id = self.target.id
 		
 		content = {"data": self.background_info_dict, "submission_id": str(self.obj_key), 
-			"page_id": self.origin.id, "target_id": self.target.id, "target_innerHTML": self.target.body.html, "target_attribute": self.target_attr}
+			"page_id": self.origin.id, "target_id": target_id, "target_innerHTML": target_html, "target_attribute": self.target_attr}
 		return content if not str_format else json.dumps(content)
