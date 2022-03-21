@@ -25,7 +25,7 @@ class FamcyPageQueue:
         route_name = '_'.join(route_list)
 
         session[route_name+"BackgroundQueueDict"].add(value, priority)
-        print("add", session[route_name+"BackgroundQueueDict"])
+        # print("add", session[route_name+"BackgroundQueueDict"])
 
 class FamcyPriorityQueue:
     """

@@ -161,7 +161,7 @@ class FPage(FamcyWidget):
 			# content_data = "<h1>You are not authorized to view this page!</h1>"
 			session["login_permission"] = "You are not authorized to view this page!"
 			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
-			# return redirect(url_for("MainBlueprint.famcy_route_func_name_iam_login"))
+			
 		else:
 			# Render all content
 			current_page.body = super(FPage, current_page).render()
