@@ -2,6 +2,7 @@
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory, g, Response, stream_with_context
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
+from flask_sse import sse
 import redis
 from flask_kvsession import KVSessionExtension, KVSessionInterface
 from simplekv.memory.redisstore import RedisStore
@@ -104,6 +105,7 @@ def create_app(famcy_id, production=False):
 	# --- Main app start zone
 	# ------------------------
 	app = Flask(__name__)
+	globals()["app"] = app
 	# Some sort of security here -> TODO check on this
 	app.config['SECRET_KEY'] = FManager.get_credentials("flask_secret_key", "").encode("utf-8")
 
@@ -121,8 +123,6 @@ def create_app(famcy_id, production=False):
 
 	# redis server
 	r = redis.Redis()
-	# q = Queue(connection=r)
-	# globals()["q"] = q
 
 	store = RedisStore(r)
 	globals()["store"] = store
@@ -131,6 +131,11 @@ def create_app(famcy_id, production=False):
 	else:
 		KVSessionInterface.serialization_method = pickle
 	KVSessionExtension(store, app)
+
+	# event based
+	app.config["REDIS_URL"] = "redis://localhost"
+	globals()["sse"] = sse
+	FManager["sse"] = sse
 
 	# ros2
 	FManager.ros2_init()
@@ -168,6 +173,9 @@ def create_app(famcy_id, production=False):
 
 	# Register the main blueprint that is used in the FamcyPage
 	app.register_blueprint(MainBlueprint)
+
+	# Register the sse blueprint that is used in the FamcyPage
+	# app.register_blueprint(sse, url_prefix='/stream')
 
 	# Init Login Manager and Related Stuffs
 	if FManager["ConsoleConfig"]["with_login"]:

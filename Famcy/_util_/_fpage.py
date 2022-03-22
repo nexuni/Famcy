@@ -11,7 +11,6 @@ import abc
 import pickle
 import os
 import sys
-import queue
 
 class FPage(FamcyWidget):
 	"""
@@ -44,6 +43,7 @@ class FPage(FamcyWidget):
 	permission = None
 	background_thread_flag = False
 	background_freq = 0.5
+	event_source_flag=False
 
 	def __init__(self, layout_mode=FLayoutMode.recommend):
 		super(FPage, self).__init__()
@@ -98,12 +98,13 @@ class FPage(FamcyWidget):
 			cls.__dict__[key] = value
 
 	@classmethod
-	def register(cls, route, style, permission_level=0, background_thread=False, background_freq=0.5, init_cls=None):
+	def register(cls, route, style, permission_level=0, background_thread=False, background_freq=0.5, init_cls=None, event_source_flag=False):
 		cls.route = route
 		cls.style = style
 		cls.permission = FPermissions(permission_level)
 		cls.background_thread_flag = background_thread
 		cls.background_freq = background_freq
+		cls.event_source_flag = event_source_flag
 
 		route_func = lambda: cls.render(init_cls=init_cls)
 		route_func.__name__ = "famcy_route_func_name"+route.replace("/", "_")
@@ -123,6 +124,9 @@ class FPage(FamcyWidget):
 				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(login_required(bg_func))
 			else:
 				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(bg_func)
+
+		if cls.event_source_flag:
+			Famcy.app.register_blueprint(Famcy.sse, url_prefix=cls.route+"/event_source")
 		
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
@@ -161,7 +165,7 @@ class FPage(FamcyWidget):
 			# content_data = "<h1>You are not authorized to view this page!</h1>"
 			session["login_permission"] = "You are not authorized to view this page!"
 			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
-			
+
 		else:
 			# Render all content
 			current_page.body = super(FPage, current_page).render()

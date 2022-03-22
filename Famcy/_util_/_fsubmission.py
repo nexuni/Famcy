@@ -311,3 +311,5 @@ class FBackgroundTask(FSubmission):
 		content = {"data": self.background_info_dict, "submission_id": str(self.obj_key), 
 			"page_id": self.origin.id, "target_id": target_id, "target_innerHTML": target_html, "target_attribute": self.target_attr}
 		return content if not str_format else json.dumps(content)
+
+
