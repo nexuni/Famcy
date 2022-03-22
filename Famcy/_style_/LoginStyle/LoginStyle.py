@@ -28,4 +28,4 @@ class LoginStyle(Famcy.FamcyStyle):
 		load_spinner = self.loader.render()
 
 		body_on_load = "background_loop('" + self.main_url + str(route) + "/bgloop" + "', '" + str(route) + "', " + str(time) + ");console.log('start!')" if background_flag else ""
-		return render_template("login.html", font_theme=font_theme, form_init_js=form_init_js, load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)
+		return render_template("login.html", event_source=str(self.main_url)+"/"+str(route)+"/event_source", font_theme=font_theme, form_init_js=form_init_js, load_spinner=load_spinner, color_theme=color_theme, html_header=html_header, content=content, extra_script=extra_script, end_js=end_js, body_on_load=body_on_load)

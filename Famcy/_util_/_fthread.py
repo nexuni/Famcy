@@ -1,6 +1,6 @@
 import threading
 import enum
-from flask import session, g
+from flask import session, g, request
 
 class FPriority(enum.IntEnum):
     """
@@ -16,12 +16,16 @@ class FamcyPageQueue:
         super(FamcyPageQueue, self).__init__()
         self.BackgroundQueueDict = {}
 
-    def init_queue(self, _id):
-        session["BackgroundQueueDict"] = FamcyPriorityQueue()
+    # def init_queue(self, _id):
+    #     session["BackgroundQueueDict"] = FamcyPriorityQueue()
 
     def add(self, value, priority):
-        session["BackgroundQueueDict"].add(value, priority)
-        print("add", session["BackgroundQueueDict"])
+        route_list = request.path[1:].split("/")
+        del route_list[-1]
+        route_name = '_'.join(route_list)
+
+        session[route_name+"BackgroundQueueDict"].add(value, priority)
+        # print("add", session[route_name+"BackgroundQueueDict"])
 
 class FamcyPriorityQueue:
     """

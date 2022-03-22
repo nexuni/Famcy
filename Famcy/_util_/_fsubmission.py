@@ -7,7 +7,7 @@ import Famcy
 import _ctypes
 import os
 import datetime
-from flask import session
+from flask import session, request
 from werkzeug.utils import secure_filename
 
 # GLOBAL HELPER
@@ -178,7 +178,9 @@ class FSubmissionSijaxHandler(object):
 			obj_response.script(extra_script)
 			obj_response.script("$('#loading_holder').css('display','none');")
 
-		session["current_page"] = FSubmissionSijaxHandler.current_page
+		route_list = request.path[1:].split("/")
+		route_name = '_'.join(route_list)
+		session[route_name+"current_page"] = FSubmissionSijaxHandler.current_page
 
 	@staticmethod
 	# @exception_handler
@@ -235,7 +237,9 @@ class FSubmissionSijaxHandler(object):
 			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, form_values["fsubmission_obj"][0])
 		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, fsubmission_obj)
 
-		session["current_page"] = FSubmissionSijaxHandler.current_page
+		route_list = request.path[1:].split("/")
+		route_name = '_'.join(route_list)
+		session[route_name+"current_page"] = FSubmissionSijaxHandler.current_page
 
 
 class FSubmission:
@@ -289,9 +293,23 @@ class FBackgroundTask(FSubmission):
 
 	def tojson(self, str_format=False):
 		self.func(self, self.background_info_dict)
-		_ = self.target.render_inner()
-		_ = self.target.body.render_inner()
+
+		if isinstance(self.target, list):
+			target_html = []
+			target_id = []
+			for t in self.target:
+				_ = t.render_inner()
+				_ = t.body.render_inner()
+				target_html.append(t.body.html)
+				target_id.append(t.id)
+		else:
+			_ = self.target.render_inner()
+			_ = self.target.body.render_inner()
+			target_html = self.target.body.html
+			target_id = self.target.id
 		
 		content = {"data": self.background_info_dict, "submission_id": str(self.obj_key), 
-			"page_id": self.origin.id, "target_id": self.target.id, "target_innerHTML": self.target.body.html, "target_attribute": self.target_attr}
+			"page_id": self.origin.id, "target_id": target_id, "target_innerHTML": target_html, "target_attribute": self.target_attr}
 		return content if not str_format else json.dumps(content)
+
+

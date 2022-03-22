@@ -11,7 +11,6 @@ import abc
 import pickle
 import os
 import sys
-import queue
 
 class FPage(FamcyWidget):
 	"""
@@ -44,6 +43,7 @@ class FPage(FamcyWidget):
 	permission = None
 	background_thread_flag = False
 	background_freq = 0.5
+	event_source_flag=False
 
 	def __init__(self, layout_mode=FLayoutMode.recommend):
 		super(FPage, self).__init__()
@@ -56,7 +56,11 @@ class FPage(FamcyWidget):
 
 		if self.background_thread_flag:
 			self.sijax_response = None
-			session["BackgroundQueueDict"] = FamcyPriorityQueue()
+
+			route_list = self.route[1:].split("/")
+			route_name = '_'.join(route_list)
+			session[route_name+"BackgroundQueueDict"] = FamcyPriorityQueue()
+
 			# Check loop correctness
 			assert getattr(self, "background_thread_inner", None), "Must implement background_thread_inner"
 			# self.bthread = FamcyThread(target=self.background_thread_loop, daemon=True)
@@ -94,12 +98,13 @@ class FPage(FamcyWidget):
 			cls.__dict__[key] = value
 
 	@classmethod
-	def register(cls, route, style, permission_level=0, background_thread=False, background_freq=0.5, init_cls=None):
+	def register(cls, route, style, permission_level=0, background_thread=False, background_freq=0.5, init_cls=None, event_source_flag=False):
 		cls.route = route
 		cls.style = style
 		cls.permission = FPermissions(permission_level)
 		cls.background_thread_flag = background_thread
 		cls.background_freq = background_freq
+		cls.event_source_flag = event_source_flag
 
 		route_func = lambda: cls.render(init_cls=init_cls)
 		route_func.__name__ = "famcy_route_func_name"+route.replace("/", "_")
@@ -119,15 +124,21 @@ class FPage(FamcyWidget):
 				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(login_required(bg_func))
 			else:
 				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(bg_func)
+
+		if cls.event_source_flag:
+			Famcy.app.register_blueprint(Famcy.sse, url_prefix=cls.route+"/event_source")
 		
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
+		route_list = request.path[1:].split("/")
+		route_name = '_'.join(route_list)
+
 		if g.sijax.is_sijax_request:
 			sijaxHandler = FSubmissionSijaxHandler
-			sijaxHandler.current_page = session.get('current_page')
+			sijaxHandler.current_page = session.get(route_name+'current_page')
 
 			# code for upload form
-			upload_list = session.get('current_page').find_class(session.get('current_page'), "upload_form")
+			upload_list = session.get(route_name+'current_page').find_class(session.get(route_name+'current_page'), "upload_form")
 			for _item in upload_list:
 				_ = g.sijax.register_upload_callback(_item.id, sijaxHandler.upload_form_handler)
 
@@ -139,14 +150,13 @@ class FPage(FamcyWidget):
 			if init_cls:
 				current_page = init_cls
 			else:
-				if "current_page" in session.keys():
-					if "BackgroundQueueDict" in session.keys():
-						del session["BackgroundQueueDict"]
-					# Famcy.FamcyBackgroundQueue.remove_queue(session["current_page"].id)
-					del session["current_page"]
+				if route_name+"current_page" in session.keys():
+					if route_name+"BackgroundQueueDict" in session.keys():
+						del session[route_name+"BackgroundQueueDict"]
+					del session[route_name+"current_page"]
 				current_page = cls()
 			if not isinstance(cls.style, Famcy.VideoStreamStyle):
-				session["current_page"] = current_page
+				session[route_name+"current_page"] = current_page
 				
 
 		form_init_js = ''	# no use
@@ -155,6 +165,7 @@ class FPage(FamcyWidget):
 			# content_data = "<h1>You are not authorized to view this page!</h1>"
 			session["login_permission"] = "You are not authorized to view this page!"
 			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
+
 		else:
 			# Render all content
 			current_page.body = super(FPage, current_page).render()
@@ -170,12 +181,16 @@ class FPage(FamcyWidget):
 
 	@staticmethod
 	def background_generator_loop():
-		_page = session.get('current_page')
+		route_list = request.path[1:].split("/")
+		del route_list[-1]
+		route_name = '_'.join(route_list)
+
+		_page = session.get(route_name+'current_page')
 		_page.background_thread_inner()
-		session['current_page'] = _page
+		session[route_name+'current_page'] = _page
 
 		try:
-			baction = session.get('BackgroundQueueDict').pop()
+			baction = session.get(route_name+'BackgroundQueueDict').pop()
 			indicator = True
 			message = baction.tojson()
 
