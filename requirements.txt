@@ -1,6 +1,7 @@
 flask
 flask_login
 flask_sijax
+flask_sse
 gadgethiServerUtils==999.999
 markdown
 redis==4.1.0
