@@ -22,6 +22,7 @@ class pureInput(Famcy.FamcyInputBlock):
             "num_range": None,                                  # if type == number
             "placeholder": "",
             "mandatory": False,
+            "align_position": "down",
             "action_after_post": "clean",                       # (clean / save)
         }
 
@@ -42,7 +43,8 @@ class pureInput(Famcy.FamcyInputBlock):
         script = Famcy.script()
 
         self.body.addElement(l_temp)
-        self.body.addElement(p_temp)
+        if self.value['align_position'] == "down":
+            self.body.addElement(p_temp) # position will align down   
         self.body.addElement(input_temp)
         self.body.addStaticScript(script)
 
