@@ -26,14 +26,7 @@
     </script>
     <script type="text/javascript" src="/static/js/event_source_js.js"></script>
     <script type="text/javascript">
-    	var source = new EventSource('{{ event_source|safe }}');
-	    source.addEventListener('publish', function(event) {
-	        var data = JSON.parse(event.data);
-	        update_event_source_target(data)
-	    }, false);
-	    source.addEventListener('error', function(event) {
-	        console.log("Error"+ event)
-	    }, false);
+    	{% if event_source %}{{ event_source|safe }}{% endif %}
     </script>
 
 </head>
