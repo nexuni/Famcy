@@ -154,6 +154,8 @@ class FPage(FamcyWidget):
 					if route_name+"BackgroundQueueDict" in session.keys():
 						del session[route_name+"BackgroundQueueDict"]
 					del session[route_name+"current_page"]
+				# reset Famcy widget id
+				FamcyWidget.reset_id()
 				current_page = cls()
 			if not isinstance(cls.style, Famcy.VideoStreamStyle):
 				session[route_name+"current_page"] = current_page

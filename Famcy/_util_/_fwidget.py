@@ -1,6 +1,7 @@
 import abc
 import json
 import Famcy
+import time
 from Famcy._util_._fthread import *
 from Famcy._util_._fsubmission import *
 
@@ -18,9 +19,13 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		* preload(): action before the rendering
 		* postload(): actions after the rendering
 	""" 
+	id_iter = 0
+
 	def __init__(self):
-		self.id = "famcy"+str(id(self))
-		self.name = "famcy_name"+str(id(self))
+		# update next id number
+		FamcyWidget.next_id()
+		self.id = "famcy"+str(FamcyWidget.get_id())
+		self.name = "famcy_name"+str(FamcyWidget.get_id())
 		self.action = ""
 		self.loader = Famcy.FManager["ConsoleConfig"]["DEFAULT_LOADER"]
 		self.page_parent = None
@@ -45,6 +50,20 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.submit_value_name = self.name
 
 		self.link = Famcy.FManager["ConsoleConfig"]["main_url"]+"/"+self.id
+
+	@classmethod
+	def reset_id(cls):
+		cls.id_iter = 0
+		# print('cls.id_iter:', cls.id_iter)
+
+	@classmethod
+	def get_id(cls):
+		return cls.id_iter
+
+	@classmethod
+	def next_id(cls):
+		cls.id_iter += 1
+		# print('next_id:', cls.id_iter)
 
 	def __setitem__(self, key, value):
 		self.attributes[key] = value
