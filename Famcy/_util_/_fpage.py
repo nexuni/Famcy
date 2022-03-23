@@ -179,7 +179,7 @@ class FPage(FamcyWidget):
 				end_script += e_s
 
 			# Apply style at the end
-			return current_page.style.render(current_page.header_script+head_script, content_data, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
+			return current_page.style.render(current_page.header_script+head_script, content_data, event_source_flag=current_page.event_source_flag, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
 
 	@staticmethod
 	def background_generator_loop():
