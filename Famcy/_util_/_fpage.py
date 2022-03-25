@@ -183,9 +183,11 @@ class FPage(FamcyWidget):
 
 	@staticmethod
 	def background_generator_loop():
+		print("request.path: ", request.path)
 		route_list = request.path[1:].split("/")
 		del route_list[-1]
 		route_name = '_'.join(route_list)
+		print("route_name: ", route_name)
 
 		_page = session.get(route_name+'current_page')
 		_page.background_thread_inner()
