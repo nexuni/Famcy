@@ -20,9 +20,12 @@ class FamcyPageQueue:
     #     session["BackgroundQueueDict"] = FamcyPriorityQueue()
 
     def add(self, value, priority):
-        route_list = request.path[1:].split("/")
-        del route_list[-1]
-        route_name = '_'.join(route_list)
+        if isinstance(value.target, list):
+            _page = value.target[0].find_page_parent(value.target[0])
+        else:
+            _page = value.target.find_page_parent(value.target)
+        route_name = _page.route.replace("/", "_")[1:]
+        print('route_name: ', route_name)
 
         session[route_name+"BackgroundQueueDict"].add(value, priority)
         # print("add", session[route_name+"BackgroundQueueDict"])

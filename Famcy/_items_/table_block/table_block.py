@@ -32,6 +32,9 @@ class table_block(Famcy.FamcyBlock):
                 "page_size": 1,
                 "page_list": [1, 2, "all"]
             },
+
+            "table_height": "200px",
+
             "column": [[{
                     "title": 'col_title1 name',
                     "field": 'col_title1',
@@ -72,6 +75,36 @@ class table_block(Famcy.FamcyBlock):
                     "col_title1": "row_content31",
                     "col_title2": "row_content32",
                     "col_title3": "row_content33"
+                },
+                {
+                    "col_title1": "row_content11",
+                    "col_title2": "row_content12",
+                    "col_title3": "row_content13"
+                },
+                {
+                    "col_title1": "row_content21",
+                    "col_title2": "row_content22",
+                    "col_title3": "row_content23"
+                },
+                {
+                    "col_title1": "row_content31",
+                    "col_title2": "row_content32",
+                    "col_title3": "row_content33"
+                },
+                {
+                    "col_title1": "row_content11",
+                    "col_title2": "row_content12",
+                    "col_title3": "row_content13"
+                },
+                {
+                    "col_title1": "row_content21",
+                    "col_title2": "row_content22",
+                    "col_title3": "row_content23"
+                },
+                {
+                    "col_title1": "row_content31",
+                    "col_title2": "row_content32",
+                    "col_title3": "row_content33"
                 }
             ]
         }
@@ -85,7 +118,7 @@ class table_block(Famcy.FamcyBlock):
             _tr = Famcy.tr()
 
             # generate btn
-            if self.value["input_button"] == "checkbox" or self.value["input_button"] == "radio":
+            if self.value["input_button"] == "checkbox":
                 _thb = Famcy.th()
                 _thb.style["text-align"] = 'center'
                 _thb.style["vertical-align"] = 'middle'
@@ -100,6 +133,7 @@ class table_block(Famcy.FamcyBlock):
                 _thi = Famcy.input()
                 _thi["name"] = str(self.name)
                 _thi["type"] = self.value["input_button"]
+                _thi["onclick"] = "select_all(this, 'tbody" + self.id + "')"
                 _ths = Famcy.span()
 
                 _thl.addElement(_thi)
@@ -148,6 +182,7 @@ class table_block(Famcy.FamcyBlock):
                 _tdl = Famcy.label()
 
                 _tdi = Famcy.input()
+                _tdi["className"] = "table_btn"
                 _tdi["name"] = str(self.name)
                 _tdi["type"] = self.value["input_button"]
                 _tdi["data-index"] = str(i)
@@ -169,12 +204,13 @@ class table_block(Famcy.FamcyBlock):
 
             _body.addElement(_tr)
 
-        if self.value["page_footer"]:
-            
-            # display first page
-            for x in range(self.value["page_footer_detail"]["page_size"]):
+        # display first page
+        page_size = self.value["page_footer_detail"]["page_size"] if isinstance(self.value["page_footer_detail"]["page_size"], int) else len(data)
+        for x in range(page_size):
+            if len(_body.children) > x:
                 _body.children[x].classList.remove("display_none")
 
+        if self.value["page_footer"]:
             _h3 = Famcy.h3()
             _h3.innerHTML = "每頁顯示資料數: "
             self.body.children[2].addElement(_h3)
@@ -183,11 +219,32 @@ class table_block(Famcy.FamcyBlock):
                 _b = Famcy.button()
                 _b.innerHTML = str(p)
                 _b["className"] = "pageBtn"
-                _b["onclick"] = "go_to_page('" + str(p) + "', 'tbody" + self.id + "')"
+                _b["onclick"] = "go_to_page('" + str(p) + "', '" + self.id + "')"
                 self.body.children[2].addElement(_b)
+
+            # switch page section html
+            _div = Famcy.div()
+            _div["className"] = "switch_page_holder"
+            _div["id"] = "switch_page"+self.id
+            _div["page_size"] = str(page_size)
+            _pbtn = Famcy.button()
+            _pbtn["onclick"] = "go_to_previous_page('" + self.id + "')"
+            _pbtn.innerHTML = "<"
+            _page_num = Famcy.h3()
+            _page_num.innerHTML = "1"
+            _nbtn = Famcy.button()
+            _nbtn["onclick"] = "go_to_next_page('" + self.id + "')"
+            _nbtn.innerHTML = ">"
+            _div.addElement(_pbtn)
+            _div.addElement(_page_num)
+            _div.addElement(_nbtn)
+            self.body.children[2].addElement(_div)
 
         self.body.children[1].addElement(_head)
         self.body.children[1].addElement(_body)
+
+        self.body.style["height"] = self.value["table_height"]
+        self.body.style["overflow"] = "auto"
 
     def init_block(self):
         self.header_script += """
