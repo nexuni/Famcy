@@ -66,8 +66,8 @@ class VideoCameraSnap(object):
 
 
 class VideoStreamStyle(Famcy.FamcyStyle):
-	def __init__(self, path, delay=0.5, snap=False):
-		self.path = path
+	def __init__(self, delay=0.5, snap=False):
+		# self.path = path
 		self.video_camera = VideoCamera
 		self.is_decoded = False
 		self.delay = delay

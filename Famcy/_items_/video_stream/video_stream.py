@@ -3,6 +3,9 @@ import Famcy
 from flask import current_app
 import urllib
 import time
+from threading import Thread
+import cv2
+import base64
 
 class video_stream(Famcy.FamcyBlock):
     """
@@ -22,77 +25,103 @@ class video_stream(Famcy.FamcyBlock):
         for the given fblock. 
         - Return a content dictionary
         """
+        # return {
+        #     "refreash_stream": "刷新",
+        #     "stop_stream": "停止",
+        #     "title": "videoStream",
+        #     "desc": "",
+        #     "rtsp_address": [],
+        #     "video_timeout": [],
+        #     "holder_width": [],
+        #     "holder_height": [],
+        #     "img_path": []
+        # }
+
         return {
-            "refreash_stream": "刷新",
-            "stop_stream": "停止",
-            "title": "videoStream",
-            "desc": "",
-            "rtsp_address": [],
-            "video_timeout": [],
-            "holder_width": [],
-            "holder_height": [],
-            "img_path": []
+            "video_link": 0,            # 'rtsp://rtsp.stream/pattern',
+            "stream_flag": True,
         }
 
+    # def init_block(self):
+    #     self.body = Famcy.div()
+    #     self.body["id"] = self.id
+    #     self.body["className"] = "videoStream"
+
+    #     h3_temp = Famcy.h3()
+    #     p_temp = Famcy.p()
+    #     div_temp = Famcy.div()
+
+    #     self.body.addElement(h3_temp)
+    #     self.body.addElement(p_temp)
+    #     self.body.addElement(div_temp)
+
+    # def render_inner(self):
+
+    #     index = 0
+    #     self.body.children[2].children = []
+    #     for w, h, address, timeout, path in zip(self.value["holder_width"], self.value["holder_height"], self.value["rtsp_address"], self.value["video_timeout"], self.value["img_path"]):
+            
+    #         script_temp = Famcy.script()
+    #         script_temp.innerHTML = """
+    #             $('#mbr' + '%s_' + '%s').bind('click', (e) => {
+    #                 e.target.parentElement.children[0].classList.remove("video_placeholder");
+    #                 e.target.parentElement.children[0].setAttribute("src", "")
+    #                 e.target.parentElement.children[0].setAttribute("src", "%s&datetime=" + new Date().getTime())
+    #             });
+    #             $('#mbd' + '%s_' + '%s').bind('click', (e) => {
+    #                 e.target.parentElement.children[0].classList.add("video_placeholder");
+    #                 e.target.parentElement.children[0].setAttribute("src", "/static/image/transparent.png")
+    #             });
+    #         """ % (index, self.id, path + '?' + urllib.parse.urlencode({"address": address, "timeout": timeout}), index, self.id)
+
+    #         div_temp = Famcy.div()
+    #         div_temp["className"] = "video_holder"
+    #         div_temp.style['width'] = w
+
+    #         img_temp = Famcy.img()
+    #         img_temp["src"] = path + '?' + urllib.parse.urlencode({"address": address, "timeout": timeout, "datetime": time.time()})
+    #         img_temp.style['height'] = h
+
+    #         btn1_temp = Famcy.button()
+    #         btn1_temp["id"] = 'mbr' + str(index) + "_" + self.id
+    #         btn1_temp["className"] = "video_submit_btn"
+    #         btn1_temp.innerHTML = self.value["refreash_stream"]
+
+    #         btn2_temp = Famcy.button()
+    #         btn2_temp["id"] = 'mbd' + str(index) + "_" + self.id
+    #         btn2_temp["className"] = "video_submit_btn"
+    #         btn2_temp.innerHTML = self.value["stop_stream"]
+
+    #         div_temp.addElement(img_temp)
+    #         div_temp.addElement(btn1_temp)
+    #         div_temp.addElement(btn2_temp)
+    #         div_temp.addElement(script_temp)
+
+    #         index += 1
+
+    #     self.body.children[0].innerHTML = self.value["title"]
+    #     self.body.children[1].innerHTML = self.value["desc"]
+    #     self.body.children[2].addElement(div_temp)
+
+    #     return self.body
     def init_block(self):
         self.body = Famcy.div()
         self.body["id"] = self.id
-        self.body["className"] = "videoStream"
 
-        h3_temp = Famcy.h3()
-        p_temp = Famcy.p()
-        div_temp = Famcy.div()
-
-        self.body.addElement(h3_temp)
-        self.body.addElement(p_temp)
-        self.body.addElement(div_temp)
+    def send_a_frame(self):
+        with Famcy.app.app_context():
+            capture = cv2.VideoCapture(self.value["video_link"])
+            while self.value["stream_flag"]:
+                time.sleep(1)
+                frame = capture.read()[1]
+                cnt = cv2.imencode('.jpg',frame)[1]
+                b64 = base64.b64encode(cnt).decode("utf-8")
+                html = "<img src='data:image/jpeg;base64,"+str(b64) +"'>"
+                Famcy.sse.publish({"indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='publish')
 
     def render_inner(self):
-
-        index = 0
-        self.body.children[2].children = []
-        for w, h, address, timeout, path in zip(self.value["holder_width"], self.value["holder_height"], self.value["rtsp_address"], self.value["video_timeout"], self.value["img_path"]):
-            
-            script_temp = Famcy.script()
-            script_temp.innerHTML = """
-                $('#mbr' + '%s_' + '%s').bind('click', (e) => {
-                    e.target.parentElement.children[0].classList.remove("video_placeholder");
-                    e.target.parentElement.children[0].setAttribute("src", "")
-                    e.target.parentElement.children[0].setAttribute("src", "%s&datetime=" + new Date().getTime())
-                });
-                $('#mbd' + '%s_' + '%s').bind('click', (e) => {
-                    e.target.parentElement.children[0].classList.add("video_placeholder");
-                    e.target.parentElement.children[0].setAttribute("src", "/static/image/transparent.png")
-                });
-            """ % (index, self.id, path + '?' + urllib.parse.urlencode({"address": address, "timeout": timeout}), index, self.id)
-
-            div_temp = Famcy.div()
-            div_temp["className"] = "video_holder"
-            div_temp.style['width'] = w
-
-            img_temp = Famcy.img()
-            img_temp["src"] = path + '?' + urllib.parse.urlencode({"address": address, "timeout": timeout, "datetime": time.time()})
-            img_temp.style['height'] = h
-
-            btn1_temp = Famcy.button()
-            btn1_temp["id"] = 'mbr' + str(index) + "_" + self.id
-            btn1_temp["className"] = "video_submit_btn"
-            btn1_temp.innerHTML = self.value["refreash_stream"]
-
-            btn2_temp = Famcy.button()
-            btn2_temp["id"] = 'mbd' + str(index) + "_" + self.id
-            btn2_temp["className"] = "video_submit_btn"
-            btn2_temp.innerHTML = self.value["stop_stream"]
-
-            div_temp.addElement(img_temp)
-            div_temp.addElement(btn1_temp)
-            div_temp.addElement(btn2_temp)
-            div_temp.addElement(script_temp)
-
-            index += 1
-
-        self.body.children[0].innerHTML = self.value["title"]
-        self.body.children[1].innerHTML = self.value["desc"]
-        self.body.children[2].addElement(div_temp)
+        # create two new threads
+        t1 = Thread(target=self.send_a_frame)
+        t1.start()
 
         return self.body
