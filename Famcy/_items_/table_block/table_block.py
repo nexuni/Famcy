@@ -20,7 +20,7 @@ class table_block(Famcy.FamcyBlock):
         - Return a content dictionary
         """
         return {
-            "input_button": "checkbox",                     # ("checkbox" / "radio" / "none")
+            "input_button": "radio",                     # ("checkbox" / "radio" / "none")
             "input_value_col_field": "col_title1",          # if input_button != "none"
 
             "page_detail": True,                            # (true / false)
@@ -62,9 +62,10 @@ class table_block(Famcy.FamcyBlock):
             ]],
             "data": [
                 {
-                    "col_title1": "row_content11",
-                    "col_title2": "row_content12",
-                    "col_title3": "row_content13"
+                    "col_title2": "row_content11",
+                    "col_title1": "row_content12",
+                    "col_title3": "row_content13",
+                    "col_title4": "row_content13"
                 },
                 {
                     "col_title1": "row_content21",
@@ -118,15 +119,15 @@ class table_block(Famcy.FamcyBlock):
             _tr = Famcy.tr()
 
             # generate btn
+            _thb = Famcy.th()
+            _thd = Famcy.div()
+            _thd["className"] = "th-inner"
+
             if self.value["input_button"] == "checkbox":
-                _thb = Famcy.th()
                 _thb.style["text-align"] = 'center'
                 _thb.style["vertical-align"] = 'middle'
                 _thb["rowspan"] = "1"
                 _thb["data-field"] = "state"
-
-                _thd = Famcy.div()
-                _thd["className"] = "th-inner"
 
                 _thl = Famcy.label()
 
@@ -139,8 +140,8 @@ class table_block(Famcy.FamcyBlock):
                 _thl.addElement(_thi)
                 _thl.addElement(_ths)
                 _thd.addElement(_thl)
-                _thb.addElement(_thd)
-                _tr.addElement(_thb)
+            _thb.addElement(_thd)
+            _tr.addElement(_thb)
 
             for c in t:
                 column_dict[c["field"]] = c
@@ -194,12 +195,12 @@ class table_block(Famcy.FamcyBlock):
                 _tdb.addElement(_tdl)
                 _tr.addElement(_tdb)
 
-            for k, v in d.items():
+            for k in column_dict.keys():
                 _td = Famcy.td()
                 _td.style["text-align"] = column_dict[k]["align"]
                 _td.style["vertical-align"] = column_dict[k]["valign"]
                 _td["data-field"] = column_dict[k]["field"]
-                _td.innerHTML = v
+                _td.innerHTML = d[k] if k in d.keys() else ""
                 _tr.addElement(_td)
 
             _body.addElement(_tr)
@@ -280,72 +281,9 @@ class table_block(Famcy.FamcyBlock):
         self.body.addStaticScript(static_script, position="head")
 
     def render_inner(self):
+        # remove previous data
+        self.body.children[1].children = []
+        self.body.children[2].children = []
+
         self.generate_table()
-        # self.body.children[2].innerHTML = """
-        #     var table_value = %s;
-        #     var table_init = {
-        #         "data": {
-        #             "total": table_value["data"].length,
-        #             "totalNotFiltered": table_value["data"].length,
-        #             "rows": table_value["data"]
-        #         },
-        #         "columns": table_value["column"]
-        #     };
-
-        #     if (table_value["toolbar"]) {
-        #         table_init["toolbar"] = "#toolbar_%s"
-        #         table_init["search"] = true
-        #         table_init["showExport"] = true
-        #         table_init["showColumns"] = true
-        #         table_init["showColumns-toggle-all"] = true
-        #         table_init["showRefresh"] = true
-        #         table_init["showToggle"] = true
-        #         table_init["showFullscreen"] = true
-        #     };
-
-        #     if (table_value["page_footer"]) {
-        #         table_init["pagination"] = true
-        #         table_init["pageSize"] = table_value["page_footer_detail"]["page_size"]
-        #         table_init["pageList"] = table_value["page_footer_detail"]["page_list"]
-        #         table_init["showFooter"] = true
-        #     };
-
-        #     if (table_value["page_detail"]) {
-        #         table_init["detailView"] = true
-        #         table_init["detailFormatter"] = detailFormatter
-        #     };
-
-        #     if (table_value["input_button"] !== "none") {
-
-        #         var temp = {}
-                
-        #         temp["field"] = "state"
-        #         temp[table_value["input_button"]] = true
-        #         temp["rowspan"] = table_value["column"].length
-        #         temp["align"] = "center"
-        #         temp["valign"] = "middle"
-
-        #         table_init["columns"][0].unshift(temp)
-        #         table_init["idField"] = table_value["input_value_col_field"]
-        #         table_init["selectItemName"] = "%s"
-                        
-        #     };
-        #     function detailFormatter(index, row) {
-        #         if (table_value["page_detail_content"] == "key_value") {
-
-        #             var html = []
-        #             $.each(row, function (key, value) {
-        #                 html.push('<p><b>' + key + ':</b> ' + value + '</p>')
-        #             })
-        #             return html.join('')
-        #         }
-                
-        #         else {
-        #             return table_value["page_detail_content"].join('')
-        #         }
-        #     };
-
-        #     $('#table_%s').bootstrapTable('destroy').bootstrapTable(table_init);
-        # """ % (json.dumps(self.value), self.id, self.name, self.id)
-
         return self.body

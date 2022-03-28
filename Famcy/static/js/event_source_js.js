@@ -11,6 +11,7 @@ var setInnerHTML = function(elm, html) {
 
 function update_event_source_target(res_dict) {
     console.log("res_dict: ", res_dict)
+
     if (res_dict["indicator"]) {
         if (typeof res_dict["message"].target_id == "string") {
             if (document.getElementById(res_dict["message"].target_id)) {
