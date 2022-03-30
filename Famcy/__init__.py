@@ -136,6 +136,7 @@ def create_app(famcy_id, production=False):
 	app.config["REDIS_URL"] = "redis://localhost"
 	globals()["sse"] = sse
 	FManager["sse"] = sse
+	app.register_blueprint(sse, url_prefix="/event_source")
 
 	# ros2
 	FManager.ros2_init()

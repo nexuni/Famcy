@@ -35,7 +35,7 @@ class ClassicStyle(Famcy.FamcyStyle):
 		body_on_load = "background_loop('" + self.main_url + str(route) + "/bgloop" + "', '" + str(route) + "', " + str(time) + ");console.log('start!')" if background_flag else ""
 		if kwargs["event_source_flag"]:
 			_event_source_script = '''
-			var source = new EventSource('%s');
+			var source = new EventSource("/event_source?channel=event_source.%s");
 		    source.addEventListener('publish', function(event) {
 		        var data = JSON.parse(event.data);
 		        update_event_source_target(data)
@@ -43,7 +43,7 @@ class ClassicStyle(Famcy.FamcyStyle):
 		    source.addEventListener('error', function(event) {
 		        console.log("Error"+ event)
 		    }, false);
-			''' % (str(self.main_url)+str(route)+"/event_source")
+			''' % (str(route)[1:])
 		else:
 			_event_source_script = ''
 			

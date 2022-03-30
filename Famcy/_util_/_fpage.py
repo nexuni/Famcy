@@ -125,8 +125,8 @@ class FPage(FamcyWidget):
 			else:
 				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(bg_func)
 
-		if cls.event_source_flag:
-			Famcy.app.register_blueprint(Famcy.sse, url_prefix=cls.route+"/event_source")
+		# if cls.event_source_flag:
+			# Famcy.app.register_blueprint(Famcy.sse, url_prefix=cls.route+"/event_source")
 		
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
