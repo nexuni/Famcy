@@ -38,8 +38,10 @@ class video_stream(Famcy.FamcyBlock):
         # }
 
         return {
-            "video_link": 0,            # 'rtsp://rtsp.stream/pattern',
+            "video_link": 'rtsp://rtsp.stream/pattern',           # 'rtsp://rtsp.stream/pattern',
             "stream_flag": True,
+            "delay": 1,
+            "route_name": "/"
         }
 
     # def init_block(self):
@@ -112,12 +114,12 @@ class video_stream(Famcy.FamcyBlock):
         with Famcy.app.app_context():
             capture = cv2.VideoCapture(self.value["video_link"])
             while self.value["stream_flag"]:
-                time.sleep(1)
+                time.sleep(self.value["delay"])
                 frame = capture.read()[1]
                 cnt = cv2.imencode('.jpg',frame)[1]
                 b64 = base64.b64encode(cnt).decode("utf-8")
                 html = "<img src='data:image/jpeg;base64,"+str(b64) +"'>"
-                Famcy.sse.publish({"indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='publish')
+                Famcy.sse.publish({"indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='publish', channel='event_source.'+self.value["route_name"][1:])
 
     def render_inner(self):
         # create two new threads
