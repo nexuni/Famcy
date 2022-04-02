@@ -140,6 +140,8 @@ class FPage(FamcyWidget):
 
 			g.sijax.register_object(FSubmissionSijaxHandler)
 
+			print("SIJAX session ========", session)
+			print("session_key: ", route_name+'current_page')
 			# code for upload form
 			upload_list = session.get(route_name+'current_page').find_class(session.get(route_name+'current_page'), "upload_form")
 			for _item in upload_list:
@@ -153,6 +155,7 @@ class FPage(FamcyWidget):
 
 			return sijax_res
 
+		print("Non SIJAX ========", session)
 		# init page
 		if request.method == 'GET':
 			print("GET render")
