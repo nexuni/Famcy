@@ -140,7 +140,7 @@ def create_app(famcy_id, production=False):
 	app.register_blueprint(sse, url_prefix="/event_source")
 
 	# avoid multiple thread race condition issue
-	sem = threading.Semaphore()
+	sem = threading.Lock()
 	globals()["sem"] = sem
 
 	# ros2
