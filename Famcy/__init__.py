@@ -75,6 +75,7 @@ class famcy_sijax(flask_sijax.Sijax):
 		
 	def _on_before_request(self):
 		print("========================_on_before_request")
+		Famcy.sem.acquire()
 		g.sijax = self
 
 		self._sijax = sijax.Sijax()
@@ -87,6 +88,7 @@ class famcy_sijax(flask_sijax.Sijax):
 
 		if self._json_uri is not None:
 			self._sijax.set_json_uri(self._json_uri)
+		Famcy.sem.release()
 
 def create_app(famcy_id, production=False):
 	"""
