@@ -38,7 +38,7 @@ class video_stream(Famcy.FamcyBlock):
         # }
 
         return {
-            "video_link": 'rtsp://rtsp.stream/pattern',           # 'rtsp://rtsp.stream/pattern',
+            "video_link": 0,           # 'rtsp://rtsp.stream/pattern',
             "stream_flag": True,
             "delay": 1,
             "route_name": "/"
@@ -122,7 +122,7 @@ class video_stream(Famcy.FamcyBlock):
                 Famcy.sse.publish({"indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='publish', channel='event_source.'+self.value["route_name"][1:])
 
     def render_inner(self):
-        # create two new threads
+        # create new threads
         t1 = Thread(target=self.send_a_frame)
         t1.start()
 

@@ -16,6 +16,7 @@ import random
 import dill
 import pickle
 import base64
+import threading
 
 from Famcy._util_._fmanager import *
 from Famcy._util_._fauth import *
@@ -122,7 +123,7 @@ def create_app(famcy_id, production=False):
 	FManager.register_csrf(app)
 
 	# redis server
-	r = redis.Redis()
+	r = redis.StrictRedis()
 
 	store = RedisStore(r)
 	globals()["store"] = store
@@ -137,6 +138,10 @@ def create_app(famcy_id, production=False):
 	globals()["sse"] = sse
 	FManager["sse"] = sse
 	app.register_blueprint(sse, url_prefix="/event_source")
+
+	# avoid multiple thread race condition issue
+	sem = threading.Semaphore()
+	globals()["sem"] = sem
 
 	# ros2
 	FManager.ros2_init()

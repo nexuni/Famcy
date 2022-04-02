@@ -125,87 +125,115 @@ class FPage(FamcyWidget):
 			else:
 				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(bg_func)
 
-		# if cls.event_source_flag:
-			# Famcy.app.register_blueprint(Famcy.sse, url_prefix=cls.route+"/event_source")
-		
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
-		route_list = request.path[1:].split("/")
-		route_name = '_'.join(route_list)
+		# handle race condition issue: lock the function
+		Famcy.sem.acquire()
 
-		if g.sijax.is_sijax_request:
-			sijaxHandler = FSubmissionSijaxHandler
-			sijaxHandler.current_page = session.get(route_name+'current_page')
+		try:
+			route_list = request.path[1:].split("/")
+			route_name = '_'.join(route_list)
 
-			# code for upload form
-			upload_list = session.get(route_name+'current_page').find_class(session.get(route_name+'current_page'), "upload_form")
-			for _item in upload_list:
-				_ = g.sijax.register_upload_callback(_item.id, sijaxHandler.upload_form_handler)
+			if g.sijax.is_sijax_request:
+				FSubmissionSijaxHandler.current_page = session.get(route_name+'current_page')
 
-			g.sijax.register_object(sijaxHandler)
-			return g.sijax.process_request()
+				g.sijax.register_object(FSubmissionSijaxHandler)
 
-		# init page
-		if request.method == 'GET':
-			if init_cls:
-				current_page = init_cls
+				# code for upload form
+				upload_list = session.get(route_name+'current_page').find_class(session.get(route_name+'current_page'), "upload_form")
+				for _item in upload_list:
+					attribute = getattr(FSubmissionSijaxHandler, "upload_form_handler")
+					_ = g.sijax.register_upload_callback(_item.id, attribute)
+
+				sijax_res = g.sijax.process_request()
+
+				# handle race condition issue: unlock the function to allow the next request
+				Famcy.sem.release()
+
+				return sijax_res
+
+			# init page
+			if request.method == 'GET':
+				if init_cls:
+					current_page = init_cls
+				else:
+					if route_name+"current_page" in session.keys():
+						if route_name+"BackgroundQueueDict" in session.keys():
+							del session[route_name+"BackgroundQueueDict"]
+						del session[route_name+"current_page"]
+					# reset Famcy widget id
+					FamcyWidget.reset_id()
+					current_page = cls()
+
+				if not isinstance(cls.style, Famcy.VideoStreamStyle):
+					session[route_name+"current_page"] = current_page
+					
+
+			form_init_js = ''	# no use
+			end_script = ''
+			if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
+				# content_data = "<h1>You are not authorized to view this page!</h1>"
+				session["login_permission"] = "You are not authorized to view this page!"
+
+				# handle race condition issue: unlock the function to allow the next request
+				Famcy.sem.release()
+
+				return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
+
 			else:
-				if route_name+"current_page" in session.keys():
-					if route_name+"BackgroundQueueDict" in session.keys():
-						del session[route_name+"BackgroundQueueDict"]
-					del session[route_name+"current_page"]
-				# reset Famcy widget id
-				FamcyWidget.reset_id()
-				current_page = cls()
-			if not isinstance(cls.style, Famcy.VideoStreamStyle):
-				session[route_name+"current_page"] = current_page
-				
+				# Render all content
+				current_page.body = super(FPage, current_page).render()
+				content_data = current_page.body.render_inner()
+				head_script, end_script = current_page.body.render_script()
+				for temp, _ in current_page.layout.staticContent:
+					h_s, e_s = temp.body.render_script()
+					head_script += h_s
+					end_script += e_s
 
-		form_init_js = ''	# no use
-		end_script = ''
-		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
-			# content_data = "<h1>You are not authorized to view this page!</h1>"
-			session["login_permission"] = "You are not authorized to view this page!"
-			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
+				# handle race condition issue: unlock the function to allow the next request
+				Famcy.sem.release()
 
-		else:
-			# Render all content
-			current_page.body = super(FPage, current_page).render()
-			content_data = current_page.body.render_inner()
-			head_script, end_script = current_page.body.render_script()
-			for temp, _ in current_page.layout.staticContent:
-				h_s, e_s = temp.body.render_script()
-				head_script += h_s
-				end_script += e_s
+				# Apply style at the end
+				return current_page.style.render(current_page.header_script+head_script, content_data, event_source_flag=current_page.event_source_flag, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
 
-			# Apply style at the end
-			return current_page.style.render(current_page.header_script+head_script, content_data, event_source_flag=current_page.event_source_flag, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
+		except:
+			# unlock the function while getting error
+			Famcy.sem.release()
 
 	@staticmethod
 	def background_generator_loop():
-		print("request.path: ", request.path)
-		route_list = request.path[1:].split("/")
-		del route_list[-1]
-		route_name = '_'.join(route_list)
-		print("route_name: ", route_name)
-
-		_page = session.get(route_name+'current_page')
-		_page.background_thread_inner()
-		session[route_name+'current_page'] = _page
+		# handle race condition issue: lock the function
+		Famcy.sem.acquire()
 
 		try:
-			baction = session.get(route_name+'BackgroundQueueDict').pop()
-			indicator = True
-			message = baction.tojson()
+			route_list = request.path[1:].split("/")
+			del route_list[-1]
+			route_name = '_'.join(route_list)
 
-		except Exception as e:
-			indicator = False
-			message = str(e)
+			_page = session.get(route_name+'current_page')
+			_page.background_thread_inner()
+			session[route_name+'current_page'] = _page
 
-		def generate():
-			yield json.dumps({"indicator": indicator, "message": message})
+			try:
+				baction = session.get(route_name+'BackgroundQueueDict').pop()
+				indicator = True
+				message = baction.tojson()
 
-		return Response(generate(), mimetype='text/plain')
+			except Exception as e:
+				indicator = False
+				message = str(e)
+
+			def generate():
+				yield json.dumps({"indicator": indicator, "message": message})
+
+			# handle race condition issue: unlock the function to allow the next request
+			Famcy.sem.release()
+
+			return Response(generate(), mimetype='text/plain')
+
+		except:
+			# handle race condition issue: unlock the function to allow the next request
+			Famcy.sem.release()
 
 	def background_thread_inner(self):
 		"""
