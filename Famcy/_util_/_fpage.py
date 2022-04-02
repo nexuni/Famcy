@@ -171,6 +171,7 @@ class FPage(FamcyWidget):
 				current_page = cls()
 
 			if not isinstance(cls.style, Famcy.VideoStreamStyle):
+				print(route_name + "___ Save to session current_page")
 				session[route_name+"current_page"] = current_page
 
 		elif request.method == 'POST':
