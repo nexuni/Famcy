@@ -167,6 +167,10 @@ class FPage(FamcyWidget):
 
 				if not isinstance(cls.style, Famcy.VideoStreamStyle):
 					session[route_name+"current_page"] = current_page
+
+			elif request.method == 'POST':
+				Famcy.sem.release()
+				return
 					
 
 			form_init_js = ''	# no use
