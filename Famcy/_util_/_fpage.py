@@ -111,9 +111,9 @@ class FPage(FamcyWidget):
 
 		if cls.permission.required_login():
 			# Register the page render to the main blueprint
-			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(login_required(route_func))
+			Famcy.FManager["flask_sijax"].route(Famcy.MainBlueprint, cls.route)(login_required(route_func))
 		else:
-			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(route_func)
+			Famcy.FManager["flask_sijax"].route(Famcy.MainBlueprint, cls.route)(route_func)
 
 		if cls.background_thread_flag:
 			bg_func = lambda: cls.background_generator_loop()
@@ -213,35 +213,37 @@ class FPage(FamcyWidget):
 		# handle race condition issue: lock the function
 		Famcy.sem.acquire()
 
+		# try:
+		route_list = request.path[1:].split("/")
+		del route_list[-1]
+		route_name = '_'.join(route_list)
+
+		_page = session.get(route_name+'current_page')
+		_page.background_thread_inner()
+		session[route_name+'current_page'] = _page
+
 		try:
-			route_list = request.path[1:].split("/")
-			del route_list[-1]
-			route_name = '_'.join(route_list)
+			baction = session.get(route_name+'BackgroundQueueDict').pop()
+			indicator = True
+			message = baction.tojson()
 
-			_page = session.get(route_name+'current_page')
-			_page.background_thread_inner()
-			session[route_name+'current_page'] = _page
+		except Exception as e:
+			indicator = False
+			message = str(e)
 
-			try:
-				baction = session.get(route_name+'BackgroundQueueDict').pop()
-				indicator = True
-				message = baction.tojson()
+		def generate():
+			yield json.dumps({"indicator": indicator, "message": message})
 
-			except Exception as e:
-				indicator = False
-				message = str(e)
+		# handle race condition issue: unlock the function to allow the next request
+		Famcy.sem.release()
 
-			def generate():
-				yield json.dumps({"indicator": indicator, "message": message})
+		return Response(generate(), mimetype='text/plain')
 
-			# handle race condition issue: unlock the function to allow the next request
-			Famcy.sem.release()
-
-			return Response(generate(), mimetype='text/plain')
-
-		except:
-			# handle race condition issue: unlock the function to allow the next request
-			Famcy.sem.release()
+		# except:
+		# handle race condition issue: unlock the function to allow the next request
+		print("bg FALLBACK")
+		Famcy.sem.release()
+		return ""
 
 	def background_thread_inner(self):
 		"""

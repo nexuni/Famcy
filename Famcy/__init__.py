@@ -2,6 +2,7 @@
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory, g, Response, stream_with_context
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
+import sijax
 from flask_sse import sse
 import redis
 from flask_kvsession import KVSessionExtension, KVSessionInterface
@@ -66,6 +67,27 @@ FamcyStyleNavBar = FStyleNavBar
 FamcyStyleNavBtns = FStyleNavBtns
 FamcyBackgroundTask = FBackgroundTask
 
+
+class famcy_sijax(flask_sijax.Sijax):
+	def __init__(self):
+		super(famcy_sijax, self).__init__()
+		print("self.__dict__: ", self.__dict__)
+		
+	def _on_before_request(self):
+		print("========================_on_before_request")
+		g.sijax = self
+
+		self._sijax = sijax.Sijax()
+		self._sijax.set_data(request.form)
+
+		url_relative = request.url[len(request.host_url) - 1:]
+		self._sijax.set_request_uri(url_relative)
+
+		print("url_relative: ", url_relative)
+
+		if self._json_uri is not None:
+			self._sijax.set_json_uri(self._json_uri)
+
 def create_app(famcy_id, production=False):
 	"""
 	Main creation function of the famcy application. 
@@ -80,7 +102,8 @@ def create_app(famcy_id, production=False):
 	FManager["CUSTOM_STATIC_PATH"] = FManager.console + "_static_"
 
 	# Sijax, submission related
-	FManager["Sijax"] = flask_sijax
+	FManager["flask_sijax"] = flask_sijax
+	FManager["Sijax"] = famcy_sijax()
 	# FManager["SijaxSubmit"] = SubmitType
 	FManager["SijaxStaticPath"] = FManager.main + 'static/js/sijax/'
 	FManager["SijaxJsonUri"] = '/static/js/sijax/json2.js'
@@ -111,7 +134,7 @@ def create_app(famcy_id, production=False):
 	app.config['SECRET_KEY'] = FManager.get_credentials("flask_secret_key", "").encode("utf-8")
 
 	# Init Sijax
-	FManager["Sijax"].Sijax().init_app(app)
+	FManager["Sijax"].init_app(app)
 	FamcyBackgroundQueue = FamcyPageQueue()
 	globals()["FamcyBackgroundQueue"] = FamcyBackgroundQueue
 
