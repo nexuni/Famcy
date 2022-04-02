@@ -130,79 +130,78 @@ class FPage(FamcyWidget):
 		# handle race condition issue: lock the function
 		Famcy.sem.acquire()
 
-		try:
-			route_list = request.path[1:].split("/")
-			route_name = '_'.join(route_list)
+		# try:
+		route_list = request.path[1:].split("/")
+		route_name = '_'.join(route_list)
 
-			if g.sijax.is_sijax_request:
-				FSubmissionSijaxHandler.current_page = session.get(route_name+'current_page')
+		if g.sijax.is_sijax_request:
+			FSubmissionSijaxHandler.current_page = session.get(route_name+'current_page')
 
-				g.sijax.register_object(FSubmissionSijaxHandler)
+			g.sijax.register_object(FSubmissionSijaxHandler)
 
-				# code for upload form
-				upload_list = session.get(route_name+'current_page').find_class(session.get(route_name+'current_page'), "upload_form")
-				for _item in upload_list:
-					attribute = getattr(FSubmissionSijaxHandler, "upload_form_handler")
-					_ = g.sijax.register_upload_callback(_item.id, attribute)
+			# code for upload form
+			upload_list = session.get(route_name+'current_page').find_class(session.get(route_name+'current_page'), "upload_form")
+			for _item in upload_list:
+				attribute = getattr(FSubmissionSijaxHandler, "upload_form_handler")
+				_ = g.sijax.register_upload_callback(_item.id, attribute)
 
-				sijax_res = g.sijax.process_request()
+			sijax_res = g.sijax.process_request()
 
-				# handle race condition issue: unlock the function to allow the next request
-				Famcy.sem.release()
-
-				return sijax_res
-
-			# init page
-			if request.method == 'GET':
-				if init_cls:
-					current_page = init_cls
-				else:
-					if route_name+"current_page" in session.keys():
-						if route_name+"BackgroundQueueDict" in session.keys():
-							del session[route_name+"BackgroundQueueDict"]
-						del session[route_name+"current_page"]
-					# reset Famcy widget id
-					FamcyWidget.reset_id()
-					current_page = cls()
-
-				if not isinstance(cls.style, Famcy.VideoStreamStyle):
-					session[route_name+"current_page"] = current_page
-
-			elif request.method == 'POST':
-				Famcy.sem.release()
-				return
-					
-
-			form_init_js = ''	# no use
-			end_script = ''
-			if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
-				# content_data = "<h1>You are not authorized to view this page!</h1>"
-				session["login_permission"] = "You are not authorized to view this page!"
-
-				# handle race condition issue: unlock the function to allow the next request
-				Famcy.sem.release()
-
-				return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
-
-			else:
-				# Render all content
-				current_page.body = super(FPage, current_page).render()
-				content_data = current_page.body.render_inner()
-				head_script, end_script = current_page.body.render_script()
-				for temp, _ in current_page.layout.staticContent:
-					h_s, e_s = temp.body.render_script()
-					head_script += h_s
-					end_script += e_s
-
-				# handle race condition issue: unlock the function to allow the next request
-				Famcy.sem.release()
-
-				# Apply style at the end
-				return current_page.style.render(current_page.header_script+head_script, content_data, event_source_flag=current_page.event_source_flag, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
-
-		except:
-			# unlock the function while getting error
+			# handle race condition issue: unlock the function to allow the next request
 			Famcy.sem.release()
+
+			return sijax_res
+
+		# init page
+		if request.method == 'GET':
+			if init_cls:
+				current_page = init_cls
+			else:
+				if route_name+"current_page" in session.keys():
+					if route_name+"BackgroundQueueDict" in session.keys():
+						del session[route_name+"BackgroundQueueDict"]
+					del session[route_name+"current_page"]
+				# reset Famcy widget id
+				FamcyWidget.reset_id()
+				current_page = cls()
+
+			if not isinstance(cls.style, Famcy.VideoStreamStyle):
+				session[route_name+"current_page"] = current_page
+
+		elif request.method == 'POST':
+			Famcy.sem.release()
+			return
+				
+
+		form_init_js = ''	# no use
+		end_script = ''
+		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
+			# content_data = "<h1>You are not authorized to view this page!</h1>"
+			session["login_permission"] = "You are not authorized to view this page!"
+
+			# handle race condition issue: unlock the function to allow the next request
+			Famcy.sem.release()
+
+			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
+
+		else:
+			# Render all content
+			current_page.body = super(FPage, current_page).render()
+			content_data = current_page.body.render_inner()
+			head_script, end_script = current_page.body.render_script()
+			for temp, _ in current_page.layout.staticContent:
+				h_s, e_s = temp.body.render_script()
+				head_script += h_s
+				end_script += e_s
+
+			# handle race condition issue: unlock the function to allow the next request
+			Famcy.sem.release()
+
+			# Apply style at the end
+			return current_page.style.render(current_page.header_script+head_script, content_data, event_source_flag=current_page.event_source_flag, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
+		# except:
+		# unlock the function while getting error
+		Famcy.sem.release()
 
 	@staticmethod
 	def background_generator_loop():
