@@ -3,7 +3,7 @@ from flask import render_template
 
 class PortfolioStyle(Famcy.FamcyStyle):
 	def __init__(self):
-		super(PortfolioStyle, self).__init__()
+		super(PortfolioStyle, self).__init__(sijax_enable=True)
 
 		# set default value
 		self.title = ""

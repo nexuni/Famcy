@@ -3,7 +3,7 @@ from flask import render_template
 
 class LoginStyle(Famcy.FamcyStyle):
 	def __init__(self):
-		super(LoginStyle, self).__init__()
+		super(LoginStyle, self).__init__(sijax_enable=True)
 
 		# set default value
 		self.title = ""

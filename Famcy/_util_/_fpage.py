@@ -109,11 +109,12 @@ class FPage(FamcyWidget):
 		route_func = lambda: cls.render(init_cls=init_cls)
 		route_func.__name__ = "famcy_route_func_name"+route.replace("/", "_")
 
+		selected_blueprint = Famcy.PageBlueprint if cls.style._sijax_enable else Famcy.MainBlueprint
 		if cls.permission.required_login():
 			# Register the page render to the main blueprint
-			Famcy.FManager["flask_sijax"].route(Famcy.MainBlueprint, cls.route)(login_required(route_func))
+			Famcy.FManager["flask_sijax"].route(selected_blueprint, cls.route)(login_required(route_func))
 		else:
-			Famcy.FManager["flask_sijax"].route(Famcy.MainBlueprint, cls.route)(route_func)
+			Famcy.FManager["flask_sijax"].route(selected_blueprint, cls.route)(route_func)
 
 		if cls.background_thread_flag:
 			bg_func = lambda: cls.background_generator_loop()
@@ -129,7 +130,7 @@ class FPage(FamcyWidget):
 	def render(cls, init_cls=None, *args, **kwargs):
 
 		# handle race condition issue: lock the function
-		Famcy.sem.acquire()
+		# Famcy.sem.acquire()
 
 		# try:
 		route_list = g.route_path[1:].split("/")
@@ -153,7 +154,7 @@ class FPage(FamcyWidget):
 			sijax_res = g.sijax.process_request()
 
 			# handle race condition issue: unlock the function to allow the next request
-			Famcy.sem.release()
+			# Famcy.sem.release()
 
 			return sijax_res
 
@@ -183,7 +184,7 @@ class FPage(FamcyWidget):
 
 		elif request.method == 'POST':
 			print("POST render")
-			Famcy.sem.release()
+			# Famcy.sem.release()
 			return ""
 				
 
@@ -194,7 +195,7 @@ class FPage(FamcyWidget):
 			session["login_permission"] = "You are not authorized to view this page!"
 
 			# handle race condition issue: unlock the function to allow the next request
-			Famcy.sem.release()
+			# Famcy.sem.release()
 
 			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
 
@@ -209,14 +210,14 @@ class FPage(FamcyWidget):
 				end_script += e_s
 
 			# handle race condition issue: unlock the function to allow the next request
-			Famcy.sem.release()
+			# Famcy.sem.release()
 
 			# Apply style at the end
 			return current_page.style.render(current_page.header_script+head_script, content_data, event_source_flag=current_page.event_source_flag, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
 		# except:
 		# unlock the function while getting error
 		print("FALLBACK")
-		Famcy.sem.release()
+		# Famcy.sem.release()
 		return ""
 
 	@staticmethod
@@ -253,7 +254,7 @@ class FPage(FamcyWidget):
 		# except:
 		# handle race condition issue: unlock the function to allow the next request
 		print("bg FALLBACK")
-		Famcy.sem.release()
+		# Famcy.sem.release()
 		return ""
 
 	def background_thread_inner(self):

@@ -3,7 +3,7 @@ from flask import render_template
 
 class ClassicStyle(Famcy.FamcyStyle):
 	def __init__(self):
-		super(ClassicStyle, self).__init__()
+		super(ClassicStyle, self).__init__(sijax_enable=True)
 
 		# set default value
 		self.title = ""
