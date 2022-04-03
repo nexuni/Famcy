@@ -92,6 +92,11 @@ class famcy_sijax(flask_sijax.Sijax):
 		app.extensions['sijax'] = self
 		
 	def _on_before_request(self):
+		# Only set sijax on POST requests, return
+		# if it is the GET request
+		if request.method == 'GET':
+			return
+
 		print("========================_on_before_request========================", request)
 		# Famcy.sem.acquire()
 		_r_form = copy.deepcopy(request.form)
