@@ -80,16 +80,16 @@ class famcy_sijax(flask_sijax.Sijax):
 		need to add the sijax function
 		"""
 		for b in blueprints:
-        	b.before_request(self._on_before_request)
+			b.before_request(self._on_before_request)
 
-        static_path = app.config.get('SIJAX_STATIC_PATH', None)
-        if static_path is not None:
-            sijax.helper.init_static_path(static_path)
+		static_path = app.config.get('SIJAX_STATIC_PATH', None)
+		if static_path is not None:
+			sijax.helper.init_static_path(static_path)
 
-        self._json_uri = app.config.get('SIJAX_JSON_URI', None)
+		self._json_uri = app.config.get('SIJAX_JSON_URI', None)
 
-        app.extensions = getattr(app, 'extensions', {})
-        app.extensions['sijax'] = self
+		app.extensions = getattr(app, 'extensions', {})
+		app.extensions['sijax'] = self
 		
 	def _on_before_request(self):
 		print("========================_on_before_request========================", request)

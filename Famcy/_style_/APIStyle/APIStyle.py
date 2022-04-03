@@ -2,7 +2,7 @@ import Famcy
 import json
 from flask import render_template
 
-class APIStyle(object):
+class APIStyle(Famcy.FamcyStyle):
 	def __init__(self):
 		super(APIStyle, self).__init__()
 		self.action = None
