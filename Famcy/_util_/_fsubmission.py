@@ -7,7 +7,7 @@ import Famcy
 import _ctypes
 import os
 import datetime
-from flask import session, request
+from flask import session, request, Response, g
 from werkzeug.utils import secure_filename
 
 # GLOBAL HELPER
@@ -179,11 +179,10 @@ class FSubmissionSijaxHandler(object):
 			obj_response.script(extra_script)
 			obj_response.script("$('#loading_holder').css('display','none');")
 
-		route_list = request.path[1:].split("/")
+		route_list = g.route_path[1:].split("/")
 		route_name = '_'.join(route_list)
 		session[route_name+"current_page"] = FSubmissionSijaxHandler.current_page
-		print("famcy_submission_handler: ", session)
-
+		
 	@staticmethod
 	# @exception_handler
 	def _dump_data(obj_response, files, form_values, fsubmission_obj, **kwargs):
@@ -213,7 +212,6 @@ class FSubmissionSijaxHandler(object):
 
 		temp_func = fsubmission_obj.func
 		response_obj = temp_func(fsubmission_obj, [[dump_files()]])
-		print(response_obj)
 
 		# Response according to the return response
 		if isinstance(response_obj, list):
@@ -239,46 +237,16 @@ class FSubmissionSijaxHandler(object):
 			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, form_values["fsubmission_obj"])
 		else:
 			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, form_values["fsubmission_obj"][0])
-		# FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, fsubmission_obj)
-		
+		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, fsubmission_obj)
 
-		temp_func = fsubmission_obj.func
-		print("temp_func: ", temp_func)
-		response_obj = temp_func(fsubmission_obj, [[{"indicator": True, "message": "filename"}]])
-
-		# Response according to the return response
-		if isinstance(response_obj, list):
-			for res_obj in response_obj:
-				res_obj.target = res_obj.target if res_obj.target else fsubmission_obj.target
-				res_obj.response(obj_response)
-		elif response_obj:
-			response_obj.target = response_obj.target if response_obj.target else fsubmission_obj.target
-			response_obj.response(obj_response)
-		else:
-			inner_text, extra_script = alert_response({"alert_type":"alert-warning", "alert_message":"系統異常", "alert_position":"prepend"}, fsubmission_obj.origin.id)
-			# args[0] is the sijax response object
-			obj_response.html_prepend('#'+fsubmission_obj.target.id, inner_text)
-			obj_response.script(extra_script)
-			obj_response.script("$('#loading_holder').css('display','none');")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		route_list = request.path[1:].split("/")
+		route_list = g.route_path[1:].split("/")
 		route_name = '_'.join(route_list)
 		session[route_name+"current_page"] = FSubmissionSijaxHandler.current_page
-		print("session: ", session[route_name+"current_page"])
+
+		# I don't know why flask doesn't get into app.session_interface.save_session in 
+		# the end of this request, so I directly call the function so that the value can
+		# be saved into redis server
+		Famcy.FManager["CurrentApp"].session_interface.save_session(Famcy.FManager["CurrentApp"], session, Response())
 
 
 class FSubmission:

@@ -18,6 +18,7 @@ import dill
 import pickle
 import base64
 import threading
+import copy
 
 from Famcy._util_._fmanager import *
 from Famcy._util_._fauth import *
@@ -71,24 +72,28 @@ FamcyBackgroundTask = FBackgroundTask
 class famcy_sijax(flask_sijax.Sijax):
 	def __init__(self):
 		super(famcy_sijax, self).__init__()
-		print("self.__dict__: ", self.__dict__)
 		
 	def _on_before_request(self):
-		print("========================_on_before_request")
+		print("========================_on_before_request========================", request)
 		Famcy.sem.acquire()
+		_r_form = copy.deepcopy(request.form)
+		_r_host_url = copy.deepcopy(request.host_url)
+		_r_url = copy.deepcopy(request.url)
 		g.sijax = self
+		g.route_path = request.path
+		Famcy.sem.release()
 
 		self._sijax = sijax.Sijax()
-		self._sijax.set_data(request.form)
+		self._sijax.set_data(_r_form)
 
-		url_relative = request.url[len(request.host_url) - 1:]
+		url_relative = _r_url[len(_r_host_url) - 1:]
 		self._sijax.set_request_uri(url_relative)
 
 		print("url_relative: ", url_relative)
 
 		if self._json_uri is not None:
 			self._sijax.set_json_uri(self._json_uri)
-		Famcy.sem.release()
+		
 
 def create_app(famcy_id, production=False):
 	"""
