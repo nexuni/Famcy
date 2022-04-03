@@ -140,7 +140,7 @@ class FPage(FamcyWidget):
 
 		print("cls.style._sijax_enable: ", cls.style, cls.style._sijax_enable)
 		if cls.style._sijax_enable and request.method == 'POST' and g.sijax.is_sijax_request:
-			
+			## Only POST and sijax enable request can enter here
 			print("g.sijax.is_sijax_request")
 			FSubmissionSijaxHandler.current_page = session.get(route_name+'current_page')
 
