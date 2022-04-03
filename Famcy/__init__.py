@@ -81,8 +81,7 @@ class famcy_sijax(flask_sijax.Sijax):
 		_r_url = copy.deepcopy(request.url)
 		g.sijax = self
 		g.route_path = request.path
-		Famcy.sem.release()
-
+		
 		self._sijax = sijax.Sijax()
 		self._sijax.set_data(_r_form)
 
@@ -93,6 +92,7 @@ class famcy_sijax(flask_sijax.Sijax):
 
 		if self._json_uri is not None:
 			self._sijax.set_json_uri(self._json_uri)
+		Famcy.sem.release()
 		
 
 def create_app(famcy_id, production=False):
@@ -170,7 +170,7 @@ def create_app(famcy_id, production=False):
 	app.register_blueprint(sse, url_prefix="/event_source")
 
 	# avoid multiple thread race condition issue
-	sem = threading.Lock()
+	sem = threading.Semaphore()
 	globals()["sem"] = sem
 
 	# ros2

@@ -127,14 +127,15 @@ class FPage(FamcyWidget):
 
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
-		# handle race condition issue: lock the function
-		# Famcy.sem.acquire()
 
 		# try:
 		route_list = g.route_path[1:].split("/")
 		route_name = '_'.join(route_list)
 
 		if g.sijax.is_sijax_request:
+			# handle race condition issue: lock the function
+			Famcy.sem.acquire()
+			
 			print("g.sijax.is_sijax_request")
 			FSubmissionSijaxHandler.current_page = session.get(route_name+'current_page')
 
@@ -151,7 +152,7 @@ class FPage(FamcyWidget):
 			sijax_res = g.sijax.process_request()
 
 			# handle race condition issue: unlock the function to allow the next request
-			# Famcy.sem.release()
+			Famcy.sem.release()
 
 			return sijax_res
 
@@ -168,7 +169,7 @@ class FPage(FamcyWidget):
 					del session[route_name+"current_page"]
 
 				Famcy.sem.acquire()
-				
+
 				# reset Famcy widget id
 				FamcyWidget.reset_id()
 				current_page = cls()
