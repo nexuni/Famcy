@@ -133,10 +133,11 @@ class FPage(FamcyWidget):
 		# Famcy.sem.acquire()
 
 		# try:
-		route_list = g.route_path[1:].split("/")
+		route_list = request.path[1:].split("/")
 		route_name = '_'.join(route_list)
 
-		if g.sijax.is_sijax_request:
+		print("cls.style._sijax_enable: ", cls.style, cls.style._sijax_enable)
+		if cls.style._sijax_enable and g.sijax.is_sijax_request:
 			
 			print("g.sijax.is_sijax_request")
 			FSubmissionSijaxHandler.current_page = session.get(route_name+'current_page')
@@ -226,7 +227,7 @@ class FPage(FamcyWidget):
 		# Famcy.sem.acquire()
 
 		# try:
-		route_list = g.route_path[1:].split("/")
+		route_list = request.path[1:].split("/")
 		del route_list[-1]
 		route_name = '_'.join(route_list)
 

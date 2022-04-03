@@ -179,7 +179,7 @@ class FSubmissionSijaxHandler(object):
 			obj_response.script(extra_script)
 			obj_response.script("$('#loading_holder').css('display','none');")
 
-		route_list = g.route_path[1:].split("/")
+		route_list = request.path[1:].split("/")
 		route_name = '_'.join(route_list)
 		session[route_name+"current_page"] = FSubmissionSijaxHandler.current_page
 		
@@ -239,7 +239,7 @@ class FSubmissionSijaxHandler(object):
 			fsubmission_obj = get_fsubmission_obj(FSubmissionSijaxHandler.current_page, form_values["fsubmission_obj"][0])
 		FSubmissionSijaxHandler._dump_data(obj_response, files, form_values, fsubmission_obj)
 
-		route_list = g.route_path[1:].split("/")
+		route_list = request.path[1:].split("/")
 		route_name = '_'.join(route_list)
 		session[route_name+"current_page"] = FSubmissionSijaxHandler.current_page
 
