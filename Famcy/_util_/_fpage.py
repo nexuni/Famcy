@@ -132,7 +132,7 @@ class FPage(FamcyWidget):
 	def render(cls, init_cls=None, *args, **kwargs):
 
 		# handle race condition issue: lock the function
-		cls._lock.acquire()
+		#cls._lock.acquire()
 
 		try:
 			route_list = request.path[1:].split("/")
@@ -157,7 +157,7 @@ class FPage(FamcyWidget):
 				sijax_res = g.sijax.process_request()
 
 				# handle race condition issue: unlock the function to allow the next request
-				cls._lock.release()
+				#cls._lock.release()
 
 				return sijax_res
 
@@ -179,7 +179,7 @@ class FPage(FamcyWidget):
 					FamcyWidget.reset_id()
 					current_page = cls()
 
-					# cls._lock.release()
+					# #cls._lock.release()
 
 				if not isinstance(cls.style, Famcy.VideoStreamStyle):
 					print(route_name + "___ Save to session current_page")
@@ -187,10 +187,10 @@ class FPage(FamcyWidget):
 
 			elif request.method == 'POST':
 				print("POST render *************")
-				cls._lock.release()
+				#cls._lock.release()
 				return ""
 					
-			cls._lock.release()
+			#cls._lock.release()
 
 			form_init_js = ''	# no use
 			end_script = ''
@@ -214,7 +214,7 @@ class FPage(FamcyWidget):
 				return current_page.style.render(current_page.header_script+head_script, content_data, event_source_flag=current_page.event_source_flag, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
 		except Exception as e:
 			# unlock the function while getting error
-			cls._lock.release()
+			#cls._lock.release()
 			print(e)
 			print("FALLBACK")
 		return ""
@@ -246,14 +246,14 @@ class FPage(FamcyWidget):
 			yield json.dumps({"indicator": indicator, "message": message})
 
 		# handle race condition issue: unlock the function to allow the next request
-		# cls._lock.release()
+		# #cls._lock.release()
 
 		return Response(generate(), mimetype='text/plain')
 
 		# except:
 		# handle race condition issue: unlock the function to allow the next request
 		print("bg FALLBACK")
-		# cls._lock.release()
+		# #cls._lock.release()
 		return ""
 
 	def background_thread_inner(self):
