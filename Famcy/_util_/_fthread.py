@@ -25,7 +25,7 @@ class FamcyPageQueue:
         else:
             _page = value.target.find_page_parent(value.target)
         route_name = _page.route.replace("/", "_")[1:]
-        print('route_name: ', route_name)
+        # print('route_name: ', route_name)
 
         session[route_name+"BackgroundQueueDict"].add(value, priority)
         # print("add", session[route_name+"BackgroundQueueDict"])

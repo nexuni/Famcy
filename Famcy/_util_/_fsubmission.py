@@ -162,7 +162,7 @@ class FSubmissionSijaxHandler(object):
 			# Will assume all data ready at this point
 			temp_func = fsubmission_obj.func
 			response_obj = temp_func(fsubmission_obj, info_list)
-		print("temp_func: ", temp_func)
+		# print("temp_func: ", temp_func)
 
 		# Response according to the return response
 		if isinstance(response_obj, list):
@@ -204,7 +204,7 @@ class FSubmissionSijaxHandler(object):
 					print("file_data.save")
 					filename = datetime.datetime.now().strftime("%Y%m%d%H%M%S")+"_"+secure_filename(file_data.filename)
 					file_data.save(os.path.join(_upload_file.value["file_path"], filename))
-					print(os.path.join(_upload_file.value["file_path"], filename))
+					# print(os.path.join(_upload_file.value["file_path"], filename))
 
 			file_type = file_data.content_type
 			file_size = len(file_data.read())

@@ -92,7 +92,7 @@ class famcy_sijax(flask_sijax.Sijax):
 		app.extensions['sijax'] = self
 		
 	def _on_before_request(self):
-		print("========================_on_before_request========================", request)
+		# print("========================_on_before_request========================", request)
 		# Famcy.sem.acquire()
 		_r_form = copy.deepcopy(request.form)
 		_r_host_url = copy.deepcopy(request.host_url)
@@ -106,7 +106,7 @@ class famcy_sijax(flask_sijax.Sijax):
 		url_relative = _r_url[len(_r_host_url) - 1:]
 		self._sijax.set_request_uri(url_relative)
 
-		print("url_relative: ", url_relative)
+		# print("url_relative: ", url_relative)
 
 		if self._json_uri is not None:
 			self._sijax.set_json_uri(self._json_uri)
