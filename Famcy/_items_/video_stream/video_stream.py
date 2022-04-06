@@ -38,8 +38,11 @@ class video_stream(Famcy.FamcyBlock):
         # }
 
         return {
-            "video_link": 0,            # 'rtsp://rtsp.stream/pattern',
+            "video_link": 'rtsp://rtsp.stream/pattern',
             "stream_flag": True,
+            "delay": 1,
+            "route_name": "/",
+            "snap": False
         }
 
     # def init_block(self):
@@ -108,20 +111,34 @@ class video_stream(Famcy.FamcyBlock):
         self.body = Famcy.div()
         self.body["id"] = self.id
 
-    def send_a_frame(self):
+    def send_frame(self):
         with Famcy.app.app_context():
             capture = cv2.VideoCapture(self.value["video_link"])
             while self.value["stream_flag"]:
-                time.sleep(1)
+                time.sleep(self.value["delay"])
                 frame = capture.read()[1]
                 cnt = cv2.imencode('.jpg',frame)[1]
                 b64 = base64.b64encode(cnt).decode("utf-8")
                 html = "<img src='data:image/jpeg;base64,"+str(b64) +"'>"
-                Famcy.sse.publish({"indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='publish')
+                Famcy.sse.publish({"indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='publish', channel='event_source.'+self.value["route_name"][1:])
+
+    def send_a_frame(self):
+        capture = cv2.VideoCapture(self.value["video_link"])
+        frame = capture.read()[1]
+        cnt = cv2.imencode('.jpg',frame)[1]
+        b64 = base64.b64encode(cnt).decode("utf-8")
+        return "data:image/jpeg;base64,"+str(b64)            
+                
 
     def render_inner(self):
-        # create two new threads
-        t1 = Thread(target=self.send_a_frame)
-        t1.start()
+        if not self.value["snap"]:
+            # create new threads
+            t1 = Thread(target=self.send_frame, daemon=True)
+            t1.start()
+        else:
+            self.body.children = []
+            _i = Famcy.img()
+            _i["src"] = self.send_a_frame()
+            self.body.addElement(_i)
 
         return self.body

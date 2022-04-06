@@ -11,6 +11,7 @@ import abc
 import pickle
 import os
 import sys
+import threading
 
 class FPage(FamcyWidget):
 	"""
@@ -44,6 +45,7 @@ class FPage(FamcyWidget):
 	background_thread_flag = False
 	background_freq = 0.5
 	event_source_flag=False
+	_lock = threading.Lock()
 
 	def __init__(self, layout_mode=FLayoutMode.recommend):
 		super(FPage, self).__init__()
@@ -109,11 +111,12 @@ class FPage(FamcyWidget):
 		route_func = lambda: cls.render(init_cls=init_cls)
 		route_func.__name__ = "famcy_route_func_name"+route.replace("/", "_")
 
+		selected_blueprint = Famcy.PageBlueprint if cls.style._sijax_enable else Famcy.MainBlueprint
 		if cls.permission.required_login():
 			# Register the page render to the main blueprint
-			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(login_required(route_func))
+			Famcy.FManager["flask_sijax"].route(selected_blueprint, cls.route)(login_required(route_func))
 		else:
-			Famcy.FManager["Sijax"].route(Famcy.MainBlueprint, cls.route)(route_func)
+			Famcy.FManager["flask_sijax"].route(selected_blueprint, cls.route)(route_func)
 
 		if cls.background_thread_flag:
 			bg_func = lambda: cls.background_generator_loop()
@@ -125,28 +128,43 @@ class FPage(FamcyWidget):
 			else:
 				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(bg_func)
 
-		if cls.event_source_flag:
-			Famcy.app.register_blueprint(Famcy.sse, url_prefix=cls.route+"/event_source")
-		
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
+
+		# handle race condition issue: lock the function
+		#cls._lock.acquire()
+
+		# try:
 		route_list = request.path[1:].split("/")
 		route_name = '_'.join(route_list)
 
-		if g.sijax.is_sijax_request:
-			sijaxHandler = FSubmissionSijaxHandler
-			sijaxHandler.current_page = session.get(route_name+'current_page')
+		# print("cls.style._sijax_enable: ", cls.style, cls.style._sijax_enable)
+		if cls.style._sijax_enable and request.method == 'POST' and g.sijax.is_sijax_request:
+			## Only POST and sijax enable request can enter here
+			# print("g.sijax.is_sijax_request")
+			FSubmissionSijaxHandler.current_page = session.get(route_name+'current_page')
 
+			g.sijax.register_object(FSubmissionSijaxHandler)
+
+			# print("SIJAX session ========", session)
+			# print("session_key: ", route_name+'current_page')
 			# code for upload form
 			upload_list = session.get(route_name+'current_page').find_class(session.get(route_name+'current_page'), "upload_form")
 			for _item in upload_list:
-				_ = g.sijax.register_upload_callback(_item.id, sijaxHandler.upload_form_handler)
+				attribute = getattr(FSubmissionSijaxHandler, "upload_form_handler")
+				_ = g.sijax.register_upload_callback(_item.id, attribute)
 
-			g.sijax.register_object(sijaxHandler)
-			return g.sijax.process_request()
+			sijax_res = g.sijax.process_request()
 
+			# handle race condition issue: unlock the function to allow the next request
+			#cls._lock.release()
+
+			return sijax_res
+
+		# print("Non SIJAX ========", session)
 		# init page
 		if request.method == 'GET':
+			# print("GET render")
 			if init_cls:
 				current_page = init_cls
 			else:
@@ -154,18 +172,36 @@ class FPage(FamcyWidget):
 					if route_name+"BackgroundQueueDict" in session.keys():
 						del session[route_name+"BackgroundQueueDict"]
 					del session[route_name+"current_page"]
+
+				# cls._lock.acquire()
+
 				# reset Famcy widget id
 				FamcyWidget.reset_id()
 				current_page = cls()
+
+				# #cls._lock.release()
+
 			if not isinstance(cls.style, Famcy.VideoStreamStyle):
+				print(route_name + "___ Save to session current_page")
 				session[route_name+"current_page"] = current_page
+
+		elif request.method == 'POST':
+			# print("POST render *************")
+			#cls._lock.release()
+			if session[route_name+"current_page"]:
+				current_page = session[route_name+"current_page"]
+			else:
+				print("POST didn't receive anything *************")
+				return ""
 				
+		#cls._lock.release()
 
 		form_init_js = ''	# no use
 		end_script = ''
 		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
 			# content_data = "<h1>You are not authorized to view this page!</h1>"
 			session["login_permission"] = "You are not authorized to view this page!"
+
 			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
 
 		else:
@@ -180,14 +216,22 @@ class FPage(FamcyWidget):
 
 			# Apply style at the end
 			return current_page.style.render(current_page.header_script+head_script, content_data, event_source_flag=current_page.event_source_flag, background_flag=current_page.background_thread_flag, route=current_page.route, time=int(1/current_page.background_freq)*1000, form_init_js=form_init_js, end_script=end_script)
+		# except Exception as e:
+			# unlock the function while getting error
+			#cls._lock.release()
+			# print(e)
+		# print("FALLBACK")
+		return ""
 
 	@staticmethod
 	def background_generator_loop():
-		print("request.path: ", request.path)
+		# handle race condition issue: lock the function
+		# cls._lock.acquire()
+
+		# try:
 		route_list = request.path[1:].split("/")
 		del route_list[-1]
 		route_name = '_'.join(route_list)
-		print("route_name: ", route_name)
 
 		_page = session.get(route_name+'current_page')
 		_page.background_thread_inner()
@@ -205,7 +249,16 @@ class FPage(FamcyWidget):
 		def generate():
 			yield json.dumps({"indicator": indicator, "message": message})
 
+		# handle race condition issue: unlock the function to allow the next request
+		# #cls._lock.release()
+
 		return Response(generate(), mimetype='text/plain')
+
+		# except:
+		# handle race condition issue: unlock the function to allow the next request
+		print("bg FALLBACK")
+		# #cls._lock.release()
+		return ""
 
 	def background_thread_inner(self):
 		"""

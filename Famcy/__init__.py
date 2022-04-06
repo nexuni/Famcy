@@ -2,6 +2,7 @@
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session, abort, current_app, Blueprint, send_from_directory, g, Response, stream_with_context
 from flask_login import LoginManager, login_user, logout_user, UserMixin, current_user
 import flask_sijax
+import sijax
 from flask_sse import sse
 import redis
 from flask_kvsession import KVSessionExtension, KVSessionInterface
@@ -16,6 +17,8 @@ import random
 import dill
 import pickle
 import base64
+import threading
+import copy
 
 from Famcy._util_._fmanager import *
 from Famcy._util_._fauth import *
@@ -65,6 +68,51 @@ FamcyStyleNavBar = FStyleNavBar
 FamcyStyleNavBtns = FStyleNavBtns
 FamcyBackgroundTask = FBackgroundTask
 
+
+class famcy_sijax(flask_sijax.Sijax):
+	def __init__(self):
+		super(famcy_sijax, self).__init__()
+
+	def init_app(self, app, blueprints):
+		"""
+		app: flask app
+		blueprint: a list of blueprints that
+		need to add the sijax function
+		"""
+		for b in blueprints:
+			b.before_request(self._on_before_request)
+
+		static_path = app.config.get('SIJAX_STATIC_PATH', None)
+		if static_path is not None:
+			sijax.helper.init_static_path(static_path)
+
+		self._json_uri = app.config.get('SIJAX_JSON_URI', None)
+
+		app.extensions = getattr(app, 'extensions', {})
+		app.extensions['sijax'] = self
+		
+	def _on_before_request(self):
+		# print("========================_on_before_request========================", request)
+		# Famcy.sem.acquire()
+		_r_form = copy.deepcopy(request.form)
+		_r_host_url = copy.deepcopy(request.host_url)
+		_r_url = copy.deepcopy(request.url)
+		g.sijax = self
+		g.route_path = request.path
+		
+		self._sijax = sijax.Sijax()
+		self._sijax.set_data(_r_form)
+
+		url_relative = _r_url[len(_r_host_url) - 1:]
+		self._sijax.set_request_uri(url_relative)
+
+		# print("url_relative: ", url_relative)
+
+		if self._json_uri is not None:
+			self._sijax.set_json_uri(self._json_uri)
+		# Famcy.sem.release()
+		
+
 def create_app(famcy_id, production=False):
 	"""
 	Main creation function of the famcy application. 
@@ -79,7 +127,8 @@ def create_app(famcy_id, production=False):
 	FManager["CUSTOM_STATIC_PATH"] = FManager.console + "_static_"
 
 	# Sijax, submission related
-	FManager["Sijax"] = flask_sijax
+	FManager["flask_sijax"] = flask_sijax
+	FManager["Sijax"] = famcy_sijax()
 	# FManager["SijaxSubmit"] = SubmitType
 	FManager["SijaxStaticPath"] = FManager.main + 'static/js/sijax/'
 	FManager["SijaxJsonUri"] = '/static/js/sijax/json2.js'
@@ -88,12 +137,17 @@ def create_app(famcy_id, production=False):
 	FManager["FamcyUser"] = FUser
 	FManager["LoginManager"] = LoginManager()
 	FManager["CurrentUser"] = current_user
+	FManager["CurrentApp"] = current_app
 
 	# System Wide blueprints and application object
 	MainBlueprint = Blueprint('MainBlueprint', __name__)
 	globals()["MainBlueprint"] = MainBlueprint
 	FManager["MainBlueprint"] = MainBlueprint
-	FManager["CurrentApp"] = current_app
+
+	# System Wide page blueprints w/ sijax
+	PageBlueprint = Blueprint('PageBlueprint', __name__)
+	globals()["PageBlueprint"] = PageBlueprint
+	FManager["PageBlueprint"] = PageBlueprint
 
 	# Webpage related configs
 	FManager["ConsoleConfig"] = FManager.read(FManager.console + "/famcy.yaml")
@@ -110,11 +164,9 @@ def create_app(famcy_id, production=False):
 	app.config['SECRET_KEY'] = FManager.get_credentials("flask_secret_key", "").encode("utf-8")
 
 	# Init Sijax
-	FManager["Sijax"].Sijax().init_app(app)
+	FManager["Sijax"].init_app(app, [PageBlueprint])
 	FamcyBackgroundQueue = FamcyPageQueue()
 	globals()["FamcyBackgroundQueue"] = FamcyBackgroundQueue
-
-	
 
 	# Init http client
 	FManager.init_http_client(**FManager["ConsoleConfig"])
@@ -122,7 +174,7 @@ def create_app(famcy_id, production=False):
 	FManager.register_csrf(app)
 
 	# redis server
-	r = redis.Redis()
+	r = redis.StrictRedis()
 
 	store = RedisStore(r)
 	globals()["store"] = store
@@ -136,6 +188,11 @@ def create_app(famcy_id, production=False):
 	app.config["REDIS_URL"] = "redis://localhost"
 	globals()["sse"] = sse
 	FManager["sse"] = sse
+	app.register_blueprint(sse, url_prefix="/event_source")
+
+	# avoid multiple thread race condition issue
+	sem = threading.Semaphore()
+	globals()["sem"] = sem
 
 	# ros2
 	FManager.ros2_init()
@@ -174,14 +231,14 @@ def create_app(famcy_id, production=False):
 	# Register the main blueprint that is used in the FamcyPage
 	app.register_blueprint(MainBlueprint)
 
-	# Register the sse blueprint that is used in the FamcyPage
-	# app.register_blueprint(sse, url_prefix='/stream')
+	# Register the page blueprint that uses sijax
+	app.register_blueprint(PageBlueprint)
 
 	# Init Login Manager and Related Stuffs
 	if FManager["ConsoleConfig"]["with_login"]:
 		# Init login manager
 		r = FManager["ConsoleConfig"]['login_url'].replace("/", "_")[1:] if FManager["ConsoleConfig"]['login_url'].replace("/", "_")[0] == "/" else FManager["ConsoleConfig"]['login_url'].replace("/", "_")
-		FManager["LoginManager"].login_view = "MainBlueprint.famcy_route_func_name_"+r
+		FManager["LoginManager"].login_view = "PageBlueprint.famcy_route_func_name_"+r
 		FManager["LoginManager"].init_app(app)
 		FManager["FamcyUser"].setup_user_loader()
 		assert Famcy.FamcyLoginManager, "User Must Register Famcy Login Manager"

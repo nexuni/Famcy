@@ -13,9 +13,9 @@ class UpdateBlockHtml(Famcy.FamcyResponse):
 	def response(self, sijax_response):
 		if self.target:
 			# update body html
-			_ = self.target.render_inner()
-			_ = self.target.body.render_inner()
-			pure_html = self.run_all_script_tag(self.target.body.html, sijax_response) if self.upload_flag else self.target.body.html
+			_body = self.target.render()
+			_ = _body.render_inner()
+			pure_html = self.run_all_script_tag(_body.html, sijax_response) if self.upload_flag else _body.html
 			sijax_response.html('#'+self.target.id, pure_html)
 
 			if hasattr(self.target, "layout"):

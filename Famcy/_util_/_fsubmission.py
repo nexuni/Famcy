@@ -7,7 +7,7 @@ import Famcy
 import _ctypes
 import os
 import datetime
-from flask import session, request
+from flask import session, request, Response, g
 from werkzeug.utils import secure_filename
 
 # GLOBAL HELPER
@@ -162,6 +162,7 @@ class FSubmissionSijaxHandler(object):
 			# Will assume all data ready at this point
 			temp_func = fsubmission_obj.func
 			response_obj = temp_func(fsubmission_obj, info_list)
+		# print("temp_func: ", temp_func)
 
 		# Response according to the return response
 		if isinstance(response_obj, list):
@@ -181,7 +182,7 @@ class FSubmissionSijaxHandler(object):
 		route_list = request.path[1:].split("/")
 		route_name = '_'.join(route_list)
 		session[route_name+"current_page"] = FSubmissionSijaxHandler.current_page
-
+		
 	@staticmethod
 	# @exception_handler
 	def _dump_data(obj_response, files, form_values, fsubmission_obj, **kwargs):
@@ -203,6 +204,7 @@ class FSubmissionSijaxHandler(object):
 					print("file_data.save")
 					filename = datetime.datetime.now().strftime("%Y%m%d%H%M%S")+"_"+secure_filename(file_data.filename)
 					file_data.save(os.path.join(_upload_file.value["file_path"], filename))
+					# print(os.path.join(_upload_file.value["file_path"], filename))
 
 			file_type = file_data.content_type
 			file_size = len(file_data.read())
@@ -240,6 +242,11 @@ class FSubmissionSijaxHandler(object):
 		route_list = request.path[1:].split("/")
 		route_name = '_'.join(route_list)
 		session[route_name+"current_page"] = FSubmissionSijaxHandler.current_page
+
+		# I don't know why flask doesn't get into app.session_interface.save_session in 
+		# the end of this request, so I directly call the function so that the value can
+		# be saved into redis server
+		Famcy.FManager["CurrentApp"].session_interface.save_session(Famcy.FManager["CurrentApp"], session, Response())
 
 
 class FSubmission:
@@ -298,14 +305,14 @@ class FBackgroundTask(FSubmission):
 			target_html = []
 			target_id = []
 			for t in self.target:
-				_ = t.render_inner()
-				_ = t.body.render_inner()
-				target_html.append(t.body.html)
+				_body = t.render()
+				_ = _body.render_inner()
+				target_html.append(_body.html)
 				target_id.append(t.id)
 		else:
-			_ = self.target.render_inner()
-			_ = self.target.body.render_inner()
-			target_html = self.target.body.html
+			_body = self.target.render()
+			_ = _body.render_inner()
+			target_html = _body.html
 			target_id = self.target.id
 		
 		content = {"data": self.background_info_dict, "submission_id": str(self.obj_key), 

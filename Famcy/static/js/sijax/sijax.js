@@ -86,7 +86,7 @@ Sijax.request = function (functionName, callArgs, requestParams) {
 	if (! requestParams) {
 		requestParams = {};
 	}
-
+	console.log(Sijax.requestUri)
 	var defaultRequestParams = {
 		"url": Sijax.requestUri,
 		"type": "POST",
