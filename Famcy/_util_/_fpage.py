@@ -138,16 +138,16 @@ class FPage(FamcyWidget):
 		route_list = request.path[1:].split("/")
 		route_name = '_'.join(route_list)
 
-		print("cls.style._sijax_enable: ", cls.style, cls.style._sijax_enable)
+		# print("cls.style._sijax_enable: ", cls.style, cls.style._sijax_enable)
 		if cls.style._sijax_enable and request.method == 'POST' and g.sijax.is_sijax_request:
 			## Only POST and sijax enable request can enter here
-			print("g.sijax.is_sijax_request")
+			# print("g.sijax.is_sijax_request")
 			FSubmissionSijaxHandler.current_page = session.get(route_name+'current_page')
 
 			g.sijax.register_object(FSubmissionSijaxHandler)
 
-			print("SIJAX session ========", session)
-			print("session_key: ", route_name+'current_page')
+			# print("SIJAX session ========", session)
+			# print("session_key: ", route_name+'current_page')
 			# code for upload form
 			upload_list = session.get(route_name+'current_page').find_class(session.get(route_name+'current_page'), "upload_form")
 			for _item in upload_list:
@@ -161,10 +161,10 @@ class FPage(FamcyWidget):
 
 			return sijax_res
 
-		print("Non SIJAX ========", session)
+		# print("Non SIJAX ========", session)
 		# init page
 		if request.method == 'GET':
-			print("GET render")
+			# print("GET render")
 			if init_cls:
 				current_page = init_cls
 			else:
@@ -186,9 +186,13 @@ class FPage(FamcyWidget):
 				session[route_name+"current_page"] = current_page
 
 		elif request.method == 'POST':
-			print("POST render *************")
+			# print("POST render *************")
 			#cls._lock.release()
-			return ""
+			if session[route_name+"current_page"]:
+				current_page = session[route_name+"current_page"]
+			else:
+				print("POST didn't receive anything *************")
+				return ""
 				
 		#cls._lock.release()
 
@@ -216,7 +220,7 @@ class FPage(FamcyWidget):
 			# unlock the function while getting error
 			#cls._lock.release()
 			# print(e)
-		print("FALLBACK")
+		# print("FALLBACK")
 		return ""
 
 	@staticmethod
