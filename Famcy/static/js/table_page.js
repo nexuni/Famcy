@@ -12,7 +12,7 @@ function go_to_page(page_num, _id) {
 	// go to first page with new page size
 	for (var i = 0; i < _body.children.length; i++) {
 		var index = _body.children[i].getAttribute("data-index");
-		if (index < page_num) {
+		if (parseInt(index) < parseInt(page_num)) {
 			_body.children[i].classList.remove("display_none")
 		}
 		else {

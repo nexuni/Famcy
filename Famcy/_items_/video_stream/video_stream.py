@@ -16,6 +16,7 @@ class video_stream(Famcy.FamcyBlock):
         self.value = video_stream.generate_template_content()
         super(video_stream, self).__init__(**kwargs)
         self.init_block()
+        self.t1 = Thread(target=self.send_frame, daemon=True)
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -42,7 +43,8 @@ class video_stream(Famcy.FamcyBlock):
             "stream_flag": True,
             "delay": 1,
             "route_name": "/",
-            "snap": False
+            "snap": False,
+            "size": None,   # [100,60]
         }
 
     # def init_block(self):
@@ -117,6 +119,8 @@ class video_stream(Famcy.FamcyBlock):
             while self.value["stream_flag"]:
                 time.sleep(self.value["delay"])
                 frame = capture.read()[1]
+                if self.value["size"]:
+                    frame = cv2.resize(frame, (self.value["size"][0], self.value["size"][1])) 
                 cnt = cv2.imencode('.jpg',frame)[1]
                 b64 = base64.b64encode(cnt).decode("utf-8")
                 html = "<img src='data:image/jpeg;base64,"+str(b64) +"'>"
@@ -125,6 +129,8 @@ class video_stream(Famcy.FamcyBlock):
     def send_a_frame(self):
         capture = cv2.VideoCapture(self.value["video_link"])
         frame = capture.read()[1]
+        if self.value["size"]:
+            frame = cv2.resize(frame, (self.value["size"][0], self.value["size"][1])) 
         cnt = cv2.imencode('.jpg',frame)[1]
         b64 = base64.b64encode(cnt).decode("utf-8")
         return "data:image/jpeg;base64,"+str(b64)            
@@ -133,8 +139,9 @@ class video_stream(Famcy.FamcyBlock):
     def render_inner(self):
         if not self.value["snap"]:
             # create new threads
-            t1 = Thread(target=self.send_frame, daemon=True)
-            t1.start()
+            if self.t1.is_alive():
+                self.t1.join()
+            self.t1.start()
         else:
             self.body.children = []
             _i = Famcy.img()

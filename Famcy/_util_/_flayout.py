@@ -115,7 +115,19 @@ class FamcyLayoutType:
 	def getLayoutDict(self):
 		return self.layoutClass.generateFamcyLayoutDict()
 
+class LayoutContent:
+	def __init__(self):
+		self.content_list = []
+		self.content_dict = {}
 
+	def __getitem__(self, item):
+		if isinstance(item, int):
+			if item < len(self.content_list):
+				return self.content_list[item]
+		else:
+			if item in self.content_dict.keys():
+				return self.content_dict[item]
+		return None
 
 class FamcyLayout:
 	"""
@@ -144,6 +156,11 @@ class FamcyLayout:
 		self.content = []
 		self.cusContent = []
 		self.staticContent = []
+
+		self.content_dict = {}
+		self.cusContent_dict = {}
+		self.staticContent_dict = {}
+
 		self._check_rep()
 
 	def _check_rep(self):
@@ -152,15 +169,30 @@ class FamcyLayout:
 		"""
 		pass
 
-	def addStaticWidget(self, card, width=50):
+	# functions about static widget
+	def getStaticWidget(self, key_name):
+		if key_name in self.staticContent_dict.keys():
+			return self.staticContent_dict[key_name][0]
+		return None
+
+	def addStaticWidget(self, card, width="50%", loading_flag=False, key=None):
 		card.parent = self.parent
 		card.page_parent = self.page_parent
+		card._layout_loading_parent = self
+		card._layout_loading_flag = loading_flag
+		card._layout_key = key
 		self.staticContent.append([card, width])
+		if key:
+			self.staticContent_dict[key] = [card, width]
 
-	def removeStaticWidget(self, card=None, index=None):
+	def removeStaticWidget(self, card=None, index=None, key=None):
 		i = 0
+		if key:
+			card = self.getStaticWidget(key)
 		for _card, _ in self.staticContent:
 			if card == _card or i == index:
+				if self.staticContent[i][0]._layout_key:
+					del self.staticContent_dict[self.staticContent[i][0]._layout_key]
 				del self.staticContent[i]
 				break
 			i += 1
@@ -168,16 +200,29 @@ class FamcyLayout:
 	def clearStaticWidget(self):
 		self.staticContent = []
 
-	def addWidget(self, card, start_row, start_col, height=1, width=1):
+	# functions about normal widget
+	def getWidget(self, key_name):
+		if key_name in self.content_dict.keys():
+			return self.content_dict[key_name][0]
+		return None
+
+	def addWidget(self, card, start_row, start_col, height=1, width=1, key=None):
 		card.parent = self.parent
 		card.page_parent = self.page_parent
+		card._layout_key = key
 		self.content.append([card, int(start_row), int(start_col), int(height), int(width)])
+		if key:
+			self.content_dict[key] = [card, int(start_row), int(start_col), int(height), int(width)]
 		self.layoutType.layoutClass.setDefaultContent(self.content)
 
-	def removeWidget(self, card=None, start_row=None, start_col=None):
+	def removeWidget(self, card=None, start_row=None, start_col=None, key=None):
 		i = 0
+		if key:
+			card = self.getWidget(key)
 		for _card, _row, _col, _, _ in self.content:
 			if card == _card or (_row == start_row and _col == start_col):
+				if self.content[i][0]._layout_key:
+					del self.content_dict[self.content[i][0]._layout_key]
 				del self.content[i]
 				break
 			i += 1
@@ -185,13 +230,26 @@ class FamcyLayout:
 	def clearWidget(self):
 		self.content = []
 
-	def addCusWidget(self, card, start_row, start_col, height=1, width=1):
-		self.cusContent.append([card, int(start_row), int(start_col), int(height), int(width)])
+	# functions about custom widget
+	def getCusWidget(self, key_name):
+		if key_name in self.cusContent_dict.keys():
+			return self.cusContent_dict[key_name][0]
+		return None
 
-	def removeCusWidget(self, card=None, start_row=None, start_col=None):
+	def addCusWidget(self, card, start_row, start_col, height=1, width=1, key=None):
+		card._layout_key = key
+		self.cusContent.append([card, int(start_row), int(start_col), int(height), int(width)])
+		if key:
+			self.cusContent_dict[key] = [card, int(start_row), int(start_col), int(height), int(width)]
+
+	def removeCusWidget(self, card=None, start_row=None, start_col=None, key=None):
 		i = 0
+		if key:
+			card = self.getCusWidget(key)
 		for _card, _row, _col, _, _ in self.cusContent:
 			if card == _card or (_row == start_row and _col == start_col):
+				if self.cusContent_dict[i][0]._layout_key:
+					del self.cusContent_dict[self.cusContent[i][0]._layout_key]
 				del self.cusContent[i]
 				break
 			i += 1
@@ -263,6 +321,10 @@ class FamcyLayout:
 
 		for _prompt, _width in self.staticContent:
 			sijax_response.css("#"+_prompt.id, "width", str(_width))
+
+		if self.parent._layout_loading_flag:
+			for _prompt, _width in self.parent._layout_loading_parent.staticContent:
+				sijax_response.css("#"+_prompt.id, "width", str(_width))
 
 		for _card, _, _, _, _ in self.content:
 			if hasattr(_card, 'layout'):
