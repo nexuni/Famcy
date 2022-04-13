@@ -124,9 +124,9 @@ class FPage(FamcyWidget):
 
 			if cls.permission.required_login():
 				# Register the page render to the main blueprint
-				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(login_required(bg_func))
+				Famcy.FManager["BgBlueprint"].route(cls.route+"/bgloop")(login_required(bg_func))
 			else:
-				Famcy.FManager["MainBlueprint"].route(cls.route+"/bgloop")(bg_func)
+				Famcy.FManager["BgBlueprint"].route(cls.route+"/bgloop")(bg_func)
 
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):

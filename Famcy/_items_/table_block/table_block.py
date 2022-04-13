@@ -62,48 +62,138 @@ class table_block(Famcy.FamcyBlock):
             ]],
             "data": [
                 {
-                    "col_title2": "row_content11",
+                    "col_title2": "1",
                     "col_title1": "row_content12",
                     "col_title3": "row_content13",
                     "col_title4": "row_content13"
                 },
                 {
-                    "col_title1": "row_content21",
+                    "col_title1": "2",
                     "col_title2": "row_content22",
                     "col_title3": "row_content23"
                 },
                 {
-                    "col_title1": "row_content31",
+                    "col_title1": "3",
                     "col_title2": "row_content32",
                     "col_title3": "row_content33"
                 },
                 {
-                    "col_title1": "row_content11",
+                    "col_title1": "4",
                     "col_title2": "row_content12",
                     "col_title3": "row_content13"
                 },
                 {
-                    "col_title1": "row_content21",
+                    "col_title1": "5",
                     "col_title2": "row_content22",
                     "col_title3": "row_content23"
                 },
                 {
-                    "col_title1": "row_content31",
+                    "col_title1": "6",
                     "col_title2": "row_content32",
                     "col_title3": "row_content33"
                 },
                 {
-                    "col_title1": "row_content11",
+                    "col_title1": "7",
                     "col_title2": "row_content12",
                     "col_title3": "row_content13"
                 },
                 {
-                    "col_title1": "row_content21",
+                    "col_title1": "8",
                     "col_title2": "row_content22",
                     "col_title3": "row_content23"
                 },
                 {
-                    "col_title1": "row_content31",
+                    "col_title1": "9",
+                    "col_title2": "row_content32",
+                    "col_title3": "row_content33"
+                },{
+                    "col_title2": "10",
+                    "col_title1": "row_content12",
+                    "col_title3": "row_content13",
+                    "col_title4": "row_content13"
+                },
+                {
+                    "col_title1": "11",
+                    "col_title2": "row_content22",
+                    "col_title3": "row_content23"
+                },
+                {
+                    "col_title1": "12",
+                    "col_title2": "row_content32",
+                    "col_title3": "row_content33"
+                },
+                {
+                    "col_title1": "13",
+                    "col_title2": "row_content12",
+                    "col_title3": "row_content13"
+                },
+                {
+                    "col_title1": "14",
+                    "col_title2": "row_content22",
+                    "col_title3": "row_content23"
+                },
+                {
+                    "col_title1": "15",
+                    "col_title2": "row_content32",
+                    "col_title3": "row_content33"
+                },
+                {
+                    "col_title1": "16",
+                    "col_title2": "row_content12",
+                    "col_title3": "row_content13"
+                },
+                {
+                    "col_title1": "17",
+                    "col_title2": "row_content22",
+                    "col_title3": "row_content23"
+                },
+                {
+                    "col_title1": "18",
+                    "col_title2": "row_content32",
+                    "col_title3": "row_content33"
+                },{
+                    "col_title2": "19",
+                    "col_title1": "row_content12",
+                    "col_title3": "row_content13",
+                    "col_title4": "row_content13"
+                },
+                {
+                    "col_title1": "20",
+                    "col_title2": "row_content22",
+                    "col_title3": "row_content23"
+                },
+                {
+                    "col_title1": "21",
+                    "col_title2": "row_content32",
+                    "col_title3": "row_content33"
+                },
+                {
+                    "col_title1": "22",
+                    "col_title2": "row_content12",
+                    "col_title3": "row_content13"
+                },
+                {
+                    "col_title1": "23",
+                    "col_title2": "row_content22",
+                    "col_title3": "row_content23"
+                },
+                {
+                    "col_title1": "24",
+                    "col_title2": "row_content32",
+                    "col_title3": "row_content33"
+                },
+                {
+                    "col_title1": "25",
+                    "col_title2": "row_content12",
+                    "col_title3": "row_content13"
+                },
+                {
+                    "col_title1": "26",
+                    "col_title2": "row_content22",
+                    "col_title3": "row_content23"
+                },
+                {
+                    "col_title1": "27",
                     "col_title2": "row_content32",
                     "col_title3": "row_content33"
                 }
@@ -152,7 +242,7 @@ class table_block(Famcy.FamcyBlock):
                 _th["rowspan"] = str(c["rowspan"])
                 _th["data-field"] = c["field"]
                 _div = Famcy.div()
-                _div.innerHTML = c["title"]
+                _div.innerHTML = str(c["title"])
                 _div["className"] = "th-inner"
                 if c["sortable"]:
                     _div["className"] = "sortable"
@@ -200,7 +290,7 @@ class table_block(Famcy.FamcyBlock):
                 _td.style["text-align"] = column_dict[k]["align"]
                 _td.style["vertical-align"] = column_dict[k]["valign"]
                 _td["data-field"] = column_dict[k]["field"]
-                _td.innerHTML = d[k] if k in d.keys() else ""
+                _td.innerHTML = str(d[k]) if k in d.keys() else ""
                 _tr.addElement(_td)
 
             _body.addElement(_tr)

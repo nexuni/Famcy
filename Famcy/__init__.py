@@ -149,6 +149,11 @@ def create_app(famcy_id, production=False):
 	globals()["PageBlueprint"] = PageBlueprint
 	FManager["PageBlueprint"] = PageBlueprint
 
+	# System Wide bgloop blueprints
+	BgBlueprint = Blueprint('BgBlueprint', __name__)
+	globals()["BgBlueprint"] = BgBlueprint
+	FManager["BgBlueprint"] = BgBlueprint
+
 	# Webpage related configs
 	FManager["ConsoleConfig"] = FManager.read(FManager.console + "/famcy.yaml")
 
@@ -233,6 +238,9 @@ def create_app(famcy_id, production=False):
 
 	# Register the page blueprint that uses sijax
 	app.register_blueprint(PageBlueprint)
+
+	# Register the bg blueprint
+	app.register_blueprint(BgBlueprint)
 
 	# Init Login Manager and Related Stuffs
 	if FManager["ConsoleConfig"]["with_login"]:
