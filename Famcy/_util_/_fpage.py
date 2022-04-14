@@ -88,11 +88,11 @@ class FPage(FamcyWidget):
 		"""
 		pass
 
-	def set_cookie(self, key, value):
-		session[key] = value
+	# def set_cookie(self, key, value):
+	# 	session[key] = value
 
-	def get_cookie(self, key):
-		return session.get(key)
+	# def get_cookie(self, key):
+	# 	return session.get(key)
 
 	@classmethod
 	def setClassAttr(cls, key, value):

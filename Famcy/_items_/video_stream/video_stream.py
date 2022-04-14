@@ -13,10 +13,21 @@ class video_stream(Famcy.FamcyBlock):
     video_stream. 
     """
     def __init__(self, **kwargs):
+        self.uniq_channal = "video"+str(id(self))
+        self.del_thread()
         self.value = video_stream.generate_template_content()
+
         super(video_stream, self).__init__(**kwargs)
+
         self.init_block()
-        self.t1 = Thread(target=self.send_frame, daemon=True)
+        self.is_alive = False
+        self.end_thread = False
+
+
+    def del_thread(self):
+        if self.get_cookie("uniq_channal") and Famcy.FManager[self.get_cookie("uniq_channal")]:
+            Famcy.FManager[self.get_cookie("uniq_channal")] = False
+        self.set_cookie("uniq_channal", self.uniq_channal)
 
     @classmethod
     def generate_template_content(cls, fblock_type=None):
@@ -26,18 +37,6 @@ class video_stream(Famcy.FamcyBlock):
         for the given fblock. 
         - Return a content dictionary
         """
-        # return {
-        #     "refreash_stream": "刷新",
-        #     "stop_stream": "停止",
-        #     "title": "videoStream",
-        #     "desc": "",
-        #     "rtsp_address": [],
-        #     "video_timeout": [],
-        #     "holder_width": [],
-        #     "holder_height": [],
-        #     "img_path": []
-        # }
-
         return {
             "video_link": 'rtsp://rtsp.stream/pattern',
             "stream_flag": True,
@@ -47,76 +46,28 @@ class video_stream(Famcy.FamcyBlock):
             "size": None,   # [100,60]
         }
 
-    # def init_block(self):
-    #     self.body = Famcy.div()
-    #     self.body["id"] = self.id
-    #     self.body["className"] = "videoStream"
-
-    #     h3_temp = Famcy.h3()
-    #     p_temp = Famcy.p()
-    #     div_temp = Famcy.div()
-
-    #     self.body.addElement(h3_temp)
-    #     self.body.addElement(p_temp)
-    #     self.body.addElement(div_temp)
-
-    # def render_inner(self):
-
-    #     index = 0
-    #     self.body.children[2].children = []
-    #     for w, h, address, timeout, path in zip(self.value["holder_width"], self.value["holder_height"], self.value["rtsp_address"], self.value["video_timeout"], self.value["img_path"]):
-            
-    #         script_temp = Famcy.script()
-    #         script_temp.innerHTML = """
-    #             $('#mbr' + '%s_' + '%s').bind('click', (e) => {
-    #                 e.target.parentElement.children[0].classList.remove("video_placeholder");
-    #                 e.target.parentElement.children[0].setAttribute("src", "")
-    #                 e.target.parentElement.children[0].setAttribute("src", "%s&datetime=" + new Date().getTime())
-    #             });
-    #             $('#mbd' + '%s_' + '%s').bind('click', (e) => {
-    #                 e.target.parentElement.children[0].classList.add("video_placeholder");
-    #                 e.target.parentElement.children[0].setAttribute("src", "/static/image/transparent.png")
-    #             });
-    #         """ % (index, self.id, path + '?' + urllib.parse.urlencode({"address": address, "timeout": timeout}), index, self.id)
-
-    #         div_temp = Famcy.div()
-    #         div_temp["className"] = "video_holder"
-    #         div_temp.style['width'] = w
-
-    #         img_temp = Famcy.img()
-    #         img_temp["src"] = path + '?' + urllib.parse.urlencode({"address": address, "timeout": timeout, "datetime": time.time()})
-    #         img_temp.style['height'] = h
-
-    #         btn1_temp = Famcy.button()
-    #         btn1_temp["id"] = 'mbr' + str(index) + "_" + self.id
-    #         btn1_temp["className"] = "video_submit_btn"
-    #         btn1_temp.innerHTML = self.value["refreash_stream"]
-
-    #         btn2_temp = Famcy.button()
-    #         btn2_temp["id"] = 'mbd' + str(index) + "_" + self.id
-    #         btn2_temp["className"] = "video_submit_btn"
-    #         btn2_temp.innerHTML = self.value["stop_stream"]
-
-    #         div_temp.addElement(img_temp)
-    #         div_temp.addElement(btn1_temp)
-    #         div_temp.addElement(btn2_temp)
-    #         div_temp.addElement(script_temp)
-
-    #         index += 1
-
-    #     self.body.children[0].innerHTML = self.value["title"]
-    #     self.body.children[1].innerHTML = self.value["desc"]
-    #     self.body.children[2].addElement(div_temp)
-
-    #     return self.body
     def init_block(self):
         self.body = Famcy.div()
         self.body["id"] = self.id
 
+        _s = Famcy.script()
+        _s.innerHTML = _event_source_script = '''
+            var source = new EventSource("/event_source?channel=event_source.%s");
+            source.addEventListener('publish', function(event) {
+                var data = JSON.parse(event.data);
+                update_event_source_target(data)
+            }, false);
+            source.addEventListener('error', function(event) {
+                console.log("Error"+ event)
+            }, false);
+            ''' % (self.uniq_channal)
+
+        self.body.addStaticScript(_s)
+
     def send_frame(self):
         with Famcy.app.app_context():
             capture = cv2.VideoCapture(self.value["video_link"])
-            while self.value["stream_flag"]:
+            while self.value["stream_flag"] and self.is_alive and Famcy.FManager[self.uniq_channal]:
                 time.sleep(self.value["delay"])
                 frame = capture.read()[1]
                 if self.value["size"]:
@@ -124,7 +75,10 @@ class video_stream(Famcy.FamcyBlock):
                 cnt = cv2.imencode('.jpg',frame)[1]
                 b64 = base64.b64encode(cnt).decode("utf-8")
                 html = "<img src='data:image/jpeg;base64,"+str(b64) +"'>"
-                Famcy.sse.publish({"indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='publish', channel='event_source.'+self.value["route_name"][1:])
+                Famcy.sse.publish({"indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='publish', channel='event_source.'+self.uniq_channal)
+            
+            # set end thread flag True when the thread is dead
+            self.end_thread = True
 
     def send_a_frame(self):
         capture = cv2.VideoCapture(self.value["video_link"])
@@ -133,15 +87,27 @@ class video_stream(Famcy.FamcyBlock):
             frame = cv2.resize(frame, (self.value["size"][0], self.value["size"][1])) 
         cnt = cv2.imencode('.jpg',frame)[1]
         b64 = base64.b64encode(cnt).decode("utf-8")
-        return "data:image/jpeg;base64,"+str(b64)            
-                
+        return "data:image/jpeg;base64,"+str(b64)
 
     def render_inner(self):
         if not self.value["snap"]:
             # create new threads
-            if self.t1.is_alive():
-                self.t1.join()
-            self.t1.start()
+            if not self.is_alive:
+                self.is_alive = True
+                t1 = Thread(target=self.send_frame, daemon=True)
+                t1.start()
+
+            else:
+                self.is_alive = False
+                while not self.end_thread:
+                    pass
+                self.end_thread = False
+                self.is_alive = True
+                t1 = Thread(target=self.send_frame, daemon=True)
+                t1.start()
+
+            Famcy.FManager[self.uniq_channal] = self.is_alive
+                
         else:
             self.body.children = []
             _i = Famcy.img()
