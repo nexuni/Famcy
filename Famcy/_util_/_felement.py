@@ -6,7 +6,7 @@ class FElement(metaclass=abc.ABCMeta):
 	def __init__(self):
 		self.style = {}
 		self.classList = []
-		self.attributes = {}
+		self.attributes = {"id": "felement"+str(id(self))}
 
 		self.innerHTML = ""
 		self.html = ""
