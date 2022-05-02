@@ -10,13 +10,7 @@ with open(os.path.join(os.path.dirname(__file__), "requirements.txt"), "r") as f
 
 setuptools.setup(
     name="Famcy", # Replace with your own username
-<<<<<<< HEAD
-    version="0.3.51",
-||||||| merged common ancestors
-    version="0.3.50",
-=======
     version="0.3.52",
->>>>>>> cc9950279a42f3bfccfd1b6795b78e4e05b4a878
     author="Nexuni Co Ltd. Develop Team",
     author_email="developers@nexuni.com",
     description="Nexuni Co Ltd. Famcy management console framework",
