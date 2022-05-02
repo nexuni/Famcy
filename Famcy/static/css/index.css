@@ -523,7 +523,24 @@ html{
 	display: none;
 }
 
+.small_submit_btn{
+	margin: 5px;
+	padding: 10px;
+	/*margin: calc(var(--semi-large-text)*0.5) 0;*/
 
+	/*padding: calc(var(--semi-large-text)*0.5);*/
+	font-size: var(--normal-text);
+	line-height: var(--normal-text);
+
+	border-radius: 4px;
+	
+	background-color: var(--main-color);
+	color: var(--white-color);
+	border: 0;
+	-webkit-appearance: none;
+	cursor: pointer;
+	text-decoration: none;
+}
 
 /*input_form*/
 .main_submit_btn{
@@ -543,6 +560,8 @@ html{
 	color: var(--white-color);
 	border: 0;
 	-webkit-appearance: none;
+	cursor: pointer;
+	text-decoration: none;
 }
 
 /*pureInput*/

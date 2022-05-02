@@ -2,6 +2,7 @@ import abc
 import json
 import Famcy
 import time
+from flask import session
 from Famcy._util_._fthread import *
 from Famcy._util_._fsubmission import *
 
@@ -43,6 +44,10 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		# Style related
 		self.css_style_dict = {}
 
+		# Layout related
+		self._layout_loading_flag = False
+		self._layout_loading_parent = None
+
 		# Submission related
 		self.submission_obj = FSubmission(self)
 		self.submission_obj_key = self.id
@@ -74,6 +79,12 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 	def __delitem__(self, item):
 		if item in self.attributes.keys():
 			del self.attributes[item]
+
+	def set_cookie(self, key, value):
+		session[key] = value
+
+	def get_cookie(self, key):
+		return session.get(key)
 
 	def find_page_parent(self, item):
 		if item.parent:
