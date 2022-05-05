@@ -44,6 +44,10 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		# Style related
 		self.css_style_dict = {}
 
+		# Layout related
+		self._layout_loading_flag = False
+		self._layout_loading_parent = None
+
 		# Submission related
 		self.submission_obj = FSubmission(self)
 		self.submission_obj_key = self.id

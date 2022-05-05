@@ -305,15 +305,25 @@ class FBackgroundTask(FSubmission):
 			target_html = []
 			target_id = []
 			for t in self.target:
-				_body = t.render()
-				_ = _body.render_inner()
-				target_html.append(_body.html)
-				target_id.append(t.id)
+				if isinstance(t, Famcy.FamcyElement):
+					_ = t.render_inner()
+					target_html.append(t.html)
+					target_id.append(t["id"])
+				else:
+					_body = t.render()
+					_ = _body.render_inner()
+					target_html.append(_body.html)
+					target_id.append(t.id)
 		else:
-			_body = self.target.render()
-			_ = _body.render_inner()
-			target_html = _body.html
-			target_id = self.target.id
+			if isinstance(self.target, Famcy.FamcyElement):
+				_ = self.target.render_inner()
+				target_html = self.target.html
+				target_id = self.target["id"]
+			else:
+				_body = self.target.render()
+				_ = _body.render_inner()
+				target_html = _body.html
+				target_id = self.target.id
 		
 		content = {"data": self.background_info_dict, "submission_id": str(self.obj_key), 
 			"page_id": self.origin.id, "target_id": target_id, "target_innerHTML": target_html, "target_attribute": self.target_attr}

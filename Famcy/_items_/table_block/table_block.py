@@ -21,7 +21,7 @@ class table_block(Famcy.FamcyBlock):
         """
         return {
             "input_button": "radio",                     # ("checkbox" / "radio" / "none")
-            "input_value_col_field": "col_title1",          # if input_button != "none"
+            "input_value_col_field": "col_title2",          # if input_button != "none"
 
             "page_detail": True,                            # (true / false)
             "page_detail_content": "key_value",             # if page_detail == true: (key_value / HTML_STR => ["<p>line1</p>", "<p>line2</p>"])
@@ -277,7 +277,13 @@ class table_block(Famcy.FamcyBlock):
                 _tdi["name"] = str(self.name)
                 _tdi["type"] = self.value["input_button"]
                 _tdi["data-index"] = str(i)
-                _tdi["value"] = d[self.value["input_value_col_field"]]
+                _ = ""
+                if isinstance(self.value["input_value_col_field"], list):
+                    for f in self.value["input_value_col_field"]:
+                        _ += d[f] + ","
+                else:
+                    _ = d[self.value["input_value_col_field"]] + " "
+                _tdi["value"] = _[:-1]
                 _tds = Famcy.span()
 
                 _tdl.addElement(_tdi)
