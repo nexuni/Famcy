@@ -50,7 +50,8 @@ class FStyle:
 
 		<link href="%s/static/css/index.css" rel="stylesheet" media="screen">
 		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-		<script src="%s/static/js/cookie_utils.js"></script>%s""" % (self.desc, self.title, self.main_url, self.main_url, self.uploadFileHeader())
+		<script src="%s/static/js/http_utils.js"></script>
+		<script src="%s/static/js/cookie_utils.js"></script>%s""" % (self.desc, self.title, self.main_url, self.main_url, self.main_url, self.uploadFileHeader())
 
 	def uploadFileHeader(self):
 		return"""
