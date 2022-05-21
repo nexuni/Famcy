@@ -134,7 +134,7 @@ class FPage(FamcyWidget):
 
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
-
+		session["login_route"] = ""
 		route_list = request.path[1:].split("/")
 		route_name = '_'.join(route_list)
 
@@ -183,9 +183,9 @@ class FPage(FamcyWidget):
 		end_script = ''
 		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
 			session["login_permission"] = "You are not authorized to view this page!"
+			session["login_route"] = request.path
 
-			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
-
+			return redirect(url_for("PageBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_"), next=request.path.replace("/", " ")))
 		else:
 			# Render all content
 			current_page.body = super(FPage, current_page).render()
