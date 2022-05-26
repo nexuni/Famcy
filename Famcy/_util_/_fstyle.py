@@ -22,7 +22,8 @@ class FStyle:
 		self._sijax_enable = sijax_enable
 
 		# default url
-		self.main_url = Famcy.FManager["ConsoleConfig"]["main_url"]
+		# self.main_url = Famcy.FManager["ConsoleConfig"]["main_url"]
+		self.main_url = ""
 
 		self._check_rep()
 
@@ -34,6 +35,9 @@ class FStyle:
 
 	def setLogin(self, with_login):
 		self.withLogin = with_login
+
+	def setDashboardHTMLHeader(self):
+		return {"indicator": True, "title": self.title, "desc": self.desc}
 
 	def setDashboardHTMLHeader(self):
 		"""

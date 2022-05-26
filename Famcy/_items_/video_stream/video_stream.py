@@ -51,7 +51,7 @@ class video_stream(Famcy.FamcyBlock):
         self.body["id"] = self.id
 
         _s = Famcy.script()
-        _s.innerHTML = _event_source_script = '''
+        _s.innerHTML = '''
             var source = new EventSource("/event_source?channel=event_source.%s");
             source.addEventListener('publish', function(event) {
                 var data = JSON.parse(event.data);

@@ -23,6 +23,12 @@ function update_event_source_target(res_dict) {
                 }
                 setInnerHTML(temp_item, res_dict["message"].target_innerHTML)
             }
+            else {
+                if (document.getElementById(res_dict["message"].target_parent)) {
+                    let temp_item = document.getElementById(res_dict["message"].target_parent)
+                    temp_item.innerHTML += res_dict["message"].target_element
+                }
+            }
         }
         else {
             for (var t = 0; t < res_dict["message"].target_id.length; t++) {
@@ -34,6 +40,12 @@ function update_event_source_target(res_dict) {
                         temp_item.setAttribute(Object.keys(temp_attr)[i], temp_attr[Object.keys(temp_attr)[i]]);
                     }
                     setInnerHTML(temp_item, res_dict["message"].target_innerHTML[t])
+                }
+                else {
+                    if (document.getElementById(res_dict["message"].target_parent[t])) {
+                        let temp_item = document.getElementById(res_dict["message"].target_parent[t])
+                        temp_item.innerHTML += res_dict["message"].target_element[t]
+                    }
                 }
             }
         }

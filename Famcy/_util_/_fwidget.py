@@ -54,12 +54,11 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.post_submission_js = ""
 		self.submit_value_name = self.name
 
-		self.link = Famcy.FManager["ConsoleConfig"]["main_url"]+"/"+self.id
+		# self.link = Famcy.FManager["ConsoleConfig"]["main_url"]+"/"+self.id
 
 	@classmethod
 	def reset_id(cls):
 		cls.id_iter = 0
-		# print('cls.id_iter:', cls.id_iter)
 
 	@classmethod
 	def get_id(cls):
@@ -68,7 +67,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 	@classmethod
 	def next_id(cls):
 		cls.id_iter += 1
-		# print('next_id:', cls.id_iter)
 
 	def __setitem__(self, key, value):
 		self.attributes[key] = value
