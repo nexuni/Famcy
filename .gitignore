@@ -217,6 +217,8 @@ $RECYCLE.BIN/
 migrations/
 __submissions__/
 
-_CONSOLE_FOLDER_/
+# _CONSOLE_FOLDER_/
+famcy.yaml
+credentials.yaml
 
 ..bfg-report
