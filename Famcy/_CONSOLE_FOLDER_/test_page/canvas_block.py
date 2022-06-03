@@ -7,6 +7,8 @@ import requests
 
 ROBOT_ID="test"
 ROBOT_META_INFO_DATA="test_info"
+CANVAS_W = 525
+CANVAS_H = 600
 
 class canvas_block(Famcy.FamcyBlock):
 
@@ -58,7 +60,7 @@ class canvas_block(Famcy.FamcyBlock):
 
         self.sendInfoBtn = Famcy.button()
         self.sendInfoBtn["className"] = "small_submit_btn"
-        self.sendInfoBtn["id"] = "btnAddRect"
+        self.sendInfoBtn["id"] = "btnRectInfo"
         self.sendInfoBtn.innerHTML = "rect info"
         self.body.addElement(self.sendInfoBtn)
 
@@ -68,6 +70,12 @@ class canvas_block(Famcy.FamcyBlock):
         self.gsavebtn.innerHTML = "save"
         self.body.addElement(self.gsavebtn)
 
+        self.clearBtn = Famcy.button()
+        self.clearBtn["className"] = "small_submit_btn"
+        self.clearBtn["id"] = "btnClear"
+        self.clearBtn.innerHTML = "clear"
+        self.body.addElement(self.clearBtn)
+
         my_script = Famcy.script()
         my_script["src"] = "asset/js/canvas_handler.js"
         self.body.addStaticScript(my_script, position="head")
@@ -76,23 +84,23 @@ class canvas_block(Famcy.FamcyBlock):
         static_style.innerHTML = """
             #canvasHolder {
                 position: relative;
-                width: 525px;
-                height: 600px;
+                width: %spx;
+                height: %spx;
             }
 
             #imgCanvasMap {
-                width: 525px;
-                height: 600px;
+                width: %spx;
+                height: %spx;
             }
 
             #imgCanvasMapMask {
                 position: absolute;
                 top: 0;
                 left: 0;
-                width: 525px;
-                height: 600px;
+                width: %spx;
+                height: %spx;
             }
-        """
+        """ % (str(CANVAS_W), str(CANVAS_H), str(CANVAS_W), str(CANVAS_H), str(CANVAS_W), str(CANVAS_H))
         self.body.addStaticScript(static_style, position="head") 
 
         konva_script = Famcy.script()
@@ -115,6 +123,8 @@ class canvas_block(Famcy.FamcyBlock):
                 "lat": 19.0883595,
                 "lng": 72.82652380000002,
             }
+
+        self.clearBtn["onclick"] = f"c_clearRoute()"
         self.areaBtn["onclick"] = f"c_addRect('{self.submission_obj_key}')"
         self.sendInfoBtn["onclick"] = "c_sendRectInfo('%s', '%s')" % (self.submission_obj_key, self.value["area_key_name"])
         self.gsavebtn["onclick"] = f"c_saveRoute('{self.value[ROBOT_ID]}', '{self.name}','{self.submission_obj_key}')"
@@ -126,6 +136,8 @@ class canvas_block(Famcy.FamcyBlock):
         self.body.children[1].innerHTML = \
             f"Draw_pic(\
                 {json.dumps(self.value[ROBOT_ID])},\
-                    {json.dumps(self.value['route'])});"
+                    {json.dumps(self.value['route'])},\
+                        {CANVAS_W},\
+                            {CANVAS_H});"
 
         return self.body

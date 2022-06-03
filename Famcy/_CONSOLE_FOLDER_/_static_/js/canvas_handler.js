@@ -4,7 +4,7 @@ var C_LINE_DICT={};
 var C_RECT_DICT={};
 var C_CANVAS_FLAG=false;
 var C_CANVAS;
-var default_area_w=100, default_area_h=50;
+var default_area_w=525*8/20, default_area_h=525/2;
 
 var source = new EventSource("/event_source?channel=event_source._canvas_");
 source.addEventListener('publish', function(event) {
@@ -43,12 +43,13 @@ function Draw_pic(
 
 
     function load () {
-        for (var i = 0; i < route_info.length; i++) {
-            c_drawFBlockRoute(route_info[i].key_name, route_info[i].points, route_info[i].pos, route_info[i].more_info)
-        }
         c_drawStorageRoute()
         c_drawStorageArea()
 
+        for (var i = 0; i < route_info.length; i++) {
+            c_drawFBlockRoute(route_info[i].key_name, route_info[i].points, route_info[i].pos, route_info[i].more_info)
+        }
+        
         c_add_all_route_to_canvas()
         c_add_all_area_to_canvas()
     }
@@ -66,6 +67,22 @@ function c_add_all_area_to_canvas() {
     if (C_CANVAS_FLAG) {
         for (var i = 0; i < Object.keys(C_AREA_DICT).length; i++) {
             C_CANVAS.add(C_AREA_DICT[Object.keys(C_AREA_DICT)[i]]["layer"])
+        }
+    }
+}
+
+function c_remove_all_route_to_canvas() {
+    if (C_CANVAS_FLAG) {
+        for (var i = 0; i < Object.keys(C_ROUTE_DICT).length; i++) {
+            C_ROUTE_DICT[Object.keys(C_ROUTE_DICT)[i]]["layer"].removeChildren()
+        }
+    }
+}
+
+function c_remove_all_area_to_canvas() {
+    if (C_CANVAS_FLAG) {
+        for (var i = 0; i < Object.keys(C_AREA_DICT).length; i++) {
+            C_AREA_DICT[Object.keys(C_AREA_DICT)[i]]["layer"].removeChildren()
         }
     }
 }
@@ -130,22 +147,28 @@ function c_sendRectInfo(obj_key, line_name) {
         let rsy = C_RECT_DICT[Object.keys(C_RECT_DICT)[i]]["group_attr"]["scaleY"] ? C_RECT_DICT[Object.keys(C_RECT_DICT)[i]]["group_attr"]["scaleY"] : 1
         let rr = C_RECT_DICT[Object.keys(C_RECT_DICT)[i]]["group_attr"]["rotation"] ? C_RECT_DICT[Object.keys(C_RECT_DICT)[i]]["group_attr"]["rotation"] : 0
 
-        let dx = rx - ox;
-        let dy = (-ry) - (-oy);
-        let dsx = rsx / osx;
-        let dsy = rsy / osy;
-        let dr = rr - or;
+        let dx = rx;
+        let dy = ry;
+        let dsx = rsx;
+        let dsy = rsy;
+        let dr = rr;
 
         res_dict[Object.keys(C_RECT_DICT)[i]] = {
             "p1": [dx, dy],
-            "p2": [dx-Math.sin(Math.PI*(dr/180))*default_area_h*dsy, dy-Math.cos(Math.PI*(dr/180))*default_area_h*dsy],
-            "p3": [dx+Math.cos(Math.PI*(dr/180))*default_area_w*dsx-Math.sin(Math.PI*(dr/180))*default_area_h*dsy, dy-Math.sin(Math.PI*(dr/180))*default_area_w*dsx-Math.cos(Math.PI*(dr/180))*default_area_h*dsy],
-            "p4": [dx+Math.cos(Math.PI*(dr/180))*default_area_w*dsx, dy-Math.sin(Math.PI*(dr/180))*default_area_w*dsx],
+            "p2": [dx-Math.sin(Math.PI*(dr/180))*default_area_h*dsy, dy+Math.cos(Math.PI*(dr/180))*default_area_h*dsy],
+            "p3": [dx+Math.cos(Math.PI*(dr/180))*default_area_w*dsx-Math.sin(Math.PI*(dr/180))*default_area_h*dsy, dy+Math.sin(Math.PI*(dr/180))*default_area_w*dsx+Math.cos(Math.PI*(dr/180))*default_area_h*dsy],
+            "p4": [dx+Math.cos(Math.PI*(dr/180))*default_area_w*dsx, dy+Math.sin(Math.PI*(dr/180))*default_area_w*dsx],
         }
-
-        console.log(ox, oy, osx, osy, or, rx, ry, rsx, rsy, rr, dx, dy, dsx, dsy, dr)
-        console.log(res_dict)
     }
+
+    res_dict["origin"] = {
+        "x": oy,
+        "y": ox,
+        "scaleX": osy,
+        "scaleY": osx,
+        "rotation": Math.PI*(or/180),
+    }
+    console.log(res_dict)
 
     let token = document.head.querySelector("[name~=csrf-token][content]").content;
     Sijax.request('famcy_submission_handler', [obj_key, res_dict], { data: { csrf_token: token } });
@@ -157,10 +180,9 @@ function c_showRect(name, color) {
         y: 0,
         width: default_area_w,
         height: default_area_h,
-        fill: 'transparent',
-        stroke: color,
-        strokeWidth: 4,
-        name: "rect"
+        fill: color,
+        name: "rect",
+        opacity: 0.3,
     });
 
     let simpleText = new Konva.Text({
@@ -174,6 +196,11 @@ function c_showRect(name, color) {
     });
 
     let group = new Konva.Group({
+        // x: default_area_w,
+        // y: default_area_h,
+        // rotation: 45,
+        // scaleX: 5/4,
+        // scaleY: 4/5,
         draggable: true,
     });
     var layer = new Konva.Layer();
@@ -193,6 +220,8 @@ function c_showRect(name, color) {
     C_RECT_DICT[name]["text_attr"] = simpleText["attrs"]
 
     C_CANVAS.add(layer)
+
+    saveValue("rectDict", JSON.stringify(C_RECT_DICT))
 }
 
 function c_drawFBlockRoute(key_name, points, pos, more_info={"width": 8, "color": "red"}) {
@@ -206,7 +235,7 @@ function c_drawFBlockRoute(key_name, points, pos, more_info={"width": 8, "color"
             strokeWidth: more_info["width"],
             lineCap: 'round',
             lineJoin: 'round',
-            tension: 1,
+            // tension: 1,
             draggable: true,
         });
 
@@ -448,7 +477,6 @@ function c_loadDb (robot_id, callback) {
         })
 }
 function c_saveRoute(robot_id) {
-    console.log("c_saveRoute")
     // call API to save data
     saveValue("imageData", document.getElementById("imgCanvasMap").getAttribute('src'))
     saveValue("lineDict", JSON.stringify(C_LINE_DICT))
@@ -481,4 +509,7 @@ function c_clearRoute() {
     saveValue("imageData", "")
     saveValue("lineDict", JSON.stringify(C_LINE_DICT))
     saveValue("rectDict", JSON.stringify(C_RECT_DICT))
+
+    c_remove_all_route_to_canvas()
+    c_remove_all_area_to_canvas()
 }

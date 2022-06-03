@@ -1,7 +1,37 @@
 import Famcy
+import math
+import numpy as np
+import copy
 from .gmap_block import *
 from .canvas_block import *
 from .joyStick import *
+
+ROS_DATA_A = [0, 0, 10, 0, 0, 8, 10, 8]
+T_DATA = [[1, 0], [0, 1]]
+K_coefficient = 1
+
+def T_coefficient(data):
+    """
+    data: [10, 20, 30, 40, 50, 60]
+    """
+    x_list = [data[i] for i in range(len(data)) if i % 2 == 0]
+    y_list = [data[i] for i in range(len(data)) if i % 2 == 1]
+
+    x_len = max(x_list)-min(x_list)
+
+    return (CANVAS_W / x_len) / 2
+
+def TA_action(A_data):
+    global K_coefficient
+    K_coefficient = T_coefficient(A_data)
+
+    b_list = []
+    for x, y in zip(*[iter(A_data)]*2):
+        b_list.append(K_coefficient*y)
+        b_list.append(K_coefficient*x)
+
+    return b_list
+
 
 class revenueGetApi(Famcy.FamcyPage):
     def __init__(self):
@@ -138,7 +168,7 @@ class testPage(Famcy.FamcyPage):
         self.g_canvas.update({
             "route": [{
                 "key_name": "route_1",
-                "points": [10, 20, 30, 40, 50, 60],
+                "points": TA_action(ROS_DATA_A),
                 "pos": {"x": 0, "y": 0},
                 "more_info": {"width": 5, "color": "blue"}
             }],
@@ -153,7 +183,13 @@ class testPage(Famcy.FamcyPage):
             return Famcy.UpdatePrompt(target=self.p_card_1)
         else:
             for kname in info.raw_data.keys():
-                print(info.raw_data[kname]["p1"], info.raw_data[kname]["p2"], info.raw_data[kname]["p3"], info.raw_data[kname]["p4"])
+                if kname != "origin":
+                    b_list = info.raw_data[kname]["p1"][::-1] + info.raw_data[kname]["p2"][::-1] + info.raw_data[kname]["p3"][::-1] + info.raw_data[kname]["p4"][::-1]
+                    a_list = self.B_rotation(self.B_scale(self.minus_Z_action(b_list, info.raw_data["origin"]["x"], info.raw_data["origin"]["y"]), info.raw_data["origin"]["scaleX"], info.raw_data["origin"]["scaleY"]), info.raw_data["origin"]["rotation"])
+                    result = self.A_divide_k(a_list)
+
+                    print("result: ", b_list)
+                    print(result)
             return Famcy.UpdateNothing()
 
     def Prompt_close(self, submission_obj, info):
@@ -173,6 +209,42 @@ class testPage(Famcy.FamcyPage):
 
     # utils
     # ====================================================
+    
+
+    def minus_Z_action(self, B_data, dx, dy):
+        ta_list = []
+        for x, y in zip(*[iter(B_data)]*2):
+            ta_list.append(x-dx)
+            ta_list.append(y-dy)
+
+        return ta_list
+
+    def B_scale(self, B_data, scaleX, scaleY):
+        s_inverse_b_list = []
+        for x, y in zip(*[iter(B_data)]*2):
+            s_inverse_b_list.append(x/scaleX)
+            s_inverse_b_list.append(y/scaleY)
+
+        return s_inverse_b_list
+
+    def B_rotation(self, B_data, rad):
+        a_list = []
+        for x, y in zip(*[iter(B_data)]*2):
+            a_list.append(math.cos(rad)*x-math.sin(rad)*y)
+            a_list.append(math.sin(rad)*x+math.cos(rad)*y)
+
+        return a_list
+
+    def A_divide_k(self, a_list):
+        result = []
+        for x, y in zip(*[iter(a_list)]*2):
+            result.append(x/K_coefficient)
+            result.append(y/K_coefficient)
+
+        return result
+    
+
+
     # ====================================================
     # ====================================================
 

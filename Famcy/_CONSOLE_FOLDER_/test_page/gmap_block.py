@@ -5,6 +5,9 @@ import requests
 
 # [24.98728136, 121.55250466]
 
+GOOGLE_MAP_W = 525
+GOOGLE_MAP_H = 600
+
 class google_map(Famcy.FamcyBlock):
 
     def __init__(self, **kwargs):
@@ -63,7 +66,7 @@ class google_map(Famcy.FamcyBlock):
         gbtn = Famcy.button()
         gbtn["className"] = "small_submit_btn"
         gbtn["id"] = "btnExport"
-        gbtn["onclick"] = f"takeshot('525', '600', '{self.submission_obj_key}')"
+        gbtn["onclick"] = f"takeshot('{GOOGLE_MAP_W}', '{GOOGLE_MAP_H}', '{self.submission_obj_key}')"
         gbtn.innerHTML = "Snapshot"
         self.body.addElement(gbtn)
 
@@ -92,28 +95,28 @@ class google_map(Famcy.FamcyBlock):
         static_style = Famcy.style()
         static_style.innerHTML = """
             #map {
-                width: 525px;
-                height: 600px;
+                width: %spx;
+                height: %spx;
             }
 
             #imgMapHolder {
                 position: relative;
-                width: 525px;
-                height: 600px;
+                width: %spx;
+                height: %spx;
             }
 
             #imgMapMask {
                 position: absolute;
                 top: 0;
                 left: 0;
-                width: 525px;
-                height: 600px;
+                width: %spx;
+                height: %spx;
             }
-        """
+        """ % (str(GOOGLE_MAP_W), str(GOOGLE_MAP_H), str(GOOGLE_MAP_W), str(GOOGLE_MAP_H), str(GOOGLE_MAP_W), str(GOOGLE_MAP_H))
         self.body.addStaticScript(static_style, position="head") 
 
         map_script = Famcy.script()
-        map_script["src"] = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBLVzlVbwKbrnXbPezNFIJsHHa4SCXZ0fI"
+        map_script["src"] = "https://maps.googleapis.com/maps/api/js?key="+Famcy.FManager["ConsoleConfig"]["google_map"]
         self.body.addStaticScript(map_script, position="head")
 
         html2canvas_script = Famcy.script()
