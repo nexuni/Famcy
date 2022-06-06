@@ -6,12 +6,12 @@ class joyStick(Famcy.FamcyBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.x = 0
         self.y = 0
         self.callback = None
         self.value = joyStick.generate_template_content()
-        super(joyStick, self).__init__()
+        super(joyStick, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod

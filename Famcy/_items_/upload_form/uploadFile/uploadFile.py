@@ -7,9 +7,9 @@ class uploadFile(Famcy.FamcyUploadBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = uploadFile.generate_template_content()
-        super(uploadFile, self).__init__()
+        super(uploadFile, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod

@@ -9,8 +9,8 @@ class FCard(FamcyWidget):
 	that can be laid onto the Famcy console
 	layout. 
 	"""
-	def __init__(self, layout_mode=FLayoutMode.recommend):
-		super(FCard, self).__init__()
+	def __init__(self, layout_mode=FLayoutMode.recommend, **kwargs):
+		super(FCard, self).__init__(**kwargs)
 
 		self.title = ""
 		self.layout = FamcyLayout(self, layout_mode)
@@ -88,7 +88,7 @@ class FCard(FamcyWidget):
 		pass
 
 class FPromptCard(FCard):
-	def __init__(self):
-		super(FPromptCard, self).__init__()
+	def __init__(self, **kwargs):
+		super(FPromptCard, self).__init__(**kwargs)
 		self.last_card = None
 		self.next_card = None

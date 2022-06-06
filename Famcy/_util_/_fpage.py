@@ -47,8 +47,8 @@ class FPage(FamcyWidget):
 	event_source_flag=False
 	_lock = threading.Lock()
 
-	def __init__(self, layout_mode=FLayoutMode.recommend):
-		super(FPage, self).__init__()
+	def __init__(self, layout_mode=FLayoutMode.recommend, **kwargs):
+		super(FPage, self).__init__(**kwargs)
 		self.layout = FamcyLayout(self, layout_mode, page_parent=self)
 
 		self.submission_obj = FSubmission(self)

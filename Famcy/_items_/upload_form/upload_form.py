@@ -8,8 +8,8 @@ class upload_form(Famcy.FamcyCard):
     Represents the block to upload 
     all kinds of files. 
     """
-    def __init__(self, layout_mode=Famcy.FamcyLayoutMode.recommend):
-        super(upload_form, self).__init__(layout_mode=layout_mode)
+    def __init__(self, layout_mode=Famcy.FamcyLayoutMode.recommend, **kwargs):
+        super(upload_form, self).__init__(layout_mode=layout_mode, **kwargs)
         self.configs["method"] = "post"
         self.init_block()
 

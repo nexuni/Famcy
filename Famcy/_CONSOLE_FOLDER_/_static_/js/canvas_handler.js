@@ -196,11 +196,6 @@ function c_showRect(name, color) {
     });
 
     let group = new Konva.Group({
-        // x: default_area_w,
-        // y: default_area_h,
-        // rotation: 45,
-        // scaleX: 5/4,
-        // scaleY: 4/5,
         draggable: true,
     });
     var layer = new Konva.Layer();

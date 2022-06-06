@@ -116,7 +116,7 @@ class testPage(Famcy.FamcyPage):
     def card1(self):
         _card = Famcy.FamcyCard()
 
-        _joy = joyStick()
+        _joy = joyStick(permission=0)
 
         _card.layout.addWidget(_joy, 0, 0)
 

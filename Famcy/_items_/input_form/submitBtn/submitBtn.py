@@ -7,9 +7,9 @@ class submitBtn(Famcy.FamcyInputBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = submitBtn.generate_template_content()
-        super(submitBtn, self).__init__()
+        super(submitBtn, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod

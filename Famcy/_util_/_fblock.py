@@ -18,9 +18,9 @@ class FBlock(FamcyWidget):
         handle_submission: handle form submit
             action
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         # self.value = FBlock.generate_template_content()
-        super(FBlock, self).__init__()
+        super(FBlock, self).__init__(**kwargs)
 
     def __getitem__(self, k):
         return self.value.get(k, None)
@@ -72,8 +72,8 @@ class FInputBlock(FBlock):
     """
     REQUIRED_KEYS = ["action_after_post", "mandatory"]
 
-    def __init__(self):
-        super(FInputBlock, self).__init__()
+    def __init__(self, **kwargs):
+        super(FInputBlock, self).__init__(**kwargs)
         self.parent_form = self.find_parent(self, 'input_form')
 
         for k in self.REQUIRED_KEYS:
@@ -81,8 +81,8 @@ class FInputBlock(FBlock):
 
 
 class FUploadBlock(FBlock):
-    def __init__(self):
-        super(FUploadBlock, self).__init__()
+    def __init__(self, **kwargs):
+        super(FUploadBlock, self).__init__(**kwargs)
         self.parent_form = self.find_parent(self, 'upload_form')
         self.upload = True
         

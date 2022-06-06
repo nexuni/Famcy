@@ -101,6 +101,7 @@ var JoyStick = (function(container, submit_id, parameters, callback)
     var context=canvas.getContext("2d");
 
     var pressed = 0; // Bool - 1=Yes - 0=No
+    var move = 0; // Bool - 1=Yes - 0=No
     var circumference = 2 * Math.PI;
     var internalRadius = (canvas.width-((canvas.width/2)+10))/2;
     var maxMoveStick = internalRadius + 5;
@@ -244,6 +245,7 @@ var JoyStick = (function(container, submit_id, parameters, callback)
     function onMouseDown(event) 
     {
         pressed = 1;
+        move = 0;
     }
 
     /* To simplify this code there was a new experimental feature here: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/offsetX , but it present only in Mouse case not metod presents in Touch case :-( */
@@ -251,6 +253,8 @@ var JoyStick = (function(container, submit_id, parameters, callback)
     {
         if(pressed === 1)
         {
+            move = 0;
+
             const scroller = document.querySelector("#content_section");
             movedX = event.pageX;
             movedY = event.pageY;
@@ -277,40 +281,54 @@ var JoyStick = (function(container, submit_id, parameters, callback)
             StickStatus.x = (100*((movedX - centerX)/maxMoveStick)).toFixed();
             StickStatus.y = ((100*((movedY - centerY)/maxMoveStick))*-1).toFixed();
             StickStatus.cardinalDirection = getCardinalDirection();
+
+            move = 1;
+
+            // send x, y pos to Famcy
+            let token = document.head.querySelector("[name~=csrf-token][content]").content
+            setInterval(() => {
+                if (move == 1) {
+                    response_dict = {"x": StickStatus.x, "y": StickStatus.y}
+                    Sijax.request('famcy_submission_handler', [submit_id, response_dict], { data: { csrf_token: token } });
+                }
+            }, 5000)
+            
             callback(StickStatus);
         }
     }
 
     function onMouseUp(event) 
     {
-        const final_x = StickStatus.x;
-        const final_y = StickStatus.y;
+        if (pressed == 1) {
+            // const final_x = StickStatus.x;
+            // const final_y = StickStatus.y;
+            move = 0;
+            pressed = 0;
+            // If required reset position store variable
+            if(autoReturnToCenter)
+            {
+                movedX = centerX;
+                movedY = centerY;
+            }
+            // Delete canvas
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            // Redraw object
+            drawExternal();
+            drawInternal();
 
-        pressed = 0;
-        // If required reset position store variable
-        if(autoReturnToCenter)
-        {
-            movedX = centerX;
-            movedY = centerY;
+            // Set attribute of callback
+            StickStatus.xPosition = movedX;
+            StickStatus.yPosition = movedY;
+            StickStatus.x = (100*((movedX - centerX)/maxMoveStick)).toFixed();
+            StickStatus.y = ((100*((movedY - centerY)/maxMoveStick))*-1).toFixed();
+            StickStatus.cardinalDirection = getCardinalDirection();
+            callback(StickStatus);
+
+            // send x, y pos to Famcy
+            // response_dict = {"x": final_x, "y": final_y}
+            // var token = document.head.querySelector("[name~=csrf-token][content]").content
+            // Sijax.request('famcy_submission_handler', [submit_id, response_dict], { data: { csrf_token: token } });
         }
-        // Delete canvas
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        // Redraw object
-        drawExternal();
-        drawInternal();
-
-        // Set attribute of callback
-        StickStatus.xPosition = movedX;
-        StickStatus.yPosition = movedY;
-        StickStatus.x = (100*((movedX - centerX)/maxMoveStick)).toFixed();
-        StickStatus.y = ((100*((movedY - centerY)/maxMoveStick))*-1).toFixed();
-        StickStatus.cardinalDirection = getCardinalDirection();
-        callback(StickStatus);
-
-        // send x, y pos to Famcy
-        response_dict = {"x": final_x, "y": final_y}
-        var token = document.head.querySelector("[name~=csrf-token][content]").content
-        Sijax.request('famcy_submission_handler', [submit_id, response_dict], { data: { csrf_token: token } });
     }
 
     function getCardinalDirection()

@@ -5,6 +5,7 @@ import time
 from flask import session
 from Famcy._util_._fthread import *
 from Famcy._util_._fsubmission import *
+from Famcy._util_._fpermissions import *
 
 class FamcyWidget(metaclass=abc.ABCMeta):
 	"""
@@ -22,7 +23,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 	""" 
 	id_iter = 0
 
-	def __init__(self):
+	def __init__(self, **kwargs):
 		# update next id number
 		FamcyWidget.next_id()
 		self.id = "famcy"+str(FamcyWidget.get_id())
@@ -35,6 +36,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.clickable = False
 		self.configs = {}
 		self.attributes = {}
+		self.permission = FPermissions(kwargs["permission"]) if "permission" in kwargs else FPermissions(0)
 
 		# Header script
 		self.header_script = ""
@@ -53,8 +55,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.submission_obj_key = self.id
 		self.post_submission_js = ""
 		self.submit_value_name = self.name
-
-		# self.link = Famcy.FManager["ConsoleConfig"]["main_url"]+"/"+self.id
 
 	@classmethod
 	def reset_id(cls):

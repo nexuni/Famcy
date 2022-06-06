@@ -7,9 +7,9 @@ class displayLight(Famcy.FamcyBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = displayLight.generate_template_content()
-        super(displayLight, self).__init__()
+        super(displayLight, self).__init__(**kwargs)
         self.init_block()
 
     def init_block(self):
