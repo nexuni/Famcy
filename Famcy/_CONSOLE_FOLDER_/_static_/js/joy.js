@@ -266,8 +266,8 @@ var JoyStick = (function(container, submit_id, parameters, callback)
             }
             else
             {
-                movedX -= canvas.offsetParent.offsetLeft;
-                movedY -= canvas.offsetParent.offsetTop-scroller.scrollTop;
+                movedX -= canvas.offsetLeft;
+                movedY -= canvas.offsetTop;
             }
             // Delete canvas
             context.clearRect(0, 0, canvas.width, canvas.height);

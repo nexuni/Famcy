@@ -6,9 +6,10 @@ from .gmap_block import *
 from .canvas_block import *
 from .joyStick import *
 
-ROS_DATA_A = [0, 0, 10, 0, 0, 8, 10, 8]
-T_DATA = [[1, 0], [0, 1]]
+ROS_DATA_A = [21.661754608154297, 20.893672943115234, 3.3902435302734375, -12.318791389465332, -5.298501968383789, -16.059478759765625, -22.065702438354492, -15.99377727508545, -31.821977615356445, -10.552935600280762, 0.2519207000732422, 61.06772232055664, 12.825460433959961, 61.705596923828125, 23.228116989135742, 56.6130485534668, 25.614919662475586, 46.3193244934082, 28.461362838745117, 32.952735900878906, 22.679168701171875, 20.540454864501953]
 K_coefficient = 1
+DX_coefficient = 0
+DY_coefficient = 0
 
 def T_coefficient(data):
     """
@@ -17,18 +18,21 @@ def T_coefficient(data):
     x_list = [data[i] for i in range(len(data)) if i % 2 == 0]
     y_list = [data[i] for i in range(len(data)) if i % 2 == 1]
 
+    dx = min(x_list) if min(x_list) < 0 else 0
+    dy = min(y_list) if min(y_list) < 0 else 0
+
     x_len = max(x_list)-min(x_list)
 
-    return (CANVAS_W / x_len) / 2
+    return (CANVAS_W / x_len) / 2, dx, dy
 
 def TA_action(A_data):
-    global K_coefficient
-    K_coefficient = T_coefficient(A_data)
+    global K_coefficient, DX_coefficient, DY_coefficient
+    K_coefficient, DX_coefficient, DY_coefficient = T_coefficient(A_data)
 
     b_list = []
     for x, y in zip(*[iter(A_data)]*2):
-        b_list.append(K_coefficient*y)
-        b_list.append(K_coefficient*x)
+        b_list.append(K_coefficient*(y - DY_coefficient))
+        b_list.append(K_coefficient*(x - DX_coefficient))
 
     return b_list
 
@@ -70,7 +74,7 @@ store_open_api = store_openGetApi()
 store_openGetApi.register(store_open_ROUTE, Famcy.APIStyle(), init_cls=store_open_api)
 store_open_api.style.setAction(store_open_api.callback)
 
-
+# Famcy.video_stream.start_rtsp_hls("rtsp", "stream1")
 
 class testPage(Famcy.FamcyPage):
     def __init__(self):
@@ -90,16 +94,28 @@ class testPage(Famcy.FamcyPage):
         # ===============
         self.card_0 = self.card0()
         self.card_1 = self.card1()
+        self.card_2 = self.card2()
         # ===============
 
         self.layout.addWidget(self.card_0, 0, 0)
         self.layout.addWidget(self.card_1, 1, 0)
+        self.layout.addWidget(self.card_2, 2, 0)
 
         self.p_card_1 = self.p_card1()
+        # self.p_card_2 = self.p_card2()
         self.layout.addStaticWidget(self.p_card_1)
+        # self.layout.addStaticWidget(self.p_card_2)
+
+        self.thread_update_msg = Famcy.FamcyBackgroundTask(self)
         
     # background task function 
     # ====================================================
+    def background_thread_inner(self):
+        self.thread_update_msg.associate(self.test,info_dict={},target=self._d)
+        Famcy.FamcyBackgroundQueue.add(self.thread_update_msg,Famcy.FamcyPriority.Standard)
+
+    def test(self):
+        print("test")
     # ====================================================
     # ====================================================
 
@@ -109,16 +125,34 @@ class testPage(Famcy.FamcyPage):
     def card0(self):
         _card = Famcy.FamcyCard()
 
-        _card.layout.addWidget(self.g_map, 0, 0)
+        self._d = Famcy.displayParagraph()
+
+        # _card.layout.addWidget(self.g_map, 0, 0)
+        _card.layout.addWidget(self._d, 0, 0)
 
         return _card
 
     def card1(self):
         _card = Famcy.FamcyCard()
 
-        _joy = joyStick(permission=0)
+        # _joy = joyStick(permission=0)
+        _v = Famcy.video_stream()
 
-        _card.layout.addWidget(_joy, 0, 0)
+        _card.layout.addWidget(_v, 0, 0)
+
+        return _card
+
+    def card2(self):
+        _card = Famcy.FamcyCard()
+
+        _input_form = Famcy.input_form()
+
+        _sb = Famcy.submitBtn()
+        _sb.connect(self.joy_start)
+
+        _input_form.layout.addWidget(_sb, 0, 0)
+
+        _card.layout.addWidget(_input_form, 0, 0)
 
         return _card
     # ====================================================
@@ -130,30 +164,46 @@ class testPage(Famcy.FamcyPage):
     def p_card1(self):
         _card = Famcy.FamcyCard()
 
+        _joy = joyStick(permission=0)
+        _card.layout.addWidget(_joy, 0, 0)
+
         _input_form = Famcy.input_form()
 
-        area_name = Famcy.pureInput()
-        area_name.set_submit_value_name("name")
-        area_name.update({
-                "title": "name",
-                "desc": ".",
-
+        sb_btn = Famcy.submitBtn()
+        sb_btn.update({
+                "title": "submit"
             })
-        area_color = Famcy.pureInput()
-        area_color.set_submit_value_name("color")
-        area_color.update({
-                "title": "color",
-                "desc": ".",
+        sb_btn.connect(self.joy_close)
+
+        _input_form.layout.addWidget(sb_btn, 0, 0)
+
+        _card.layout.addWidget(_input_form, 1, 0)
+
+        return _card
+
+    def p_card2(self):
+        _card = Famcy.FamcyCard()
+
+        _input_form = Famcy.input_form()
+
+        self.streaming = Famcy.video_stream()
+        self.streaming.is_prompt_card = True
+        self.streaming.update({
+                "delay": 0.01,
+                "route_name": "/map",
+                "video_link": "rtsp://rtsp.stream/pattern", # robot_data[0][ROBOT_STREAM_URL],
+                "stream_flag": True,
+                "snap": False,
+                "size": [200,160]
+
             })
         sb_btn = Famcy.submitBtn()
         sb_btn.update({
                 "title": "submit"
             })
-        sb_btn.connect(self.Prompt_close)
+        sb_btn.connect(self.video_close)
 
-        _input_form.layout.addWidget(area_name, 0, 0)
-        _input_form.layout.addWidget(area_color, 0, 1)
-        _input_form.layout.addWidget(sb_btn, 1, 0, 1, 2)
+        _input_form.layout.addWidget(sb_btn, 0, 0)
 
         _card.layout.addWidget(_input_form, 0, 0)
 
@@ -197,6 +247,29 @@ class testPage(Famcy.FamcyPage):
         color = info["color"]
         _extra_script = "c_showRect('" + name + "', '" + color + "')"
         return Famcy.UpdateRemoveElement(target=self.p_card_1, prompt_flag=True, extra_script=_extra_script)
+
+    def video_start(self, submission_obj, info):
+        self.streaming.update({
+                "stream_flag": True,
+            })
+        self.streaming.end_thread = True
+        self.streaming.postload = self.streaming.start_thread()
+        return [Famcy.UpdatePrompt(target=self.p_card_2)]
+
+    def video_close(self, submission_obj, info):
+        print("video_close")
+        self.streaming.update({
+                "stream_flag": False,
+            })
+        # self.streaming.end_thread = True
+        # self.streaming.is_alive = False
+        return [Famcy.UpdateBlockHtml(target=self.streaming), Famcy.UpdateRemoveElement(prompt_flag=True)]
+
+    def joy_start(self, submission_obj, info):
+        return [Famcy.UpdatePrompt(target=self.p_card_1)]
+
+    def joy_close(self, submission_obj, info):
+        return Famcy.UpdateRemoveElement(prompt_flag=True)
     # ====================================================
     # ====================================================
         
@@ -238,8 +311,8 @@ class testPage(Famcy.FamcyPage):
     def A_divide_k(self, a_list):
         result = []
         for x, y in zip(*[iter(a_list)]*2):
-            result.append(x/K_coefficient)
-            result.append(y/K_coefficient)
+            result.append(x/K_coefficient + DX_coefficient)
+            result.append(y/K_coefficient + DY_coefficient)
 
         return result
     
@@ -249,4 +322,4 @@ class testPage(Famcy.FamcyPage):
     # ====================================================
 
    
-testPage.register("/test", Famcy.ClassicStyle(), permission_level=0, background_thread=False)
+testPage.register("/test", Famcy.ClassicStyle(), permission_level=0, background_thread=True)
