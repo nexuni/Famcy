@@ -299,4 +299,4 @@ class employeePage(Famcy.FamcyPage):
     # ====================================================
 
    
-employeePage.register("/employee", Famcy.ClassicStyle(), permission_level=0, background_thread=False)
+employeePage.register("/employee", Famcy.NexuniStyle(), permission_level=0, background_thread=False)

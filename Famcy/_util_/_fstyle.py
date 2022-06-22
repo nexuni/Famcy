@@ -22,8 +22,7 @@ class FStyle:
 		self._sijax_enable = sijax_enable
 
 		# default url
-		# self.main_url = Famcy.FManager["ConsoleConfig"]["main_url"]
-		self.main_url = ""
+		self.main_url = Famcy.FManager["ConsoleConfig"]["main_url"] if "main_url" in Famcy.FManager["ConsoleConfig"].keys() else ""
 
 		self._check_rep()
 
@@ -36,10 +35,7 @@ class FStyle:
 	def setLogin(self, with_login):
 		self.withLogin = with_login
 
-	# def setDashboardHTMLHeader(self):
-	# 	return {"indicator": True, "title": self.title, "desc": self.desc}
-
-	def setDashboardHTMLHeader(self):
+	def setDashboardHTMLHeader(self, css_file="index"):
 		"""
 		Return the html header for the dashboard
 		"""
@@ -52,10 +48,10 @@ class FStyle:
 		/>
 		<title>%s</title>
 
-		<link href="%s/static/css/index.css" rel="stylesheet" media="screen">
+		<link href="%s/static/css/%s.css" rel="stylesheet" media="screen">
 		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 		<script src="%s/static/js/http_utils.js"></script>
-		<script src="%s/static/js/cookie_utils.js"></script>%s""" % (self.desc, self.title, self.main_url, self.main_url, self.main_url, self.uploadFileHeader())
+		<script src="%s/static/js/cookie_utils.js"></script>%s""" % (self.desc, self.title, self.main_url, css_file, self.main_url, self.main_url, self.uploadFileHeader())
 
 	def uploadFileHeader(self):
 		return"""
@@ -315,9 +311,10 @@ class FStyleSideBtns(FStyle):
 
 
 class FStyleNavBtns(FStyle):
-	def __init__(self):
+	def __init__(self, className="portfolio_nav"):
 		super(FStyleNavBtns, self).__init__()
 		self.body = None
+		self.className = className
 		self.side_bar_title_href = Famcy.FManager["ConsoleConfig"]["main_page"]
 		self.side_bar_title = Famcy.FManager["ConsoleConfig"]["side_bar_title"]
 		self.side_bar_hierarchy = Famcy.FManager["ConsoleConfig"]["side_bar_hierachy"]
@@ -343,7 +340,7 @@ class FStyleNavBtns(FStyle):
 		side_bar_style = {"main_title1": "bxl-docker", "main_title2": "bxl-python"}
 		"""
 		self.body = Famcy.div()
-		self.body["className"] = "portfolio_nav"
+		self.body["className"] = self.className
 
 		for top_level in self.side_bar_hierarchy:
 			main_title = list(top_level.keys())[0]

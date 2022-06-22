@@ -7,6 +7,8 @@ class submitBtn(Famcy.FamcyInputBlock):
     Represents the block to display
     paragraph. 
     """
+    btn_style="default"                                  # (nexuni / default)
+    
     def __init__(self, **kwargs):
         self.value = submitBtn.generate_template_content()
         super(submitBtn, self).__init__(**kwargs)
@@ -17,7 +19,7 @@ class submitBtn(Famcy.FamcyInputBlock):
         return {
             "title": "inputBtn",
             "mandatory": False,
-            "action_after_post": "clean",                    # (clean / save)
+            "action_after_post": "clean",                       # (clean / save)
         }
 
     def init_block(self):
@@ -27,6 +29,10 @@ class submitBtn(Famcy.FamcyInputBlock):
         self.body["type"] = "submit"
         self.body["name"] = "send"
 
+        if submitBtn.btn_style == "nexuni":
+            self.body["className"] = "round_submit_btn"
+
     def render_inner(self):
         self.body["value"] = self.value["title"]
+        
         return self.body
