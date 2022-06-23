@@ -42,10 +42,11 @@ class employeePage(Famcy.FamcyPage):
                 "title": "選擇查看月份",
                 "input_type": "month"
             })
-        sb_btn = Famcy.submitBtn()
+        sb_btn = Famcy.submitBtn(parent=_card1)
         sb_btn.update({
                 "title": "查詢"
             })
+        # sb_btn.setGeometry(200, 200, 200, 200)
 
         _input_form.layout.addWidget(employee, 0, 0)
         _input_form.layout.addWidget(year_month, 0, 1)

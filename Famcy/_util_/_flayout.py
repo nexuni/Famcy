@@ -153,6 +153,8 @@ class FamcyLayout:
 		self.mode = layout_mode
 		self.layoutType = FamcyLayoutType(self.mode)
 
+		self.fixedContent = []
+
 		self.content = []
 		self.cusContent = []
 		self.staticContent = []
@@ -168,6 +170,11 @@ class FamcyLayout:
 		Rep Invariant
 		"""
 		pass
+
+	def addFixedWidget(self, card, **kwargs):
+		for k in kwargs.keys():
+			card.body.style[k] = kwargs[k] + " !important"
+		self.fixedContent.append([card])
 
 	# functions about static widget
 	def getStaticWidget(self, key_name):
@@ -385,6 +392,12 @@ class FamcyLayout:
 					_ = _card.render()
 					if not set(_body.script).intersection(set(_.script)):
 						_body.script.extend(_.script)
+					header_script += _card.header_script
+
+			for _ in self.fixedContent:
+				_card = _[0]
+				if _card.permission.verify(Famcy.FManager["CurrentUser"]):
+					_body.addElement(_card.render())
 					header_script += _card.header_script
 
 		return header_script + layout_css, _body
