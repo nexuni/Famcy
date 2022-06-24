@@ -466,7 +466,6 @@ html{
     cursor: pointer;
     background-position: right;
     background-repeat: no-repeat;
-    padding-right: 30px!important;
 }
 
 .table_holder thead th .both {
@@ -524,11 +523,9 @@ html{
 }
 
 .small_submit_btn{
-	margin: 5px;
+	width: fit-content;
 	padding: 10px;
-	/*margin: calc(var(--semi-large-text)*0.5) 0;*/
-
-	/*padding: calc(var(--semi-large-text)*0.5);*/
+	margin: 5px;
 	font-size: var(--normal-text);
 	line-height: var(--normal-text);
 
@@ -562,6 +559,13 @@ html{
 	-webkit-appearance: none;
 	cursor: pointer;
 	text-decoration: none;
+}
+
+.round_submit_btn{
+	width: fit-content;
+	min-width: 100px;
+	padding: 10px;
+	border-radius: 20px;
 }
 
 /*pureInput*/

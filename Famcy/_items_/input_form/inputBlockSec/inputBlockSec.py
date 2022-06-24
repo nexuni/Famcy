@@ -7,9 +7,9 @@ class inputBlockSec(Famcy.FamcyInputBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = inputBlockSec.generate_template_content()
-        super(inputBlockSec, self).__init__()
+        super(inputBlockSec, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod

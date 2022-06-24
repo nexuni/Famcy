@@ -5,6 +5,7 @@ import time
 from flask import session
 from Famcy._util_._fthread import *
 from Famcy._util_._fsubmission import *
+from Famcy._util_._fpermissions import *
 
 class FamcyWidget(metaclass=abc.ABCMeta):
 	"""
@@ -22,19 +23,20 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 	""" 
 	id_iter = 0
 
-	def __init__(self):
+	def __init__(self, **kwargs):
 		# update next id number
 		FamcyWidget.next_id()
 		self.id = "famcy"+str(FamcyWidget.get_id())
 		self.name = "famcy_name"+str(FamcyWidget.get_id())
 		self.action = ""
 		self.loader = Famcy.FManager["ConsoleConfig"]["DEFAULT_LOADER"]
-		self.page_parent = None
-		self.parent = None
+		self.page_parent = kwargs["page_parent"] if "page_parent" in kwargs.keys() else None
+		self.parent = kwargs["parent"] if "parent" in kwargs.keys() else None
 		self.body = None
 		self.clickable = False
 		self.configs = {}
 		self.attributes = {}
+		self.permission = FPermissions(kwargs["permission"]) if "permission" in kwargs else FPermissions(0)
 
 		# Header script
 		self.header_script = ""
@@ -54,12 +56,9 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		self.post_submission_js = ""
 		self.submit_value_name = self.name
 
-		self.link = Famcy.FManager["ConsoleConfig"]["main_url"]+"/"+self.id
-
 	@classmethod
 	def reset_id(cls):
 		cls.id_iter = 0
-		# print('cls.id_iter:', cls.id_iter)
 
 	@classmethod
 	def get_id(cls):
@@ -68,7 +67,6 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 	@classmethod
 	def next_id(cls):
 		cls.id_iter += 1
-		# print('next_id:', cls.id_iter)
 
 	def __setitem__(self, key, value):
 		self.attributes[key] = value
@@ -85,6 +83,23 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 
 	def get_cookie(self, key):
 		return session.get(key)
+
+	def setGeometry(self, x, y, w, h):
+		if self.parent:
+			if hasattr(self.parent, "layout"):
+				self.parent.body.style["position"] = "relative !important"
+				self.parent.layout.addFixedWidget(self, position="absolute", top=str(y)+"px" if isinstance(y, int) else _, left=str(x)+"px" if isinstance(x, int) else _, width=str(w)+"px" if isinstance(w, int) else _, height=str(h)+"px" if isinstance(h, int) else _)
+			else:
+				print("Widget should be put under a class which contains the attribute FLayout such as FPage or FCard")
+		else:
+			print("Widget should inherit a parent object")
+
+	def setFixedSize(self, w, h):
+		if self.body:
+			self.body.style["width"] = str(w)+"px" if isinstance(w, int) else _ + " !important"
+			self.body.style["height"] = str(h)+"px" if isinstance(h, int) else _ + " !important"
+		else:
+			print("Error: self.body is None")
 
 	def find_page_parent(self, item):
 		if item.parent:

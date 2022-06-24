@@ -7,9 +7,9 @@ class urlBtn(Famcy.FamcyInputBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = urlBtn.generate_template_content()
-        super(urlBtn, self).__init__()
+        super(urlBtn, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod

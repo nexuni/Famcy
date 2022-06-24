@@ -7,9 +7,9 @@ class downloadFile(Famcy.FamcyUploadBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = downloadFile.generate_template_content()
-        super(downloadFile, self).__init__()
+        super(downloadFile, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod

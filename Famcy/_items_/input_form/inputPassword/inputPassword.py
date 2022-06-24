@@ -7,9 +7,9 @@ class inputPassword(Famcy.FamcyInputBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = inputPassword.generate_template_content()
-        super(inputPassword, self).__init__()
+        super(inputPassword, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod

@@ -7,9 +7,9 @@ class pureInput(Famcy.FamcyInputBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = pureInput.generate_template_content()
-        super(pureInput, self).__init__()
+        super(pureInput, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod

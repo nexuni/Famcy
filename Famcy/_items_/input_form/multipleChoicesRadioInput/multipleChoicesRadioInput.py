@@ -7,9 +7,9 @@ class multipleChoicesRadioInput(Famcy.FamcyInputBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = multipleChoicesRadioInput.generate_template_content()
-        super(multipleChoicesRadioInput, self).__init__()
+        super(multipleChoicesRadioInput, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod

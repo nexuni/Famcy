@@ -153,6 +153,8 @@ class FamcyLayout:
 		self.mode = layout_mode
 		self.layoutType = FamcyLayoutType(self.mode)
 
+		self.fixedContent = []
+
 		self.content = []
 		self.cusContent = []
 		self.staticContent = []
@@ -168,6 +170,11 @@ class FamcyLayout:
 		Rep Invariant
 		"""
 		pass
+
+	def addFixedWidget(self, card, **kwargs):
+		for k in kwargs.keys():
+			card.body.style[k] = kwargs[k] + " !important"
+		self.fixedContent.append([card])
 
 	# functions about static widget
 	def getStaticWidget(self, key_name):
@@ -374,15 +381,24 @@ class FamcyLayout:
 		_body = body_element if body_element else self.parent.body
 		_body.children = []
 
-		for _card, _, _, _, _ in self.content:
-			_body.addElement(_card.render())
-			header_script += _card.header_script
+		if self.parent.permission.verify(Famcy.FManager["CurrentUser"]):
+			for _card, _, _, _, _ in self.content:
+				if _card.permission.verify(Famcy.FManager["CurrentUser"]):
+					_body.addElement(_card.render())
+					header_script += _card.header_script
 
-		for _card, _ in self.staticContent:
-			_ = _card.render()
-			if not set(_body.script).intersection(set(_.script)):
-				_body.script.extend(_.script)
-			header_script += _card.header_script
+			for _card, _ in self.staticContent:
+				if _card.permission.verify(Famcy.FManager["CurrentUser"]):
+					_ = _card.render()
+					if not set(_body.script).intersection(set(_.script)):
+						_body.script.extend(_.script)
+					header_script += _card.header_script
+
+			for _ in self.fixedContent:
+				_card = _[0]
+				if _card.permission.verify(Famcy.FManager["CurrentUser"]):
+					_body.addElement(_card.render())
+					header_script += _card.header_script
 
 		return header_script + layout_css, _body
 

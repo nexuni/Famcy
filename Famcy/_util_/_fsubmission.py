@@ -67,6 +67,7 @@ def put_submissions_to_list(fsubmission_obj, sub_dict):
 	input_parent = fsubmission_obj.origin.find_parent(fsubmission_obj.origin, "input_form")
 	f_submit_info = FSubmissionInfo()
 	f_submit_info.info_list = []
+	f_submit_info.raw_data = sub_dict
 
 	if input_parent:
 		for child, _, _, _, _ in input_parent.layout.content:
@@ -84,6 +85,7 @@ class FSubmissionInfo(object):
 	def __init__(self):
 		self.info_list = []
 		self.info_dict = {}
+		self.raw_data = None
 
 	def __getitem__(self, item):
 		if isinstance(item, int):

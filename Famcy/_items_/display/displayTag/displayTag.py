@@ -7,9 +7,9 @@ class displayTag(Famcy.FamcyBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = displayTag.generate_template_content()
-        super(displayTag, self).__init__()
+        super(displayTag, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod
