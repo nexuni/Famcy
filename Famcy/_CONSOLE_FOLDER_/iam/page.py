@@ -9,21 +9,34 @@ class CustomLoginManager(Famcy.FamcyLogin):
 		super(CustomLoginManager, self).__init__(always_remember=always_remember)
 
 	def init_login_db(self):
-		# # self.get_carpark_id() #get location position
-		# send_dict = {
-		# 	"operation": "pull_login_data",
-		# 	"area": "DDA"
-		# 	# "area": self.carpark_id
-		# }
+		# self.get_carpark_id() #get location position
+		send_dict = {
+			"operation": "pull_login_data",
+			"area": "DDA"
+			# "area": self.carpark_id
+		}
 
 		# # headers = {
 		# # 	"walkthrough": "Julia"
 		# # }
 
-		# res = Famcy.FManager.http_client.client_post("login_http_url", send_dict, gauth=True)
-		# CustomLoginManager.login_db = json.loads(res)["message"]
-		# return json.loads(res)["indicator"]
-		return True
+		res = Famcy.FManager.http_client.client_post("login_http_url", send_dict, gauth=True)
+		CustomLoginManager.login_db = json.loads(res)["message"]
+		print("res: ", res)
+		return json.loads(res)["indicator"]
+		# return True
+
+	# def get_carpark_id(self):
+	# 	send_dict = {
+	# 		"service": "pms",
+	# 		"operation": "get_carpark_id"
+	# 	}
+	# 	try:
+	# 		res_msg = Famcy.FManager.http_client.client_get("main_http_url", send_dict)
+	# 		res_msg = json.loads(res_msg)
+	# 		self.carpark_id = res_msg['message']
+	# 	except Exception as e:
+	# 		raise ValueError("could not find carpark_id")
 
 	def authenticate_user(self, user, password):
 		"""
@@ -31,13 +44,13 @@ class CustomLoginManager(Famcy.FamcyLogin):
 		the user info. The input user should
 		at least have the id attribute. 
 		"""
-		# if isinstance(CustomLoginManager.login_db, list):
-		# 	for member in CustomLoginManager.login_db:
-		# 		sha_password = hashlib.sha256(password.encode()).hexdigest()
-		# 		if user.name == member["username"] and sha_password == member["password"]:
-		# 			return {"indicator": True, "message": member}
-		# return {"indicator": False, "message": None}
-		return {"indicator": True, "message": {"permission": 1, "username": "julia"}}
+		if isinstance(CustomLoginManager.login_db, list):
+			for member in CustomLoginManager.login_db:
+				# sha_password = hashlib.sha256(password.encode()).hexdigest()
+				if user.name == member["username"] and password == member["password"]:
+					return {"indicator": True, "message": member}
+		return {"indicator": False, "message": None}
+		# return {"indicator": True, "message": {"permission": 1, "username": "julia"}}
 
 	def get_user_info(self, user):
 		for member in CustomLoginManager.login_db:

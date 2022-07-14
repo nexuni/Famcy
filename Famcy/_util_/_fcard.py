@@ -13,7 +13,7 @@ class FCard(FamcyWidget):
 		super(FCard, self).__init__(**kwargs)
 
 		self.title = ""
-		self.layout = FamcyLayout(self, layout_mode)
+		self.layout = FamcyLayout(self, layout_mode, **kwargs)
 		self.fit_content = False
 		self.init_card()
 		self._check_rep()

@@ -1,6 +1,15 @@
 import Famcy
 import json
 import requests
+from gadgethiServerUtils.authentication import *
+from gadgethiServerUtils.file_basics import read_config_yaml
+from os.path import expanduser
+import datetime
+
+G = GadgethiHMAC256Encryption("uber-server", Famcy.FManager.get_credentials("gadgethi_secret"))
+HEADER = G.getGServerAuthHeaders()
+STORE_ID = "DDA"
+HOST_ADDRESS = "http://127.0.0.1:5088/" # "https://store.nexuni-api.com/doday/v1"
 
 class financePage(Famcy.FamcyPage):
     def __init__(self):
@@ -49,7 +58,7 @@ class financePage(Famcy.FamcyPage):
         selected_type.update({
                 "title": "選擇種類",
                 "desc": ".",
-                "value": ["全部", "店面", "Uber", "Foodpanda"],
+                "value": ["全部", "店面", "外送"],
             })
         sb_btn = Famcy.submitBtn()
         sb_btn.update({
@@ -168,50 +177,28 @@ class financePage(Famcy.FamcyPage):
     # submission function
     # ====================================================
     def generate_chart(self, sb, info):
-        res_ind, res_msg = self.get_chart_data(info)
+        d_res_ind, d_res_msg = self.get_chart_data(info, "day")
+        w_res_ind, w_res_msg = self.get_chart_data(info, "week")
+        m_res_ind, m_res_msg = self.get_chart_data(info, "month")
+        p_res_ind, p_res_msg = self.get_chart_data(info, "product")
 
-        if res_ind:
+        if d_res_ind and w_res_ind and m_res_ind and p_res_ind:
             self.daily_revenue_graph.update({
-                "values": [{
-                    "x": res_msg["day"]["data"]["x"],
-                    "y": res_msg["day"]["data"]["y"],
-                    "mode": "lines+markers",
-                    "color": "rgb(225, 0, 0)",
-                    "marker_size": 8,
-                    "line_width": 3
-                }]
+                "values": [i for i in d_res_msg["data_list"]]
             })
             self.weekly_revenue_graph.update({
-                "values": [{
-                    "x": res_msg["week"]["data"]["x"],
-                    "y": res_msg["week"]["data"]["y"],
-                    "mode": "lines+markers",
-                    "color": "rgb(225, 0, 0)",
-                    "marker_size": 8,
-                    "line_width": 3
-                }]
+                "values": [i for i in w_res_msg["data_list"]]
             })
             self.monthly_revenue_graph.update({
-                "values": [{
-                    "x": res_msg["month"]["data"]["x"],
-                    "y": res_msg["month"]["data"]["y"],
-                    "mode": "lines+markers",
-                    "color": "rgb(225, 0, 0)",
-                    "marker_size": 8,
-                    "line_width": 3
-                }]
+                "values": [i for i in m_res_msg["data_list"]]
             })
             self.item_rank_graph.update({
-                "values": [{
-                    "x": res_msg["item"]["data"]["x"],
-                    "y": res_msg["item"]["data"]["y"],
-                    "color": "rgb(225, 0, 0)"
-                }],
+                "values": [i for i in p_res_msg["data_list"]]
             })
             return [Famcy.UpdateBlockHtml(target=self.card_1), Famcy.UpdateBlockHtml(target=self.card_2), Famcy.UpdateBlockHtml(target=self.card_3), Famcy.UpdateBlockHtml(target=self.card_4)]
 
         else:
-            return Famcy.UpdateAlert(target=self.card_0, alert_message=res_msg)
+            return Famcy.UpdateAlert(target=self.card_0, alert_message="資料異常，請重新再試")
         
     # ====================================================
     # ====================================================
@@ -219,27 +206,56 @@ class financePage(Famcy.FamcyPage):
 
     # http request function
     # ====================================================
-    def get_chart_data(self, info):
-        send_dict = {
-            "platform": "store", # "uber"   info["type"]
-            "store_name": "DDA",
-            "date": info["date"].replace("-","")
-        }
+    def get_chart_data(self, info, graph_type):
+        selected_day = self.convert_to_epoch_time(info["date"])
 
-        # res_str = Famcy.FManager.http_client.client_get("doday_http_url", send_dict, gauth=False)
-        res_str = requests.get("http://127.0.0.1:5000/revenue", params=send_dict).text
-        res_ind = json.loads(res_str)["indicator"]
-        res_msg = json.loads(res_str)["message"]
+        # set parameter platform
+        # if info["type"] == "全部":
+        #     p = "platform=all"
+        # elif info["type"] == "店面":
+        #     p = "platform=store"
+        # elif info["type"] == "外送":
+        #     p = "platform=delivery"
+        p = "platform="+json.dumps(["all", "store", "delivery"])
 
-        return res_ind, res_msg
+        # get different graph
+        if graph_type == "day":
+            t = "start_time="+json.dumps([selected_day, selected_day, selected_day])+"&end_time="+json.dumps([str(int(selected_day)+60*60*24), str(int(selected_day)+60*60*24), str(int(selected_day)+60*60*24)])
+            s = "scope="+json.dumps(["hourly", "hourly", "hourly"])
+
+        elif graph_type == "week":
+            t = "start_time="+json.dumps([str(int(selected_day)-60*60*24*7), str(int(selected_day)-60*60*24*7), str(int(selected_day)-60*60*24*7)])+"&end_time="+json.dumps([selected_day, selected_day, selected_day])
+            s = "scope="+json.dumps(["daily", "daily", "daily"])
+
+        elif graph_type == "month":
+            t = "start_time="+json.dumps([str(int(selected_day)-60*60*24*30), str(int(selected_day)-60*60*24*30), str(int(selected_day)-60*60*24*30)])+"&end_time="+json.dumps([selected_day, selected_day, selected_day])
+            s = "scope="+json.dumps(["daily", "daily", "daily"])
+
+        elif graph_type == "product":
+            t = "start_time="+json.dumps([selected_day, selected_day, selected_day])+"&end_time="+json.dumps([str(int(selected_day)+60*60*24), str(int(selected_day)+60*60*24), str(int(selected_day)+60*60*24)])
+            s = "scope="+json.dumps(["product", "product", "product"])
+
+        query = HOST_ADDRESS+"?service=order&operation=get_order_revenue&advance=True&store_id="+STORE_ID+"&"+t+"&"+s+"&"+p
+        r = requests.get(query, headers=HEADER).text
+        res_dict = json.loads(r)
+
+        return res_dict["indicator"], res_dict["message"]
     # ====================================================
     # ====================================================
 
 
     # utils
     # ====================================================
+    def convert_to_epoch_time(self, date=None, y=None, m=None, d=None):
+        if date:
+            date_list = date.split("-")
+            y = int(date_list[0])
+            m = int(date_list[1])
+            d = int(date_list[2])
+
+        return str(int(datetime.datetime(y,m,d,0,0).timestamp()))
     # ====================================================
     # ====================================================
 
    
-financePage.register("/finance", Famcy.ClassicStyle(), permission_level=0, background_thread=False)
+financePage.register("/finance", Famcy.NexuniStyle(), permission_level=0, background_thread=False)

@@ -22,6 +22,7 @@ function input_form_main_btn_submit(e, loader_flag, form_id, form_obj_key, btn_o
 	var flag = checkform(form_element, form_obj_key)
 	var token = document.head.querySelector("[name~=csrf-token][content]").content
 	if (flag) {
+		console.log(btn_obj_key, response_dict)
 		Sijax.request('famcy_submission_handler', [btn_obj_key, response_dict], { data: { csrf_token: token } });
 	}
 };

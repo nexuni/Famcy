@@ -20,16 +20,17 @@ class table_block(Famcy.FamcyBlock):
         - Return a content dictionary
         """
         return {
+            "event_source_update": False,
             "input_button": "radio",                     # ("checkbox" / "radio" / "none")
             "input_value_col_field": "col_title2",          # if input_button != "none"
 
-            "page_detail": True,                            # (true / false)
-            "page_detail_content": "key_value",             # if page_detail == true: (key_value / HTML_STR => ["<p>line1</p>", "<p>line2</p>"])
+            # "page_detail": True,                            # (true / false)
+            # "page_detail_content": "key_value",             # if page_detail == true: (key_value / HTML_STR => ["<p>line1</p>", "<p>line2</p>"])
 
             "toolbar": True,                                # (true / false)
             "page_footer": True,                            # (true / false)
             "page_footer_detail": {                         # if page_footer == true
-                "page_size": 1,
+                "page_size": 100,
                 "page_list": [1, 2, "all"]
             },
 
@@ -317,8 +318,8 @@ class table_block(Famcy.FamcyBlock):
         static_script["src"] = "/static/js/table_page.js"
         self.body.addStaticScript(static_script, position="head")
 
-        _script = Famcy.script()
-        _script.innerHTML = '''
+        self.event_source_script = Famcy.script()
+        self.event_source_script.innerHTML = '''
         var source = new EventSource("/event_source?channel=event_source.table_%s");
         source.addEventListener('publish', function(event) {
             var data = JSON.parse(event.data);
@@ -328,12 +329,20 @@ class table_block(Famcy.FamcyBlock):
             console.log("Error"+ event)
         }, false);
         ''' % self.id
-        self.body.addStaticScript(_script)
+        self.body.addStaticScript(self.event_source_script)
 
     def render_inner(self):
         # remove previous data
         self.body.children[1].children = []
         self.body.children[2].children = []
+
+        # remove event source stuff
+        if self.value["event_source_update"]:
+            if self.event_source_script not in self.body.script or self.event_source_script not in self.body.head_script:
+                self.body.addStaticScript(self.event_source_script)
+        else:
+            if self.event_source_script in self.body.script or self.event_source_script in self.body.head_script:
+                self.body.removeStaticScript(self.event_source_script)
 
         self.generate_table()
         return self.body

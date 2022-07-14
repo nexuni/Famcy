@@ -1,4 +1,14 @@
 import Famcy
+import json
+import requests
+import datetime
+from gadgethiServerUtils.authentication import *
+
+G = GadgethiHMAC256Encryption("uber-server", Famcy.FManager.get_credentials("gadgethi_secret"))
+HEADER = G.getGServerAuthHeaders()
+STORE_ID = "DDA"
+HOST_ADDRESS = "http://127.0.0.1:5088/" # "https://store.nexuni-api.com/doday/v1"
+
 
 class orderPage(Famcy.FamcyPage):
     def __init__(self):
@@ -29,13 +39,15 @@ class orderPage(Famcy.FamcyPage):
         _input_form = Famcy.input_form()
 
         order_num = Famcy.pureInput()
+        order_num.set_submit_value_name("order_num")
         order_num.update({
                 "title": "輸入單號",
                 "desc": "ex. DDA-20210901-5003"
             })
 
-        year_month = Famcy.pureInput()
-        year_month.update({
+        selected_date = Famcy.pureInput()
+        selected_date.set_submit_value_name("selected_date")
+        selected_date.update({
                 "title": "選擇日期",
                 "desc": ".",
                 "input_type": "date"
@@ -44,9 +56,10 @@ class orderPage(Famcy.FamcyPage):
         sb_btn.update({
                 "title": "查詢"
             })
+        sb_btn.connect(self.show_order_detail)
 
         _input_form.layout.addWidget(order_num, 0, 0)
-        _input_form.layout.addWidget(year_month, 0, 1)
+        _input_form.layout.addWidget(selected_date, 0, 1)
         _input_form.layout.addWidget(sb_btn, 1, 0, 1, 2)
 
         self.order_table = Famcy.table_block()
@@ -57,11 +70,7 @@ class orderPage(Famcy.FamcyPage):
             "page_detail_content": "key_value",             # if page_detail == true: (key_value / HTML_STR => ["<p>line1</p>", "<p>line2</p>"])
 
             "toolbar": False,                                # (true / false)
-            "page_footer": True,                            # (true / false)
-            "page_footer_detail": {                         # if page_footer == true
-                "page_size": 100,
-                "page_list": [1, 2, "all"]
-            },
+            "page_footer": False,
 
             "table_height": "200px",
 
@@ -75,7 +84,7 @@ class orderPage(Famcy.FamcyPage):
                 },
                 {
                     "title": '序號',
-                    "field": 'num',
+                    "field": 'order_no',
                     "rowspan": 1,
                     "align": 'center',
                     "valign": 'middle',
@@ -83,7 +92,7 @@ class orderPage(Famcy.FamcyPage):
                 },
                 {
                     "title": '店',
-                    "field": 'store',
+                    "field": 'store_id',
                     "rowspan": 1,
                     "align": 'center',
                     "valign": 'middle',
@@ -91,7 +100,7 @@ class orderPage(Famcy.FamcyPage):
                 },
                 {
                     "title": '系列',
-                    "field": 'category',
+                    "field": 'name1',
                     "rowspan": 1,
                     "align": 'center',
                     "valign": 'middle',
@@ -99,7 +108,7 @@ class orderPage(Famcy.FamcyPage):
                 },
                 {
                     "title": '品名',
-                    "field": 'item_name',
+                    "field": 'name2',
                     "rowspan": 1,
                     "align": 'center',
                     "valign": 'middle',
@@ -107,7 +116,7 @@ class orderPage(Famcy.FamcyPage):
                 },
                 {
                     "title": '配料',
-                    "field": 'addon',
+                    "field": 'name3with4',
                     "rowspan": 1,
                     "align": 'center',
                     "valign": 'middle',
@@ -115,7 +124,7 @@ class orderPage(Famcy.FamcyPage):
                 },
                 {
                     "title": '用餐方式',
-                    "field": 'stay_or_togo',
+                    "field": 'stayortogo',
                     "rowspan": 1,
                     "align": 'center',
                     "valign": 'middle',
@@ -170,23 +179,7 @@ class orderPage(Famcy.FamcyPage):
                     "sortable": True
                 }
             ]],
-            "data": [
-                {
-                    "order_id": "DDA-20210901-5003",
-                    "num": "1",
-                    "store": "DDA",
-                    "category": "推薦系列",
-                    "item_name": "絕配1. 紅豆、芋圓、粉圓豆花",
-                    "addon": '{"冷熱冰量": ["去冰"], "湯底": ["糖水(半糖)"], "附加選項(熱的才可選擇薑汁)": []}',
-                    "stay_or_togo": "stay",
-                    "amount": "2",
-                    "final_price": "120",
-                    "payment_method": "creditcard",
-                    "status": "preparing",
-                    "member_phone": "01234567890",
-                    "sync": "True"
-                }
-            ]
+            "data": []
         })
 
         _card1.layout.addWidget(_input_form, 0, 0)
@@ -201,14 +194,16 @@ class orderPage(Famcy.FamcyPage):
 
         _input_form = Famcy.input_form()
 
-        order_num = Famcy.pureInput()
-        order_num.update({
+        phone_num = Famcy.pureInput()
+        phone_num.set_submit_value_name("phone_num")
+        phone_num.update({
                 "title": "電話號碼",
                 "desc": "ex. 0900123456"
             })
 
-        year_month = Famcy.pureInput()
-        year_month.update({
+        points = Famcy.pureInput()
+        points.set_submit_value_name("points")
+        points.update({
                 "title": "點數",
                 "desc": "5/-5"
             })
@@ -216,24 +211,18 @@ class orderPage(Famcy.FamcyPage):
         sb_btn.update({
                 "title": "查詢"
             })
+        sb_btn.connect(self.edit_member_info)
 
-        _input_form.layout.addWidget(order_num, 0, 0)
-        _input_form.layout.addWidget(year_month, 0, 1)
+        _input_form.layout.addWidget(phone_num, 0, 0)
+        _input_form.layout.addWidget(points, 0, 1)
         _input_form.layout.addWidget(sb_btn, 1, 0, 1, 2)
 
         self.member_table = Famcy.table_block()
         self.member_table.update({
             "input_button": "none",
 
-            "page_detail": False,                            # (true / false)
-            "page_detail_content": "key_value",             # if page_detail == true: (key_value / HTML_STR => ["<p>line1</p>", "<p>line2</p>"])
-
             "toolbar": False,                                # (true / false)
-            "page_footer": True,                            # (true / false)
-            "page_footer_detail": {                         # if page_footer == true
-                "page_size": 100,
-                "page_list": [1, 2, "all"]
-            },
+            "page_footer": False,
 
             "table_height": "200px",
 
@@ -286,17 +275,7 @@ class orderPage(Famcy.FamcyPage):
                     "sortable": True
                 }
             ]],
-            "data": [
-                {
-                    "name": "julia",
-                    "points": "100",
-                    "member_phone": "01234567890",
-                    "birthday": "20010703",
-                    "member_level": "none",
-                    "img_link": ""
-                    
-                }
-            ]
+            "data": []
         })
 
         _card2.layout.addWidget(_input_form, 0, 0)
@@ -315,20 +294,95 @@ class orderPage(Famcy.FamcyPage):
 
     # submission function
     # ====================================================
+    def show_order_detail(self, sb, info):
+        if info["selected_date"]:
+            selected_date = self.convert_to_epoch_time(info["selected_date"])
+            start_time = selected_date
+            end_time = selected_date + 60*60*24
+        else:
+            start_time = None
+            end_time = None
+
+        res_ind, res_msg = self.get_get_order_information(info["order_num"], start_time, end_time)
+
+        self.order_table.update({
+            "data": res_msg
+        })
+
+        if res_ind:
+            return Famcy.UpdateBlockHtml(target=self.card_1)
+        else:
+            return Famcy.UpdateAlert(target=self.card_1, alert_message=res_msg)
+
+    def edit_member_info(self, sb, info):
+        res_list = []
+        if info["points"] and info["points"] != "":
+            res_ind, res_msg = self.post_clerk_add_point(info["phone_num"], info["points"])
+            res_list = [Famcy.UpdateAlert(target=self.card_2, alert_message=res_msg)]
+            
+        res_ind, res_msg = self.get_get_member_info(info["phone_num"])
+        self.member_table.update({
+                "data": [{
+                        "name": res_msg["username"],
+                        "points": res_msg["reward_points"],
+                        "member_phone": res_msg["user_phone"],
+                        "birthday": res_msg["birthday"],
+                        "member_level": res_msg["membership_level"],
+                        "img_link": res_msg["profile_pic_url"]
+                    }]
+            })
+        res_list = [Famcy.UpdateBlockHtml(target=self.card_2)] + res_list
+        return res_list
     # ====================================================
     # ====================================================
         
 
     # http request function
     # ====================================================
+    def get_get_order_information(self, order_id=None, epoch_time=None, epoch_time_end=None):
+        o = "&order_id="+str(order_id) if order_id else ""
+        es = "&start_time="+str(epoch_time) if epoch_time else ""
+        ee = "&end_time="+str(epoch_time_end) if epoch_time_end else ""
+        query = HOST_ADDRESS+"?service=order&operation=get_order_information&store_id="+STORE_ID+o+es+ee
+        r = requests.get(query, headers=HEADER).text
+        res_dict = json.loads(r)
+        print("res_dict: ", res_dict)
+        return res_dict["indicator"], res_dict["message"]
+
+    def get_get_member_info(self, phone_num):
+        query = HOST_ADDRESS+"?service=member&operation=get_member_info&user_phone="+phone_num
+        r = requests.get(query, headers=HEADER).text
+        res_dict = json.loads(r)
+        print("res_dict: ", res_dict)
+        return res_dict["indicator"], json.loads(res_dict["message"])
+
+    def post_clerk_add_point(self, phone_num, points):
+        send_dict = {
+            "service": "member",
+            "operation": "clerk_add_point",
+            "user_phone": phone_num,
+            "adding_points": points
+        }
+        r = requests.post(HOST_ADDRESS, data=send_dict, headers=HEADER).text
+        res_dict = json.loads(r)
+        print("res_dict: ", res_dict)
+        return res_dict["indicator"], res_dict["message"]
     # ====================================================
     # ====================================================
 
 
     # utils
     # ====================================================
+    def convert_to_epoch_time(self, date=None):
+        if date:
+            date_list = date.split("-")
+            y = int(date_list[0])
+            m = int(date_list[1])
+            d = int(date_list[2])
+
+        return int(datetime.datetime(y,m,d,0,0).timestamp())
     # ====================================================
     # ====================================================
 
    
-orderPage.register("/order", Famcy.ClassicStyle(), permission_level=0, background_thread=False)
+orderPage.register("/order", Famcy.NexuniStyle(), permission_level=0, background_thread=False)
