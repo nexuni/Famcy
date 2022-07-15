@@ -134,9 +134,7 @@ class google_map(Famcy.FamcyBlock):
             "key_name": key_name,
             "points": json.dumps(points),
             "pos": json.dumps(pos)},
-            type='publish',
-            channel="event_source._gmap_"
-            )
+            type='gmap')
 
     def render_inner(self):
         robot_pos = {
