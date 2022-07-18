@@ -3,14 +3,10 @@ var LINE_DICT={};
 var CANVAS_FLAG=false;
 var CANVAS, CANVAS_HTML;
 
-var source = new EventSource("/event_source?channel=event_source._gmap_");
-source.addEventListener('publish', function(event) {
+source.addEventListener('gmap', function(event) {
     var data = JSON.parse(event.data);
     drawFBlockRoute(data.key_name, JSON.parse(data.points), JSON.parse(data.pos), JSON.parse(data.more_info))
     add_all_route_to_canvas()
-}, false);
-source.addEventListener('error', function(event) {
-    console.log("Error"+ event)
 }, false);
 
 function Draw_google_map(

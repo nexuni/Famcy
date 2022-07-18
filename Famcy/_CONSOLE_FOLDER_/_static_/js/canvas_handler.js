@@ -6,14 +6,10 @@ var C_CANVAS_FLAG=false;
 var C_CANVAS;
 var default_area_w=525*8/20, default_area_h=525/2;
 
-var source = new EventSource("/event_source?channel=event_source._canvas_");
-source.addEventListener('publish', function(event) {
+source.addEventListener('canvas_block', function(event) {
     var data = JSON.parse(event.data);
     c_drawFBlockRoute(data.key_name, JSON.parse(data.points), JSON.parse(data.pos), JSON.parse(data.more_info))
     c_add_all_route_to_canvas()
-}, false);
-source.addEventListener('error', function(event) {
-    console.log("Error"+ event)
 }, false);
 
 function Draw_pic(

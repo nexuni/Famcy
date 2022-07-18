@@ -7,75 +7,74 @@ from .canvas_block import *
 from .joyStick import *
 from .timePicker import *
 
-# ROS_DATA_A = [21.661754608154297, 20.893672943115234, 3.3902435302734375, -12.318791389465332, -5.298501968383789, -16.059478759765625, -22.065702438354492, -15.99377727508545, -31.821977615356445, -10.552935600280762, 0.2519207000732422, 61.06772232055664, 12.825460433959961, 61.705596923828125, 23.228116989135742, 56.6130485534668, 25.614919662475586, 46.3193244934082, 28.461362838745117, 32.952735900878906, 22.679168701171875, 20.540454864501953]
-# K_coefficient = 1
-# DX_coefficient = 0
-# DY_coefficient = 0
+ROS_DATA_A = [21.661754608154297, 20.893672943115234, 3.3902435302734375, -12.318791389465332, -5.298501968383789, -16.059478759765625, -22.065702438354492, -15.99377727508545, -31.821977615356445, -10.552935600280762, 0.2519207000732422, 61.06772232055664, 12.825460433959961, 61.705596923828125, 23.228116989135742, 56.6130485534668, 25.614919662475586, 46.3193244934082, 28.461362838745117, 32.952735900878906, 22.679168701171875, 20.540454864501953]
+K_coefficient = 1
+DX_coefficient = 0
+DY_coefficient = 0
 
-# def T_coefficient(data):
-#     """
-#     data: [10, 20, 30, 40, 50, 60]
-#     """
-#     x_list = [data[i] for i in range(len(data)) if i % 2 == 0]
-#     y_list = [data[i] for i in range(len(data)) if i % 2 == 1]
+def T_coefficient(data):
+    """
+    data: [10, 20, 30, 40, 50, 60]
+    """
+    x_list = [data[i] for i in range(len(data)) if i % 2 == 0]
+    y_list = [data[i] for i in range(len(data)) if i % 2 == 1]
 
-#     dx = min(x_list) if min(x_list) < 0 else 0
-#     dy = min(y_list) if min(y_list) < 0 else 0
+    dx = min(x_list) if min(x_list) < 0 else 0
+    dy = min(y_list) if min(y_list) < 0 else 0
 
-#     x_len = max(x_list)-min(x_list)
+    x_len = max(x_list)-min(x_list)
 
-#     return (CANVAS_W / x_len) / 2, dx, dy
+    return (CANVAS_W / x_len) / 2, dx, dy
 
-# def TA_action(A_data):
-#     global K_coefficient, DX_coefficient, DY_coefficient
-#     K_coefficient, DX_coefficient, DY_coefficient = T_coefficient(A_data)
+def TA_action(A_data):
+    global K_coefficient, DX_coefficient, DY_coefficient
+    K_coefficient, DX_coefficient, DY_coefficient = T_coefficient(A_data)
 
-#     b_list = []
-#     for x, y in zip(*[iter(A_data)]*2):
-#         b_list.append(K_coefficient*(y - DY_coefficient))
-#         b_list.append(K_coefficient*(x - DX_coefficient))
+    b_list = []
+    for x, y in zip(*[iter(A_data)]*2):
+        b_list.append(K_coefficient*(y - DY_coefficient))
+        b_list.append(K_coefficient*(x - DX_coefficient))
 
-#     return b_list
+    return b_list
 
 
-# class revenueGetApi(Famcy.FamcyPage):
-#     def __init__(self):
-#         super(revenueGetApi, self).__init__()
+class revenueGetApi(Famcy.FamcyPage):
+    def __init__(self):
+        super(revenueGetApi, self).__init__()
 
-#     def callback(self):
-#         res_dict = {
-#             "day": {"data": {"x": ["12:00", "13:00", "14:00", "15:00"], "y": [200,300,400,500]}},
-#             "week": {"data": {"x": ["星期一", "星期二", "星期三", "星期四"],  "y": [200,300,400,500]}},
-#             "month": {"data": {"x": ["1/1", "1/2", "1/3", "1/4"], "y": [200,300,400,500]}},
-#             "item": {"data": {"x": ["絕配一", "絕配二", "絕配三", "絕配四", "絕配五", "絕配六"],  "y": [219, 146, 112, 127, 124, 180]}}
-#         }
+    def callback(self):
+        res_dict = {
+            "day": {"data": {"x": ["12:00", "13:00", "14:00", "15:00"], "y": [200,300,400,500]}},
+            "week": {"data": {"x": ["星期一", "星期二", "星期三", "星期四"],  "y": [200,300,400,500]}},
+            "month": {"data": {"x": ["1/1", "1/2", "1/3", "1/4"], "y": [200,300,400,500]}},
+            "item": {"data": {"x": ["絕配一", "絕配二", "絕配三", "絕配四", "絕配五", "絕配六"],  "y": [219, 146, 112, 127, 124, 180]}}
+        }
 
-#         if self.get_request_args("date"):
-#             self.style.setReturnValue(indicator=True, message=res_dict)
-#         else:
-#             self.style.setReturnValue(indicator=False, message="Something wrong")
+        if self.get_request_args("date"):
+            self.style.setReturnValue(indicator=True, message=res_dict)
+        else:
+            self.style.setReturnValue(indicator=False, message="Something wrong")
 
-# revenue_ROUTE = "/revenue"
-# revenue_api = revenueGetApi()
-# revenueGetApi.register(revenue_ROUTE, Famcy.APIStyle(), init_cls=revenue_api)
-# revenue_api.style.setAction(revenue_api.callback)
+revenue_ROUTE = "/revenue"
+revenue_api = revenueGetApi()
+revenueGetApi.register(revenue_ROUTE, Famcy.APIStyle(), init_cls=revenue_api)
+revenue_api.style.setAction(revenue_api.callback)
 
-# class store_openGetApi(Famcy.FamcyPage):
-#     def __init__(self):
-#         super(store_openGetApi, self).__init__()
+class store_openGetApi(Famcy.FamcyPage):
+    def __init__(self):
+        super(store_openGetApi, self).__init__()
 
-#     def callback(self):
-#         if self.get_request_args("edit_day") and self.get_request_args("start_time") and self.get_request_args("end_time"):
-#             self.style.setReturnValue(indicator=True, message="Succeed")
-#         else:
-#             self.style.setReturnValue(indicator=False, message="Something wrong")
+    def callback(self):
+        if self.get_request_args("edit_day") and self.get_request_args("start_time") and self.get_request_args("end_time"):
+            self.style.setReturnValue(indicator=True, message="Succeed")
+        else:
+            self.style.setReturnValue(indicator=False, message="Something wrong")
 
-# store_open_ROUTE = "/store_open"
-# store_open_api = store_openGetApi()
-# store_openGetApi.register(store_open_ROUTE, Famcy.APIStyle(), init_cls=store_open_api)
-# store_open_api.style.setAction(store_open_api.callback)
+store_open_ROUTE = "/store_open"
+store_open_api = store_openGetApi()
+store_openGetApi.register(store_open_ROUTE, Famcy.APIStyle(), init_cls=store_open_api)
+store_open_api.style.setAction(store_open_api.callback)
 
-# Famcy.video_stream.start_rtsp_hls("rtsp", "stream1")
 
 class testPage(Famcy.FamcyPage):
     def __init__(self):
@@ -127,10 +126,22 @@ class testPage(Famcy.FamcyPage):
     def card0(self):
         _card = Famcy.FamcyCard()
 
-        self._d = timePicker()
+        self._d = Famcy.table_block()
 
+
+
+        # _v = cv2_video()
+        # _v.update({
+        #     "video_link": 'rtsp://10.0.1.202'
+        #     })
+
+        # _card.layout.addWidget(_v, 0, 0)
+
+
+
+        
         # _card.layout.addWidget(self.g_map, 0, 0)
-        _card.layout.addWidget(self._d, 0, 0)
+        _card.layout.addWidget(self._d, 1, 0)
 
         return _card
 
@@ -138,7 +149,10 @@ class testPage(Famcy.FamcyPage):
         _card = Famcy.FamcyCard()
 
         # _joy = joyStick(permission=0)
-        _v = Famcy.video_stream()
+        _v = cv2_video()
+        _v.update({
+            "video_link": 'rtsp://10.0.1.202'
+            })
 
         _card.layout.addWidget(_v, 0, 0)
 
@@ -228,7 +242,7 @@ class testPage(Famcy.FamcyPage):
         self.card_0.layout.removeWidget(self.g_map)
         self.card_0.layout.addWidget(self.g_canvas, 0 ,0)
         Famcy.FManager["google_map"] = False
-        return Famcy.UpdateBlockHtml(target=self.card_0)
+        # return Famcy.UpdateBlockHtml(target=self.card_0)
 
     def Prompt_info(self, submission_obj, info):
         if info.raw_data == {}:
@@ -324,4 +338,84 @@ class testPage(Famcy.FamcyPage):
     # ====================================================
 
    
-testPage.register("/test", Famcy.ClassicStyle(), permission_level=100, background_thread=False)
+testPage.register("/test", Famcy.ClassicStyle(), permission_level=0, background_thread=False, event_source_flag=True)
+
+
+
+
+
+import json
+import Famcy
+from flask import current_app
+import urllib
+import time
+from threading import Thread
+import cv2
+import base64
+
+class cv2_video(Famcy.FamcyBlock):
+    """
+    Represents the block to display
+    cv2_video. 
+    """
+    def __init__(self, **kwargs):
+        self.uniq_channal = "video"+str(id(self))
+        # self.del_thread()
+        self.value = cv2_video.generate_template_content()
+
+        super(cv2_video, self).__init__(**kwargs)
+
+        self.init_block()
+
+    @classmethod
+    def generate_template_content(cls, fblock_type=None):
+        """
+        This is the function that
+        returns the template content 
+        for the given fblock. 
+        - Return a content dictionary
+        """
+        return {
+            "video_link": ''
+        }
+
+    def init_block(self):
+        self.body = Famcy.div()
+        self.body["id"] = self.id
+
+        _s = Famcy.script()
+        _s.innerHTML = '''
+            source.addEventListener('video', function(event) {
+                console.log("video")
+                var data = JSON.parse(event.data);
+                update_event_source_target(data)
+            }, false);
+            '''
+
+        self.body.addStaticScript(_s)
+
+    def send_frame(self):
+        with Famcy.app.app_context():
+            # capture = cv2.VideoCapture("rtspsrc location="+self.value["video_link"]+" user-id=admin user-pw=@minc135246 is-live=true protocols=tcp ! rtph265depay ! h265parse ! nvv4l2decoder ! nvvidconv ! videoconvert ! appsink drop=true sync=false", cv2.CAP_GSTREAMER)
+            capture = cv2.VideoCapture(self.value["video_link"])
+            while True:
+                # time.sleep(self.value["delay"])
+                time.sleep(0.1)
+                # frame = capture.read()[1]
+                success, frame = capture.read()
+                print("video: ", success)
+                if not success:
+                    pass
+                else:
+                    ret, buffer = cv2.imencode('.jpg', frame)
+                    frame = buffer.tobytes()
+                    b64 = base64.b64encode(buffer).decode("utf-8")
+
+                    html = "<img src='data:image/jpeg;base64,"+str(b64) +"'>"
+                    print("Famcy.sse: ==============>")
+                    Famcy.sse.publish({"video": True, "indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='video')
+
+    def render_inner(self):
+        t1 = Thread(target=self.send_frame)
+        t1.start()
+        return self.body

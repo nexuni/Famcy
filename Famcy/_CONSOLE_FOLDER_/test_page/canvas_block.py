@@ -108,6 +108,7 @@ class canvas_block(Famcy.FamcyBlock):
         self.body.addStaticScript(konva_script, position="head")
 
     def update_route(self, key_name, points, pos, more_info):
+        print("update_route")
         Famcy.sse.publish({
             "indicator": True,
             "more_info": json.dumps(more_info),
@@ -115,8 +116,7 @@ class canvas_block(Famcy.FamcyBlock):
             "points": json.dumps(points),
             "pos": json.dumps(pos)
             },
-            type='publish',
-            channel="event_source._canvas_")
+            type='canvas_block')
 
     def render_inner(self):
         robot_pos = {
