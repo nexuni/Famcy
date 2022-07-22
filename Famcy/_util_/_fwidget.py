@@ -84,6 +84,12 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 	def get_cookie(self, key):
 		return session.get(key)
 
+	def hide(self):
+		self.body.style["display"] = "none !important"
+
+	def show(self):
+		self.body.style["display"] = "block"
+
 	def setGeometry(self, x, y, w, h):
 		if self.parent:
 			if hasattr(self.parent, "layout"):

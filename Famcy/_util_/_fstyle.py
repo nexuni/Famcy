@@ -67,7 +67,7 @@ class FStyle:
 		<script src='%s/static/js/fullcalendar_zh.js' type="text/javascript"></script>
 
 		<!--side bar-->
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.8/css/boxicons.min.css"></link>
+		<link rel="stylesheet" href="%s/static/css/boxicons-2.1.2/css/boxicons.min.css"></link>
 
 		<!--input password-->
 		<script type="text/javascript" src="%s/static/js/password_strength_lightweight.js"></script>
@@ -89,7 +89,7 @@ class FStyle:
 		<!--background loop-->
 		<script src="%s/static/js/background_loop.js"></script>
 
-		""" % tuple([self.main_url for _ in range(13)])
+		""" % tuple([self.main_url for _ in range(14)])
 
 	def setDashboardJavaScript(self):
 		return"""

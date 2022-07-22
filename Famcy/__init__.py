@@ -42,6 +42,7 @@ FamcyElement = FElement
 FamcyBlock = FBlock
 FamcyPage = FPage
 FamcyCard = FCard
+FamcySection = FSection
 FamcyPermissions = FPermissions
 FamcyInputBlock = FInputBlock
 FamcyUploadBlock = FUploadBlock

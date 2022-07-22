@@ -32,16 +32,16 @@ function checkform(form_item, submit_id, failure_msg="資料輸入有誤") {
 
 
     // password check
-    var input_password = form_item.getElementsByClassName("inputPassword")
-    Array.prototype.forEach.call(input_password, function(el) {
-        var valid = el.getElementsByClassName("valid")
-        if (valid.length !== 4) {
-            flag.push("false")
-        }
-        else {
-            flag.push("true")
-        }
-    });
+    // var input_password = form_item.getElementsByClassName("inputPassword")
+    // Array.prototype.forEach.call(input_password, function(el) {
+    //     var valid = el.getElementsByClassName("valid")
+    //     if (valid.length !== 4) {
+    //         flag.push("false")
+    //     }
+    //     else {
+    //         flag.push("true")
+    //     }
+    // });
 
 
     if (flag.includes("false")) {

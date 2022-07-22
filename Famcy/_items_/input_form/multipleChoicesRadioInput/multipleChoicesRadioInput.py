@@ -19,6 +19,7 @@ class multipleChoicesRadioInput(Famcy.FamcyInputBlock):
                 "desc": "",
                 "mandatory": False,
                 "value": [],
+                "defaultValue": [],
                 "action_after_post": "clean",                    # (clean / save)
             }
 
@@ -50,6 +51,8 @@ class multipleChoicesRadioInput(Famcy.FamcyInputBlock):
             input_temp["className"] = "rad-input"
             input_temp["name"] = self.name
             input_temp["value"] = list_value
+            if list_value in self.value["defaultValue"]:
+                input_temp["checked"] = "checked"
             div1_temp = Famcy.div()
             div1_temp["className"] = "rad-design"
             div2_temp = Famcy.div()

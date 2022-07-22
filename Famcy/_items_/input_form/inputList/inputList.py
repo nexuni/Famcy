@@ -18,6 +18,7 @@ class inputList(Famcy.FamcyInputBlock):
             "desc": "",
             "mandatory": False,
             "value": [],
+            "returnValue": [],
             "defaultValue": None,
             "action_after_post": "clean",                    # (clean / save)
         }
@@ -48,11 +49,12 @@ class inputList(Famcy.FamcyInputBlock):
         self.body.children[2].children[0].children = []
         if "---" not in self.value["value"]:
             self.value["value"].insert(0, "---")
-        for list_value in self.value["value"]:
+            self.value["returnValue"].insert(0, "---")
+        for i, list_value in enumerate(self.value["value"]):
             opt_temp = Famcy.option()
             opt_temp["name"] = self.name
-            opt_temp["value"] = list_value
-            opt_temp.innerHTML = list_value
+            opt_temp["value"] = str(self.value["returnValue"][i]) if len(self.value["returnValue"]) == len(self.value["value"]) else str(list_value)
+            opt_temp.innerHTML = str(list_value)
             self.body.children[2].children[0].addElement(opt_temp)
 
         if self.value["defaultValue"]:

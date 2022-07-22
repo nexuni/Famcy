@@ -54,6 +54,8 @@ class FPage(FamcyWidget):
 		self.submission_obj = FSubmission(self)
 		self.submission_obj_key = self.id
 
+		# self.permission = FPage.permission
+
 		self.init_page()
 
 		if self.background_thread_flag:
@@ -103,7 +105,7 @@ class FPage(FamcyWidget):
 	def register(cls, route, style, permission_level=0, background_thread=False, background_freq=0.5, init_cls=None, event_source_flag=False):
 		cls.route = route
 		cls.style = style
-		cls.permission = FPermissions(permission_level)
+		cls.permission = FPermissions(permission_level, route)
 		cls.background_thread_flag = background_thread
 		cls.background_freq = background_freq
 		cls.event_source_flag = event_source_flag
@@ -178,10 +180,10 @@ class FPage(FamcyWidget):
 			else:
 				print("POST didn't receive anything *************")
 				return ""
-
+		# print("current_page: ", cls.route, id(cls.permission), cls.permission.lowest_permission)
 		form_init_js = ''	# no use
 		end_script = ''
-		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
+		if not cls.permission.verify(Famcy.FManager["CurrentUser"]):
 			session["login_permission"] = "You are not authorized to view this page!"
 			session["login_route"] = request.path
 
