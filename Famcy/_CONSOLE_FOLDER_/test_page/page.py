@@ -6,6 +6,16 @@ from .gmap_block import *
 from .canvas_block import *
 from .joyStick import *
 from .timePicker import *
+# from .video_example import *
+
+
+import json
+from flask import current_app
+import urllib
+import time
+from threading import Thread
+import cv2
+import base64
 
 ROS_DATA_A = [21.661754608154297, 20.893672943115234, 3.3902435302734375, -12.318791389465332, -5.298501968383789, -16.059478759765625, -22.065702438354492, -15.99377727508545, -31.821977615356445, -10.552935600280762, 0.2519207000732422, 61.06772232055664, 12.825460433959961, 61.705596923828125, 23.228116989135742, 56.6130485534668, 25.614919662475586, 46.3193244934082, 28.461362838745117, 32.952735900878906, 22.679168701171875, 20.540454864501953]
 K_coefficient = 1
@@ -76,6 +86,51 @@ store_openGetApi.register(store_open_ROUTE, Famcy.APIStyle(), init_cls=store_ope
 store_open_api.style.setAction(store_open_api.callback)
 
 
+# class video_eventsourceApi(Famcy.FamcyPage):
+#     def __init__(self):
+#         super(video_eventsourceApi, self).__init__()
+
+#         self.id = "famcy_video1"
+
+#         t1 = Thread(target=self.send_frame)
+#         t1.start()
+
+#     def send_frame(self):
+#         capture = cv2.VideoCapture("rtsp://demo:demo@ipvmdemo.dyndns.org:5541/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast")
+#         with Famcy.app.app_context():
+#             while True:
+#                 try:
+#                     time.sleep(0.01)
+
+#                     success, frame = capture.read()
+                    
+#                     if not success:
+#                         pass
+#                     else:
+#                         ret, buffer = cv2.imencode('.jpg', frame)
+#                         frame = buffer.tobytes()
+#                         b64 = base64.b64encode(buffer).decode("utf-8")
+
+#                         html = "<img src='data:image/jpeg;base64,"+str(b64) +"'>"
+                        
+#                         Famcy.sse.publish({"video": True, "indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='video')
+
+#                 except Exception as e:
+#                     print("error: ", e)
+            
+
+#     # def callback(self):
+#     #     if self.get_request_args("edit_day") and self.get_request_args("start_time") and self.get_request_args("end_time"):
+#     #         self.style.setReturnValue(indicator=True, message="Succeed")
+#     #     else:
+#     #         self.style.setReturnValue(indicator=False, message="Something wrong")
+
+# video_eventsourceROUTE = "/video_eventsource"
+# video_eventsourceapi = video_eventsourceApi()
+# video_eventsourceApi.register(video_eventsourceROUTE, Famcy.APIStyle(), init_cls=video_eventsourceapi)
+# # video_eventsourceapi.style.setAction(video_eventsourceapi.callback)
+
+
 class testPage(Famcy.FamcyPage):
     def __init__(self):
         super(testPage, self).__init__()
@@ -126,22 +181,22 @@ class testPage(Famcy.FamcyPage):
     def card0(self):
         _card = Famcy.FamcyCard()
 
-        self._d = Famcy.table_block()
+        # self._d = Famcy.table_block()
 
 
 
-        # _v = cv2_video()
-        # _v.update({
-        #     "video_link": 'rtsp://10.0.1.202'
-        #     })
+        _v = cv2_video()
+        _v.update({
+            "video_link": 'rtsp://10.0.1.202'
+            })
 
-        # _card.layout.addWidget(_v, 0, 0)
+        _card.layout.addWidget(_v, 0, 0)
 
 
 
         
         # _card.layout.addWidget(self.g_map, 0, 0)
-        _card.layout.addWidget(self._d, 1, 0)
+        # _card.layout.addWidget(self._d, 1, 0)
 
         return _card
 
@@ -344,15 +399,6 @@ testPage.register("/test", Famcy.ClassicStyle(), permission_level=0, background_
 
 
 
-import json
-import Famcy
-from flask import current_app
-import urllib
-import time
-from threading import Thread
-import cv2
-import base64
-
 class cv2_video(Famcy.FamcyBlock):
     """
     Represents the block to display
@@ -381,7 +427,7 @@ class cv2_video(Famcy.FamcyBlock):
 
     def init_block(self):
         self.body = Famcy.div()
-        self.body["id"] = self.id
+        self.body["id"] = "famcy_video1"
 
         _s = Famcy.script()
         _s.innerHTML = '''
@@ -394,28 +440,28 @@ class cv2_video(Famcy.FamcyBlock):
 
         self.body.addStaticScript(_s)
 
-    def send_frame(self):
-        with Famcy.app.app_context():
-            # capture = cv2.VideoCapture("rtspsrc location="+self.value["video_link"]+" user-id=admin user-pw=@minc135246 is-live=true protocols=tcp ! rtph265depay ! h265parse ! nvv4l2decoder ! nvvidconv ! videoconvert ! appsink drop=true sync=false", cv2.CAP_GSTREAMER)
-            capture = cv2.VideoCapture(self.value["video_link"])
-            while True:
-                # time.sleep(self.value["delay"])
-                time.sleep(0.1)
-                # frame = capture.read()[1]
-                success, frame = capture.read()
-                print("video: ", success)
-                if not success:
-                    pass
-                else:
-                    ret, buffer = cv2.imencode('.jpg', frame)
-                    frame = buffer.tobytes()
-                    b64 = base64.b64encode(buffer).decode("utf-8")
+    # def send_frame(self):
+    #     with Famcy.app.app_context():
+    #         # capture = cv2.VideoCapture("rtspsrc location="+self.value["video_link"]+" user-id=admin user-pw=@minc135246 is-live=true protocols=tcp ! rtph265depay ! h265parse ! nvv4l2decoder ! nvvidconv ! videoconvert ! appsink drop=true sync=false", cv2.CAP_GSTREAMER)
+    #         capture = cv2.VideoCapture(self.value["video_link"])
+    #         while True:
+    #             # time.sleep(self.value["delay"])
+    #             time.sleep(0.1)
+    #             # frame = capture.read()[1]
+    #             success, frame = capture.read()
+    #             print("video: ", success)
+    #             if not success:
+    #                 pass
+    #             else:
+    #                 ret, buffer = cv2.imencode('.jpg', frame)
+    #                 frame = buffer.tobytes()
+    #                 b64 = base64.b64encode(buffer).decode("utf-8")
 
-                    html = "<img src='data:image/jpeg;base64,"+str(b64) +"'>"
-                    print("Famcy.sse: ==============>")
-                    Famcy.sse.publish({"video": True, "indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='video')
+    #                 html = "<img src='data:image/jpeg;base64,"+str(b64) +"'>"
+    #                 print("Famcy.sse: ==============>")
+    #                 Famcy.sse.publish({"video": True, "indicator": True, "message": {"target_id": self.id, "target_innerHTML": html, "target_attribute": {}}}, type='video')
 
     def render_inner(self):
-        t1 = Thread(target=self.send_frame)
-        t1.start()
+        # t1 = Thread(target=self.send_frame)
+        # t1.start()
         return self.body

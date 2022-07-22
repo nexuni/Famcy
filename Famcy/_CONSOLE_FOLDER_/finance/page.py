@@ -53,13 +53,13 @@ class financePage(Famcy.FamcyPage):
                 "input_type": "date"
 
             })
-        selected_type = Famcy.inputList()
-        selected_type.set_submit_value_name("type")
-        selected_type.update({
-                "title": "選擇種類",
-                "desc": ".",
-                "value": ["全部", "店面", "外送"],
-            })
+        # selected_type = Famcy.inputList()
+        # selected_type.set_submit_value_name("type")
+        # selected_type.update({
+        #         "title": "選擇種類",
+        #         "desc": ".",
+        #         "value": ["全部", "店面", "外送"],
+        #     })
         sb_btn = Famcy.submitBtn()
         sb_btn.update({
                 "title": "產生圖表"
@@ -67,8 +67,8 @@ class financePage(Famcy.FamcyPage):
         sb_btn.connect(self.generate_chart)
 
         _input_form.layout.addWidget(selected_day, 0, 0)
-        _input_form.layout.addWidget(selected_type, 0, 1)
-        _input_form.layout.addWidget(sb_btn, 1, 0, 1, 2)
+        # _input_form.layout.addWidget(selected_type, 0, 1)
+        _input_form.layout.addWidget(sb_btn, 0, 1)
 
         _card0.layout.addWidget(_input_form, 0, 0)
 
@@ -79,10 +79,52 @@ class financePage(Famcy.FamcyPage):
         _card1 = Famcy.FamcyCard()
         _card1.title = "單日營業額"
 
+        self.daily_revenue_table = Famcy.table_block()
+        self.daily_revenue_table.update({
+                "input_button": "none",
+                "toolbar": False,
+                "page_footer": False,
+                "table_height": "auto",
+                "column": [[{
+                        "title": '時段',
+                        "field": 'time',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '店內收入',
+                        "field": 'store',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '外送收入',
+                        "field": 'delivery',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '全部收入',
+                        "field": 'all',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    }
+                ]],
+                "data": []
+            })
+
         self.daily_revenue_graph = Famcy.line_chart()
         self.daily_revenue_graph.update({
                 "title": "營業額",
-                "labels": ["台幣"],
+                "labels": ["全部", "店面", "外送"],
                 "values": [{
                     "x": [],
                     "y": [],
@@ -93,7 +135,8 @@ class financePage(Famcy.FamcyPage):
                 }]
             })
 
-        _card1.layout.addWidget(self.daily_revenue_graph, 0, 0)
+        _card1.layout.addWidget(self.daily_revenue_table, 0, 0)
+        _card1.layout.addWidget(self.daily_revenue_graph, 1, 0)
 
         return _card1
 
@@ -102,10 +145,52 @@ class financePage(Famcy.FamcyPage):
         _card2 = Famcy.FamcyCard()
         _card2.title = "單周營業額"
 
+        self.weekly_revenue_table = Famcy.table_block()
+        self.weekly_revenue_table.update({
+                "input_button": "none",
+                "toolbar": False,
+                "page_footer": False,
+                "table_height": "auto",
+                "column": [[{
+                        "title": '時段',
+                        "field": 'time',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '店內收入',
+                        "field": 'store',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '外送收入',
+                        "field": 'delivery',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '全部收入',
+                        "field": 'all',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    }
+                ]],
+                "data": []
+            })
+
         self.weekly_revenue_graph = Famcy.line_chart()
         self.weekly_revenue_graph.update({
                 "title": "營業額",
-                "labels": ["台幣"],
+                "labels": ["全部", "店面", "外送"],
                 "values": [{
                     "x": [],
                     "y": [],
@@ -116,7 +201,8 @@ class financePage(Famcy.FamcyPage):
                 }]
             })
 
-        _card2.layout.addWidget(self.weekly_revenue_graph, 0, 0)
+        _card2.layout.addWidget(self.weekly_revenue_table, 0, 0)
+        _card2.layout.addWidget(self.weekly_revenue_graph, 1, 0)
 
         return _card2
 
@@ -125,10 +211,52 @@ class financePage(Famcy.FamcyPage):
         _card3 = Famcy.FamcyCard()
         _card3.title = "單月營業額"
 
+        self.monthly_revenue_table = Famcy.table_block()
+        self.monthly_revenue_table.update({
+                "input_button": "none",
+                "toolbar": False,
+                "page_footer": False,
+                "table_height": "auto",
+                "column": [[{
+                        "title": '時段',
+                        "field": 'time',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '店內收入',
+                        "field": 'store',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '外送收入',
+                        "field": 'delivery',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '全部收入',
+                        "field": 'all',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    }
+                ]],
+                "data": []
+            })
+
         self.monthly_revenue_graph = Famcy.line_chart()
         self.monthly_revenue_graph.update({
                 "title": "營業額",
-                "labels": ["台幣"],
+                "labels": ["全部", "店面", "外送"],
                 "values": [{
                     "x": [],
                     "y": [],
@@ -139,7 +267,8 @@ class financePage(Famcy.FamcyPage):
                 }]
             })
 
-        _card3.layout.addWidget(self.monthly_revenue_graph, 0, 0)
+        _card3.layout.addWidget(self.monthly_revenue_table, 0, 0)
+        _card3.layout.addWidget(self.monthly_revenue_graph, 1, 0)
 
         return _card3
 
@@ -148,6 +277,48 @@ class financePage(Famcy.FamcyPage):
         _card4 = Famcy.FamcyCard()
         _card4.title = "單日產品銷售排行"
 
+        self.item_rank_table = Famcy.table_block()
+        self.item_rank_table.update({
+                "input_button": "none",
+                "toolbar": False,
+                "page_footer": False,
+                "table_height": "auto",
+                "column": [[{
+                        "title": '品項',
+                        "field": 'time',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '店內銷售數量',
+                        "field": 'store',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '外送銷售數量',
+                        "field": 'delivery',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    },
+                    {
+                        "title": '全部銷售數量',
+                        "field": 'all',
+                        "rowspan": 1,
+                        "align": 'center',
+                        "valign": 'middle',
+                        "sortable": True
+                    }
+                ]],
+                "data": []
+            })
+
         self.item_rank_graph = Famcy.bar_chart()
         self.item_rank_graph.update({
                 "values": [{
@@ -155,13 +326,13 @@ class financePage(Famcy.FamcyPage):
                     "y": [],
                     "color": "rgb(225, 0, 0)"
                 }],
-                "labels": [""],
+                "labels": ["全部", "店面", "外送"],
                 "title": "產品銷售排行",
-                "xy_axis_title": ["產品", "銷售數量"],
-                "size": ["100%", 500]
+                "xy_axis_title": ["產品", "銷售數量"]
             })
 
-        _card4.layout.addWidget(self.item_rank_graph, 0, 0)
+        _card4.layout.addWidget(self.item_rank_table, 0, 0)
+        _card4.layout.addWidget(self.item_rank_graph, 1, 0)
 
         return _card4
     # ====================================================
@@ -182,19 +353,18 @@ class financePage(Famcy.FamcyPage):
         m_res_ind, m_res_msg = self.get_chart_data(info, "month")
         p_res_ind, p_res_msg = self.get_chart_data(info, "product")
 
+        print("d: ", [i for i in d_res_msg["data_list"]])
         if d_res_ind and w_res_ind and m_res_ind and p_res_ind:
-            self.daily_revenue_graph.update({
-                "values": [i for i in d_res_msg["data_list"]]
-            })
-            self.weekly_revenue_graph.update({
-                "values": [i for i in w_res_msg["data_list"]]
-            })
-            self.monthly_revenue_graph.update({
-                "values": [i for i in m_res_msg["data_list"]]
-            })
-            self.item_rank_graph.update({
-                "values": [i for i in p_res_msg["data_list"]]
-            })
+            self.daily_revenue_graph.update({ "values": [i for i in d_res_msg["data_list"]] })
+            self.weekly_revenue_graph.update({ "values": [i for i in w_res_msg["data_list"]] })
+            self.monthly_revenue_graph.update({ "values": [i for i in m_res_msg["data_list"]] })
+            self.item_rank_graph.update({ "values": [i for i in p_res_msg["data_list"]] })
+
+            self.daily_revenue_table.update({ "data": self.convert_data_to_table(d_res_msg) })
+            self.weekly_revenue_table.update({ "data": self.convert_data_to_table(w_res_msg) })
+            self.monthly_revenue_table.update({ "data": self.convert_data_to_table(m_res_msg) })
+            self.item_rank_table.update({ "data": self.convert_data_to_table(p_res_msg) })
+
             return [Famcy.UpdateBlockHtml(target=self.card_1), Famcy.UpdateBlockHtml(target=self.card_2), Famcy.UpdateBlockHtml(target=self.card_3), Famcy.UpdateBlockHtml(target=self.card_4)]
 
         else:
@@ -224,11 +394,11 @@ class financePage(Famcy.FamcyPage):
             s = "scope="+json.dumps(["hourly", "hourly", "hourly"])
 
         elif graph_type == "week":
-            t = "start_time="+json.dumps([str(int(selected_day)-60*60*24*7), str(int(selected_day)-60*60*24*7), str(int(selected_day)-60*60*24*7)])+"&end_time="+json.dumps([selected_day, selected_day, selected_day])
+            t = "start_time="+json.dumps([str(int(selected_day)-60*60*24*6), str(int(selected_day)-60*60*24*6), str(int(selected_day)-60*60*24*6)])+"&end_time="+json.dumps([str(int(selected_day)+60*60*24), str(int(selected_day)+60*60*24), str(int(selected_day)+60*60*24)])
             s = "scope="+json.dumps(["daily", "daily", "daily"])
 
         elif graph_type == "month":
-            t = "start_time="+json.dumps([str(int(selected_day)-60*60*24*30), str(int(selected_day)-60*60*24*30), str(int(selected_day)-60*60*24*30)])+"&end_time="+json.dumps([selected_day, selected_day, selected_day])
+            t = "start_time="+json.dumps([str(int(selected_day)-60*60*24*30), str(int(selected_day)-60*60*24*30), str(int(selected_day)-60*60*24*30)])+"&end_time="+json.dumps([str(int(selected_day)+60*60*24), str(int(selected_day)+60*60*24), str(int(selected_day)+60*60*24)])
             s = "scope="+json.dumps(["daily", "daily", "daily"])
 
         elif graph_type == "product":
@@ -239,6 +409,7 @@ class financePage(Famcy.FamcyPage):
         r = requests.get(query, headers=HEADER).text
         res_dict = json.loads(r)
 
+        print("res_dict: ", res_dict)
         return res_dict["indicator"], res_dict["message"]
     # ====================================================
     # ====================================================
@@ -254,6 +425,35 @@ class financePage(Famcy.FamcyPage):
             d = int(date_list[2])
 
         return str(int(datetime.datetime(y,m,d,0,0).timestamp()))
+
+    def convert_data_to_table(self, data):
+        return_list = []
+        total_a = 0
+        total_b = 0
+        total_c = 0
+
+        for t, a, b, c in zip(data["data_list"][0]["x"], data["data_list"][0]["y"], data["data_list"][1]["y"], data["data_list"][2]["y"]):
+            temp = {
+                "time": t,
+                "all": a,
+                "store": b,
+                "delivery": c
+            }
+            total_a += int(a)
+            total_b += int(b)
+            total_c += int(c)
+
+            return_list.append(temp)
+
+        return_list.append({
+            "time": "小計: ",
+            "all": total_a,
+            "store": total_b,
+            "delivery": total_c
+        })
+
+        return return_list
+
     # ====================================================
     # ====================================================
 

@@ -3,7 +3,7 @@ function generateBarChart(ident, data_list, title, xy_title, size) {
 	var data = data_list;
 
 	var layout = {
-		width: size[0],
+		// width: size[0],
   		height: size[1],
 		title: title,
 		xaxis: {

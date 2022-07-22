@@ -284,34 +284,50 @@ class menuPage(Famcy.FamcyPage):
                 "title": "價錢"
             })
 
-        _menu_edit_card.item_addon_title = Famcy.displayParagraph()
-        _menu_edit_card.item_addon_title.update({
+        # _menu_edit_card.item_addon_title = Famcy.displayParagraph()
+        # _menu_edit_card.item_addon_title.update({
+        #         "title": "配料",
+        #         "content": ""
+        #     })
+
+        # self.menu_edit_section = Famcy.FamcySection()
+
+        # btn_col, i = 4, 0
+        # for addon in self.addon_titles:
+        #     _ = Famcy.submitBtn()
+        #     _.selected = False
+        #     _.update({ "title": addon })
+        #     _.connect(self.selected_addon_btn)
+        #     self.menu_edit_section.layout.addWidget(_, int(i/btn_col), i%btn_col, 1, 1, "addon"+str(i))
+        #     i += 1
+
+        _menu_edit_card.item_addon_choice = Famcy.multipleChoicesRadioInput()
+        _menu_edit_card.item_addon_choice.set_submit_value_name("addon_choice")
+        _menu_edit_card.item_addon_choice.connect(self.selected_addon_btn)
+        _menu_edit_card.item_addon_choice.update({
                 "title": "配料",
-                "content": ""
+                "desc": "",
+                "value": self.addon_titles,
             })
 
-        card_len, btn_col, i = 4, 4, 0
-        _menu_edit_card.card_len = card_len
-        for addon in self.addon_titles:
-            _ = Famcy.submitBtn()
-            _.update({ "title": addon })
-            self.menu_edit_input_form.layout.addWidget(_, int(i/btn_col)+card_len, i%btn_col, 1, 1, "addon"+str(i))
-            i += 1
+        _menu_edit_card.item_addon = []
 
         _return_sb = Famcy.submitBtn()
+        _return_sb.set_btn_style(3)
         _return_sb.update({ "title": "返回" })
         _return_sb.connect(self.closed_card)
 
         _submit_sb = Famcy.submitBtn()
+        _submit_sb.set_btn_style(3)
         _submit_sb.update({ "title": "確定新增或更改" })
         _submit_sb.connect(self.submit_add_or_edit_menu)
 
-        self.menu_edit_input_form.layout.addWidget(_menu_edit_card.category, 0, 0, 1, btn_col)
-        self.menu_edit_input_form.layout.addWidget(_menu_edit_card.item_name, 1, 0, 1, btn_col)
-        self.menu_edit_input_form.layout.addWidget(_menu_edit_card.item_price, 2, 0, 1, btn_col)
-        self.menu_edit_input_form.layout.addWidget(_menu_edit_card.item_addon_title, 3, 0, 1, btn_col)
-        self.menu_edit_input_form.layout.addWidget(_return_sb, int(i/btn_col)+card_len+1, 0)
-        self.menu_edit_input_form.layout.addWidget(_submit_sb, int(i/btn_col)+card_len+1, 1)
+        self.menu_edit_input_form.layout.addWidget(_menu_edit_card.category, 0, 0, 1, 2)
+        self.menu_edit_input_form.layout.addWidget(_menu_edit_card.item_name, 1, 0, 1, 2)
+        self.menu_edit_input_form.layout.addWidget(_menu_edit_card.item_price, 2, 0, 1, 2)
+        self.menu_edit_input_form.layout.addWidget(_menu_edit_card.item_addon_choice, 3, 0, 1, 2)
+        self.menu_edit_input_form.layout.addWidget(_return_sb, 4, 0)
+        self.menu_edit_input_form.layout.addWidget(_submit_sb, 4, 1)
 
         _menu_edit_card.layout.addWidget(self.menu_edit_input_form, 0, 0)
 
@@ -324,6 +340,7 @@ class menuPage(Famcy.FamcyPage):
     # ====================================================
     def edit_menu(self, sb, info):
         if info["name"]:
+            self.menu_edit_card.addon_flag = sb.origin.addon_flag
             self.menu_edit_card.current_action = "edit"
             _data = self.find_data_by_name(info["name"], sb.target.value["data"])
             self.update_menu_edit_card(_data, sb.origin.addon_flag)                       # , addon_flag=True
@@ -332,6 +349,7 @@ class menuPage(Famcy.FamcyPage):
             return Famcy.UpdateAlert(target=sb.origin.parent.parent, alert_message="未選取需更改之品項")
 
     def add_menu(self, sb, info):
+        self.menu_edit_card.addon_flag = sb.origin.addon_flag
         self.menu_edit_card.current_action = "add"
         self.clear_menu_edit_card(sb.target.value["category"], sb.origin.addon_flag)      # , addon_flag=True
         return Famcy.UpdatePrompt(target=self.menu_edit_card)
@@ -343,11 +361,41 @@ class menuPage(Famcy.FamcyPage):
         else:
             return Famcy.UpdateAlert(target=sb.origin.parent.parent, alert_message=res_msg)
 
+    def selected_addon_btn(self, sb, info):
+        print("info: ", info.__dict__, info.info_dict["addon_choice"])
+        self.menu_edit_card.item_addon = info.info_dict["addon_choice"]
+        self.update_addon_section(self.menu_edit_card.item_addon)
+
+        # if sb.origin.selected:
+        #     if sb.origin.value["title"] in self.menu_edit_card.item_addon:
+        #         self.menu_edit_card.item_addon.remove(sb.origin.value["title"])
+        #     self.update_addon_section(self.menu_edit_card.item_addon)
+        # else:
+        #     if sb.origin.value["title"] not in self.menu_edit_card.item_addon:
+        #         self.menu_edit_card.item_addon.append(sb.origin.value["title"])
+        #     self.update_addon_section(self.menu_edit_card.item_addon)
+
+        return Famcy.UpdateBlockHtml(target=self.menu_edit_card.item_addon_choice)
+
+        
+
     def submit_add_or_edit_menu(self, sb, info):
         if self.menu_edit_card.current_action == "add":
-            item_info = {}
-            item_info["name"] = info["name"]
-            item_info["price"] = info["price"]
+            addon_connection_list = []
+            for n in self.menu_edit_card.item_addon:
+                connect_element = {
+                    "level": 4,
+                    "name": n,
+                    "connected_name": info["name"],
+                    "connected_level": 3,
+                }
+                addon_connection_list.append(connect_element)
+
+            item_info = {
+                "name": info["name"],
+                "price": info["price"],
+                "addon_connection_list": addon_connection_list
+            }
             res_ind, res_msg = self.post_add_sub_item_and_connect(2, info["category"], item_info)
             if res_ind:
                 return Famcy.UpdateAlert(target=self.menu_edit_card, alert_message="成功新增品項")
@@ -355,9 +403,21 @@ class menuPage(Famcy.FamcyPage):
                 return Famcy.UpdateAlert(target=self.menu_edit_card, alert_message=res_msg)
 
         elif self.menu_edit_card.current_action == "edit":
+            addon_connection_list = []
+            for n in self.menu_edit_card.item_addon:
+                connect_element = {
+                    "level": 4,
+                    "name": n,
+                    "connected_name": info["name"],
+                    "connected_level": 3,
+                }
+                addon_connection_list.append(connect_element)
+
+            print("addon_connection_list: ", addon_connection_list)
             update_info = {
                 "name": info["name"],
-                "price": info["price"]
+                "price": info["price"],
+                "addon_connection_list": json.dumps(addon_connection_list)
             }
             res_ind, res_msg = self.post_edit_item(self.menu_edit_card.item_name.value["defaultValue"], update_info)
             if res_ind:
@@ -401,10 +461,11 @@ class menuPage(Famcy.FamcyPage):
             "suspend": json.dumps([0]),
             "other_information_dict": json.dumps([{}]),
             "delivery_price": json.dumps([item_info["price"]]),
+            "addon_connection_list": json.dumps([item_info["addon_connection_list"]]),
         }
         r = requests.post(HOST_ADDRESS, data=send_dict, headers=HEADER).text
         res_dict = json.loads(r)
-        # print("res_dict: ", res_dict["message"])
+        print("res_dict: ", res_dict["message"])
         return res_dict["indicator"], res_dict["message"]
 
     def post_edit_item(self, old_name, update_info):
@@ -418,7 +479,7 @@ class menuPage(Famcy.FamcyPage):
         send_dict.update(update_info)
         r = requests.post(HOST_ADDRESS, data=send_dict, headers=HEADER).text
         res_dict = json.loads(r)
-        # print("res_dict: ", res_dict["message"])
+        print("post_edit_item: ", res_dict["message"])
         return res_dict["indicator"], res_dict["message"]
 
     def post_delete_item(self, name):
@@ -444,33 +505,35 @@ class menuPage(Famcy.FamcyPage):
         self.menu_edit_card.category.update({ "defaultValue": "" })
         self.menu_edit_card.item_name.update({ "defaultValue": "" })
         self.menu_edit_card.item_price.update({ "defaultValue": "" })
-        if addon_flag:
-            self.menu_edit_card.item_addon_title.update({ "title": "配料", "content": "選配種類: X" })
-            self.display_addon_section(addon_flag)
-        else:
-            self.menu_edit_card.item_addon_title.update({ "title": "", "content": "" })
-            self.display_addon_section(addon_flag)
+        self.menu_edit_card.item_addon = []
+        self.update_addon_section("X", addon_flag)
 
     def update_menu_edit_card(self, item_data, addon_flag=False):
         self.menu_edit_card.title = item_data["category"]
         self.menu_edit_card.category.update({ "defaultValue": item_data["category"] })
         self.menu_edit_card.item_name.update({ "defaultValue": item_data["name"] })
         self.menu_edit_card.item_price.update({ "defaultValue": item_data["price"][4:] if isinstance(item_data["price"], str) else str(item_data["price"])})
+        self.menu_edit_card.item_addon = None if addon_flag else copy.deepcopy(item_data["addon_title"])
+        self.update_addon_section(self.menu_edit_card.item_addon, addon_flag)
+
+    def update_addon_section(self, addon_data, addon_flag=False):
         if addon_flag:
-            self.menu_edit_card.item_addon_title.update({ "title": "配料", "content": "選配種類: "+("|".join(item_data["addon_title"])) })
-            self.display_addon_section(addon_flag)
+            self.menu_edit_card.item_addon_choice.hide()
+            # self.menu_edit_card.item_addon_choice.update({ "title": "", "desc": "" })
+            # self.display_addon_section(addon_data, addon_flag)
         else:
-            self.menu_edit_card.item_addon_title.update({ "title": "", "content": "" })
-            self.display_addon_section(addon_flag)
+            self.menu_edit_card.item_addon_choice.show()
+            self.menu_edit_card.item_addon_choice.update({ "title": "配料", "desc": "選配種類: "+("|".join(addon_data)), "defaultValue": addon_data })
+            # self.display_addon_section(addon_data)
     
-    def display_addon_section(self, addon_flag=False):
-        temp_list = self.menu_edit_card.layout.content[self.menu_edit_card.card_len:]
-        if addon_flag:
-            for t in temp_list:
-                t[0].body.style["display"] = "block"
-        else:
-            for t in temp_list:
-                t[0].body.style["display"] = "none"
+    # def display_addon_section(self, addon_data):
+    #     for i in self.menu_edit_section.item_addon_choice.value["value"]:
+    #         if i in self.menu_edit_card.item_addon:
+    #             t.selected = True
+    #             t.set_btn_style(4)
+    #         else:
+    #             t.selected = False
+    #             t.set_btn_style(2)
 
     def update_title_list(self, title_block, title_list):
         title_block.update({ "content": "<br>".join(title_list) })
