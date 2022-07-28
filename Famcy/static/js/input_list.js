@@ -38,6 +38,7 @@ function generate_list(list_id) {
       create a new DIV that will act as an option item:*/
       c = document.createElement("DIV");
       c.innerHTML += selElmnt.options[j].innerHTML;
+      c.setAttribute("option_value",  selElmnt.options[j].value)
 
       c.addEventListener("click", function(e) {
           /*when an item is clicked, update the original select box,
@@ -52,7 +53,7 @@ function generate_list(list_id) {
             if (s.options[i].innerHTML == this.innerHTML) {
               s.selectedIndex = i;
               h.innerHTML = this.innerHTML;
-              document.getElementById(s.options[i].getAttribute("name")).setAttribute("value", this.innerHTML)
+              document.getElementById(s.options[i].getAttribute("name")).setAttribute("value", this.getAttribute("option_value"))
 
               if (selElmnt.getAttribute("after_action").includes("save")) {
                 saveValue(s.options[s.selectedIndex].getAttribute("name"), this.innerHTML)

@@ -14,6 +14,11 @@
 	{{ color_theme|safe }}
 	{% endif %}
 
+	<script type="text/javascript" src="/static/js/event_source_js.js"></script>
+    <script type="text/javascript">
+    	{% if event_source %}{{ event_source|safe }}{% endif %}
+    </script>
+
 	{% if extra_script %}
 	{{ extra_script|safe }}
 	{% endif %}
@@ -23,10 +28,6 @@
     <script type="text/javascript">
         {{ g.sijax.get_js()|safe }}
         {{ form_init_js|safe }}
-    </script>
-    <script type="text/javascript" src="/static/js/event_source_js.js"></script>
-    <script type="text/javascript">
-    	{% if event_source %}{{ event_source|safe }}{% endif %}
     </script>
 </head>
 <body id="root">

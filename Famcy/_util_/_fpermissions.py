@@ -18,7 +18,8 @@ class FPermissions:
 	Method:
 		* verify: verify the permission 
 	"""
-	def __init__(self, lowest_permission):
+	def __init__(self, lowest_permission, route=None):
+		self.route = route
 		self.lowest_permission = lowest_permission
 
 	def required_login(self):
@@ -30,6 +31,10 @@ class FPermissions:
 		current Famcy user met the req of 
 		the permission. 
 		"""
+		if self.route == "/logout":
+			# logout page must return true
+			return True
+
 		if not isinstance(current_user, Famcy.FamcyUser):
 			# user logout
 			return 0 >= self.lowest_permission
