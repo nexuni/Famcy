@@ -33,7 +33,7 @@ class submitBtn(Famcy.FamcyInputBlock):
             self.body["className"] = "round_submit_btn"
 
     def set_btn_style(self, style_num=None):
-        if style_num and style_num < 5:
+        if style_num and style_num <= 5:
             if style_num == 1:
                 # default style
                 self.body.classList.remove("round_submit_btn")

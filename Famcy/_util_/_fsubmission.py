@@ -14,6 +14,7 @@ from werkzeug.utils import secure_filename
 def get_fsubmission_obj(parent, obj_id):
 	""" Inverse of id() function. But only works if the object is not garbage collected"""
 	if parent:
+		print("get_fsubmission_obj: ", parent.find_obj_by_id(parent, obj_id))
 		return parent.find_obj_by_id(parent, obj_id)
 
 def alert_response(info_dict, form_id):
@@ -71,6 +72,12 @@ def put_submissions_to_list(fsubmission_obj, sub_dict):
 
 	if input_parent:
 		for child, _, _, _, _ in input_parent.layout.content:
+			if child.name in sub_dict.keys():
+				f_submit_info.info_dict[child.submit_value_name] = sub_dict[child.name][0] if len(sub_dict[child.name]) == 1 else sub_dict[child.name]
+				f_submit_info.info_list.append(sub_dict[child.name])
+
+		for _ in input_parent.layout.fixedContent:
+			child = _[0]
 			if child.name in sub_dict.keys():
 				f_submit_info.info_dict[child.submit_value_name] = sub_dict[child.name][0] if len(sub_dict[child.name]) == 1 else sub_dict[child.name]
 				f_submit_info.info_list.append(sub_dict[child.name])
