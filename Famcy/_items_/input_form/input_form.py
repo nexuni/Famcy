@@ -23,8 +23,8 @@ class input_form(Famcy.FamcyCard):
 		script["src"] = "/static/js/input_form_submit.js"
 		self.body.addStaticScript(script)
 
-	def set_submit_action(self, layout_content):
-		for widget, _, _, _, _ in layout_content:
+	def set_submit_action(self, layout):
+		for widget, _, _, _, _ in layout.content:
 			if widget.clickable:
 				if type(widget).__name__ == "inputBtn":
 					widget.body.children[3]["onclick"] = "input_form_main_btn_submit(this, %s, '%s', '%s', '%s');" % (json.dumps(self.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
@@ -32,14 +32,26 @@ class input_form(Famcy.FamcyCard):
 					widget.body["onclick"] = "input_form_main_btn_submit(this, %s, '%s', '%s', '%s');" % (json.dumps(self.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
 			else:
 				if type(widget).__name__ == "FSection":
-					self.set_submit_action(widget.layout.content)
+					self.set_submit_action(widget.layout)
+
+		for _ in layout.fixedContent:
+			widget = _[0]
+			if widget.clickable:
+				if type(widget).__name__ == "inputBtn":
+					widget.body.children[3]["onclick"] = "input_form_main_btn_submit(this, %s, '%s', '%s', '%s');" % (json.dumps(self.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
+				else:
+					widget.body["onclick"] = "input_form_main_btn_submit(this, %s, '%s', '%s', '%s');" % (json.dumps(self.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
+			else:
+				if type(widget).__name__ == "FSection":
+					self.set_submit_action(widget.layout)
+
 
 	def render_inner(self):
 		header_script, self.body = self.layout.render()
 		if header_script not in self.header_script:
 			self.header_script += header_script
 
-		self.set_submit_action(self.layout.content)
+		self.set_submit_action(self.layout)
 
 		return self.body
 		

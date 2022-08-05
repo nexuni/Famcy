@@ -147,8 +147,8 @@ class FamcyLayout:
 		* addWidget(card, start row, start col, height(num row), width(num col))
 		* render()
 	"""
-	def __init__(self, parent, layout_mode, page_parent=None):
-		self.parent = parent
+	def __init__(self, _parent, layout_mode, page_parent=None, **kwargs):
+		self.parent = _parent
 		self.page_parent = page_parent
 		self.mode = layout_mode
 		self.layoutType = FamcyLayoutType(self.mode)

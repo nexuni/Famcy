@@ -46,7 +46,7 @@ class pureInput(Famcy.FamcyInputBlock):
         if self.value['align_position'] == "down":
             self.body.addElement(p_temp) # position will align down   
         self.body.addElement(input_temp)
-        self.body.addStaticScript(script)
+        self.body.addElement(script)
 
     def render_inner(self):
         if self.value["input_type"] == "number" and self.value["num_range"]:
@@ -71,10 +71,10 @@ class pureInput(Famcy.FamcyInputBlock):
 
         if "save" in self.value["action_after_post"]:
             self.body.children[2]["onkeyup"] = 'saveValue(\'' + self.id + '\', this.value);'
-            self.body.script[0].innerHTML = 'document.getElementById("' + self.id + '_input").value = getSavedValue("' + self.id + '");'
+            self.body.children[-1].innerHTML = 'document.getElementById("' + self.id + '_input").value = getSavedValue("' + self.id + '");'
         else:
             del self.body.children[2]["onkeyup"]
-            self.body.script[0].innerHTML = ''
+            self.body.children[-1].innerHTML = ''
 
 
         return self.body
