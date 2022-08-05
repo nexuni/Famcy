@@ -94,7 +94,7 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 		if self.parent:
 			if hasattr(self.parent, "layout"):
 				self.parent.body.style["position"] = "relative !important"
-				self.parent.layout.addFixedWidget(self, position="absolute", top=str(y)+"px" if isinstance(y, int) else _, left=str(x)+"px" if isinstance(x, int) else _, width=str(w)+"px" if isinstance(w, int) else _, height=str(h)+"px" if isinstance(h, int) else _)
+				self.parent.layout.addFixedWidget(self, position="absolute", top=str(y)+"px" if isinstance(y, int) else y, left=str(x)+"px" if isinstance(x, int) else x, width=str(w)+"px" if isinstance(w, int) else w, height=str(h)+"px" if isinstance(h, int) else h)
 			else:
 				print("Widget should be put under a class which contains the attribute FLayout such as FPage or FCard")
 		else:
@@ -136,6 +136,12 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 				if type(_item).__name__ == className:
 					return_list.append(_item)
 				return_list.extend(self.find_class(_item, className))
+
+			for _ in item.layout.fixedContent:
+				_item = _[0]
+				if type(_item).__name__ == className:
+					return_list.append(_item)
+				return_list.extend(self.find_class(_item, className))
 		return return_list
 
 	def find_all_widget(self, item):
@@ -146,6 +152,11 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 				return_list.extend(self.find_all_widget(_item))
 
 			for _item, _ in item.layout.staticContent:
+				return_list.append(_item)
+				return_list.extend(self.find_all_widget(_item))
+
+			for _ in item.layout.fixedContent:
+				_item = _[0]
 				return_list.append(_item)
 				return_list.extend(self.find_all_widget(_item))
 		return return_list
@@ -160,6 +171,14 @@ class FamcyWidget(metaclass=abc.ABCMeta):
 					return _children
 
 			for _item, _ in item.layout.staticContent:
+				if _item.submission_obj_key == obj_id:
+					return _item.submission_obj
+				_children = self.find_obj_by_id(_item, obj_id)
+				if _children:
+					return _children
+
+			for _ in item.layout.fixedContent:
+				_item = _[0]
 				if _item.submission_obj_key == obj_id:
 					return _item.submission_obj
 				_children = self.find_obj_by_id(_item, obj_id)
