@@ -76,7 +76,7 @@ class FElement(metaclass=abc.ABCMeta):
 		return_attr += ' class="' + _[:-1] + '"' if self.classList != [] else ""
 
 		for key, val in self.attributes.items():
-			return_attr += ' ' + key + '="' + val + '"'
+			return_attr += ' ' + str(key) + '="' + str(val) + '"'
 
 		return return_attr
 

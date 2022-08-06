@@ -13,7 +13,7 @@ class UpdateTabHtml(Famcy.FamcyResponse):
 	def response(self, sijax_response):
 		if self.target:
 			# update body html
-			_body = self.target.render()
+			_body = super(Famcy.FamcyPage, self.target).render()
 			
 			pure_html = self.run_all_script_tag(_body.render_inner(), sijax_response) if self.upload_flag else _body.render_inner()
 			sijax_response.html('#content_section', pure_html)

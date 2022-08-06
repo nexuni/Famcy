@@ -47,12 +47,14 @@ class FPage(FamcyWidget):
 	event_source_flag=False
 	_lock = threading.Lock()
 
-	def __init__(self, layout_mode=FLayoutMode.recommend):
-		super(FPage, self).__init__()
+	def __init__(self, layout_mode=FLayoutMode.recommend, **kwargs):
+		super(FPage, self).__init__(**kwargs)
 		self.layout = FamcyLayout(self, layout_mode, page_parent=self)
 
 		self.submission_obj = FSubmission(self)
 		self.submission_obj_key = self.id
+
+		# self.permission = FPage.permission
 
 		self.init_page()
 
@@ -103,7 +105,7 @@ class FPage(FamcyWidget):
 	def register(cls, route, style, permission_level=0, background_thread=False, background_freq=0.5, init_cls=None, event_source_flag=False):
 		cls.route = route
 		cls.style = style
-		cls.permission = FPermissions(permission_level)
+		cls.permission = FPermissions(permission_level, route)
 		cls.background_thread_flag = background_thread
 		cls.background_freq = background_freq
 		cls.event_source_flag = event_source_flag
@@ -134,7 +136,7 @@ class FPage(FamcyWidget):
 
 	@classmethod
 	def render(cls, init_cls=None, *args, **kwargs):
-
+		session["login_route"] = ""
 		route_list = request.path[1:].split("/")
 		route_name = '_'.join(route_list)
 
@@ -178,14 +180,14 @@ class FPage(FamcyWidget):
 			else:
 				print("POST didn't receive anything *************")
 				return ""
-
+		# print("current_page: ", cls.route, id(cls.permission), cls.permission.lowest_permission)
 		form_init_js = ''	# no use
 		end_script = ''
-		if not current_page.permission.verify(Famcy.FManager["CurrentUser"]):
+		if not cls.permission.verify(Famcy.FManager["CurrentUser"]):
 			session["login_permission"] = "You are not authorized to view this page!"
+			session["login_route"] = request.path
 
-			return redirect(url_for("MainBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_")))
-
+			return redirect(url_for("PageBlueprint.famcy_route_func_name_"+Famcy.FManager["ConsoleConfig"]['login_url'].replace("/", "_"), next=request.path.replace("/", " ")))
 		else:
 			# Render all content
 			current_page.body = super(FPage, current_page).render()

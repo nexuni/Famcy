@@ -20,16 +20,17 @@ class table_block(Famcy.FamcyBlock):
         - Return a content dictionary
         """
         return {
+            "event_source_update": False,
             "input_button": "radio",                     # ("checkbox" / "radio" / "none")
             "input_value_col_field": "col_title2",          # if input_button != "none"
 
-            "page_detail": True,                            # (true / false)
-            "page_detail_content": "key_value",             # if page_detail == true: (key_value / HTML_STR => ["<p>line1</p>", "<p>line2</p>"])
+            # "page_detail": True,                            # (true / false)
+            # "page_detail_content": "key_value",             # if page_detail == true: (key_value / HTML_STR => ["<p>line1</p>", "<p>line2</p>"])
 
             "toolbar": True,                                # (true / false)
             "page_footer": True,                            # (true / false)
             "page_footer_detail": {                         # if page_footer == true
-                "page_size": 1,
+                "page_size": 100,
                 "page_list": [1, 2, "all"]
             },
 
@@ -71,241 +72,18 @@ class table_block(Famcy.FamcyBlock):
                     "col_title1": "2",
                     "col_title2": "row_content22",
                     "col_title3": "row_content23"
-                },
-                {
-                    "col_title1": "3",
-                    "col_title2": "row_content32",
-                    "col_title3": "row_content33"
-                },
-                {
-                    "col_title1": "4",
-                    "col_title2": "row_content12",
-                    "col_title3": "row_content13"
-                },
-                {
-                    "col_title1": "5",
-                    "col_title2": "row_content22",
-                    "col_title3": "row_content23"
-                },
-                {
-                    "col_title1": "6",
-                    "col_title2": "row_content32",
-                    "col_title3": "row_content33"
-                },
-                {
-                    "col_title1": "7",
-                    "col_title2": "row_content12",
-                    "col_title3": "row_content13"
-                },
-                {
-                    "col_title1": "8",
-                    "col_title2": "row_content22",
-                    "col_title3": "row_content23"
-                },
-                {
-                    "col_title1": "9",
-                    "col_title2": "row_content32",
-                    "col_title3": "row_content33"
-                },{
-                    "col_title2": "10",
-                    "col_title1": "row_content12",
-                    "col_title3": "row_content13",
-                    "col_title4": "row_content13"
-                },
-                {
-                    "col_title1": "11",
-                    "col_title2": "row_content22",
-                    "col_title3": "row_content23"
-                },
-                {
-                    "col_title1": "12",
-                    "col_title2": "row_content32",
-                    "col_title3": "row_content33"
-                },
-                {
-                    "col_title1": "13",
-                    "col_title2": "row_content12",
-                    "col_title3": "row_content13"
-                },
-                {
-                    "col_title1": "14",
-                    "col_title2": "row_content22",
-                    "col_title3": "row_content23"
-                },
-                {
-                    "col_title1": "15",
-                    "col_title2": "row_content32",
-                    "col_title3": "row_content33"
-                },
-                {
-                    "col_title1": "16",
-                    "col_title2": "row_content12",
-                    "col_title3": "row_content13"
-                },
-                {
-                    "col_title1": "17",
-                    "col_title2": "row_content22",
-                    "col_title3": "row_content23"
-                },
-                {
-                    "col_title1": "18",
-                    "col_title2": "row_content32",
-                    "col_title3": "row_content33"
-                },{
-                    "col_title2": "19",
-                    "col_title1": "row_content12",
-                    "col_title3": "row_content13",
-                    "col_title4": "row_content13"
-                },
-                {
-                    "col_title1": "20",
-                    "col_title2": "row_content22",
-                    "col_title3": "row_content23"
-                },
-                {
-                    "col_title1": "21",
-                    "col_title2": "row_content32",
-                    "col_title3": "row_content33"
-                },
-                {
-                    "col_title1": "22",
-                    "col_title2": "row_content12",
-                    "col_title3": "row_content13"
-                },
-                {
-                    "col_title1": "23",
-                    "col_title2": "row_content22",
-                    "col_title3": "row_content23"
-                },
-                {
-                    "col_title1": "24",
-                    "col_title2": "row_content32",
-                    "col_title3": "row_content33"
-                },
-                {
-                    "col_title1": "25",
-                    "col_title2": "row_content12",
-                    "col_title3": "row_content13"
-                },
-                {
-                    "col_title1": "26",
-                    "col_title2": "row_content22",
-                    "col_title3": "row_content23"
-                },
-                {
-                    "col_title1": "27",
-                    "col_title2": "row_content32",
-                    "col_title3": "row_content33"
                 }
             ]
         }
 
     def generate_table(self):
-        # generate column title
-        _head = Famcy.thead()
-
-        column_dict = {}
-        for t in self.value["column"]:
-            _tr = Famcy.tr()
-
-            # generate btn
-            _thb = Famcy.th()
-            _thd = Famcy.div()
-            _thd["className"] = "th-inner"
-
-            if self.value["input_button"] == "checkbox":
-                _thb.style["text-align"] = 'center'
-                _thb.style["vertical-align"] = 'middle'
-                _thb["rowspan"] = "1"
-                _thb["data-field"] = "state"
-
-                _thl = Famcy.label()
-
-                _thi = Famcy.input()
-                _thi["name"] = str(self.name)
-                _thi["type"] = self.value["input_button"]
-                _thi["onclick"] = "select_all(this, 'tbody" + self.id + "')"
-                _ths = Famcy.span()
-
-                _thl.addElement(_thi)
-                _thl.addElement(_ths)
-                _thd.addElement(_thl)
-            _thb.addElement(_thd)
-            _tr.addElement(_thb)
-
-            for c in t:
-                column_dict[c["field"]] = c
-
-                _th = Famcy.th()
-                _th.style["text-align"] = c["align"]
-                _th.style["vertical-align"] = c["valign"]
-                _th["rowspan"] = str(c["rowspan"])
-                _th["data-field"] = c["field"]
-                _div = Famcy.div()
-                _div.innerHTML = str(c["title"])
-                _div["className"] = "th-inner"
-                if c["sortable"]:
-                    _div["className"] = "sortable"
-                    _div["className"] = "both"
-
-                _th.addElement(_div)
-                _tr.addElement(_th)
-
-            _head.addElement(_tr)
-
-        # generate body info
-        _body = Famcy.tbody()
-        _body["id"] = "tbody"+self.id
-        for i, d in enumerate(self.value["data"]):
-            _tr = Famcy.tr()
-            _tr["className"] = "display_none"
-            _tr["data-index"] = str(i)
-            _tr["data-has-detail-view"] = "false"
-
-            # generate btn
-            if self.value["input_button"] == "checkbox" or self.value["input_button"] == "radio":
-                _tdb = Famcy.td()
-                _tdb.style["text-align"] = 'center'
-                _tdb.style["vertical-align"] = 'middle'
-                _tdb["rowspan"] = "1"
-                _tdb["data-field"] = "state"
-
-                _tdl = Famcy.label()
-
-                _tdi = Famcy.input()
-                _tdi["className"] = "table_btn"
-                _tdi["name"] = str(self.name)
-                _tdi["type"] = self.value["input_button"]
-                _tdi["data-index"] = str(i)
-                _ = ""
-                if isinstance(self.value["input_value_col_field"], list):
-                    for f in self.value["input_value_col_field"]:
-                        _ += d[f] + ","
-                else:
-                    _ = d[self.value["input_value_col_field"]] + " "
-                _tdi["value"] = _[:-1]
-                _tds = Famcy.span()
-
-                _tdl.addElement(_tdi)
-                _tdl.addElement(_tds)
-                _tdb.addElement(_tdl)
-                _tr.addElement(_tdb)
-
-            for k in column_dict.keys():
-                _td = Famcy.td()
-                _td.style["text-align"] = column_dict[k]["align"]
-                _td.style["vertical-align"] = column_dict[k]["valign"]
-                _td["data-field"] = column_dict[k]["field"]
-                _td.innerHTML = str(d[k]) if k in d.keys() else ""
-                _tr.addElement(_td)
-
-            _body.addElement(_tr)
+        self.radio_num = 1 if self.value["input_button"] and self.value["input_button"] != "none" else 0
+        _head = self.generate_head()
+        _body = self.generate_body()
 
         # display first page
-        page_size = self.value["page_footer_detail"]["page_size"] if isinstance(self.value["page_footer_detail"]["page_size"], int) else len(data)
-        for x in range(page_size):
-            if len(_body.children) > x:
-                _body.children[x].classList.remove("display_none")
+        self.value["page_footer_detail"]["page_size"] = page_size = self.value["page_footer_detail"]["page_size"] if isinstance(self.value["page_footer_detail"]["page_size"], int) else len(data)
+        self.display_page(_body, page_size)
 
         if self.value["page_footer"]:
             _h3 = Famcy.h3()
@@ -343,6 +121,170 @@ class table_block(Famcy.FamcyBlock):
         self.body.style["height"] = self.value["table_height"]
         self.body.style["overflow"] = "auto"
 
+    def display_page(self, _body, page_size):
+        for x in range(page_size):
+            if len(_body.children) > x:
+                if "display_none" in _body.children[x].classList:
+                    _body.children[x].classList.remove("display_none")
+
+    def generate_head(self, _head=None, _data=None):
+        # generate column title
+        if not _head:
+            _head = Famcy.thead()
+        if not _data:
+            _data = self.value["column"]
+
+        self.column_dict = {}
+        for t in _data:
+            _tr = Famcy.tr()
+
+            # generate btn
+            if self.value["input_button"] and self.value["input_button"] != "none":
+                _thb = Famcy.th()
+                _thd = Famcy.div()
+                _thd["className"] = "th-inner"
+
+                if self.value["input_button"] == "checkbox":
+                    _thb.style["text-align"] = 'center'
+                    _thb.style["vertical-align"] = 'middle'
+                    _thb["rowspan"] = "1"
+                    _thb["data-field"] = "state"
+
+                    _thl = Famcy.label()
+
+                    _thi = Famcy.input()
+                    _thi["name"] = str(self.name)
+                    _thi["type"] = self.value["input_button"]
+                    _thi["onclick"] = "select_all(this, 'tbody" + self.id + "')"
+                    _ths = Famcy.span()
+
+                    _thl.addElement(_thi)
+                    _thl.addElement(_ths)
+                    _thd.addElement(_thl)
+                _thb.addElement(_thd)
+                _tr.addElement(_thb)
+
+            for c in t:
+                self.column_dict[c["field"]] = c
+
+                _th = Famcy.th()
+                _th.style["text-align"] = c["align"]
+                _th.style["vertical-align"] = c["valign"]
+                _th["rowspan"] = str(c["rowspan"])
+                _th["data-field"] = c["field"]
+                _div = Famcy.div()
+                _div.innerHTML = str(c["title"])
+                _div["className"] = "th-inner"
+                if c["sortable"]:
+                    _div["className"] = "sortable"
+                    _div["className"] = "both"
+
+                _th.addElement(_div)
+                _tr.addElement(_th)
+
+            _head.addElement(_tr)
+
+        return _head
+
+    def generate_body(self, _body=None, _data=None):
+        # generate body info
+        if not _body:
+            _body = Famcy.tbody()
+        if not _data:
+            _data = self.value["data"]
+
+        _body["id"] = "tbody"+self.id
+        for i, d in enumerate(_data):
+            _tr = Famcy.tr()
+            _tr["className"] = "display_none"
+            _tr["data-index"] = str(i)
+            _tr["data-has-detail-view"] = "false"
+
+            # generate btn
+            if self.value["input_button"] == "checkbox" or self.value["input_button"] == "radio":
+                _tdb = Famcy.td()
+                _tdb.style["text-align"] = 'center'
+                _tdb.style["vertical-align"] = 'middle'
+                _tdb["rowspan"] = "1"
+                _tdb["data-field"] = "state"
+
+                _tdl = Famcy.label()
+
+                _tdi = Famcy.input()
+                _tdi["className"] = "table_btn"
+                _tdi["name"] = str(self.name)
+                _tdi["type"] = self.value["input_button"]
+                _tdi["data-index"] = str(i)
+                _ = ""
+                if isinstance(self.value["input_value_col_field"], list):
+                    for f in self.value["input_value_col_field"]:
+                        _ += d[f] + ","
+                else:
+                    _ = d[self.value["input_value_col_field"]] + " "
+                _tdi["value"] = _[:-1]
+                _tds = Famcy.span()
+
+                _tdl.addElement(_tdi)
+                _tdl.addElement(_tds)
+                _tdb.addElement(_tdl)
+                _tr.addElement(_tdb)
+
+            for k in self.column_dict.keys():
+                _td = Famcy.td()
+                _td.style["text-align"] = self.column_dict[k]["align"]
+                _td.style["vertical-align"] = self.column_dict[k]["valign"]
+                _td["data-field"] = self.column_dict[k]["field"]
+                _td.innerHTML = str(d[k]) if k in d.keys() else ""
+                _tr.addElement(_td)
+
+            _body.addElement(_tr)
+
+        return _body
+
+    def update_body_innerHTML(self):
+        _body = self.body.children[1].children[1]
+        _data = self.value["data"]
+
+        for i, d in enumerate(_data):
+            _tr = _body.children[i]
+
+            for _i, k in enumerate(self.column_dict.keys()):
+                _td = _tr.children[_i+self.radio_num]
+                _td.innerHTML = str(d[k]) if k in d.keys() else ""
+                
+        return _body
+
+    def find_table_element(self, row=None, col=None):
+        self.update_body_innerHTML()
+        return self.body.children[1].children[1].children[row].children[col+self.radio_num]
+
+    def add_row(self, data):
+        _add_row = [i for i in data if i not in self.value["data"]]
+
+        # generate new table
+        # =================================================
+        self.value["data"] = data
+        self.body.children[1].children[1] = self.generate_body(_body=self.body.children[1].children[1], _data=data)
+        self.display_page(self.body.children[1].children[1], self.value["page_footer_detail"]["page_size"])
+        # =================================================
+
+        if isinstance(_add_row, list):
+            _len = len(_add_row)
+            _children = self.body.children[1].children[1].children
+            target_element = []
+            target_id = []
+            target_parent = []
+            for i in range(len(_children)-_len, len(_children)):
+                t = _children[i]
+                if isinstance(t, Famcy.FamcyElement):
+                    target_element.append(t.render_inner())
+                    target_id.append(t["id"])
+                    target_parent.append(t.parentElement["id"])
+            Famcy.sse.publish({"indicator": True, "message": {"target_parent": target_parent, "target_id": target_id, "target_element": target_element, "target_attribute": {}}}, type='publish')
+
+        else:
+            print("Fail to add new row")
+
     def init_block(self):
         self.header_script += """
         <!--table-->
@@ -376,10 +318,27 @@ class table_block(Famcy.FamcyBlock):
         static_script["src"] = "/static/js/table_page.js"
         self.body.addStaticScript(static_script, position="head")
 
+        # self.event_source_script = Famcy.script()
+        # self.event_source_script.innerHTML = '''
+        # source.addEventListener('table', function(event) {
+        #     var data = JSON.parse(event.data);
+        #     update_event_source_target(data)
+        # }, false);
+        # '''
+        # self.body.addStaticScript(self.event_source_script)
+
     def render_inner(self):
         # remove previous data
         self.body.children[1].children = []
         self.body.children[2].children = []
+
+        # remove event source stuff
+        # if self.value["event_source_update"]:
+        #     if self.event_source_script not in self.body.script or self.event_source_script not in self.body.head_script:
+        #         self.body.addStaticScript(self.event_source_script)
+        # else:
+        #     if self.event_source_script in self.body.script or self.event_source_script in self.body.head_script:
+        #         self.body.removeStaticScript(self.event_source_script)
 
         self.generate_table()
         return self.body

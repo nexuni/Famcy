@@ -9,11 +9,11 @@ class FCard(FamcyWidget):
 	that can be laid onto the Famcy console
 	layout. 
 	"""
-	def __init__(self, layout_mode=FLayoutMode.recommend):
-		super(FCard, self).__init__()
+	def __init__(self, layout_mode=FLayoutMode.recommend, **kwargs):
+		super(FCard, self).__init__(**kwargs)
 
 		self.title = ""
-		self.layout = FamcyLayout(self, layout_mode)
+		self.layout = FamcyLayout(self, layout_mode, **kwargs)
 		self.fit_content = False
 		self.init_card()
 		self._check_rep()
@@ -88,7 +88,35 @@ class FCard(FamcyWidget):
 		pass
 
 class FPromptCard(FCard):
-	def __init__(self):
-		super(FPromptCard, self).__init__()
+	def __init__(self, **kwargs):
+		super(FPromptCard, self).__init__(**kwargs)
 		self.last_card = None
 		self.next_card = None
+
+class FSection(FCard):
+	def __init__(self, **kwargs):
+		super(FSection, self).__init__(**kwargs)
+		self.init_card()
+		
+	def init_card(self):
+		self.body = Famcy.div()
+		self.body["id"] = self.id
+		self.body["className"] = "empty_section"
+
+	def render_inner(self):
+		"""
+		This is the function to 
+		render the layout and
+		apply style. 
+		"""
+		if self.fit_content:
+			self.body.style["height"] = "fit-content"
+		else:
+			self.body.style["height"] = "auto"
+
+		header_script, _content = self.layout.render()
+		self.body = _content
+		if header_script not in self.header_script:
+			self.header_script += header_script
+
+		return self.body

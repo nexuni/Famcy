@@ -7,8 +7,8 @@ class input_form(Famcy.FamcyCard):
 	that group all submittable
 	blocks together. 
 	"""
-	def __init__(self, layout_mode=Famcy.FamcyLayoutMode.recommend):
-		super(input_form, self).__init__(layout_mode=layout_mode)
+	def __init__(self, layout_mode=Famcy.FamcyLayoutMode.recommend, **kwargs):
+		super(input_form, self).__init__(layout_mode=layout_mode, **kwargs)
 		self.configs["method"] = "post"
 		self.init_block()
 
@@ -23,19 +23,35 @@ class input_form(Famcy.FamcyCard):
 		script["src"] = "/static/js/input_form_submit.js"
 		self.body.addStaticScript(script)
 
-	def render_inner(self):
-			
-		header_script, self.body = self.layout.render()
-		if header_script not in self.header_script:
-			self.header_script += header_script
-
-		inner_script = ""
-		for widget, _, _, _, _ in self.layout.content:
+	def set_submit_action(self, layout):
+		for widget, _, _, _, _ in layout.content:
 			if widget.clickable:
 				if type(widget).__name__ == "inputBtn":
 					widget.body.children[3]["onclick"] = "input_form_main_btn_submit(this, %s, '%s', '%s', '%s');" % (json.dumps(self.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
 				else:
 					widget.body["onclick"] = "input_form_main_btn_submit(this, %s, '%s', '%s', '%s');" % (json.dumps(self.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
+			else:
+				if type(widget).__name__ == "FSection":
+					self.set_submit_action(widget.layout)
+
+		for _ in layout.fixedContent:
+			widget = _[0]
+			if widget.clickable:
+				if type(widget).__name__ == "inputBtn":
+					widget.body.children[3]["onclick"] = "input_form_main_btn_submit(this, %s, '%s', '%s', '%s');" % (json.dumps(self.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
+				else:
+					widget.body["onclick"] = "input_form_main_btn_submit(this, %s, '%s', '%s', '%s');" % (json.dumps(self.loader), self.id, str(self.submission_obj_key), str(widget.submission_obj_key))
+			else:
+				if type(widget).__name__ == "FSection":
+					self.set_submit_action(widget.layout)
+
+
+	def render_inner(self):
+		header_script, self.body = self.layout.render()
+		if header_script not in self.header_script:
+			self.header_script += header_script
+
+		self.set_submit_action(self.layout)
 
 		return self.body
 		

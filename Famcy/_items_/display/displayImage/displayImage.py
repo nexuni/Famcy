@@ -7,9 +7,9 @@ class displayImage(Famcy.FamcyBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = displayImage.generate_template_content()
-        super(displayImage, self).__init__()
+        super(displayImage, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod

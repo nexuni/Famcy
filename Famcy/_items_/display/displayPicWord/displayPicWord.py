@@ -7,9 +7,9 @@ class displayPicWord(Famcy.FamcyBlock):
     Represents the block to display
     paragraph. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = displayPicWord.generate_template_content()
-        super(displayPicWord, self).__init__()
+        super(displayPicWord, self).__init__(**kwargs)
         self.init_block()
 
     @classmethod

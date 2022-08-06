@@ -7,9 +7,9 @@ class line_chart(Famcy.FamcyBlock):
     Represents the block to display
     line_chart. 
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.value = line_chart.generate_template_content()
-        super(line_chart, self).__init__()
+        super(line_chart, self).__init__(**kwargs)
         self.init_block()
         
     @classmethod
