@@ -174,6 +174,10 @@ def create_app(famcy_id, production=False):
 	FamcyBackgroundQueue = FamcyPageQueue()
 	globals()["FamcyBackgroundQueue"] = FamcyBackgroundQueue
 
+	if "enable_sso" in FManager["ConsoleConfig"].keys() and FManager["ConsoleConfig"]["enable_sso"]:
+		from oauthlib.oauth2 import WebApplicationClient
+		globals()["GoogleSSOClient"] = WebApplicationClient(Famcy.FManager.get_credentials("GOOGLE_CLIENT_ID"))
+
 	# Init http client
 	FManager.init_http_client(**FManager["ConsoleConfig"])
 	# Security Enhance
