@@ -110,9 +110,9 @@ class event_calendar(Famcy.FamcyBlock):
                         center: 'agendaDay,agendaWeek,month',
                         right: 'prev,next today'
                     },
-                    editable: true,
+                    editable: false,
                     firstDay: 0, //  1(Monday) this can be changed to 0(Sunday) for the USA system
-                    selectable: true,
+                    selectable: false,
                     defaultView: 'month',
 
                     axisFormat: 'h:mm',
