@@ -14,6 +14,7 @@ class NexuniStyle(Famcy.FamcyStyle):
 		self.color_theme.setColor(main_color="#E2E139", sub_color="#B3B3B3", dark_color="#1A1A1A", white_color=None, light_grey_color=None, semi_grey_color=None)
 
 		self.side_bar = Famcy.FamcyStyleNavBtns(className="nexuni_nav")
+		self.font_theme.setFontFamily("""-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, sans-serif""")
 
 		Famcy.submitBtn.btn_style = "nexuni"
 
