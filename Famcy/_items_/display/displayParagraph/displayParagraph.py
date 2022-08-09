@@ -46,6 +46,6 @@ class displayParagraph(Famcy.FamcyBlock):
 
     def render_inner(self):
         self.body.children[0].innerHTML = self.value["title"]
-        self.body.children[1].innerHTML = markdown.markdown(self.value["content"])
+        self.body.children[1].innerHTML = markdown.markdown(self.value["content"], extensions=['tables', 'sane_lists', 'nl2br', 'wikilinks'])
 
         return self.body
