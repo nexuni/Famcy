@@ -218,9 +218,9 @@ class table_block(Famcy.FamcyBlock):
                 _ = ""
                 if isinstance(self.value["input_value_col_field"], list):
                     for f in self.value["input_value_col_field"]:
-                        _ += d[f] + ","
+                        _ += str(d[f]) + ","
                 else:
-                    _ = d[self.value["input_value_col_field"]] + " "
+                    _ = str(d[self.value["input_value_col_field"]]) + " "
                 _tdi["value"] = _[:-1]
                 _tds = Famcy.span()
 
