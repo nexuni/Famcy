@@ -70,7 +70,7 @@ class pureInput(Famcy.FamcyInputBlock):
             del self.body.children[2]["required"]
 
         if "save" in self.value["action_after_post"]:
-            if self.value["input_type"] == "date":
+            if self.value["input_type"] in ["date", "time"]:
                 self.body.children[2]["onchange"] = 'saveValue(\'' + self.id + '\', this.value);'
             else:
                 self.body.children[2]["onkeyup"] = 'saveValue(\'' + self.id + '\', this.value);'
